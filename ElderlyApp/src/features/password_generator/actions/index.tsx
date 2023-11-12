@@ -13,6 +13,8 @@ const plusImage = "../../../assets/images/plus.png"
 const crossImage = "../../../assets/images/cross.png"
 const checkImage = "../../../assets/images/check.png"
 
+const defaultLength = 12
+
 const requirementLabel = "REQUISITOS:"
 const lengthLabel = "Tamanho:"
 const upperLabel = "Maiúsculas"
@@ -29,8 +31,9 @@ const enum Requirements {
 
 export default function Generator({ navigation }: {readonly navigation: any}) {
 
+  const [passGenerated, setPassGenerated] = useState("");
   const [password, setPassword] = useState("");
-  const [length, setLength] = useState(12);
+  const [length, setLength] = useState(defaultLength);
   const [uppercase, setUppercase] = useState(true);
   const [lowercase, setLowercase] = useState(true);
   const [numbers, setNumbers] = useState(true);
@@ -43,8 +46,23 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
   const updateSpecial = () => {if(!verifyPool(Requirements.Special)) setSpecial(!special)}
   const updateNumbers = () => {if(!verifyPool(Requirements.Numbers)) setNumbers(!numbers)}
 
-  useEffect(() => { generatePasswords() }, [length, uppercase, lowercase, numbers, special])
-  
+  //UseEffects: ---
+  useEffect(() => { 
+    generatePassword()
+   }, [length, uppercase, lowercase, numbers, special])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      console.log(passGenerated + password)
+      if(passGenerated != password) {
+        saveNewPassword()
+      }
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [password, passGenerated]);
+
+
+  //Auxiliar functions: ---
   function verifyPool(currentCase: string): boolean {
     switch(currentCase) {
       case Requirements.Upper: 
@@ -59,14 +77,23 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
     return (!lowercase && !uppercase && !numbers && !special) 
   }
 
-  function generatePasswords() {
-    const password = Algoritm({length: length, strict: true, symbols: special, uppercase: uppercase, lowercase: lowercase, numbers: numbers})
-    setPassword(password)
-    savePasswordGenerated(password)
+  function saveNewPassword() {
+    console.log("ola")
+    setPassword(passGenerated)
+    savePasswordGenerated(passGenerated)
   }
 
+  function generatePassword() {
+    const password = Algoritm({length: length, strict: true, symbols: special, uppercase: uppercase, lowercase: lowercase, numbers: numbers})
+    setPassGenerated(password)
+  }
+
+  /* Quando se clica em guardar, vai copiar a mesma, e guardar em histórico a nova password
+     Basicamente vai fazer o que faria ao fim de timestamp, mas de forma instântanea.
+  */
   function saveOnClickBoard() {
     Clipboard.setString(password)
+    saveNewPassword()
     showMessage({
       message: 'COPIADO',
       type: 'success',
@@ -75,6 +102,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
     });
   }
 
+  //Components: ---
   function MainBox() {
     return (
       <View style= { { flex: 0.15, flexDirection: 'row', justifyContent: 'space-around'} }>
@@ -108,7 +136,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
               
               {/* View onde vai aparecer a password que será gerada */}
               <View style={[{flex: 1,  width: '90%', marginTop: '5%', marginHorizontal: '5%', justifyContent: 'center', alignItems: 'center'}, passwordFirstHalf.passwordGenerated]}>
-                <Text numberOfLines={2} adjustsFontSizeToFit style={[{ fontSize: 22 }]}>{password}</Text>
+                <Text numberOfLines={2} adjustsFontSizeToFit style={[{ fontSize: 22 }]}>{passGenerated}</Text>
               </View>
               
               {/* Botões para copiar a password e para gerar uma nova */}
@@ -116,7 +144,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
                 <TouchableOpacity style={[{flex: 1,  width: '100%', marginRight: '5%', justifyContent: 'center', alignItems: 'center'}, passwordFirstHalf.copyButton]} onPress={() => saveOnClickBoard() }>
                   <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Copiar</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[{flex: 1,  width: '100%', justifyContent: 'center', alignItems: 'center'}, passwordFirstHalf.regenerateButton]} onPress={() => generatePasswords() }>
+                <TouchableOpacity style={[{flex: 1,  width: '100%', justifyContent: 'center', alignItems: 'center'}, passwordFirstHalf.regenerateButton]} onPress={() => generatePassword() }>
                   <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Regenerar</Text>
                 </TouchableOpacity>
               </View>
