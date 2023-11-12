@@ -12,4 +12,13 @@ const stylesMainBox = StyleSheet.create({
     }
 })
 
-export { stylesMainBox }
+const stylesButtons = StyleSheet.create({
+    copyButton: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        borderWidth: 5, // Largura da linha na margem
+        backgroundColor: '#F5D274',
+        borderColor: '#D09C11',
+    }
+})
+
+export { stylesMainBox, stylesButtons }

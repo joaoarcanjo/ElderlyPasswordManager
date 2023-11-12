@@ -1,9 +1,10 @@
 import React,{Component} from 'react'
 import {View, Text, TouchableOpacity, Image, ScrollView} from 'react-native'
 import { stylesAddCredential, styleScroolView } from '../styles/styles'
-import { stylesMainBox } from '../../../styles/main_style'
+import { stylesMainBox } from '../../../assets/styles/main_style'
 
 function MainBox() {
+
   return (
     <View style= { { flex: 0.15, flexDirection: 'row', justifyContent: 'space-around'} }>
         <View style={[{flex: 1, margin: '5%', justifyContent: 'center',  alignItems: 'center'}, stylesMainBox.pageInfoContainer]}>
@@ -44,7 +45,7 @@ function ScrollItemExample() {
 
         <View style={{flex: 0.35}}>
           <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%', justifyContent: 'center',  alignItems: 'center'}, styleScroolView.itemMoreInfoButton]}>
-              <Image source={require('../../../images/more_info.png')} style={[{width: '60%', height: 60, marginRight: '5%', resizeMode: 'contain'}]}/>
+              <Image source={require('../../../assets/images/more_info.png')} style={[{width: '60%', height: 60, marginRight: '5%', resizeMode: 'contain'}]}/>
           </TouchableOpacity>
         </View>
       </View>
