@@ -2,6 +2,7 @@ import React from 'react'
 import {View, Text, Image, TouchableOpacity} from 'react-native'
 import { stylesOptions, stylesFirstHalf } from '../styles/styles'
 import { MovieRealmContext } from '../../../realm/index'
+import Navbar from '../../../navigation/actions'
 
 const credentialsImage = '../images/credenciais.png'
 const generatorImage = '../images/gerador.png'
@@ -70,11 +71,11 @@ function Functionalities({ navigation }: {readonly navigation: any}) {
                 </TouchableOpacity>
                 <TouchableOpacity style={[{width: '40%', margin: '3%', borderRadius: 20, borderWidth: 5, justifyContent: 'center', alignItems: 'center'}, stylesOptions.squareGenerator]} onPress={() => GeneratorsNavigation()}>
                     <Image source={require(generatorImage)} style={[stylesOptions.squarePhoto]}/>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>Nova Pass</Text>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '0%'}, stylesOptions.squareText]}>Nova Pass</Text>
                 </TouchableOpacity>
            </View>
            <View style={{flex: 0.5, flexDirection: 'row', justifyContent: 'space-around' }}>
-                <TouchableOpacity style={[{width: '40%', margin: '3%', borderRadius: 20, borderWidth: 5, justifyContent: 'center', alignItems: 'center'}, stylesOptions.squareSettings]} onPress={() => handleAddMovie()}>
+                <TouchableOpacity style={[{width: '40%', margin: '3%', borderRadius: 20, borderWidth: 5, justifyContent: 'center', alignItems: 'center'}, stylesOptions.squareSettings]} onPress={() => CredencialsNavigation()}>
                     <Image source={require(settingsImage)} style={[stylesOptions.squarePhoto]}/>
                     <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>Definições</Text>
                 </TouchableOpacity>

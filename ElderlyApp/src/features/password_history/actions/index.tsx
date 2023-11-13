@@ -7,6 +7,7 @@ import { styleScroolView } from '../styles/styles'
 import { MovieRealmContext } from '../../../realm/index'
 import { GeneratedPassword } from '../../../realm/Models';
 import formatTimestamp from '../../../components/time';
+import Navbar from '../../../navigation/actions';
 
 export default function PasswordHistory({ navigation }: {readonly navigation: any}) {
 
@@ -75,6 +76,7 @@ export default function PasswordHistory({ navigation }: {readonly navigation: an
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
       <MainBox/>
       <CredentialsList/>   
+      <Navbar navigation={navigation}/>
     </View>
   )
 }

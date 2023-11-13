@@ -2,6 +2,7 @@ import React,{Component} from 'react'
 import {View, Text, TouchableOpacity, Image, ScrollView} from 'react-native'
 import { stylesAddCredential, styleScroolView } from '../styles/styles'
 import { stylesMainBox } from '../../../assets/styles/main_style'
+import Navbar from '../../../navigation/actions'
 
 function MainBox() {
 
@@ -56,7 +57,7 @@ function ScrollItemExample() {
 
 function CredentialsList() {
   return (
-    <View style={{ flex: 0.75, flexDirection: 'row', justifyContent: 'space-around'}}>
+    <View style={{ flex: 0.70, flexDirection: 'row', justifyContent: 'space-around'}}>
       <View style={[{ flex: 1, flexDirection: 'row', marginTop:'5%', marginHorizontal: '4%', justifyContent: 'space-around'}, styleScroolView.credencialsContainer]}>
         <ScrollView style={[{margin: '3%'}]}>
           <ScrollItemExample/>
@@ -75,6 +76,7 @@ export default function Credentials({ navigation }: {readonly navigation: any}) 
       <MainBox/>
       <AddCredencial/>
       <CredentialsList/>
+      <Navbar navigation={navigation}/>
     </View>
   )
 }

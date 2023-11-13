@@ -6,6 +6,7 @@ import Algoritm from './algoritm'
 import Clipboard from '@react-native-community/clipboard'
 import { showMessage } from 'react-native-flash-message'
 import { deleteGenerated, savePasswordGenerated } from '../../../realm/operations'
+import Navbar from '../../../navigation/actions'
 
 const copyImage = "../../../assets/images/copy.png"
 const minusImage = "../../../assets/images/minus.png"
@@ -54,6 +55,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
   useEffect(() => {
     const timer = setTimeout(() => {
       console.log(passGenerated + password)
+      console.log(passGenerated != password)
       if(passGenerated != password) {
         saveNewPassword()
       }
@@ -78,9 +80,10 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
   }
 
   function saveNewPassword() {
-    console.log("ola")
-    setPassword(passGenerated)
-    savePasswordGenerated(passGenerated)
+    if(passGenerated != password) {
+      setPassword(passGenerated)
+      savePasswordGenerated(passGenerated)
+    }
   }
 
   function generatePassword() {
@@ -216,6 +219,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
       <HistoryButton/>
       <PasswordFirstBox/>
       <PasswordSecondBox/>
+      <Navbar navigation={navigation}/>
     </View>
   )
 }
