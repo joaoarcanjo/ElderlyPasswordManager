@@ -2,12 +2,12 @@ import React from 'react'
 import {View, Text, Image, TouchableOpacity} from 'react-native'
 import { stylesOptions, stylesFirstHalf } from '../styles/styles'
 import { MovieRealmContext } from '../../../realm/index'
-import Navbar from '../../../navigation/actions'
 
 const credentialsImage = '../images/credenciais.png'
 const generatorImage = '../images/gerador.png'
 const settingsImage = '../images/definições.png'
 const questionsImage = '../images/perguntas.png'
+const elderlyImage = '../../../assets/images/elderly.png'
 
 const { useRealm } = MovieRealmContext;
 
@@ -23,7 +23,7 @@ function ElderlyInfoBox() {
                 </View>
             </View>
             <View style={{flex: 0.45, justifyContent: 'center', alignItems: 'center'}}>
-                <Image source={require('../images/elderly.png')} style={{ width: '80%', height: '80%', resizeMode: 'contain'}}/>
+                <Image source={require(elderlyImage)} style={{ width: '80%', height: '80%', resizeMode: 'contain'}}/>
             </View>
         </View>
     )
@@ -62,6 +62,18 @@ function Functionalities({ navigation }: {readonly navigation: any}) {
         navigation.push('Generator')
     }
 
+    const FrequentQuestionsNavigation = () => {
+        // Your code to handle the click event
+        console.log('Questions button clicked!');
+        navigation.push('FrequentQuestions')
+    }
+
+    const SettingsNavigation = () => {
+        // Your code to handle the click event
+        console.log('Questions button clicked!');
+        navigation.push('Settings')
+    }
+
     return (
         <View style={{flex: 0.65, marginTop: '10%', marginBottom: '10%', justifyContent: 'center', alignItems: 'center' }}>
            <View style={{flex: 0.5, flexDirection: 'row', justifyContent: 'space-around' }}>
@@ -75,11 +87,11 @@ function Functionalities({ navigation }: {readonly navigation: any}) {
                 </TouchableOpacity>
            </View>
            <View style={{flex: 0.5, flexDirection: 'row', justifyContent: 'space-around' }}>
-                <TouchableOpacity style={[{width: '40%', margin: '3%', borderRadius: 20, borderWidth: 5, justifyContent: 'center', alignItems: 'center'}, stylesOptions.squareSettings]} onPress={() => CredencialsNavigation()}>
+                <TouchableOpacity style={[{width: '40%', margin: '3%', borderRadius: 20, borderWidth: 5, justifyContent: 'center', alignItems: 'center'}, stylesOptions.squareSettings]} onPress={() => SettingsNavigation()}>
                     <Image source={require(settingsImage)} style={[stylesOptions.squarePhoto]}/>
                     <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>Definições</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[{width: '40%', margin: '3%', borderRadius: 20, borderWidth: 5, justifyContent: 'center', alignItems: 'center'}, stylesOptions.squareQuestions]} onPress={() => CredencialsNavigation()}>
+                <TouchableOpacity style={[{width: '40%', margin: '3%', borderRadius: 20, borderWidth: 5, justifyContent: 'center', alignItems: 'center'}, stylesOptions.squareQuestions]} onPress={() => FrequentQuestionsNavigation()}>
                     <Image source={require(questionsImage)} style={[stylesOptions.squarePhoto]}/>
                     <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>Perguntas</Text>
                 </TouchableOpacity>
