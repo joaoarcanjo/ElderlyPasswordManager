@@ -9,7 +9,6 @@ const gitHubUrl = 'https://github.com/joaoarcanjo/ThesisApps'
 import { firebase } from '../../../../FirebaseConfig';
 
 async function a() {
-
     const firestore = firebase.firestore()
   
     const a = firestore.collection("Elderly").doc("Elderly1").get()

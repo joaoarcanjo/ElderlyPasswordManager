@@ -2,10 +2,10 @@ import React,{ useEffect, useState} from 'react'
 import {View, Text, TouchableOpacity, Image } from 'react-native'
 import { stylesMainBox } from '../../../assets/styles/main_style'
 import { historyStyle, passwordFirstHalf, passwordSecondHalf } from '../styles/styles'
-import Algoritm from './algoritm'
-import * as Clipboard from 'expo-clipboard';
+import * as Clipboard from 'expo-clipboard'
 import Navbar from '../../../navigation/actions'
-import { deleteGenerated, savePasswordGenerated } from '../../../database'
+import { savePasswordGenerated } from '../../../database'
+import Algorithm from './algorithm'
 
 const copyImage = "../../../assets/images/copy.png"
 const minusImage = "../../../assets/images/minus.png"
@@ -84,7 +84,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
   }
 
   function generatePassword() {
-    const password = Algoritm({length: length, strict: true, symbols: special, uppercase: uppercase, lowercase: lowercase, numbers: numbers})
+    const password = Algorithm({length: length, strict: true, symbols: special, uppercase: uppercase, lowercase: lowercase, numbers: numbers})
     setPassGenerated(password)
   }
 
