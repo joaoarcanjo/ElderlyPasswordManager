@@ -26,7 +26,7 @@ export const deleteGenerated = () => {
     if(db != null) {
         db.transaction((tx) => {
             tx.executeSql(
-              'DELETE FROM passwords WHERE id IN (SELECT id FROM passwords ORDER BY timestamp DESC LIMIT -1 OFFSET 2)',
+              'DELETE FROM passwords WHERE id IN (SELECT id FROM passwords ORDER BY timestamp DESC LIMIT -10 OFFSET 9)',
               [],
               (_, result) => {
                 console.log('Tuplo com timestamp mais antigo excluído com sucesso:', result);
@@ -40,7 +40,7 @@ export const deleteGenerated = () => {
 Function to save the new generated password.
 */
 export const savePasswordGenerated = (password: string) => {
-
+    deleteGenerated()
     if(db != null) {
         db.transaction(tx => {
             tx.executeSql('INSERT INTO passwords (id, password, timestamp) VALUES (?, ?, ?);',
