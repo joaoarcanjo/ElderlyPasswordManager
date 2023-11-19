@@ -1,10 +1,13 @@
+const { BIN_ENCODING } = require('./constants')
 const { split } = require('./split')
 const { combine } = require('./combine')
 global.Buffer = require('buffer').Buffer;
 
 function generateShares(secret, numberOfShares, threshold) {
     let shares = split(Buffer.from(secret), { shares: numberOfShares, threshold: threshold })
-    shares = shares.map(share => Buffer.from(share).toString('hex'))
+    shares = shares.map(share => Buffer.from(share).toString(HEX_ENCODING))
+    //console.log("Buffers:")
+    //shares.map(share => console.log(share))
     return shares
 }
 

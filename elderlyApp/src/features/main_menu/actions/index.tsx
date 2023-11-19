@@ -48,7 +48,7 @@ function UserInfo() {
 
 function Functionalities({ navigation }: {readonly navigation: any}) {
 
-    const CredencialsNavigation = () => {
+    const CredencialsNavigation = async () => {
         // Your code to handle the click event
         console.log('Credentials button clicked!');
         navigation.push('Credentials')
@@ -56,7 +56,7 @@ function Functionalities({ navigation }: {readonly navigation: any}) {
 
     const GeneratorsNavigation = () => {
         // Your code to handle the click event
-        console.log('Credentials button clicked!');
+        console.log('Generator button clicked!');
         navigation.push('Generator')
     }
 

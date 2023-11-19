@@ -76,8 +76,9 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
     return (!lowercase && !uppercase && !numbers && !special) 
   }
 
-  function saveNewPassword() {
+  async function saveNewPassword() {
     if(passGenerated != password) {
+      // You can use the 'result' object to get information about the password strength
       setPassword(passGenerated)
       savePasswordGenerated(passGenerated)
     }

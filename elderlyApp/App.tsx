@@ -1,5 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
 import MainMenu from './src/features/main_menu/actions';
 import Credentials from './src/features/list_credentials/actions';
 import { NavigationContainer } from '@react-navigation/native';
@@ -8,10 +7,9 @@ import Settings from './src/features/settings_interface/actions';
 import FrequentQuestions from './src/features/frequent_questions/actions';
 import Generator from './src/features/password_generator/actions';
 import PasswordHistory from './src/features/password_history/actions';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { initDb } from './src/database';
-import React from 'react';
-
+import zxcvbnTest from './src/algorithms/zxcvbn/algorithm';
 
 const Stack = createNativeStackNavigator();
 
@@ -19,6 +17,7 @@ export default function App() {
 
     useEffect(() => {
       initDb()
+      zxcvbnTest()
     }, [])
 
     return (
