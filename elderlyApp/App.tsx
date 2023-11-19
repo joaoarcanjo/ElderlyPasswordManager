@@ -10,6 +10,7 @@ import PasswordHistory from './src/features/password_history/actions';
 import React, { useEffect } from 'react';
 import { initDb } from './src/database';
 import zxcvbnTest from './src/algorithms/zxcvbn/algorithm';
+import FlashMessage from 'react-native-flash-message';
 
 const Stack = createNativeStackNavigator();
 
@@ -17,7 +18,7 @@ export default function App() {
 
     useEffect(() => {
       initDb()
-      zxcvbnTest()
+      //zxcvbnTest()
     }, [])
 
     return (
@@ -32,6 +33,7 @@ export default function App() {
               <Stack.Screen name="PasswordHistory" component={PasswordHistory} options={{title: "Password history", headerShown:false}}/>
               <Stack.Screen name="FrequentQuestions" component={FrequentQuestions} options={{title: "Frequent Questions", headerShown:false}}/>
             </Stack.Navigator>
+            <FlashMessage/>
         </NavigationContainer>
     );
 }

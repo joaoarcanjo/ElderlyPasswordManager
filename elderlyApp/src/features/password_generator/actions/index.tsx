@@ -6,6 +6,7 @@ import * as Clipboard from 'expo-clipboard'
 import Navbar from '../../../navigation/actions'
 import { savePasswordGenerated } from '../../../database'
 import Algorithm from './algorithm'
+import { showMessage } from 'react-native-flash-message'
 
 const copyImage = "../../../assets/images/copy.png"
 const minusImage = "../../../assets/images/minus.png"
@@ -94,13 +95,13 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
   */
   function saveOnClickBoard() {
     Clipboard.setStringAsync(password)
-    saveNewPassword()/*
+    saveNewPassword()
     showMessage({
       message: 'COPIADO',
       type: 'success',
       icon: props => <Image source={require(copyImage)} {...props} />,
       color: "black",
-    });*/
+    });
   }
 
   //Components: ---

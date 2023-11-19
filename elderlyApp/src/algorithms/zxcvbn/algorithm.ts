@@ -1,7 +1,11 @@
 import zxcvbn from 'zxcvbn';
 
-export default function zxcvbnTest() {
+function zxcvbnTest() {
     const password = 'francisco';
+    zxcvbnMain(password)
+}
+
+function zxcvbnMain(password: string) {
     const passwordStrength = zxcvbn(password);
     
     console.log(passwordStrength.score); // Output: 34
@@ -9,3 +13,5 @@ export default function zxcvbnTest() {
     console.log(passwordStrength.sequence)
     console.log(passwordStrength.feedback)
 }
+
+export default {zxcvbnMain, zxcvbn}

@@ -4,6 +4,8 @@ import { stylesMainBox } from '../../../assets/styles/main_style'
 import Navbar from '../../../navigation/actions'
 import { styleScroolView } from '../styles/styles'
 
+const jsonData = require('./questions.json');
+
 function MainBox() {
 
   return (
@@ -15,7 +17,7 @@ function MainBox() {
   )
 }
 
-function ScrollItemExample() {
+function ScrollItemExample({question}: Readonly<{question: {question: string, response: string}}>) {
 
   const [showInfo, setShowInfo] = useState(true);
 
@@ -26,11 +28,11 @@ function ScrollItemExample() {
 
       <View style={{flex: 0.65, marginHorizontal: '3%', marginVertical: '2%', flexDirection: 'row'}}>
 
-        <View style={{flex: 0.65, marginRight: '3%', justifyContent: 'center', alignItems: 'center' }}>
-          <Text numberOfLines={2} adjustsFontSizeToFit style={[{ fontSize: 25, margin: '3%', color: 'black' }]}>É possível ter mais que um cuidador?</Text>
+        <View style={{flex: 0.75, marginRight: '3%', justifyContent: 'center', alignItems: 'center' }}>
+          <Text numberOfLines={2} style={[{ fontSize: 17, margin: '3%', color: 'black' }]}>{question.question}</Text>
         </View>
 
-        <View style={{flex: 0.35}}>
+        <View style={{flex: 0.25}}>
           {showInfo ? 
             <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%', justifyContent: 'center',  alignItems: 'center'}]} onPress={() => changeInfoState()}>
               <Image source={require('../../../assets/images/plus.png')} style={[{width: '70%', height: '70%', marginRight: '5%', resizeMode: 'contain'}]}/>
@@ -43,8 +45,8 @@ function ScrollItemExample() {
       {!showInfo ?
         <View>
         <View style={{ borderBottomColor: 'black', borderBottomWidth: StyleSheet.hairlineWidth, margin: '4%' }}/>
-        <Text numberOfLines={10} adjustsFontSizeToFit style={[{ fontSize: 17, margin: '5%', color: 'black' }]}>
-          É necessário x, y e z. É necessário x, y e z.
+        <Text numberOfLines={10} adjustsFontSizeToFit style={[{ fontSize: 15, margin: '5%', color: 'black' }]}>
+          {question.response}
         </Text>
       </View> : <></>
       }
@@ -52,18 +54,13 @@ function ScrollItemExample() {
   )
 }
 
+interface question { response: any, question: any }
 
 function QuestionsLists() {
   return (
     <View style={{ flex: 0.75, flexDirection: 'row', justifyContent: 'space-around'}}>
         <ScrollView style={[{margin: '3%'}]}>
-          <ScrollItemExample/>
-          <ScrollItemExample/>
-          <ScrollItemExample/>
-          <ScrollItemExample/>
-          <ScrollItemExample/>
-          <ScrollItemExample/>
-          <ScrollItemExample/>
+          {jsonData.questions.map((question: question) => <ScrollItemExample key={question.question} question={question}/>)}
         </ScrollView>
     </View>
   )

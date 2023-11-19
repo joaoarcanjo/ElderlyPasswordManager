@@ -17,6 +17,7 @@ export function initDb() {
         'CREATE TABLE IF NOT EXISTS passwords (id TEXT PRIMARY KEY, password TEXT, timestamp INTEGER);'
     );
     })
+    //TODO: Criar a tabela para guardar os perfis dos cuidadores.
 }
 
 /*
