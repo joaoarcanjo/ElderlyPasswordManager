@@ -4,20 +4,28 @@ import Credentials from './src/features/list_credentials/actions';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Settings from './src/features/settings_interface/actions';
-import FrequentQuestions from './src/features/frequent_questions/actions';
+import FrequentQuestions from './src/features/list_questions/actions';
 import Generator from './src/features/password_generator/actions';
 import PasswordHistory from './src/features/password_history/actions';
 import React, { useEffect } from 'react';
 import { initDb } from './src/database';
-import zxcvbnTest from './src/algorithms/zxcvbn/algorithm';
+//import zxcvbnTest from './src/algorithms/zxcvbn/algorithm';
+//import {save, getValueFor} from './src/keychain/index';
 import FlashMessage from 'react-native-flash-message';
+import Caregivers from './src/features/list_caregivers/actions';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+    /*
+    async function secureStoreTest() {
+      save("ola", "asd")
+      console.log(await getValueFor("ola"))
+    }*/
 
     useEffect(() => {
       initDb()
+      //secureStoreTest()
       //zxcvbnTest()
     }, [])
 
@@ -32,6 +40,7 @@ export default function App() {
               <Stack.Screen name="Generator" component={Generator} options={{title: "Generator", headerShown:false}}/>
               <Stack.Screen name="PasswordHistory" component={PasswordHistory} options={{title: "Password history", headerShown:false}}/>
               <Stack.Screen name="FrequentQuestions" component={FrequentQuestions} options={{title: "Frequent Questions", headerShown:false}}/>
+              <Stack.Screen name="Caregivers" component={Caregivers} options={{title: "Caregivers", headerShown:false}}/>
             </Stack.Navigator>
             <FlashMessage/>
         </NavigationContainer>

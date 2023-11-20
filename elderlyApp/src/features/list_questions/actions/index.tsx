@@ -17,7 +17,9 @@ function MainBox() {
   )
 }
 
-function ScrollItemExample({question}: Readonly<{question: {question: string, response: string}}>) {
+interface question { response: any, question: any }
+
+function ScrollItemExample({question}: Readonly<{question: question}>) {
 
   const [showInfo, setShowInfo] = useState(true);
 
@@ -54,9 +56,7 @@ function ScrollItemExample({question}: Readonly<{question: {question: string, re
   )
 }
 
-interface question { response: any, question: any }
-
-function QuestionsLists() {
+function QuestionsList() {
   return (
     <View style={{ flex: 0.75, flexDirection: 'row', justifyContent: 'space-around'}}>
         <ScrollView style={[{margin: '3%'}]}>
@@ -70,7 +70,7 @@ export default function FrequentQuestions({ navigation }: {readonly navigation: 
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
       <MainBox/>
-      <QuestionsLists/>
+      <QuestionsList/>
       <Navbar navigation={navigation}/>
     </View>
   )

@@ -30,6 +30,7 @@ const styleScroolView = StyleSheet.create({
         borderRadius: 20, // Define o raio dos cantos para arredondá-los
         borderWidth: 2, // Largura da linha na margem
         backgroundColor: '#DCE0DE', // Cor de fundo
+        borderColor: '#8c8d8f',
         marginVertical: 8, // Margem vertical entre os itens
     },
     itemCopyUsername: {

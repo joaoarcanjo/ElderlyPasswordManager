@@ -15,6 +15,7 @@ const crossImage = "../../../assets/images/cross.png"
 const checkImage = "../../../assets/images/check.png"
 
 const defaultLength = 12
+const saveTimer = 3000
 
 const requirementLabel = "REQUISITOS:"
 const lengthLabel = "Tamanho:"
@@ -57,7 +58,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
       if(passGenerated != password) {
         saveNewPassword()
       }
-    }, 2000);
+    }, saveTimer);
     return () => clearTimeout(timer);
   }, [password, passGenerated]);
 
@@ -83,6 +84,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
       setPassword(passGenerated)
       savePasswordGenerated(passGenerated)
     }
+    
   }
 
   function generatePassword() {

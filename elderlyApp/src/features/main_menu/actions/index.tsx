@@ -1,6 +1,8 @@
 import {View, Text, Image, TouchableOpacity} from 'react-native'
 import { stylesOptions, stylesFirstHalf } from '../styles/styles'
 import React = require('react')
+import { useNavigation } from '@react-navigation/native'
+import type { StackNavigationProp } from '@react-navigation/stack';
 
 const credentialsImage = '../images/credenciais.png'
 const generatorImage = '../images/gerador.png'
@@ -28,9 +30,18 @@ function ElderlyInfoBox() {
 }
 
 function CaregiversButtonBox() {
+
+    const navigation = useNavigation<StackNavigationProp<any>>();
+
+    const GeneratorsNavigation = () => {
+        // Your code to handle the click event
+        console.log('Generator button clicked!');
+        navigation.push('Caregivers')
+    }
+
     return (
         <View style={[{flex: 0.4}, stylesFirstHalf.caregiversContainer]}>
-            <TouchableOpacity style={[{flex: 1, justifyContent: 'center', alignItems: 'center'}, stylesFirstHalf.caregiversButton]} onPress={() => {}}>
+            <TouchableOpacity style={[{flex: 1, justifyContent: 'center', alignItems: 'center'}, stylesFirstHalf.caregiversButton]} onPress={() => {GeneratorsNavigation()}}>
                 <Text style={stylesFirstHalf.caregiversButtonText}>Cuidadores</Text>
             </TouchableOpacity>
         </View>
@@ -38,6 +49,7 @@ function CaregiversButtonBox() {
 }
 
 function UserInfo() {
+    
     return (
         <View style={{ flex: 0.35, justifyContent: 'center', alignItems: 'center'}}>
             <ElderlyInfoBox/>
@@ -46,7 +58,8 @@ function UserInfo() {
     );
 }
 
-function Functionalities({ navigation }: {readonly navigation: any}) {
+function Functionalities() {
+    const navigation = useNavigation<StackNavigationProp<any>>();
 
     const CredencialsNavigation = async () => {
         // Your code to handle the click event
@@ -75,21 +88,21 @@ function Functionalities({ navigation }: {readonly navigation: any}) {
     return (
         <View style={{flex: 0.65, marginTop: '10%', marginBottom: '10%', justifyContent: 'center', alignItems: 'center' }}>
            <View style={{flex: 0.5, flexDirection: 'row', justifyContent: 'space-around' }}>
-                <TouchableOpacity style={[{width: '40%', margin: '3%', borderRadius: 20, borderWidth: 5, justifyContent: 'center', alignItems: 'center'}, stylesOptions.squareCredentials]} onPress={() => CredencialsNavigation()}>
+                <TouchableOpacity style={[{width: '40%', margin: '3%', justifyContent: 'center', alignItems: 'center'}, stylesOptions.squareCredentials]} onPress={() => CredencialsNavigation()}>
                     <Image source={require(credentialsImage)} style={[stylesOptions.squarePhoto]}/>
                     <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>Credenciais</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[{width: '40%', margin: '3%', borderRadius: 20, borderWidth: 5, justifyContent: 'center', alignItems: 'center'}, stylesOptions.squareGenerator]} onPress={() => GeneratorsNavigation()}>
+                <TouchableOpacity style={[{width: '40%', margin: '3%', justifyContent: 'center', alignItems: 'center'}, stylesOptions.squareGenerator]} onPress={() => GeneratorsNavigation()}>
                     <Image source={require(generatorImage)} style={[stylesOptions.squarePhoto]}/>
                     <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '0%'}, stylesOptions.squareText]}>Nova Pass</Text>
                 </TouchableOpacity>
            </View>
            <View style={{flex: 0.5, flexDirection: 'row', justifyContent: 'space-around' }}>
-                <TouchableOpacity style={[{width: '40%', margin: '3%', borderRadius: 20, borderWidth: 5, justifyContent: 'center', alignItems: 'center'}, stylesOptions.squareSettings]} onPress={() => SettingsNavigation()}>
+                <TouchableOpacity style={[{width: '40%', margin: '3%', justifyContent: 'center', alignItems: 'center'}, stylesOptions.squareSettings]} onPress={() => SettingsNavigation()}>
                     <Image source={require(settingsImage)} style={[stylesOptions.squarePhoto]}/>
                     <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>Definições</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[{width: '40%', margin: '3%', borderRadius: 20, borderWidth: 5, justifyContent: 'center', alignItems: 'center'}, stylesOptions.squareQuestions]} onPress={() => FrequentQuestionsNavigation()}>
+                <TouchableOpacity style={[{width: '40%', margin: '3%', justifyContent: 'center', alignItems: 'center'}, stylesOptions.squareQuestions]} onPress={() => FrequentQuestionsNavigation()}>
                     <Image source={require(questionsImage)} style={[stylesOptions.squarePhoto]}/>
                     <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>Perguntas</Text>
                 </TouchableOpacity>
