@@ -1,5 +1,6 @@
 import * as SQLite from 'expo-sqlite'
 import * as Crypto from 'expo-crypto'
+import { Password } from './types';
 
 export let db: SQLite.SQLiteDatabase | null = null;
 
@@ -62,3 +63,29 @@ export const getPasswords = () => {
         });
     }
 }
+
+export const realizarConsulta = (): Promise<Password[]> => {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT * FROM passwords ORDER BY timestamp DESC';
+        
+        try {
+            db!!.transaction((tx) => {
+                tx.executeSql(
+                    sql,
+                    [],
+                    (tx, results) => {
+                    const data: Password[] = [];
+            
+                    for (let i = 0; i < results.rows.length; i++) {
+                        data.push(results.rows.item(i) as Password);
+                    }
+            
+                    resolve(data);
+                    }
+                );
+            });
+        } catch (error) {
+            reject(error)
+        }
+    });
+};

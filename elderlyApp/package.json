@@ -17,17 +17,18 @@
     "expo": "~49.0.15",
     "expo-clipboard": "~4.3.1",
     "expo-crypto": "~12.4.1",
+    "expo-secure-store": "~12.3.1",
     "expo-sqlite": "~11.3.3",
     "firebase": "^10.6.0",
     "react": "18.2.0",
     "react-native": "0.72.6",
     "react-native-flash-message": "^0.4.2",
-    "zxcvbn": "^4.4.2",
-    "expo-secure-store": "~12.3.1"
+    "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@types/react": "~18.2.14",
+    "@types/react-native": "^0.72.7",
     "@types/zxcvbn": "^4.4.4",
     "typescript": "^5.1.3"
   },

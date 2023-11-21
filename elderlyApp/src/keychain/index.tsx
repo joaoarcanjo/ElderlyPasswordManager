@@ -24,4 +24,9 @@ async function getValueFor(key: string) {
   }
 }
 
-export { save, getValueFor }
+async function secureStoreTest() {
+  save("ola", "asd")
+  console.log(await getValueFor("ola"))
+}
+
+export { secureStoreTest }

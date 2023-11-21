@@ -1,8 +1,13 @@
 import {View, Text, Image, TouchableOpacity} from 'react-native'
 import { stylesOptions, stylesFirstHalf } from '../styles/styles'
-import React = require('react')
+import React from 'react'
 import { useNavigation } from '@react-navigation/native'
 import type { StackNavigationProp } from '@react-navigation/stack';
+
+/* IMPORTS PARA REALIZAR OS TESTES DE DIVERSAS FUNÇÕES */
+//import zxcvbnTest from '../../../src/algorithms/zxcvbn/algorithm';
+//import {secureStoreTest} from '../../../src/keychain/index';
+//import { firebaseTest } from '../../../firebase/firestore/funcionalities';
 
 const credentialsImage = '../images/credenciais.png'
 const generatorImage = '../images/gerador.png'
@@ -34,6 +39,9 @@ function CaregiversButtonBox() {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const GeneratorsNavigation = () => {
+        //secureStoreTest()
+        //zxcvbnTest()
+        //firebaseTest()
         // Your code to handle the click event
         console.log('Generator button clicked!');
         navigation.push('Caregivers')
@@ -111,11 +119,11 @@ function Functionalities() {
     );
 }
 
-export default function MainMenu({ navigation }: {readonly navigation: any}) {
+export default function MainMenu() {
     return (
         <View style={{ flex: 1, flexDirection: 'column', marginTop: '5%'}}>
             <UserInfo/>
-            <Functionalities navigation={navigation}/>
+            <Functionalities/>
         </View>
     );
 }

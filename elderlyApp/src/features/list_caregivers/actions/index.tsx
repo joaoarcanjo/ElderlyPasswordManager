@@ -1,4 +1,4 @@
-import React,{Component, useState} from 'react'
+import React,{useState} from 'react'
 import {View, Text, TouchableOpacity, Image, ScrollView, StyleSheet, Linking} from 'react-native'
 import { stylesAddCaregiver, styleScroolView, caregiverContactInfo, decouplingOption } from '../styles/styles'
 import { stylesButtons, stylesMainBox } from '../../../assets/styles/main_style'

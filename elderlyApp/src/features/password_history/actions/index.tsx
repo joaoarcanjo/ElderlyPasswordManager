@@ -1,12 +1,13 @@
-import React,{ useEffect, useState } from 'react'
+import React,{ useState } from 'react'
 import {View, Text, TouchableOpacity, ScrollView, Image } from 'react-native'
 import { stylesMainBox, stylesButtons } from '../../../assets/styles/main_style'
 import * as Clipboard from 'expo-clipboard'
 import { styleScroolView } from '../styles/styles'
 import formatTimestamp from '../../../components/time';
 import Navbar from '../../../navigation/actions';
-import { db } from '../../../database'
+import { realizarConsulta } from '../../../database'
 import { showMessage } from 'react-native-flash-message'
+import { Password } from '../../../database/types'
 
 export default function PasswordHistory({ navigation }: {readonly navigation: any}) {
 
@@ -44,28 +45,11 @@ export default function PasswordHistory({ navigation }: {readonly navigation: an
     )
   }
 
-  interface Password {
-    id: string,
-    password: string,
-    timestamp: number
-  }
-
   function CredentialsList() {
 
     const [passwords, setPasswords] = useState<Password[]>([]);
 
-    if(db != null) {
-      db.transaction(tx => {
-        tx.executeSql(
-          'SELECT * FROM passwords ORDER BY timestamp DESC',
-          [],
-          (txObj, resultSet) => {
-            const resultados = resultSet.rows._array as Password[];
-            setPasswords(resultados)
-          }
-        );
-      })
-    }
+    realizarConsulta().then(value => setPasswords(value))
     
     return (
       <View style={{ flex: 0.85, flexDirection: 'row', justifyContent: 'space-around'}}>

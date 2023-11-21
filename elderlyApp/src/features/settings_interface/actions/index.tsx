@@ -6,34 +6,6 @@ import { accountInfo, appInfo, logout } from '../styles/styles'
 
 const gitHubUrl = 'https://github.com/joaoarcanjo/ThesisApps'
 
-import { firebase } from '../../../../FirebaseConfig';
-
-async function a() {
-    const firestore = firebase.firestore()
-  
-    const a = firestore.collection("Elderly").doc("Elderly1").get()
-    const querySnapshot = await firebase.firestore()
-              .collection('Elderly')
-              .get() //error with this
-  
-  
-    firestore.collection('Elderly').add({name: 'ola'})
-  
-    console.log(firestore.collection('Elderly'))
-  
-  
-    const collectionRef = firestore.collection('Elderly');
-  
-    collectionRef.get().then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        console.log(doc.id, ' => ', doc.data());
-      });
-    }).catch((error) => {
-      console.error('Error getting documents: ', error);
-    });
-  
-  }
-
 function MainBox() {
 
   return (
@@ -89,7 +61,7 @@ function AppInfo() {
 function Logout() {
   return (
     <View style= { { flex: 0.10, flexDirection: 'row', justifyContent: 'space-around', marginBottom: '2%'} }>
-      <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%', justifyContent: 'center',  alignItems: 'center'}, logout.logoutButton]} onPress={() => a()}>
+      <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%', justifyContent: 'center',  alignItems: 'center'}, logout.logoutButton]}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>SAIR DA CONTA</Text>
       </TouchableOpacity>
     </View>

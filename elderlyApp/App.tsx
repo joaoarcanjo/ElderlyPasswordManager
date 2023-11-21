@@ -9,24 +9,15 @@ import Generator from './src/features/password_generator/actions';
 import PasswordHistory from './src/features/password_history/actions';
 import React, { useEffect } from 'react';
 import { initDb } from './src/database';
-//import zxcvbnTest from './src/algorithms/zxcvbn/algorithm';
-//import {save, getValueFor} from './src/keychain/index';
 import FlashMessage from 'react-native-flash-message';
 import Caregivers from './src/features/list_caregivers/actions';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-    /*
-    async function secureStoreTest() {
-      save("ola", "asd")
-      console.log(await getValueFor("ola"))
-    }*/
 
     useEffect(() => {
       initDb()
-      //secureStoreTest()
-      //zxcvbnTest()
     }, [])
 
     return (
