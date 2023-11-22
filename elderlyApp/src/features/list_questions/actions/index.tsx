@@ -9,7 +9,7 @@ const jsonData = require('./questions.json');
 function MainBox() {
 
   return (
-    <View style= { { flex: 0.15, flexDirection: 'row', justifyContent: 'space-around'} }>
+    <View style= { { flex: 0.15, flexDirection: 'row'} }>
         <View style={[{flex: 1, margin: '5%', justifyContent: 'center',  alignItems: 'center'}, stylesMainBox.pageInfoContainer]}>
             <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesMainBox.pageInfoText]}>FAQs</Text>
         </View>

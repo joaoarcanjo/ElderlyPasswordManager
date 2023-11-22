@@ -1,88 +1,45 @@
 import {StyleSheet} from 'react-native'
+import { addCaregiverButtonBackgroud, addCaregiverButtonBorder, desvinculateButtonBackgroud, desvinculateButtonBorder, greyBackgroud, greyBorder, whiteBackgroud } from '../../../assets/styles/colors'
 
 /**
  * Estilos da view para adicionar uma nova credencial
  */
 const stylesAddCaregiver = StyleSheet.create({
-    addCaregiverButton: {
+    button: {
         borderRadius: 20, // Define o raio dos cantos para arredondá-los
-        backgroundColor: '#58b859',
-        borderColor: '#449447',
-        borderWidth: 3, // Largura da linha na margem
-        elevation: 3, // Android
-        shadowColor: 'rgba(0,0,0, .3)', // IOS
-        shadowOffset: { height: 1, width: 1 }, // IOS
-        shadowOpacity: 1, // IOS
-        shadowRadius: 1, //IOS
+        backgroundColor: addCaregiverButtonBackgroud,
+        borderColor: addCaregiverButtonBorder,
+        borderWidth: 3, // Largura da linha na marge
     },
-    addCaregiverButtonText: {
+    buttonText: {
         fontSize: 25,
-        color: '#f5f5f5'
+        color: '#f5f5f5',
+        fontWeight: 'bold'
     }
 })
 
-/**
- * Estilos da scroll view com as credenciais
- */
-const styleScroolView = StyleSheet.create({
-    caregiversContainer: {
-        borderTopLeftRadius: 20, // Arredonda o canto inferior esquerdo
-        borderTopRightRadius: 20, // Arredonda o canto inferior direito        
-        borderBottomWidth: 0,
-        borderWidth: 2, // Largura da linha na margem
-    },
-    itemContainer: {
+const caregiverStyle = StyleSheet.create({
+    container: {
         borderRadius: 20, // Define o raio dos cantos para arredondá-los
         borderWidth: 2, // Largura da linha na margem
-        backgroundColor: '#DCE0DE', // Cor de fundo
-        borderColor: '#8c8d8f',
+        backgroundColor: greyBackgroud, // Cor de fundo
+        borderColor: greyBorder,
         marginVertical: 8, // Margem vertical entre os itens
-    },
-    button: {
-        borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        backgroundColor: 'white',
-        borderColor: '#9c9c9c',
-        borderWidth: 3, // Largura da linha na margem
-        elevation: 3, // Android
-        shadowColor: 'rgba(0,0,0, .3)', // IOS
-        shadowOffset: { height: 1, width: 1 }, // IOS
-        shadowOpacity: 1, // IOS
-        shadowRadius: 1, //IOS
-    },
+    }
 })
 
 const caregiverContactInfo = StyleSheet.create({
     contactContainer: {
       borderRadius: 20, // Define o raio dos cantos para arredondá-los
       borderWidth: 2, // Largura da linha na margem
-      backgroundColor: '#DCE0DE', // Cor de fundo
+      backgroundColor: greyBackgroud, // Cor de fundo
+      borderColor: greyBorder
     },
     accountInfo: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         borderWidth: 2, // Largura da linha na margem
-        backgroundColor: 'white', // Cor de fundo
-    },
-    callButton: {
-      borderRadius: 15, // Define o raio dos cantos para arredondá-los
-      backgroundColor: 'white',
-      borderColor: '#9c9c9c',
-      borderWidth: 3, // Largura da linha na margem
-      elevation: 3, // Android
-      shadowColor: 'rgba(0,0,0, .3)', // IOS
-      shadowOffset: { height: 1, width: 1 }, // IOS
-      shadowOpacity: 1, // IOS
-      shadowRadius: 1, //IOS
-    },
-    sendEmailButton: {
-        borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        backgroundColor: 'white',
-        borderColor: '#9c9c9c',
-        borderWidth: 3, // Largura da linha na margem
-        elevation: 3, // Android
-        shadowColor: 'rgba(0,0,0, .3)', // IOS
-        shadowOffset: { height: 1, width: 1 }, // IOS
-        shadowOpacity: 1, // IOS
-        shadowRadius: 1, //IOS
+        backgroundColor: whiteBackgroud, // Cor de fundo
+        borderColor: greyBorder
     },
     accountInfoText: {
       fontSize: 20,
@@ -91,36 +48,16 @@ const caregiverContactInfo = StyleSheet.create({
 })
 
 const decouplingOption = StyleSheet.create({
-    yesButton: {
+    button: {
       borderRadius: 15, // Define o raio dos cantos para arredondá-los
-      backgroundColor: '#58b859',
-      borderColor: '#449447',
-      borderWidth: 3, // Largura da linha na margem
-      elevation: 3, // Android
-      shadowColor: 'rgba(0,0,0, .3)', // IOS
-      shadowOffset: { height: 1, width: 1 }, // IOS
-      shadowOpacity: 1, // IOS
-      shadowRadius: 1, //IOS
+      backgroundColor: desvinculateButtonBackgroud,
+      borderColor: desvinculateButtonBorder,
+      borderWidth: 3
     },
-    noButton: {
-      borderRadius: 15, // Define o raio dos cantos para arredondá-los
-      backgroundColor: '#e35f5f',
-      borderColor: '#a31f1f',
-      borderWidth: 3, // Largura da linha na margem
-      elevation: 3, // Android
-      shadowColor: 'rgba(0,0,0, .3)', // IOS
-      shadowOffset: { height: 1, width: 1 }, // IOS
-      shadowOpacity: 1, // IOS
-      shadowRadius: 1, //IOS
-    },
-    optionText: {
+    buttonText: {
         color: '#f5f5f5'
-    },
-    decouplingMessage: {
-      fontSize: 20,
-      color: 'black'
     }
 })
 
 
-export { stylesAddCaregiver, styleScroolView, caregiverContactInfo, decouplingOption }
+export { stylesAddCaregiver, caregiverStyle, caregiverContactInfo, decouplingOption }

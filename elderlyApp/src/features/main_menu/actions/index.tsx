@@ -3,6 +3,7 @@ import { stylesOptions, stylesFirstHalf } from '../styles/styles'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
 import type { StackNavigationProp } from '@react-navigation/stack';
+import { stylesButtons } from '../../../assets/styles/main_style';
 
 /* IMPORTS PARA REALIZAR OS TESTES DE DIVERSAS FUNÇÕES */
 //import zxcvbnTest from '../../../src/algorithms/zxcvbn/algorithm';
@@ -49,7 +50,7 @@ function CaregiversButtonBox() {
 
     return (
         <View style={[{flex: 0.4}, stylesFirstHalf.caregiversContainer]}>
-            <TouchableOpacity style={[{flex: 1, justifyContent: 'center', alignItems: 'center'}, stylesFirstHalf.caregiversButton]} onPress={() => {GeneratorsNavigation()}}>
+            <TouchableOpacity style={[{flex: 1, justifyContent: 'center', alignItems: 'center'}, stylesFirstHalf.caregiversButton, stylesButtons.mainConfig]} onPress={() => {GeneratorsNavigation()}}>
                 <Text style={stylesFirstHalf.caregiversButtonText}>Cuidadores</Text>
             </TouchableOpacity>
         </View>
@@ -96,21 +97,21 @@ function Functionalities() {
     return (
         <View style={{flex: 0.65, marginTop: '10%', marginBottom: '10%', justifyContent: 'center', alignItems: 'center' }}>
            <View style={{flex: 0.5, flexDirection: 'row', justifyContent: 'space-around' }}>
-                <TouchableOpacity style={[{width: '40%', margin: '3%', justifyContent: 'center', alignItems: 'center'}, stylesOptions.squareCredentials]} onPress={() => CredencialsNavigation()}>
+                <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareCredentials, stylesButtons.mainConfig]} onPress={() => CredencialsNavigation()}>
                     <Image source={require(credentialsImage)} style={[stylesOptions.squarePhoto]}/>
                     <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>Credenciais</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[{width: '40%', margin: '3%', justifyContent: 'center', alignItems: 'center'}, stylesOptions.squareGenerator]} onPress={() => GeneratorsNavigation()}>
+                <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareGenerator, stylesButtons.mainConfig]} onPress={() => GeneratorsNavigation()}>
                     <Image source={require(generatorImage)} style={[stylesOptions.squarePhoto]}/>
                     <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '0%'}, stylesOptions.squareText]}>Nova Pass</Text>
                 </TouchableOpacity>
            </View>
            <View style={{flex: 0.5, flexDirection: 'row', justifyContent: 'space-around' }}>
-                <TouchableOpacity style={[{width: '40%', margin: '3%', justifyContent: 'center', alignItems: 'center'}, stylesOptions.squareSettings]} onPress={() => SettingsNavigation()}>
+                <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareSettings, stylesButtons.mainConfig]} onPress={() => SettingsNavigation()}>
                     <Image source={require(settingsImage)} style={[stylesOptions.squarePhoto]}/>
                     <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>Definições</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[{width: '40%', margin: '3%', justifyContent: 'center', alignItems: 'center'}, stylesOptions.squareQuestions]} onPress={() => FrequentQuestionsNavigation()}>
+                <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareQuestions, stylesButtons.mainConfig]} onPress={() => FrequentQuestionsNavigation()}>
                     <Image source={require(questionsImage)} style={[stylesOptions.squarePhoto]}/>
                     <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>Perguntas</Text>
                 </TouchableOpacity>

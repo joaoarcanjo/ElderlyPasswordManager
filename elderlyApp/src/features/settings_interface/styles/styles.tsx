@@ -1,4 +1,5 @@
 import {StyleSheet} from 'react-native'
+import { editButtonBackgroud, editButtonBorder, greyBackgroud, greyBorder, logoutButtonBackgroud, logoutButtonBorder, whiteBackgroud } from '../../../assets/styles/colors'
 
 /**
  * Estilos da view para adicionar uma nova credencial
@@ -7,8 +8,8 @@ const logout = StyleSheet.create({
     logoutButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         borderWidth: 5, // Largura da linha na margem
-        backgroundColor: '#e35f5f',
-        borderColor: '#a31f1f',
+        backgroundColor: logoutButtonBackgroud,
+        borderColor: logoutButtonBorder,
     },
     logoutButtonText: {
       fontSize: 25,
@@ -20,18 +21,18 @@ const accountInfo = StyleSheet.create({
     accountInfoContainer: {
       borderRadius: 20, // Define o raio dos cantos para arredondá-los
       borderWidth: 2, // Largura da linha na margem
-      backgroundColor: '#DCE0DE', // Cor de fundo
+      backgroundColor: greyBackgroud, // Cor de fundo
     },
     accountInfo: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         borderWidth: 2, // Largura da linha na margem
-        backgroundColor: 'white', // Cor de fundo
+        backgroundColor: whiteBackgroud, // Cor de fundo
     },
     editButton: {
       borderRadius: 15, // Define o raio dos cantos para arredondá-los
       borderWidth: 3, // Largura da linha na margem
-      backgroundColor: '#F3E7AB',
-      borderColor: '#E1C748',
+      backgroundColor: editButtonBackgroud,
+      borderColor: editButtonBorder,
     },
     accountInfoText: {
       fontSize: 20,
@@ -43,12 +44,12 @@ const appInfo = StyleSheet.create({
   appInfoContainer: {
     borderRadius: 20, // Define o raio dos cantos para arredondá-los
     borderWidth: 2, // Largura da linha na margem
-    backgroundColor: '#DCE0DE', // Cor de fundo
+    backgroundColor: greyBackgroud, // Cor de fundo
   },
-  appInfo: {
+  appInfoButton: {
       borderRadius: 15, // Define o raio dos cantos para arredondá-los
-      borderWidth: 3, // Largura da linha na margem
-      backgroundColor: 'white', // Cor de fundo
+      backgroundColor: whiteBackgroud, // Cor de fundo
+      borderColor: greyBorder
   },
   appInfoText: {
     fontSize: 20,

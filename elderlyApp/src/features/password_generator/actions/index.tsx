@@ -1,6 +1,6 @@
 import React,{ useEffect, useState} from 'react'
 import {View, Text, TouchableOpacity, Image } from 'react-native'
-import { stylesMainBox } from '../../../assets/styles/main_style'
+import { stylesButtons, stylesMainBox } from '../../../assets/styles/main_style'
 import { historyStyle, passwordFirstHalf, passwordSecondHalf } from '../styles/styles'
 import * as Clipboard from 'expo-clipboard'
 import Navbar from '../../../navigation/actions'
@@ -109,7 +109,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
   //Components: ---
   function MainBox() {
     return (
-      <View style= { { flex: 0.15, flexDirection: 'row', justifyContent: 'space-around'} }>
+      <View style= { { flex: 0.15, flexDirection: 'row'} }>
           <View style={[{flex: 1, margin: '5%', justifyContent: 'center',  alignItems: 'center'}, stylesMainBox.pageInfoContainer]}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={stylesMainBox.pageInfoText}>Gerador</Text>
           </View>
@@ -123,7 +123,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
     
     return (
       <View style= { { flex: 0.06, width: '100%', alignItems: 'flex-end' } }>
-            <TouchableOpacity style={[{flex: 1,  width: '45%', marginRight: '8%', justifyContent: 'center', alignItems: 'center'}, historyStyle.historyButton]} onPress={() => HistoryNavigation()}>
+            <TouchableOpacity style={[{flex: 1,  width: '45%', marginRight: '8%'}, historyStyle.historyButton, stylesButtons.mainConfig]} onPress={() => HistoryNavigation()}>
                 <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontWeight: 'bold', fontSize: 22 }]}>Histórico</Text>
             </TouchableOpacity>
       </View>
@@ -143,10 +143,10 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
               
               {/* Botões para copiar a password e para gerar uma nova */}
               <View style={{flexDirection: 'row', margin: '5%'}}>
-                <TouchableOpacity style={[{flex: 1,  width: '100%', marginRight: '5%', justifyContent: 'center', alignItems: 'center'}, passwordFirstHalf.copyButton]} onPress={() => saveOnClickBoard() }>
+                <TouchableOpacity style={[{flex: 0.5, marginRight: '2%'}, passwordFirstHalf.copyButton, stylesButtons.mainConfig]} onPress={() => saveOnClickBoard() }>
                   <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Copiar</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[{flex: 1,  width: '100%', justifyContent: 'center', alignItems: 'center'}, passwordFirstHalf.regenerateButton]} onPress={() => generatePassword() }>
+                <TouchableOpacity style={[{flex: 0.5, marginLeft: '2%'}, passwordFirstHalf.regenerateButton, stylesButtons.mainConfig]} onPress={() => generatePassword() }>
                   <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Regenerar</Text>
                 </TouchableOpacity>
               </View>
@@ -162,13 +162,13 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
           <Text numberOfLines={1} adjustsFontSizeToFit style={[passwordSecondHalf.lengthText]}>{lengthLabel}</Text>
         </View>
         <View style={[{flex: 0.60, flexDirection: 'row', margin: '5%', justifyContent: 'center',  alignItems: 'center'}]}>
-        <TouchableOpacity style={[{flex: 0.30, width: '100%', justifyContent: 'center',  alignItems: 'center'}]} onPress={() => decLength()}>
+        <TouchableOpacity style={[{flex: 0.30}]} onPress={() => decLength()}>
           <Image source={require(minusImage)} style={[{width: '100%', height: 40, margin: '5%', resizeMode: 'contain'}]}/>
         </TouchableOpacity>
-        <View style={[{flex: 0.40, width: '100%', marginHorizontal: '5%', alignItems: 'center', backgroundColor: 'red'}, passwordSecondHalf.lengthDisplay]}>
+        <View style={[{flex: 0.40, marginHorizontal: '5%', alignItems: 'center', backgroundColor: 'red'}, passwordSecondHalf.lengthDisplay]}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '5%'}, passwordSecondHalf.numberSelectedText]}>{length}</Text>
         </View>
-        <TouchableOpacity style={[{flex: 0.30, width: '100%', justifyContent: 'center',  alignItems: 'center'}]} onPress={() => incLength()}>
+        <TouchableOpacity style={[{flex: 0.30}]} onPress={() => incLength()}>
           <Image source={require(plusImage)} style={[{width: '100%', height: 40, margin: '5%', resizeMode: 'contain'}]}/>
         </TouchableOpacity>
         </View>
@@ -181,10 +181,10 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
       <View style={[{flex: 0.50, height: '90%', marginHorizontal: '3%', justifyContent: 'center',  alignItems: 'center' }, passwordSecondHalf.lengthContainer]}>
         <Text numberOfLines={1} adjustsFontSizeToFit style={[passwordSecondHalf.requirementsText]}>{name}</Text>
         {value ? 
-        <TouchableOpacity style={[{flex: 0.60, width: '100%', marginTop: '5%', justifyContent: 'center',  alignItems: 'center'}]} onPress={() => func()}>
+        <TouchableOpacity style={[{flex: 0.60, width: '100%', marginTop: '5%'}]} onPress={() => func()}>
           <Image source={require(checkImage)} style={[{width: '100%', height: '100%', resizeMode: 'contain'}]}/>
         </TouchableOpacity>:
-        <TouchableOpacity style={[{flex: 0.60, width: '100%', marginTop: '5%', justifyContent: 'center',  alignItems: 'center'}]} onPress={() => func()}>
+        <TouchableOpacity style={[{flex: 0.60, width: '100%', marginTop: '5%'}]} onPress={() => func()}>
           <Image source={require(crossImage)} style={[{width: '100%', height: '100%', resizeMode: 'contain'}]}/>
         </TouchableOpacity>}
       </View>

@@ -1,9 +1,22 @@
 import {StyleSheet} from 'react-native'
-
+import {
+  credencialsButtonBackgroud,
+  credencialsButtonBorder,
+  settingsButtonBackgroud,
+  generatorButtonBackgroud,
+  generatorButtonBorder,
+  questionsButtonBackgroud,
+  questionsButtonBorder,
+  caregiversButtonBackgroud,
+  caregiversButtonBorder, 
+  settingsButtonBorder,
+  whiteBackgroud,
+  blackBorder
+} from '../../../assets/styles/colors';
 
 const stylesFirstHalf = StyleSheet.create({
     elderContainer: {
-        backgroundColor: 'white',
+        backgroundColor: whiteBackgroud,
         borderRadius: 20, // Define o raio dos cantos para arredondá-los
         borderWidth: 3, // Largura da linha na margem
     },
@@ -13,20 +26,15 @@ const stylesFirstHalf = StyleSheet.create({
         borderBottomRightRadius: 20, // Arredonda o canto inferior direito
         borderTopWidth: 0,
         borderWidth: 3, // Largura do contorno
-        borderColor: 'black', // Cor do contorno
-        backgroundColor: 'white'
+        borderColor: blackBorder, // Cor do contorno
+        backgroundColor: whiteBackgroud
     },
     caregiversButton: {
         borderRadius: 20, // Define o raio dos cantos para arredondá-los
         borderWidth: 3, // Largura da linha na margem
         margin: '3%',
-        backgroundColor: '#DBB8E9',
-        borderColor: '#83419F', // Cor da linha na margem (cinza escuro)
-        elevation: 3, // Android
-        shadowColor: 'rgba(0,0,0, .3)', // IOS
-        shadowOffset: { height: 1, width: 1 }, // IOS
-        shadowOpacity: 1, // IOS
-        shadowRadius: 1, //IOS
+        backgroundColor: caregiversButtonBackgroud,
+        borderColor: caregiversButtonBorder
     },
     caregiversButtonText: {
         fontSize: 30,
@@ -36,48 +44,28 @@ const stylesFirstHalf = StyleSheet.create({
 
 const stylesOptions = StyleSheet.create({
    squareQuestions: {
-     backgroundColor: '#F5D274',
-     borderColor: '#D09C11',
+     backgroundColor: questionsButtonBackgroud,
+     borderColor: questionsButtonBorder,
      borderRadius: 20, 
-     borderWidth: 5, 
-     elevation: 10, // Android
-     shadowColor: 'rgba(0,0,0, .5)', // IOS
-     shadowOffset: { height: 2, width: 2 }, // IOS
-     shadowOpacity: 2, // IOS
-     shadowRadius: 2, //IOS
+     borderWidth: 5
    },
    squareGenerator: {
-     backgroundColor: '#9FCFDD',
-     borderColor: '#297D95',
+     backgroundColor: generatorButtonBackgroud,
+     borderColor: generatorButtonBorder,
      borderRadius: 20, 
-     borderWidth: 5, 
-     elevation: 10, // Android
-     shadowColor: 'rgba(0,0,0, .5)', // IOS
-     shadowOffset: { height: 2, width: 2 }, // IOS
-     shadowOpacity: 2, // IOS
-     shadowRadius: 2, //IOS
+     borderWidth: 5
    },
    squareCredentials: {
-     backgroundColor: '#7FCA82',
-     borderColor: '#449447',
+     backgroundColor: credencialsButtonBackgroud,
+     borderColor: credencialsButtonBorder,
      borderRadius: 20, 
-     borderWidth: 5, 
-     elevation: 10, // Android
-     shadowColor: 'rgba(0,0,0, .5)', // IOS
-     shadowOffset: { height: 2, width: 2 }, // IOS
-     shadowOpacity: 2, // IOS
-     shadowRadius: 2, //IOS
+     borderWidth: 5
    },
    squareSettings: {
-     backgroundColor: '#F197AC',
-     borderColor: '#BC5E74',
+     backgroundColor: settingsButtonBackgroud,
+     borderColor: settingsButtonBorder,
      borderRadius: 20, 
-     borderWidth: 5, 
-     elevation: 10, // Android
-     shadowColor: 'rgba(0,0,0, .5)', // IOS
-     shadowOffset: { height: 2, width: 2 }, // IOS
-     shadowOpacity: 2, // IOS
-     shadowRadius: 2, //IOS
+     borderWidth: 5
    },
    squareText: {
      fontSize: 21,

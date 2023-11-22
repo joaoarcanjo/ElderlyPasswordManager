@@ -1,4 +1,5 @@
 import {StyleSheet} from 'react-native'
+import { copyButtonBackground, copyButtonBorder, greyBackgroud, greyBorder, historyButtonBackgroud, historyButtonBorder, regenerateButtonBackgroud, regenerateButtonBorder, whiteBackgroud } from '../../../assets/styles/colors'
 
 /**
  * Estilos da view que informa qual é a página atual
@@ -6,9 +7,8 @@ import {StyleSheet} from 'react-native'
 const historyStyle = StyleSheet.create({
     historyButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        borderWidth: 5, // Largura da linha na margem
-        backgroundColor: '#9FCFDD',
-        borderColor: '#297D95',
+        backgroundColor: historyButtonBackgroud,
+        borderColor: historyButtonBorder,
     }
 })
 
@@ -17,26 +17,26 @@ const passwordFirstHalf = StyleSheet.create({
         borderTopLeftRadius: 20, // Arredonda o canto inferior esquerdo
         borderTopRightRadius: 20, // Arredonda o canto inferior direito     
         borderBottomWidth: 0,
-        backgroundColor: '#DCE0DE', // Cor de fundo
+        backgroundColor: greyBackgroud, // Cor de fundo
         borderWidth: 2, // Largura da linha na margem
     },
     passwordGenerated: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         borderWidth: 3, // Largura da linha na margem
-        backgroundColor: 'white',
-        borderColor: '#8c8d8f',
+        backgroundColor: whiteBackgroud,
+        borderColor: greyBorder,
     },
     copyButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         borderWidth: 5, // Largura da linha na margem
-        backgroundColor: '#F5D274',
-        borderColor: '#D09C11',
+        backgroundColor: copyButtonBackground,
+        borderColor: copyButtonBorder,
     },
     regenerateButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        borderWidth: 6, // Largura da linha na margem
-        backgroundColor: '#7FCA82',
-        borderColor: '#449447',
+        borderWidth: 5, // Largura da linha na margem
+        backgroundColor: regenerateButtonBackgroud,
+        borderColor: regenerateButtonBorder,
     }
 })
 
@@ -45,7 +45,7 @@ const passwordSecondHalf = StyleSheet.create({
         borderTopLeftRadius: 20, // Arredonda o canto inferior esquerdo
         borderTopRightRadius: 20, // Arredonda o canto inferior direito     
         borderBottomWidth: 0,
-        backgroundColor: 'white', // Cor de fundo
+        backgroundColor: whiteBackgroud, // Cor de fundo
         borderWidth: 2, // Largura da linha na margem
     }, 
     requirementsText: {
@@ -55,8 +55,8 @@ const passwordSecondHalf = StyleSheet.create({
     lengthContainer: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         borderWidth: 2, // Largura da linha na margem
-        backgroundColor: '#DCE0DE', // Cor de fundo
-        borderColor: '#8c8d8f',
+        backgroundColor: greyBackgroud, // Cor de fundo
+        borderColor: greyBorder,
     },
     lengthText: {
         fontSize: 25,
@@ -65,8 +65,8 @@ const passwordSecondHalf = StyleSheet.create({
     lengthDisplay: {
         borderRadius: 10, // Define o raio dos cantos para arredondá-los
         borderWidth: 3, // Largura da linha na margem
-        backgroundColor: 'white',
-        borderColor: '#8c8d8f'
+        backgroundColor: whiteBackgroud,
+        borderColor: greyBorder
     },
     numberSelectedText: {
         fontSize: 25,

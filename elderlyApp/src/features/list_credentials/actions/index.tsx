@@ -1,13 +1,13 @@
-import React,{Component} from 'react'
+import React from 'react'
 import {View, Text, TouchableOpacity, Image, ScrollView} from 'react-native'
 import { stylesAddCredential, styleScroolView } from '../styles/styles'
-import { stylesMainBox } from '../../../assets/styles/main_style'
+import { stylesButtons, stylesMainBox } from '../../../assets/styles/main_style'
 import Navbar from '../../../navigation/actions'
 
 function MainBox() {
 
   return (
-    <View style= { { flex: 0.15, flexDirection: 'row', justifyContent: 'space-around'} }>
+    <View style= { { flex: 0.15, flexDirection: 'row'} }>
         <View style={[{flex: 1, margin: '5%', justifyContent: 'center',  alignItems: 'center'}, stylesMainBox.pageInfoContainer]}>
             <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesMainBox.pageInfoText]}>Credenciais</Text>
         </View>
@@ -17,8 +17,8 @@ function MainBox() {
 
 function AddCredencial() {
   return (
-    <View style= { { flex: 0.10, flexDirection: 'row', justifyContent: 'space-around'} }>
-      <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%', justifyContent: 'center',  alignItems: 'center'}, stylesAddCredential.addCredentialButton]}>
+    <View style= { { flex: 0.10, flexDirection: 'row'} }>
+      <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, stylesAddCredential.addCredentialButton, stylesButtons.mainConfig]}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCredential.addCredentialButtonText]}>ADICIONAR CREDENCIAIS</Text>
       </TouchableOpacity>
     </View>
@@ -36,16 +36,16 @@ function ScrollItemExample() {
       <View style={{flex: 0.65, marginHorizontal: '3%', marginBottom: '3%', flexDirection: 'row'}}>
 
         <View style={{flex: 0.65, marginRight: '3%'}}>
-          <TouchableOpacity style={[{flex: 0.5, margin: '2%', justifyContent: 'center',  alignItems: 'center'}, styleScroolView.itemCopyUsername]}>
+          <TouchableOpacity style={[{flex: 0.5, margin: '2%'}, styleScroolView.itemCopyUsername, stylesButtons.mainConfig]}>
             <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar utilizador</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[{flex: 0.5, margin: '2%', justifyContent: 'center',  alignItems: 'center'}, styleScroolView.itemCopyPassword]}>
+          <TouchableOpacity style={[{flex: 0.5, margin: '2%'}, styleScroolView.itemCopyPassword, stylesButtons.mainConfig]}>
             <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar Password</Text>
           </TouchableOpacity>
         </View>
 
         <View style={{flex: 0.35}}>
-          <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%', justifyContent: 'center',  alignItems: 'center'}, styleScroolView.itemMoreInfoButton]}>
+          <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.itemMoreInfoButton, stylesButtons.mainConfig]}>
               <Image source={require('../../../assets/images/more_info.png')} style={[{width: '60%', height: 60, marginRight: '5%', resizeMode: 'contain'}]}/>
           </TouchableOpacity>
         </View>
