@@ -77,7 +77,7 @@ export default function Caregivers({ navigation }: {readonly navigation: any}) {
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}> 
       <MainBox/>
       <CaregiversList/>
-      <Navbar navigation={navigation}/>
+      <Navbar/>
     </View>
   )
 }

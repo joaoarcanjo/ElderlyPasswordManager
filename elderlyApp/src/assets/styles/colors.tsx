@@ -73,3 +73,8 @@ export const previousbuttonBorder = blueBorder
 
 export const homePageButtonBackground = lightRedBackground
 export const homePagebuttonBorder = lightRedBorder
+
+//ADD CREDENCIAL PAGE
+
+export const addCredentialButtonBackgroud = darkGreenBackgroud
+export const addCredentialButtonBorder = darkGreenBorder

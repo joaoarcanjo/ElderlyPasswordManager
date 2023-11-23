@@ -8,6 +8,7 @@ const stylesMainBox = StyleSheet.create({
         marginHorizontal: '8%'
     },
     pageInfoText: {
+        marginHorizontal: '8%',
         fontSize: 35,
         color: 'black'
     }

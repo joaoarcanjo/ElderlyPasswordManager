@@ -68,14 +68,14 @@ function Logout() {
   )
 }
 
-export default function Settings({ navigation }: {readonly navigation: any}) {
+export default function Settings() {
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
       <MainBox/>
       <AccountInfo/>
       <AppInfo/>
       <Logout/>
-      <Navbar navigation={navigation}/>
+      <Navbar/>
     </View>
   )
 }

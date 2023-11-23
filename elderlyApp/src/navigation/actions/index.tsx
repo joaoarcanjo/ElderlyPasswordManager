@@ -2,8 +2,11 @@ import React from "react";
 import { View, TouchableOpacity, Text } from "react-native";
 import navigationStyle from '../style/style';
 import { stylesButtons } from "../../assets/styles/main_style";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
-export default function Navbar({ navigation }: {readonly navigation: any}) {
+export default function Navbar() {
+    const navigation = useNavigation<StackNavigationProp<any>>();
 
     const goBack = () => navigation.goBack()
 

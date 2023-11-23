@@ -6,6 +6,9 @@ import Navbar from '../../../navigation/actions'
 import { listAllElderlyCredencials } from '../../../firebase/firestore/funcionalities'
 import { showMessage } from 'react-native-flash-message'
 import * as Clipboard from 'expo-clipboard'
+import { useNavigation } from '@react-navigation/native'
+import { StackNavigationProp } from '@react-navigation/stack'
+import { useIsFocused } from '@react-navigation/native';
 
 function MainBox() {
 
@@ -19,9 +22,12 @@ function MainBox() {
 }
 
 function AddCredencial() {
+
+  const navigation = useNavigation<StackNavigationProp<any>>();
+  
   return (
     <View style= { { flex: 0.10, flexDirection: 'row'} }>
-      <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, stylesAddCredential.addCredentialButton, stylesButtons.mainConfig]}>
+      <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, stylesAddCredential.addCredentialButton, stylesButtons.mainConfig]} onPress={() => {navigation.push('AddCredential')}}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCredential.addCredentialButtonText]}>ADICIONAR CREDENCIAIS</Text>
       </TouchableOpacity>
     </View>
@@ -77,6 +83,7 @@ interface Credential {
 function CredentialsList() {
 
   const [credencials, setCredencials] = useState<Credential[]>([]);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     listAllElderlyCredencials().then((credencials) => {
@@ -84,7 +91,7 @@ function CredentialsList() {
       credencials.forEach(value => auxCredencials.push(JSON.parse(value)))
       setCredencials(auxCredencials)
     })
-  }, [])
+  }, [isFocused])
 
   return (
     <View style={{ flex: 0.70, flexDirection: 'row', justifyContent: 'space-around'}}>
@@ -97,13 +104,13 @@ function CredentialsList() {
   )
 }
 
-export default function Credentials({ navigation }: {readonly navigation: any}) {
+export default function Credentials() {
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
       <MainBox/>
       <AddCredencial/>
       <CredentialsList/>
-      <Navbar navigation={navigation}/>
+      <Navbar/>
     </View>
   )
 }
