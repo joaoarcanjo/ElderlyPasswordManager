@@ -15,13 +15,17 @@ async function save(key: string, value: string) {
  * 
  * @param key 
  */
-async function getValueFor(key: string) {
-  let result = await SecureStore.getItemAsync(key);
-  if (result) {
-    alert("🔐 Here's your value 🔐 \n" + result);
-  } else {
-    alert('No values stored under that key.');
-  }
+async function getValueFor(key: string): Promise<string> {
+
+  return SecureStore.getItemAsync(key).then((result) => {
+    if (result != null) {
+      //alert("🔐 Here's your value 🔐 \n" + result);
+      return result;
+    } else {
+      //alert('No values stored under that key.');
+      return '';
+    }
+  });
 }
 
 async function secureStoreTest() {
@@ -29,4 +33,10 @@ async function secureStoreTest() {
   console.log(await getValueFor("ola"))
 }
 
-export { secureStoreTest }
+async function initKeychain(userId: string) {
+  if(await getValueFor('userId') == '') {
+    save('userId', userId)
+  }
+}
+
+export { getValueFor, secureStoreTest, initKeychain }

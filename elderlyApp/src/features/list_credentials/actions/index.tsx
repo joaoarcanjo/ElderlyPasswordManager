@@ -1,8 +1,11 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {View, Text, TouchableOpacity, Image, ScrollView} from 'react-native'
 import { stylesAddCredential, styleScroolView } from '../styles/styles'
 import { stylesButtons, stylesMainBox } from '../../../assets/styles/main_style'
 import Navbar from '../../../navigation/actions'
+import { listAllElderlyCredencials } from '../../../firebase/firestore/funcionalities'
+import { showMessage } from 'react-native-flash-message'
+import * as Clipboard from 'expo-clipboard'
 
 function MainBox() {
 
@@ -25,21 +28,32 @@ function AddCredencial() {
   )
 }
 
-function ScrollItemExample() {
+function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
+
+  function copyValue(value: string) {
+    Clipboard.setStringAsync(value)
+    showMessage({
+      message: 'COPIADO',
+      type: 'success',
+      icon: props => <Image source={require("../../../assets/images/copy.png")} {...props} />,
+      color: "black", // text color
+    });
+  }
+
   return (
     <View style={[{margin: '3%'}, styleScroolView.itemContainer]}>
-      <View style={{flex: 0.35, margin: '3%', flexDirection: 'row', alignItems: 'center'}}>
-        <Image source={require('../images/instagram_icon.png')} style={[{width: '20%', height: 50, marginRight: '5%', resizeMode: 'contain'}]}/>
-        <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 30, fontWeight: 'bold' }]}>Instagram</Text>
+      <View style={{flex: 0.35, marginVertical: '3%', marginLeft: '6%', flexDirection: 'row', alignItems: 'center'}}>
+        {/*<Image source={require('../images/instagram_icon.png')} style={[{width: '20%', height: 50, marginRight: '5%', resizeMode: 'contain'}]}/>*/}
+        <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 30, fontWeight: 'bold' }]}>{credential.platform}</Text>
       </View>
 
       <View style={{flex: 0.65, marginHorizontal: '3%', marginBottom: '3%', flexDirection: 'row'}}>
 
         <View style={{flex: 0.65, marginRight: '3%'}}>
-          <TouchableOpacity style={[{flex: 0.5, margin: '2%'}, styleScroolView.itemCopyUsername, stylesButtons.mainConfig]}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar utilizador</Text>
+          <TouchableOpacity style={[{flex: 0.5, margin: '2%'}, styleScroolView.itemCopyUsername, stylesButtons.mainConfig]} onPress={() => copyValue(credential.username)}>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar Utilizador</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[{flex: 0.5, margin: '2%'}, styleScroolView.itemCopyPassword, stylesButtons.mainConfig]}>
+          <TouchableOpacity style={[{flex: 0.5, margin: '2%'}, styleScroolView.itemCopyPassword, stylesButtons.mainConfig]} onPress={() => copyValue(credential.password)}>
             <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar Password</Text>
           </TouchableOpacity>
         </View>
@@ -54,16 +68,29 @@ function ScrollItemExample() {
   )
 }
 
+interface Credential {
+  platform: string,
+  username: string,
+  password: string
+}
 
 function CredentialsList() {
+
+  const [credencials, setCredencials] = useState<Credential[]>([]);
+
+  useEffect(() => {
+    listAllElderlyCredencials().then((credencials) => {
+      let auxCredencials: Credential[] = [];
+      credencials.forEach(value => auxCredencials.push(JSON.parse(value)))
+      setCredencials(auxCredencials)
+    })
+  }, [])
+
   return (
     <View style={{ flex: 0.70, flexDirection: 'row', justifyContent: 'space-around'}}>
       <View style={[{ flex: 1, flexDirection: 'row', marginTop:'5%', marginHorizontal: '4%', justifyContent: 'space-around'}, styleScroolView.credencialsContainer]}>
         <ScrollView style={[{margin: '3%'}]}>
-          <ScrollItemExample/>
-          <ScrollItemExample/>
-          <ScrollItemExample/>
-          <ScrollItemExample/>
+          {credencials.map((value) => <ScrollItemExample key={value.platform} credential={value}/>)}
         </ScrollView>
       </View>
     </View>

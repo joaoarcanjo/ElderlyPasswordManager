@@ -1,5 +1,7 @@
+import { getNewId } from '../../algorithms/0thers/randomUUID';
+import { getValueFor } from '../../keychain';
+import { userIdKey } from '../../keychain/constants';
 import { firebase } from '../FirebaseConfig';
-import * as Crypto from 'expo-crypto';
 import { credencialsCollectionName, defaultCredencials, defaultElderly, elderlyCollectionName } from './constants';
 
 const firestore = firebase.firestore()
@@ -9,15 +11,13 @@ const firestore = firebase.firestore()
  * respetivamente na criação da conta.
  * @returns 
  */
-async function createElderly(): Promise<string> {
-    //RandomUUID que vai ser futuramente apagado e substituido pelo ID do idoso.
-    const randomUUID = Crypto.randomUUID()
+async function createElderly(elderlyId: string) {
 
     try {
         const elderlyCollectionRef = firebase.firestore().collection(elderlyCollectionName)
 
         //Cria na coleção o elemento do idoso.
-        const novoDocumentoRef = elderlyCollectionRef.doc(randomUUID)
+        const novoDocumentoRef = elderlyCollectionRef.doc(elderlyId)
         novoDocumentoRef.set(defaultElderly)
     
         //Cria a subcoleção credenciais e adiciona um valor default.
@@ -28,8 +28,23 @@ async function createElderly(): Promise<string> {
         alert('Erro ao tentar criar a conta, tente novamente!')
         console.log('Error: ', error)
     }
+}
 
-    return randomUUID
+/**
+ * Esta função tem como intuito verificar se o idoso já possui dados na cloud Firestore. 
+ * Retorna uma Promise com essa verificação, ou com o erro que ocorreu.
+ * @param elderlyId 
+ * @returns 
+ */
+async function elderlyExists(elderlyId: string): Promise<boolean> {
+    
+    return firestore.collection(elderlyCollectionName).doc(elderlyId).get()
+    .then((doc) => doc.exists)
+    .catch((error) => {
+        alert('Erro ao verificar se idoso existe, tente novamente!')
+        console.error('Error: ', error)
+        return false
+    })
 }
 
 /**
@@ -38,8 +53,9 @@ async function createElderly(): Promise<string> {
  * @param newCredencialId 
  * @param data 
  */
-async function addCredencial(userId: string, newCredencialId: string, data: string) {
+async function addCredencial(newCredencialId: string, data: string) {
 
+    const userId = await getValueFor(userIdKey)
     const defaultCredencial = defaultCredencials(data)
 
     firestore.collection(elderlyCollectionName)
@@ -56,13 +72,16 @@ async function addCredencial(userId: string, newCredencialId: string, data: stri
 /**
  * Função para listar todos os idosos
  */
-async function listAllElderly() {
+async function listAllElderly(): Promise<string[]> {
   
-    firestore.collection(elderlyCollectionName).get().then((docs) => {
-        docs.forEach((doc) => { console.log(doc.id, ' => ', doc.data()); });
+    return firestore.collection(elderlyCollectionName).get().then((docs) => {
+        const values: string[] = []
+        docs.forEach((doc) => { console.log(doc.id, ' => ', doc.data()); values.push(doc.data().caregivers) });
+        return values
     }).catch((error) => {
         alert('Erro ao obter os idosos, tente novamente!')
-      console.error('Error: ', error);
+        console.error('Error: ', error)
+        return []
     });
 }
 
@@ -70,19 +89,19 @@ async function listAllElderly() {
  * Função para listar as credenciais de determinado utilizador
  * @param userId 
  */
-async function listAllElderlyCredencials(userId: string) {
+async function listAllElderlyCredencials(): Promise<string[]> {
 
-    firestore.collection(elderlyCollectionName)
-        .doc(userId).collection(credencialsCollectionName)
-        .get().then((docs) => {
-            docs.forEach((doc) =>  {
-                console.log(doc.id, " => ", doc.data());
-            })
-        })
-        .catch((error) => {
-            alert('Erro ao obter as credenciais, tente novamente!')
-            console.log('Error: ', error)
-        })
+    const userId = await getValueFor(userIdKey)
+
+    return firestore.collection(elderlyCollectionName).doc(userId).collection(credencialsCollectionName).get().then((docs) => {
+        const values: string[] = []
+        docs.forEach((doc) => { console.log(doc.id, ' => ', doc.data()); values.push(doc.data().data) });
+        return values
+    }).catch((error) => {
+        alert('Erro ao obter as credenciais, tente novamente!')
+        console.log('Error: ', error)
+        return []
+    });
 }
 
 /**
@@ -90,7 +109,9 @@ async function listAllElderlyCredencials(userId: string) {
  * @param userId 
  * @param credencialId 
  */
-async function listCredencialProperties(userId: string, credencialId: string) {
+async function listCredencialProperties(credencialId: string) {
+
+    const userId = await getValueFor(userIdKey)
 
     firestore.collection(elderlyCollectionName)
         .doc(userId).collection(credencialsCollectionName)
@@ -102,15 +123,27 @@ async function listCredencialProperties(userId: string, credencialId: string) {
             console.log('Error: ', error)
         })
 }
-
+/*
 function firebaseTest() {
 
-    createElderly().then(id => {
-        addCredencial(id, "instagram", "{username: joao__arcanjo, password: 1234}"); 
+    const userId = getNewId()
+
+    createElderly(userId).then(() => {
+        addCredencial("instagram", "{username: joao__arcanjo, password: 1234}"); 
         //listAllElderlyCredencials(id)
-        listCredencialProperties(id, 'instagram')
+        listCredencialProperties('instagram')
     })
     //listAllElderly()
+}*/
+
+function initFirestore(elderlyId: string) {
+
+    elderlyExists(elderlyId).then((result) => {
+        if(!result) { //se não existir
+            createElderly(elderlyId)
+            console.log('Elderly created.')
+        }
+    })
 }
 
-export { listAllElderly, createElderly, addCredencial, listAllElderlyCredencials, firebaseTest }
+export { initFirestore, listAllElderly, createElderly, addCredencial, listAllElderlyCredencials, /*firebaseTest*/ }

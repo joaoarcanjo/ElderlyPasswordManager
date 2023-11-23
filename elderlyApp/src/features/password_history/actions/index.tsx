@@ -3,7 +3,7 @@ import {View, Text, TouchableOpacity, ScrollView, Image } from 'react-native'
 import { stylesMainBox, stylesButtons } from '../../../assets/styles/main_style'
 import * as Clipboard from 'expo-clipboard'
 import { styleScroolView } from '../styles/styles'
-import formatTimestamp from '../../../components/time';
+import formatTimestamp from '../../../algorithms/0thers/time';
 import Navbar from '../../../navigation/actions';
 import { realizarConsulta } from '../../../database'
 import { showMessage } from 'react-native-flash-message'
