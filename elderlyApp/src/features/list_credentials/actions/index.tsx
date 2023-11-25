@@ -6,9 +6,8 @@ import Navbar from '../../../navigation/actions'
 import { listAllElderlyCredencials } from '../../../firebase/firestore/funcionalities'
 import { showMessage } from 'react-native-flash-message'
 import * as Clipboard from 'expo-clipboard'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useIsFocused } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
-import { useIsFocused } from '@react-navigation/native';
 
 function MainBox() {
 
@@ -88,7 +87,7 @@ function CredentialsList() {
   useEffect(() => {
     listAllElderlyCredencials().then((credencials) => {
       let auxCredencials: Credential[] = [];
-      credencials.forEach(value => auxCredencials.push(JSON.parse(value)))
+      credencials.forEach(value => {auxCredencials.push(JSON.parse(value))})
       setCredencials(auxCredencials)
     })
   }, [isFocused])

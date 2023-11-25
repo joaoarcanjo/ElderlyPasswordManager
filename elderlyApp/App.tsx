@@ -11,9 +11,12 @@ import React, { useEffect } from 'react';
 import { initDb } from './src/database';
 import FlashMessage from 'react-native-flash-message';
 import Caregivers from './src/features/list_caregivers/actions';
-import { addCredencial, initFirestore } from './src/firebase/firestore/funcionalities';
-import { initKeychain } from './src/keychain';
+import { changeKey, initFirestore } from './src/firebase/firestore/funcionalities';
+import { initKeychain, secureStoreTest } from './src/keychain';
 import { AddCredencial } from './src/features/add_credentials/actions';
+import { elderlySSSKey } from './src/keychain/constants';
+
+const { initSSS } = require('./src/algorithms/sss/sss')
 
 const Stack = createNativeStackNavigator();
 
@@ -22,13 +25,15 @@ const elderlyIdForTest = 'elderlyIdForTest'
 export default function App() {
 
     useEffect(() => {
-      initDb()
-      initFirestore(elderlyIdForTest)
+
+      secureStoreTest()
+
       initKeychain(elderlyIdForTest)
-      addCredencial('instagram', '{"platform": "instagram", "username": "joao__arcanjo", "password": "1234"}')
-      addCredencial('facebook', '{"platform": "facebook", "username": "joao__arcanjo", "password": "1234"}')
-      addCredencial('amazon', '{"platform": "amazon", "username": "joao__arcanjo", "password": "1234"}')
-      addCredencial('benfica', '{"platform": "SL Benfica", "username": "joao__arcanjo", "password": "4321"}')
+        .then(() => initSSS())
+        .then(() => initFirestore())
+        .then(() => initDb())
+        .then(() => changeKey())
+  
     }, [])
 
     return (
@@ -47,4 +52,8 @@ export default function App() {
           <FlashMessage/>
         </NavigationContainer>
     );
+}
+
+function getValueFor(elderlySSSKey: any): any {
+  throw new Error('Function not implemented.');
 }

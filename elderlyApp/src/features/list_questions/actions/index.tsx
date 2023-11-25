@@ -66,12 +66,12 @@ function QuestionsList() {
   )
 }
 
-export default function FrequentQuestions({ navigation }: {readonly navigation: any}) {
+export default function FrequentQuestions() {
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
       <MainBox/>
       <QuestionsList/>
-      <Navbar navigation={navigation}/>
+      <Navbar/>
     </View>
   )
 }

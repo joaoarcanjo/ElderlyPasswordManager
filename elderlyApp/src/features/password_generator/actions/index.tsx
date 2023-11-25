@@ -218,7 +218,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
       <HistoryButton/>
       <PasswordFirstBox/>
       <PasswordSecondBox/>
-      <Navbar navigation={navigation}/>
+      <Navbar/>
     </View>
   )
 }

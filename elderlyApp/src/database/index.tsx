@@ -31,7 +31,7 @@ export const deleteGenerated = () => {
               'DELETE FROM passwords WHERE id IN (SELECT id FROM passwords ORDER BY timestamp DESC LIMIT -10 OFFSET 9)',
               [],
               (_, result) => {
-                console.log('Tuplo com timestamp mais antigo excluído com sucesso:', result);
+                //console.log('Tuplo com timestamp mais antigo excluído com sucesso:', result);
               }
             );
         });

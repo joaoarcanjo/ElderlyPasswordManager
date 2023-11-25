@@ -40,11 +40,6 @@ function CaregiversButtonBox() {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const GeneratorsNavigation = () => {
-        //secureStoreTest()
-        //zxcvbnTest()
-        //firebaseTest()
-        // Your code to handle the click event
-        console.log('Generator button clicked!');
         navigation.push('Caregivers')
     }
 
@@ -72,25 +67,25 @@ function Functionalities() {
 
     const CredencialsNavigation = async () => {
         // Your code to handle the click event
-        console.log('Credentials button clicked!');
+        //console.log('Credentials button clicked!');
         navigation.push('Credentials')
     }
 
     const GeneratorsNavigation = () => {
         // Your code to handle the click event
-        console.log('Generator button clicked!');
+        //console.log('Generator button clicked!');
         navigation.push('Generator')
     }
 
     const FrequentQuestionsNavigation = () => {
         // Your code to handle the click event
-        console.log('Questions button clicked!');
+        //console.log('Questions button clicked!');
         navigation.push('FrequentQuestions')
     }
 
     const SettingsNavigation = () => {
         // Your code to handle the click event
-        console.log('Questions button clicked!');
+        //console.log('Questions button clicked!');
         navigation.push('Settings')
     }
 

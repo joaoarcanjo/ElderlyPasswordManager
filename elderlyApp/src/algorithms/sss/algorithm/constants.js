@@ -1,6 +1,6 @@
 const PRIMITIVE_POLYNOMIAL = 29
 
-const BIT_PADDING = 256
+const BIT_PADDING = 128
 const BIT_COUNT = 8
 const BIT_SIZE = 2 ** BIT_COUNT
 

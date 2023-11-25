@@ -1,4 +1,5 @@
 import * as SecureStore from 'expo-secure-store';
+import { elderlySSSKey } from './constants';
 
 /**
  * Função para armazenar o valor key-value.
@@ -29,14 +30,17 @@ async function getValueFor(key: string): Promise<string> {
 }
 
 async function secureStoreTest() {
+  //save(elderlySSSKey, '')
+  
   save("ola", "asd")
-  console.log(await getValueFor("ola"))
+  console.log(await getValueFor(elderlySSSKey))
 }
 
-async function initKeychain(userId: string) {
+async function initKeychain(userId: string): Promise<boolean> {
   if(await getValueFor('userId') == '') {
     save('userId', userId)
   }
+  return true
 }
 
-export { getValueFor, secureStoreTest, initKeychain }
+export { getValueFor, secureStoreTest, initKeychain, save };
