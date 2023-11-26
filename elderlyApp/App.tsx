@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import MainMenu from './src/features/main_menu/actions';
 import Credentials from './src/features/list_credentials/actions';
 import { NavigationContainer } from '@react-navigation/native';
@@ -12,27 +12,29 @@ import { initDb } from './src/database';
 import FlashMessage from 'react-native-flash-message';
 import Caregivers from './src/features/list_caregivers/actions';
 import { changeKey, initFirestore } from './src/firebase/firestore/funcionalities';
-import { initKeychain, secureStoreTest } from './src/keychain';
+import { cleanKeychain, initKeychain } from './src/keychain';
 import { AddCredencial } from './src/features/add_credentials/actions';
-import { elderlySSSKey } from './src/keychain/constants';
-
-const { initSSS } = require('./src/algorithms/sss/sss')
+import { initSSS } from './src/algorithms/sss/sss';
 
 const Stack = createNativeStackNavigator();
 
-const elderlyIdForTest = 'elderlyIdForTest'
+const elderlyIdForTest = 'elderlyIdForTest'+Platform.OS
+
+const im_testing = false
 
 export default function App() {
 
     useEffect(() => {
 
-      secureStoreTest()
-
-      initKeychain(elderlyIdForTest)
+      if(im_testing) {
+        cleanKeychain()
+      } else {
+        initKeychain(elderlyIdForTest)
         .then(() => initSSS())
         .then(() => initFirestore())
         .then(() => initDb())
         .then(() => changeKey())
+      }
   
     }, [])
 
@@ -52,8 +54,4 @@ export default function App() {
           <FlashMessage/>
         </NavigationContainer>
     );
-}
-
-function getValueFor(elderlySSSKey: any): any {
-  throw new Error('Function not implemented.');
 }

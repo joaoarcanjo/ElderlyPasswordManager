@@ -87,7 +87,11 @@ function CredentialsList() {
   useEffect(() => {
     listAllElderlyCredencials().then((credencials) => {
       let auxCredencials: Credential[] = [];
-      credencials.forEach(value => {auxCredencials.push(JSON.parse(value))})
+      credencials.forEach(value => {
+        if(value.length != 0) {
+          auxCredencials.push(JSON.parse(value))
+        }
+      })
       setCredencials(auxCredencials)
     })
   }, [isFocused])

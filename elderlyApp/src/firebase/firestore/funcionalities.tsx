@@ -13,11 +13,10 @@ const firestore = firebase.firestore()
  */
 async function changeKey() {
 
-    //if(await getValueFor(elderlySSSKey) != '') return;
-
     const userId = await getValueFor(elderlyId)
     const key = await getValueFor(firestoreSSSKey)
 
+    console.log('UserId: ', userId)
     firebase.firestore().collection(elderlyCollectionName)
         .doc(userId).update({key: key})
         .catch((error) => {
@@ -62,8 +61,8 @@ async function createElderly(elderlyId: string) {
         novoDocumentoRef.set(defaultElderly)
     
         //Cria a subcoleção credenciais e adiciona um valor default.
-        novoDocumentoRef.collection(credencialsCollectionName)
-            .doc('defaultCredencial').set(defaultCredencials("defaultData"))
+       // novoDocumentoRef.collection(credencialsCollectionName)
+            //.doc('defaultCredencial').set(defaultCredencials("defaultData"))
 
     } catch (error) {
         alert('Erro ao tentar criar a conta, tente novamente!')
@@ -149,8 +148,11 @@ async function listAllElderlyCredencials(): Promise<string[]> {
     return firestore.collection(elderlyCollectionName).doc(userId).collection(credencialsCollectionName).get().then((docs) => {
         const values: string[] = []
         docs.forEach((doc) => { 
-            console.log("Key:", key)
-            console.log("Decryption: ", cryptoes.AES.decrypt(doc.data().data , key).toString(cryptoes.enc.Utf8), '\n')
+            if(doc.data()) {
+                console.log(doc.data())
+                console.log("Key:", key)
+                console.log("Decryption: ", cryptoes.AES.decrypt(doc.data().data , key).toString(cryptoes.enc.Utf8), '\n')
+            }
             values.push(cryptoes.AES.decrypt(doc.data().data , key).toString(cryptoes.enc.Utf8)) 
         });
         return values
@@ -180,18 +182,6 @@ async function listCredencialProperties(credencialId: string) {
             console.log('Error: ', error)
         })
 }
-/*
-function firebaseTest() {
-
-    const userId = getNewId()
-
-    createElderly(userId).then(() => {
-        addCredencial("instagram", "{username: joao__arcanjo, password: 1234}"); 
-        //listAllElderlyCredencials(id)
-        listCredencialProperties('instagram')
-    })
-    //listAllElderly()
-}*/
 
 async function initFirestore(): Promise<boolean> {
 
@@ -200,10 +190,11 @@ async function initFirestore(): Promise<boolean> {
     return elderlyExists(id).then((result) => {
         if (!result) { //se não existir
             createElderly(id)
-            console.log('Elderly created.')
+            console.log('Elderly created sucessfully!!')
         }
         return true
-    }).catch(_ => {
+    }).catch(error => {
+        console.log('Error initFirestore: ', error)
         return false
     });
 }
