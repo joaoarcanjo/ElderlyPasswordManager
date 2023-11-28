@@ -80,7 +80,10 @@ function CredentialsList() {
   const [credencials, setCredencials] = useState<Credential[]>([]);
   const isFocused = useIsFocused();
 
+  const [isFething, setIsFething] = useState(true);
+
   useEffect(() => {
+    setIsFething(true)
     listAllElderlyCredencials().then((credencials) => {
       let auxCredencials: Credential[] = [];
       credencials.forEach(value => {
@@ -89,15 +92,19 @@ function CredentialsList() {
         }
       })
       setCredencials(auxCredencials)
-    })
+    }).then(() => setIsFething(false))
   }, [isFocused])
 
   return (
     <View style={{ flex: 0.70, flexDirection: 'row', justifyContent: 'space-around'}}>
       <View style={[{ flex: 1, flexDirection: 'row', marginTop:'5%', marginHorizontal: '4%', justifyContent: 'space-around'}, styleScroolView.credencialsContainer]}>
+        {isFething ?
+        <View style={{alignItems: 'center',justifyContent: 'center'}}>
+          <Image source={require('../../../assets/images/spinner6.gif')} style={[{width: 300, height: 300, resizeMode: 'contain'}]}/>
+        </View>:
         <ScrollView style={[{margin: '3%'}]}>
           {credencials.map((value) => <ScrollItemExample key={value.id} credential={value}/>)}
-        </ScrollView>
+        </ScrollView>}
       </View>
     </View>
   )
