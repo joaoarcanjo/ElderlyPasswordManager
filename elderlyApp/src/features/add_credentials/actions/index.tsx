@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { TextInput, View, StyleSheet, Button, Text, TouchableOpacity } from "react-native";
-import { stylesButtons, stylesMainBox } from "../../../assets/styles/main_style";
+import { TextInput, View, Text, TouchableOpacity } from "react-native";
+import { stylesButtons } from "../../../assets/styles/main_style";
 import { passwordFirstHalf, stylesAddCredential, stylesInputsCredencials } from "../styles/styles";
 import { whiteBackgroud } from "../../../assets/styles/colors";
 import Navbar from "../../../navigation/actions";
 import { addCredencial } from "../../../firebase/firestore/funcionalities";
-import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'; 
+import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import Algorithm from "../../password_generator/actions/algorithm";
 import { getScore } from '../../../algorithms/zxcvbn/algorithm'
 import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
 import MainBox from "../../../components/MainBox";
 import AvaliationEmoji from "../../../components/EmojiAvaliation";
+import { getNewId } from "../../../algorithms/0thers/randomUUID";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 const placeholderPlatform = 'Insira a plataforma'
 const placeholderUsername = 'Insira o seu username'
@@ -24,10 +27,14 @@ function CredentialsInput() {
     const [avaliation, setAvaliation] = useState<number>(0)
 
     const [showPassword, setShowPassword] = useState(false); 
+    const navigation = useNavigation<StackNavigationProp<any>>();
   
     const handleSave = () => {
-        if(platform != '' && username != '' && password != '')
-            addCredencial(platform, JSON.stringify({platform: platform, username: username, password: password}))
+        if(platform != '' && username != '' && password != '') {
+            const uuid = getNewId()
+            addCredencial(uuid, JSON.stringify({platform: platform, username: username, password: password}))
+            navigation.goBack()
+        }
     }
 
     const toggleShowPassword = () => setShowPassword(!showPassword);

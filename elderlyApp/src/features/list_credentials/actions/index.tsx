@@ -34,31 +34,30 @@ function AddCredencial() {
 
 function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
 
-
   const navigation = useNavigation<StackNavigationProp<any>>();
 
-  const NavigateToCredentialPage = (platform: string, username: string, password: string) => navigation.navigate('CredentialPage', {platformName: platform, username: username, password: password})
+  const NavigateToCredentialPage = () => navigation.navigate('CredentialPage', {id: credential.id, platform: credential.data.platform, username: credential.data.username, password: credential.data.password})
 
   return (
     <View style={[{margin: '3%'}, styleScroolView.itemContainer]}>
       <View style={{flex: 0.35, marginVertical: '3%', marginLeft: '6%', flexDirection: 'row', alignItems: 'center'}}>
         {/*<Image source={require('../images/instagram_icon.png')} style={[{width: '20%', height: 50, marginRight: '5%', resizeMode: 'contain'}]}/>*/}
-        <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 30, fontWeight: 'bold' }]}>{credential.platform}</Text>
+        <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 30, fontWeight: 'bold' }]}>{credential.data.platform}</Text>
       </View>
 
       <View style={{flex: 0.65, marginHorizontal: '3%', marginBottom: '3%', flexDirection: 'row'}}>
 
         <View style={{flex: 0.65, marginRight: '3%'}}>
-          <TouchableOpacity style={[{flex: 0.5, margin: '2%'}, styleScroolView.itemCopyUsername, stylesButtons.mainConfig]} onPress={() => copyValue(credential.username)}>
+          <TouchableOpacity style={[{flex: 0.5, margin: '2%'}, styleScroolView.itemCopyUsername, stylesButtons.mainConfig]} onPress={() => copyValue(credential.data.username)}>
             <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar Utilizador</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[{flex: 0.5, margin: '2%'}, styleScroolView.itemCopyPassword, stylesButtons.mainConfig]} onPress={() => copyValue(credential.password)}>
+          <TouchableOpacity style={[{flex: 0.5, margin: '2%'}, styleScroolView.itemCopyPassword, stylesButtons.mainConfig]} onPress={() => copyValue(credential.data.password)}>
             <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar Password</Text>
           </TouchableOpacity>
         </View>
 
         <View style={{flex: 0.35}}>
-          <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.itemMoreInfoButton, stylesButtons.mainConfig]} onPress={() => {NavigateToCredentialPage(credential.platform, credential.username, credential.password)}}>
+          <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.itemMoreInfoButton, stylesButtons.mainConfig]} onPress={() => {NavigateToCredentialPage()}}>
               <Image source={require('../../../assets/images/more_info.png')} style={[{width: '60%', height: 60, marginRight: '5%', resizeMode: 'contain'}]}/>
           </TouchableOpacity>
         </View>
@@ -68,9 +67,12 @@ function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
 }
 
 interface Credential {
-  platform: string,
-  username: string,
-  password: string
+  id: string,
+  data: {
+    platform: string,
+    username: string,
+    password: string
+  }
 }
 
 function CredentialsList() {
@@ -82,8 +84,8 @@ function CredentialsList() {
     listAllElderlyCredencials().then((credencials) => {
       let auxCredencials: Credential[] = [];
       credencials.forEach(value => {
-        if(value.length != 0) {
-          auxCredencials.push(JSON.parse(value))
+        if(value.data.length != 0) {
+          auxCredencials.push({id: value.id, data: JSON.parse(value.data)})
         }
       })
       setCredencials(auxCredencials)
@@ -94,7 +96,7 @@ function CredentialsList() {
     <View style={{ flex: 0.70, flexDirection: 'row', justifyContent: 'space-around'}}>
       <View style={[{ flex: 1, flexDirection: 'row', marginTop:'5%', marginHorizontal: '4%', justifyContent: 'space-around'}, styleScroolView.credencialsContainer]}>
         <ScrollView style={[{margin: '3%'}]}>
-          {credencials.map((value) => <ScrollItemExample key={value.platform} credential={value}/>)}
+          {credencials.map((value) => <ScrollItemExample key={value.id} credential={value}/>)}
         </ScrollView>
       </View>
     </View>

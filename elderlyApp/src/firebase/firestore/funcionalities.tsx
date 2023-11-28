@@ -133,11 +133,16 @@ async function listAllElderly(): Promise<string[]> {
     });
 }
 
+interface Credential {
+    id: string,
+    data: string
+}
+
 /**
  * Função para listar as credenciais de determinado utilizador
  * @param userId 
  */
-async function listAllElderlyCredencials(): Promise<string[]> {
+async function listAllElderlyCredencials(): Promise<Credential[]> {
 
     const userId = await getValueFor(elderlyId)
 
@@ -145,14 +150,15 @@ async function listAllElderlyCredencials(): Promise<string[]> {
 
 
     return firestore.collection(elderlyCollectionName).doc(userId).collection(credencialsCollectionName).get().then((docs) => {
-        const values: string[] = []
+        const values: Credential[] = []
         docs.forEach((doc) => { 
             if(doc.data()) {
+                console.log(doc.id)
                 console.log(doc.data())
                 console.log("Key:", key)
                 console.log("Decryption: ", cryptoes.AES.decrypt(doc.data().data , key).toString(cryptoes.enc.Utf8), '\n')
             }
-            values.push(cryptoes.AES.decrypt(doc.data().data , key).toString(cryptoes.enc.Utf8)) 
+            values.push({'id': doc.id, 'data': cryptoes.AES.decrypt(doc.data().data , key).toString(cryptoes.enc.Utf8)}) 
         });
         return values
     }).catch((error) => {
@@ -182,6 +188,21 @@ async function listCredencialProperties(credencialId: string) {
         })
 }
 
+async function deleteCredential(credentialId: string) {
+    
+    const userId = await getValueFor(elderlyId)
+
+    firestore.collection(elderlyCollectionName)
+        .doc(userId)
+            .collection(credencialsCollectionName)
+            .doc(credentialId)
+            .delete()
+        .catch((error) => {
+            //alert('Erro ao tentar adicionar a nova credencial, tente novamente!')
+            console.log('Error: ', error)
+        })
+}
+
 async function initFirestore(): Promise<boolean> {
 
     const id = await getValueFor(elderlyId)
@@ -198,4 +219,4 @@ async function initFirestore(): Promise<boolean> {
     });
 }
 
-export { initFirestore, changeKey, getKey, listAllElderly, createElderly, addCredencial, listAllElderlyCredencials, /*firebaseTest*/ }
+export { deleteCredential, initFirestore, changeKey, getKey, listAllElderly, createElderly, addCredencial, listAllElderlyCredencials, /*firebaseTest*/ }

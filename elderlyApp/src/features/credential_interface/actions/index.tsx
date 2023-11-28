@@ -8,6 +8,9 @@ import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
 import AvaliationEmoji from '../../../components/EmojiAvaliation'
 import { getScore } from '../../../algorithms/zxcvbn/algorithm'
 import copyValue from '../../../components/ShowFlashMessage'
+import { StackNavigationProp } from '@react-navigation/stack'
+import { useNavigation } from '@react-navigation/native'
+import { deleteCredential } from '../../../firebase/firestore/funcionalities'
 
 function AppInfo({un, pw}: Readonly<{un: string, pw: string}>) {
 
@@ -103,10 +106,18 @@ function AppInfo({un, pw}: Readonly<{un: string, pw: string}>) {
   )
 }
 
-function DeleteCredential() {
+function DeleteCredential({id}: Readonly<{id: string}>) {
+  
+  const navigation = useNavigation<StackNavigationProp<any>>();
+
+  const deleteCredentialAction = () => {
+    navigation.goBack()
+    deleteCredential(id)
+  }
+
   return (
     <View style= { { flex: 0.10, flexDirection: 'row', justifyContent: 'space-around', marginBottom: '2%'} }>
-      <TouchableOpacity style={[{flex: 1, marginHorizontal: '20%', marginVertical: '3%'}, logout.logoutButton, stylesButtons.mainConfig]}>
+      <TouchableOpacity style={[{flex: 1, marginHorizontal: '20%', marginVertical: '3%'}, logout.logoutButton, stylesButtons.mainConfig]} onPress={() => deleteCredentialAction()}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>Apagar</Text>
       </TouchableOpacity>
     </View>
@@ -117,9 +128,9 @@ export default function CredencialPage({ route }: Readonly<{route: any}>) {
 
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-      <MainBox text={route.params.platformName}/>
+      <MainBox text={route.params.platform}/>
       <AppInfo un={route.params.username} pw={route.params.password}/>
-      <DeleteCredential/>
+      <DeleteCredential id={route.params.id} />
       <Navbar/>
     </View>
   )

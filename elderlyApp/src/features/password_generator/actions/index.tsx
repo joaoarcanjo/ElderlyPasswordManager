@@ -2,14 +2,11 @@ import React,{ useEffect, useState} from 'react'
 import {View, Text, TouchableOpacity, Image } from 'react-native'
 import { stylesButtons, stylesMainBox } from '../../../assets/styles/main_style'
 import { historyStyle, passwordFirstHalf, passwordSecondHalf } from '../styles/styles'
-import * as Clipboard from 'expo-clipboard'
 import Navbar from '../../../navigation/actions'
 import { savePasswordGenerated } from '../../../database'
 import Algorithm from './algorithm'
-import { showMessage } from 'react-native-flash-message'
 import copyValue from '../../../components/ShowFlashMessage'
 
-const copyImage = "../../../assets/images/copy.png"
 const minusImage = "../../../assets/images/minus.png"
 const plusImage = "../../../assets/images/plus.png"
 const crossImage = "../../../assets/images/cross.png"
