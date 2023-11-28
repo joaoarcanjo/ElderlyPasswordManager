@@ -1,6 +1,6 @@
 import * as Crypto from 'expo-crypto';
 
-const RANDOM_BATCH_SIZE = 8;
+const RANDOM_BATCH_SIZE = 128;
 
 let randomIndex;
 let randBytes;

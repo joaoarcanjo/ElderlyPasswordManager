@@ -3,7 +3,6 @@ import * as Crypto from 'expo-crypto';
 import { getValueFor, save } from './../../keychain/index'
 import { caregiver1SSSKey, caregiver2SSSKey, elderlySSSKey, firestoreSSSKey } from "../../keychain/constants";
 
-const { BIN_ENCODING } = require('./algorithm/constants')
 const { split } = require('./algorithm/split')
 const { combine } = require('./algorithm/combine')
 

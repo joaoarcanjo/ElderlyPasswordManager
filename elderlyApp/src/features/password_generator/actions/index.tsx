@@ -7,6 +7,7 @@ import Navbar from '../../../navigation/actions'
 import { savePasswordGenerated } from '../../../database'
 import Algorithm from './algorithm'
 import { showMessage } from 'react-native-flash-message'
+import copyValue from '../../../components/ShowFlashMessage'
 
 const copyImage = "../../../assets/images/copy.png"
 const minusImage = "../../../assets/images/minus.png"
@@ -96,14 +97,8 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
      Basicamente vai fazer o que faria ao fim de timestamp, mas de forma instântanea.
   */
   function saveOnClickBoard() {
-    Clipboard.setStringAsync(password)
     saveNewPassword()
-    showMessage({
-      message: 'COPIADO',
-      type: 'success',
-      icon: props => <Image source={require(copyImage)} {...props} />,
-      color: "black",
-    });
+    copyValue(password)
   }
 
   //Components: ---

@@ -4,10 +4,9 @@ import { stylesAddCredential, styleScroolView } from '../styles/styles'
 import { stylesButtons, stylesMainBox } from '../../../assets/styles/main_style'
 import Navbar from '../../../navigation/actions'
 import { listAllElderlyCredencials } from '../../../firebase/firestore/funcionalities'
-import { showMessage } from 'react-native-flash-message'
-import * as Clipboard from 'expo-clipboard'
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
+import copyValue from '../../../components/ShowFlashMessage'
 
 function MainBox() {
 
@@ -35,15 +34,10 @@ function AddCredencial() {
 
 function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
 
-  function copyValue(value: string) {
-    Clipboard.setStringAsync(value)
-    showMessage({
-      message: 'COPIADO',
-      type: 'success',
-      icon: props => <Image source={require("../../../assets/images/copy.png")} {...props} />,
-      color: "black", // text color
-    });
-  }
+
+  const navigation = useNavigation<StackNavigationProp<any>>();
+
+  const NavigateToCredentialPage = (platform: string, username: string, password: string) => navigation.navigate('CredentialPage', {platformName: platform, username: username, password: password})
 
   return (
     <View style={[{margin: '3%'}, styleScroolView.itemContainer]}>
@@ -64,7 +58,7 @@ function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
         </View>
 
         <View style={{flex: 0.35}}>
-          <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.itemMoreInfoButton, stylesButtons.mainConfig]}>
+          <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.itemMoreInfoButton, stylesButtons.mainConfig]} onPress={() => {NavigateToCredentialPage(credential.platform, credential.username, credential.password)}}>
               <Image source={require('../../../assets/images/more_info.png')} style={[{width: '60%', height: 60, marginRight: '5%', resizeMode: 'contain'}]}/>
           </TouchableOpacity>
         </View>

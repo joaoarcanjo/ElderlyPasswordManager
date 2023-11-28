@@ -1,4 +1,3 @@
-import { getNewId } from '../../algorithms/0thers/randomUUID';
 import { deriveSecret } from '../../algorithms/sss/sss';
 import { getValueFor } from '../../keychain';
 import { elderlyId, elderlySSSKey, firestoreSSSKey } from '../../keychain/constants';
@@ -164,7 +163,7 @@ async function listAllElderlyCredencials(): Promise<string[]> {
 }
 
 /**
- * Função para listar as propriedades de um determinado idoso
+ * Função para listar as propriedades de uma credencial específica
  * @param userId 
  * @param credencialId 
  */

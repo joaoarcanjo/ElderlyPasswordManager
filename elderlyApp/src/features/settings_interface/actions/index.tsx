@@ -1,21 +1,11 @@
 import React from 'react'
 import {View, Text, TouchableOpacity, Image, Linking} from 'react-native'
-import { stylesButtons, stylesMainBox } from '../../../assets/styles/main_style'
+import { stylesButtons } from '../../../assets/styles/main_style'
 import Navbar from '../../../navigation/actions'
 import { accountInfo, appInfo, logout } from '../styles/styles'
+import MainBox from '../../../components/MainBox'
 
 const gitHubUrl = 'https://github.com/joaoarcanjo/ThesisApps'
-
-function MainBox() { //TODO: FAZER UM MAINBOX COMPONENT
-
-  return (
-    <View style= { { flex: 0.15, flexDirection: 'row'} }>
-        <View style={[{flex: 1, margin: '5%', justifyContent: 'center',  alignItems: 'center'}, stylesMainBox.pageInfoContainer]}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesMainBox.pageInfoText]}>Definições</Text>
-        </View>
-    </View>
-  )
-}
 
 function AccountInfo() {
   return (
@@ -71,7 +61,7 @@ function Logout() {
 export default function Settings() {
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-      <MainBox/>
+      <MainBox text={'Definições'}/>
       <AccountInfo/>
       <AppInfo/>
       <Logout/>
