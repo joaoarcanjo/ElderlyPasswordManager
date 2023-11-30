@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native'
-import { editCredentialsButtonBackground, editCredentialsButtonBorder, greyBackgroud, greyBorder, logoutButtonBackgroud, logoutButtonBorder, permissionsButtonBackground, permissionsButtonBorder, whiteBackgroud } from '../../../assets/styles/colors'
+import { cancelButtonBackground, cancelButtonBorder, editCredentialsButtonBackground, editCredentialsButtonBorder, greyBackgroud, greyBorder, logoutButtonBackgroud, logoutButtonBorder, permissionsButtonBackground, permissionsButtonBorder, saveButtonBackground, saveButtonBorder, whiteBackgroud } from '../../../assets/styles/colors'
 
 /**
  * Estilos da view para adicionar uma nova credencial
@@ -19,9 +19,9 @@ const logout = StyleSheet.create({
 
 const credentials = StyleSheet.create({
   credentialInfoContainer: {
-    borderRadius: 20, // Define o raio dos cantos para arredondá-los
+    borderRadius: 15, // Define o raio dos cantos para arredondá-los
     borderWidth: 2, // Largura da linha na margem
-    backgroundColor: greyBackgroud, // Cor de fundo
+    backgroundColor: whiteBackgroud, // Cor de fundo
   },
   credentialInfoButton: {
       borderRadius: 15, // Define o raio dos cantos para arredondá-los
@@ -51,6 +51,16 @@ const options = StyleSheet.create({
     backgroundColor: editCredentialsButtonBackground,
     borderColor: editCredentialsButtonBorder
   },
+  saveButton: {
+    borderRadius: 15, // Define o raio dos cantos para arredondá-los
+    backgroundColor: saveButtonBackground,
+    borderColor: saveButtonBorder
+  },
+  cancelButton: {
+    borderRadius: 15, // Define o raio dos cantos para arredondá-los
+    backgroundColor: cancelButtonBackground,
+    borderColor: cancelButtonBorder
+  },
   permissionButton: {
     borderRadius: 15, // Define o raio dos cantos para arredondá-los
     backgroundColor: permissionsButtonBackground,
@@ -66,4 +76,12 @@ const options = StyleSheet.create({
   }
 })
 
-export { changer, logout, credentials, options }
+const modal = StyleSheet.create({
+  modalText: {
+    fontSize: 25,
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+})
+
+export { changer, logout, credentials, options, modal }

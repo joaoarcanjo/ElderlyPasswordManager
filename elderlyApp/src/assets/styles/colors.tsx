@@ -86,3 +86,9 @@ export const editCredentialsButtonBorder = yellowBorder
 
 export const permissionsButtonBackground = yellowBackground
 export const permissionsButtonBorder = yellowBorder
+
+export const saveButtonBackground = lightGreenBackgroud
+export const saveButtonBorder = darkGreenBorder
+
+export const cancelButtonBackground = lightRedBackground
+export const cancelButtonBorder = lightRedBorder
