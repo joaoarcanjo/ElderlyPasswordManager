@@ -5,7 +5,7 @@ import { historyStyle, passwordFirstHalf, passwordSecondHalf } from '../styles/s
 import Navbar from '../../../navigation/actions'
 import { savePasswordGenerated } from '../../../database'
 import Algorithm from './algorithm'
-import copyValue from '../../../components/ShowFlashMessage'
+import { copyValue } from '../../../components/ShowFlashMessage'
 
 const minusImage = "../../../assets/images/minus.png"
 const plusImage = "../../../assets/images/plus.png"

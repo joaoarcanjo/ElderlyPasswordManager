@@ -13,7 +13,9 @@ const firebaseConfig = {
 };
 
 if(!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig)
+    const a = firebase.initializeApp(firebaseConfig)
 }
 
-export { firebase }
+const FIREBASE_AUTH = firebase.auth()
+
+export { firebase, FIREBASE_AUTH }

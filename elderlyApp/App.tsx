@@ -16,6 +16,7 @@ import { cleanKeychain, initKeychain } from './src/keychain';
 import { AddCredencial } from './src/features/add_credentials/actions';
 import { initSSS } from './src/algorithms/sss/sss';
 import CredencialPage from './src/features/credential_interface/actions';
+import LoginPage from './src/features/login_interface/actions';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -27,6 +28,7 @@ export type RootStackParamList = {
   Caregivers: undefined;
   Generator: undefined;
   CredentialPage: { platform: string, username: string, password: string };
+  LoginPage: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -54,7 +56,7 @@ export default function App() {
     return (
         <NavigationContainer>
           <View style={{flex: 0.06}}/>
-          <Stack.Navigator initialRouteName="Home">
+          <Stack.Navigator initialRouteName="LoginPage">
             <Stack.Screen name="Home" component={MainMenu} options={{title: "Home", headerShown:false}}/>
             <Stack.Screen name="Credentials" component={Credentials} options={{title: "Credencials", headerShown:false}}/>
             <Stack.Screen name="AddCredential" component={AddCredencial} options={{title: "AddCredencial", headerShown:false}}/>
@@ -64,6 +66,7 @@ export default function App() {
             <Stack.Screen name="FrequentQuestions" component={FrequentQuestions} options={{title: "Frequent Questions", headerShown:false}}/>
             <Stack.Screen name="Caregivers" component={Caregivers} options={{title: "Caregivers", headerShown:false}}/>
             <Stack.Screen name="CredentialPage" component={CredencialPage} options={{title: "CredencialPage", headerShown:false}}  />
+            <Stack.Screen name="LoginPage" component={LoginPage} options={{title: "LoginPage", headerShown:false}}  />
           </Stack.Navigator>
           <FlashMessage/>
         </NavigationContainer>
