@@ -4,6 +4,8 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "fire
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { FIREBASE_AUTH } from '../../../firebase/FirebaseConfig';
+import { getValueFor } from "../../../keychain";
+import { elderlyEmail } from "../../../keychain/constants";
 
 const LoginPage = () => {
 
@@ -15,12 +17,17 @@ const LoginPage = () => {
         setLoading(true)
 
         try {
-            const response = await signInWithEmailAndPassword(FIREBASE_AUTH, email, password)
+            const emailAux = await getValueFor(elderlyEmail)
+            if(email != emailAux && emailAux != '') {
+                alert('Registation failed: invalid user.')
+            } else {
+                await signInWithEmailAndPassword(FIREBASE_AUTH, email, password)
+                navigation.push('Home')
+            }
         } catch (error) {
             alert('Registation failed: ' + error)
         } finally {
             setLoading(false)
-            navigation.push('Home')
         }
     }
 

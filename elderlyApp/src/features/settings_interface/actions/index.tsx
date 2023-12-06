@@ -4,6 +4,9 @@ import { stylesButtons } from '../../../assets/styles/main_style'
 import Navbar from '../../../navigation/actions'
 import { accountInfo, appInfo, logout } from '../styles/styles'
 import MainBox from '../../../components/MainBox'
+import { useNavigation } from '@react-navigation/native'
+import { StackNavigationProp } from '@react-navigation/stack'
+import { FIREBASE_AUTH } from '../../../firebase/FirebaseConfig'
 
 const gitHubUrl = 'https://github.com/joaoarcanjo/ThesisApps'
 
@@ -49,9 +52,13 @@ function AppInfo() {
 }
 
 function Logout() {
+  
+  const navigation = useNavigation<StackNavigationProp<any>>();
+  const signOut = () => {FIREBASE_AUTH.signOut()}
+
   return (
     <View style= { { flex: 0.10, flexDirection: 'row', justifyContent: 'space-around', marginBottom: '2%'} }>
-      <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, logout.logoutButton, stylesButtons.mainConfig]}>
+      <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, logout.logoutButton, stylesButtons.mainConfig]} onPress={signOut}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>SAIR DA CONTA</Text>
       </TouchableOpacity>
     </View>

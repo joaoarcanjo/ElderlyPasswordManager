@@ -1,5 +1,6 @@
 import * as SecureStore from 'expo-secure-store';
-import { caregiver1SSSKey, caregiver2SSSKey, elderlyId, elderlySSSKey, firestoreSSSKey } from './constants';
+import { caregiver1SSSKey, caregiver2SSSKey, elderlyEmail, elderlyId, elderlySSSKey, firestoreSSSKey } from './constants';
+import { User } from 'firebase/auth';
 
 /**
  * Função para armazenar o valor key-value.
@@ -40,9 +41,15 @@ async function cleanKeychain() {
  * @param userId 
  * @returns 
  */
-async function initKeychain(userId: string): Promise<boolean> {
+async function initKeychain(user: User): Promise<boolean> {
   if(await getValueFor(elderlyId) == '') {
-    await cleanKeychain().then(() => save(elderlyId, userId))
+    await cleanKeychain().then(() => {
+      save(elderlyId, user.uid)
+      const userEmail = user.email
+      if(userEmail != null) {
+        save(elderlyEmail, userEmail+'')
+      }
+    })
   }
   return true
 }
