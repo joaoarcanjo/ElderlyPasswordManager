@@ -6,7 +6,7 @@ import Navbar from '../../../navigation/actions'
 import { listAllElderlyCredencials } from '../../../firebase/firestore/funcionalities'
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
-import copyValue from '../../../components/ShowFlashMessage'
+import {copyValue} from '../../../components/ShowFlashMessage'
 
 function MainBox() {
 

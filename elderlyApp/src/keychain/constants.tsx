@@ -5,4 +5,5 @@ export const caregiver2SSSKey = 'caregiver2SSSKey'
 export const firestoreSSSKey = 'firestoreSSSKey'
 export const localDBKey = 'localDBKey' //ainda a não ser utilizada
 export const elderlyEmail = 'userEmail'
+export const elderlyPwd = 'userPwd'
 export const elderlyPhone = 'userPhone'

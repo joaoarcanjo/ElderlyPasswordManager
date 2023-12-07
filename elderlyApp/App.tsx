@@ -74,7 +74,7 @@ export default function App() {
       onAuthStateChanged(FIREBASE_AUTH, (user) =>{
         setUser(user)
         if(user != null) {
-          initKeychain(user)
+          initKeychain(user.uid)
         }
     })
   }, [user])

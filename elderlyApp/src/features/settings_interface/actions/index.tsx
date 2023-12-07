@@ -7,6 +7,8 @@ import MainBox from '../../../components/MainBox'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { FIREBASE_AUTH } from '../../../firebase/FirebaseConfig'
+import { elderlyEmail, elderlyPwd } from '../../../keychain/constants'
+import { save } from '../../../keychain'
 
 const gitHubUrl = 'https://github.com/joaoarcanjo/ThesisApps'
 
@@ -53,8 +55,13 @@ function AppInfo() {
 
 function Logout() {
   
-  const navigation = useNavigation<StackNavigationProp<any>>();
-  const signOut = () => {FIREBASE_AUTH.signOut()}
+  const navigation = useNavigation<StackNavigationProp<any>>()
+  
+  const signOut = () => {
+    save(elderlyEmail, '')
+    save(elderlyPwd, '')
+    FIREBASE_AUTH.signOut()
+  }
 
   return (
     <View style= { { flex: 0.10, flexDirection: 'row', justifyContent: 'space-around', marginBottom: '2%'} }>
