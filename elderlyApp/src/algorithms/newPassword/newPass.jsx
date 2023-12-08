@@ -80,7 +80,7 @@ let generate = function(options, pool) {
 };
 
 // Generate a random password.
-export default function Algoritm(options) {
+function NewPass(options) {
 	// Set defaults.
 	options = options || {};
 	if (!Object.prototype.hasOwnProperty.call(options, 'length')) options.length = 10;
@@ -144,3 +144,5 @@ export default function Algoritm(options) {
 
 	return password;
 };
+
+export default { NewPass }

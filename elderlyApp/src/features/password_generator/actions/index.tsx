@@ -6,6 +6,7 @@ import Navbar from '../../../navigation/actions'
 import { savePasswordGenerated } from '../../../database'
 import Algorithm from './algorithm'
 import { copyValue } from '../../../components/ShowFlashMessage'
+import MainBox from '../../../components/MainBox'
 
 const minusImage = "../../../assets/images/minus.png"
 const plusImage = "../../../assets/images/plus.png"
@@ -82,7 +83,6 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
       setPassword(passGenerated)
       savePasswordGenerated(passGenerated)
     }
-    
   }
 
   function generatePassword() {
@@ -99,23 +99,17 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
   }
 
   //Components: ---
-  function MainBox() {
-    return (
-      <View style= { { flex: 0.15, flexDirection: 'row'} }>
-          <View style={[{flex: 1, margin: '5%', justifyContent: 'center',  alignItems: 'center'}, stylesMainBox.pageInfoContainer]}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={stylesMainBox.pageInfoText}>Gerador</Text>
-          </View>
-      </View>
-    )
-  }
 
   function HistoryButton() {
 
-    const HistoryNavigation = () => navigation.push('PasswordHistory')
-    
+    const HistoryPressed = () => {
+      saveNewPassword()
+      navigation.push('PasswordHistory')
+    }
+
     return (
       <View style= { { flex: 0.06, width: '100%', alignItems: 'flex-end' } }>
-            <TouchableOpacity style={[{flex: 1,  width: '45%', marginRight: '8%'}, historyStyle.historyButton, stylesButtons.mainConfig]} onPress={() => HistoryNavigation()}>
+            <TouchableOpacity style={[{flex: 1,  width: '45%', marginRight: '8%'}, historyStyle.historyButton, stylesButtons.mainConfig]} onPress={() => HistoryPressed()}>
                 <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontWeight: 'bold', fontSize: 22 }]}>Histórico</Text>
             </TouchableOpacity>
       </View>
@@ -206,7 +200,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
 
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-      <MainBox/>
+      <MainBox text='Gerador'/>
       <HistoryButton/>
       <PasswordFirstBox/>
       <PasswordSecondBox/>

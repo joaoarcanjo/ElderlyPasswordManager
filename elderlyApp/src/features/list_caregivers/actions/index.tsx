@@ -1,23 +1,13 @@
 import React,{useState} from 'react'
 import {View, Text, TouchableOpacity, Image, StyleSheet, Linking} from 'react-native'
 import { stylesAddCaregiver, caregiverStyle, caregiverContactInfo, decouplingOption } from '../styles/styles'
-import { stylesButtons, stylesMainBox } from '../../../assets/styles/main_style'
+import { stylesButtons } from '../../../assets/styles/main_style'
 import Navbar from '../../../navigation/actions'
+import MainBox from '../../../components/MainBox'
 
 const caregiverImage = '../../../assets/images/caregiver.png'
 const telephoneImage = '../../../assets/images/telephone.png'
 const emailImage = '../../../assets/images/email.png'
-
-function MainBox() {
-
-  return (
-    <View style= { { flex: 0.15, flexDirection: 'row'} }>
-        <View style={[{flex: 1, margin: '5%', justifyContent: 'center',  alignItems: 'center'}, stylesMainBox.pageInfoContainer]}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesMainBox.pageInfoText]}>Cuidadores</Text>
-        </View>
-    </View>
-  )
-}
 
 function CaregiverItem() {
 
@@ -75,7 +65,7 @@ function CaregiversList() {
 export default function Caregivers({ navigation }: {readonly navigation: any}) {
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}> 
-      <MainBox/>
+      <MainBox text={'Caregivers'}/>
       <CaregiversList/>
       <Navbar/>
     </View>

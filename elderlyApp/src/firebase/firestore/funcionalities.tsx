@@ -1,9 +1,9 @@
+import { wordArrayToString, decryption, encryption, randomIV } from '../../algorithms/0thers/cryptoOperations';
 import { deriveSecret } from '../../algorithms/sss/sss';
 import { getValueFor } from '../../keychain';
 import { elderlyId, elderlySSSKey, firestoreSSSKey } from '../../keychain/constants';
 import { firebase } from '../FirebaseConfig';
 import { credencialsCollectionName, defaultCredencials, defaultElderly, elderlyCollectionName } from './constants';
-import cryptoes from "crypto-es";
 
 const firestore = firebase.firestore()
 
@@ -97,14 +97,16 @@ async function addCredencial(newCredencialId: string, data: string) {
     const userId = await getValueFor(elderlyId)
 
     const key = deriveSecret([await getKey(), await getValueFor(elderlySSSKey)])
-    console.log("Add credencial key: ",key)
-    const encrypted = cryptoes.AES.encrypt(data , key).toString();
+    console.log("Add credencial key: ", key)
+
+    const nonce = randomIV()
+    const encrypted = encryption(data, key, nonce)
 
     //console.log("Key:", key)
     //console.log("Encryption:", encrypted)
 
     console.log(encrypted)
-    const defaultCredencial = defaultCredencials(encrypted)
+    const defaultCredencial = defaultCredencials(encrypted, wordArrayToString(nonce))
 
     firestore.collection(elderlyCollectionName)
         .doc(userId)
@@ -153,16 +155,16 @@ async function listAllElderlyCredencials(): Promise<Credential[]> {
         const values: Credential[] = []
         docs.forEach((doc) => { 
             if(doc.data()) {
-                console.log(doc.id)
-                console.log(doc.data())
-                console.log("Key:", key)
-                console.log("Decryption: ", cryptoes.AES.decrypt(doc.data().data , key).toString(cryptoes.enc.Utf8), '\n')
+                const nonce = doc.data().iv// CryptoJS.lib.WordArray.random(16)
+                const decrypted = decryption(doc.data().data, key, nonce)
+                //console.log("Key:", key)
+                //console.log("Decryption: ", decryption, '\n')
+                values.push({'id': doc.id, 'data': decrypted}) 
             }
-            values.push({'id': doc.id, 'data': cryptoes.AES.decrypt(doc.data().data , key).toString(cryptoes.enc.Utf8)}) 
         });
         return values
     }).catch((error) => {
-        //alert('Erro ao obter as credenciais, tente novamente!')
+        alert('Erro ao obter as credenciais, tente novamente!')
         console.log('Error: ', error)
         return []
     });

@@ -1,35 +1,15 @@
-import React,{ useState } from 'react'
-import {View, Text, TouchableOpacity, ScrollView, Image } from 'react-native'
-import { stylesMainBox, stylesButtons } from '../../../assets/styles/main_style'
-import * as Clipboard from 'expo-clipboard'
+import React,{ useEffect, useState } from 'react'
+import {View, Text, TouchableOpacity, ScrollView } from 'react-native'
+import { stylesButtons } from '../../../assets/styles/main_style'
 import { styleScroolView } from '../styles/styles'
 import formatTimestamp from '../../../algorithms/0thers/time';
 import Navbar from '../../../navigation/actions';
 import { realizarConsulta } from '../../../database'
-import { showMessage } from 'react-native-flash-message'
 import { Password } from '../../../database/types'
+import { copyValue } from '../../../components/ShowFlashMessage'
+import MainBox from '../../../components/MainBox';
 
-export default function PasswordHistory({ navigation }: {readonly navigation: any}) {
-
-  function SavePassword(password: string) {
-    Clipboard.setStringAsync(password)
-    showMessage({
-      message: 'COPIADO',
-      type: 'success',
-      icon: props => <Image source={require("../../../assets/images/copy.png")} {...props} />,
-      color: "black", // text color
-    });
-  }
-
-  function MainBox() {
-    return (
-      <View style= { { flex: 0.15, flexDirection: 'row'} }>
-          <View style={[{flex: 1, margin: '5%', justifyContent: 'center',  alignItems: 'center'}, stylesMainBox.pageInfoContainer]}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={stylesMainBox.pageInfoText}>Histórico</Text>
-          </View>
-      </View>
-    )
-  }
+export default function PasswordHistory() {
   
   function PasswordGeneratedItem({thisPassword, time}: Readonly<{thisPassword: string, time: number}>) {
     return (
@@ -38,7 +18,7 @@ export default function PasswordHistory({ navigation }: {readonly navigation: an
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{fontSize: 30, margin: '3%', fontWeight: 'bold' }, styleScroolView.itemPassword]}>{thisPassword}</Text>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%', textAlign: 'right' }, styleScroolView.itemDate]}>{formatTimestamp(time)}</Text>
         </View>
-        <TouchableOpacity style={[{flex: 0.3, margin: '2%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => SavePassword(thisPassword) }>
+        <TouchableOpacity style={[{flex: 0.3, margin: '2%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(thisPassword) }>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar</Text>
         </TouchableOpacity>
       </View>
@@ -49,7 +29,9 @@ export default function PasswordHistory({ navigation }: {readonly navigation: an
 
     const [passwords, setPasswords] = useState<Password[]>([]);
 
-    realizarConsulta().then(value => setPasswords(value))
+    useEffect(() => {
+      realizarConsulta().then(value => setPasswords(value))
+    }, [])
     
     return (
       <View style={{ flex: 0.85, flexDirection: 'row'}}>
@@ -64,9 +46,9 @@ export default function PasswordHistory({ navigation }: {readonly navigation: an
   
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-      <MainBox/>
+      <MainBox text={'History'}/>
       <PasswordsList/>   
-      <Navbar navigation={navigation}/>
+      <Navbar/>
     </View>
   )
 }

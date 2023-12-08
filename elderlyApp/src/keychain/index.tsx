@@ -1,7 +1,6 @@
 import * as SecureStore from 'expo-secure-store';
-import { caregiver1SSSKey, caregiver2SSSKey, elderlyEmail, elderlyId, elderlySSSKey, firestoreSSSKey } from './constants';
-import { User } from 'firebase/auth';
-
+import { caregiver1SSSKey, caregiver2SSSKey, elderlyEmail, elderlyId, elderlySSSKey, firestoreSSSKey, localDBKey } from './constants';
+import * as Crypto from 'expo-crypto';
 /**
  * Função para armazenar o valor key-value.
  * 
@@ -46,6 +45,9 @@ async function initKeychain(userId: string): Promise<boolean> {
     await cleanKeychain().then(() => {
       save(elderlyId, userId)
     })
+  }
+  if(await getValueFor(localDBKey) == '') {
+    save(localDBKey, String.fromCharCode.apply(null, Array.from(Crypto.getRandomBytes(32)))) 
   }
   return true
 }

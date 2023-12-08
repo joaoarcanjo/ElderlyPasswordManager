@@ -7,17 +7,7 @@ import { listAllElderlyCredencials } from '../../../firebase/firestore/funcional
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import {copyValue} from '../../../components/ShowFlashMessage'
-
-function MainBox() {
-
-  return (
-    <View style= { { flex: 0.15, flexDirection: 'row'} }>
-        <View style={[{flex: 1, margin: '5%', justifyContent: 'center',  alignItems: 'center'}, stylesMainBox.pageInfoContainer]}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesMainBox.pageInfoText]}>Credenciais</Text>
-        </View>
-    </View>
-  )
-}
+import MainBox from '../../../components/MainBox'
 
 function AddCredencial() {
 
@@ -113,7 +103,7 @@ function CredentialsList() {
 export default function Credentials() {
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-      <MainBox/>
+      <MainBox text={'Credenciais'}/>
       <AddCredencial/>
       <CredentialsList/>
       <Navbar/>

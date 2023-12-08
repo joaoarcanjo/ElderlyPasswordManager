@@ -1,12 +1,15 @@
+import { WordArray } from "crypto-es/lib/core"
+
 const elderlyCollectionName = 'Elderly'
 const credencialsCollectionName = 'Credencials'
 
 const keyParameter = 'key'
 
-const defaultCredencials = (data: string) => ({
+const defaultCredencials = (data: string, nonce: string) => ({
     data: data,
     readCaregivers: [],
-    writeCaregivers: []
+    writeCaregivers: [],
+    iv: nonce
 })
 
 const defaultElderly = {

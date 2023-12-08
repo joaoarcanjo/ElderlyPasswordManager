@@ -11,9 +11,9 @@ import { getScore } from '../../../algorithms/zxcvbn/algorithm'
 import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
 import MainBox from "../../../components/MainBox";
 import AvaliationEmoji from "../../../components/EmojiAvaliation";
-import { getNewId } from "../../../algorithms/0thers/randomUUID";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { getNewId } from "../../../algorithms/0thers/cryptoOperations";
 
 const placeholderPlatform = 'Insira a plataforma'
 const placeholderUsername = 'Insira o seu username'
