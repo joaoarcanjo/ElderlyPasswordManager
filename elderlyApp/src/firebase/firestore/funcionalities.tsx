@@ -3,7 +3,7 @@ import { deriveSecret } from '../../algorithms/sss/sss';
 import { getValueFor } from '../../keychain';
 import { elderlyId, elderlySSSKey, firestoreSSSKey } from '../../keychain/constants';
 import { firebase } from '../FirebaseConfig';
-import { credencialsCollectionName, defaultCredencials, defaultElderly, elderlyCollectionName } from './constants';
+import { credencialsCollectionName, defaultCredencials, defaultElderly, elderlyCollectionName, updateDataCredencial } from './constants';
 
 const firestore = firebase.firestore()
 
@@ -97,7 +97,6 @@ async function addCredencial(newCredencialId: string, data: string) {
     const userId = await getValueFor(elderlyId)
 
     const key = deriveSecret([await getKey(), await getValueFor(elderlySSSKey)])
-    console.log("Add credencial key: ", key)
 
     const nonce = randomIV()
     const encrypted = encryption(data, key, nonce)
@@ -105,7 +104,7 @@ async function addCredencial(newCredencialId: string, data: string) {
     //console.log("Key:", key)
     //console.log("Encryption:", encrypted)
 
-    console.log(encrypted)
+    //console.log(encrypted)
     const defaultCredencial = defaultCredencials(encrypted, wordArrayToString(nonce))
 
     firestore.collection(elderlyCollectionName)
@@ -190,6 +189,10 @@ async function listCredencialProperties(credencialId: string) {
         })
 }
 
+/**
+ * Função para apagar uma credencial específica
+ * @param credentialId 
+ */
 async function deleteCredential(credentialId: string) {
     
     const userId = await getValueFor(elderlyId)
@@ -203,6 +206,28 @@ async function deleteCredential(credentialId: string) {
             //alert('Erro ao tentar adicionar a nova credencial, tente novamente!')
             console.log('Error: ', error)
         })
+}
+
+async function updateCredential(credencialId: string, data: string): Promise<boolean> {
+    const userId = await getValueFor(elderlyId)
+
+    const key = deriveSecret([await getKey(), await getValueFor(elderlySSSKey)])
+
+    const nonce = randomIV()
+    const encrypted = encryption(data, key, nonce)
+    
+    const updatedCredencial = updateDataCredencial(encrypted, wordArrayToString(nonce))
+
+    return firestore.collection(elderlyCollectionName)
+        .doc(userId)
+            .collection(credencialsCollectionName)
+            .doc(credencialId)
+            .update(updatedCredencial)
+        .catch((error) => {
+            //alert('Erro ao tentar adicionar a nova credencial, tente novamente!')
+            console.log('Error: ', error)
+            return false
+        }).then(() => { return true })
 }
 
 async function initFirestore(): Promise<boolean> {
@@ -221,4 +246,4 @@ async function initFirestore(): Promise<boolean> {
     });
 }
 
-export { deleteCredential, initFirestore, changeKey, getKey, listAllElderly, createElderly, addCredencial, listAllElderlyCredencials, /*firebaseTest*/ }
+export { deleteCredential, initFirestore, changeKey, getKey, listAllElderly, createElderly, addCredencial, updateCredential, listAllElderlyCredencials, /*firebaseTest*/ }

@@ -3,7 +3,7 @@ import { Image } from 'react-native'
 import { showMessage } from "react-native-flash-message";
 import * as Clipboard from 'expo-clipboard'
 import React from 'react';
-import { lightBlueBackground } from '../assets/styles/colors';
+import { lightBlueBackground, purpleBackground } from '../assets/styles/colors';
 
 function copyValue(value: string) {
     Clipboard.setStringAsync(value)
@@ -25,4 +25,14 @@ function editValueFlash() {
   });
 } 
 
-export { copyValue, editValueFlash }
+function editCompletedFlash() {
+  showMessage({
+    message: 'CREDENCIAL ATUALIZADA COM SUCESSO!',
+    type: 'success',
+    icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
+    backgroundColor: purpleBackground,
+    color: "black", // text color
+  });
+} 
+
+export { copyValue, editValueFlash, editCompletedFlash }

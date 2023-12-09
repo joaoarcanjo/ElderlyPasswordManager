@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { View, TextInput, ActivityIndicator, Image, Text, TouchableOpacity } from "react-native"
+import { View, TextInput, Image, Text, TouchableOpacity } from "react-native"
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { signInOperation, signUpOperation } from "../../../firebase/authentication/funcionalities";
@@ -117,7 +117,7 @@ const LoginPage = () => {
                                 <Text style={{fontSize: 30}}>Entrar</Text>
                             </TouchableOpacity>
                             <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginLeft: '10%', marginBottom: '2%', justifyContent: 'center', fontSize: 20}]}>Ainda não tem conta?</Text>
-                            <TouchableOpacity style={[{flex: 0.4, width: '80%', marginBottom: '10%', marginHorizontal: '10%'}, stylesButtons.mainConfig, stylesButtons.copyButton, actions.sinUpButton]} onPress={signIn}>
+                            <TouchableOpacity style={[{flex: 0.4, width: '80%', marginBottom: '10%', marginHorizontal: '10%'}, stylesButtons.mainConfig, stylesButtons.copyButton, actions.sinUpButton]} onPress={signUp}>
                                 <Text style={{fontSize: 30}}>Criar uma conta</Text>
                             </TouchableOpacity>
                             </>

@@ -29,7 +29,7 @@ export type RootStackParamList = {
   FrequentQuestions: undefined;
   Caregivers: undefined;
   Generator: undefined;
-  CredentialPage: { platform: string, username: string, password: string };
+  CredentialPage: { id: string, platform: string, username: string, password: string };
   LoginPage: undefined;
 };
 

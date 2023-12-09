@@ -7,16 +7,20 @@ import MainBox from '../../../components/MainBox'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import AvaliationEmoji from '../../../components/EmojiAvaliation'
 import { getScore } from '../../../algorithms/zxcvbn/algorithm'
-import { copyValue, editValueFlash } from '../../../components/ShowFlashMessage'
+import { copyValue, editCompletedFlash, editValueFlash } from '../../../components/ShowFlashMessage'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
-import { deleteCredential } from '../../../firebase/firestore/funcionalities'
+import { deleteCredential, updateCredential } from '../../../firebase/firestore/funcionalities'
 import ModalBox from '../../../components/Modal'
 
-function AppInfo({un, pw}: Readonly<{un: string, pw: string}>) {
+function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string, un: string, pw: string}>) {
 
   const [username, setUsername] = useState(un)
   const [password, setPassword] = useState(pw)
+
+  const [usernameEdited, setUsernameEdited] = useState(un)
+  const [passwordEdited, setPasswordEdited] = useState(pw)
+
   const [avaliation, setAvaliation] = useState<number>(0)
   
   useEffect(() => setAvaliation(getScore(password)), [password])
@@ -25,6 +29,31 @@ function AppInfo({un, pw}: Readonly<{un: string, pw: string}>) {
 
   const [editFlag, setEditFlag] = useState(true); 
   const toggleEditFlag = () => {setEditFlag(!editFlag);};
+
+  function saveCredentialUpdate() {
+    if(password == passwordEdited && username == usernameEdited) {
+      toggleEditFlag()
+    } else {
+      updateCredential(id, JSON.stringify({platform: platform, username: usernameEdited, password: passwordEdited}))
+      .then((updated) => {
+        toggleEditFlag()
+        if(updated) {
+          setUsername(usernameEdited)
+          setPassword(passwordEdited)
+          editCompletedFlash()
+        } else {
+          setUsernameEdited(username)
+          setPasswordEdited(password)
+        }
+      })
+    }
+  }
+
+  function cancelUpdate() {
+    toggleEditFlag()
+    setUsernameEdited(username)
+    setPasswordEdited(password)
+  }
 
   function Options() {
     return (
@@ -39,10 +68,10 @@ function AppInfo({un, pw}: Readonly<{un: string, pw: string}>) {
             </TouchableOpacity>
           </> :
           <>
-            <TouchableOpacity style={[{flex: 0.5, margin: '3%', marginVertical: '5%'}, stylesButtons.mainConfig, options.saveButton]}>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%', marginVertical: '5%'}, stylesButtons.mainConfig, options.saveButton]} onPress={saveCredentialUpdate}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>Guardar</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[{flex: 0.5, margin: '3%', marginVertical: '5%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={() => toggleEditFlag()}>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%', marginVertical: '5%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={cancelUpdate}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>Cancelar</Text>
             </TouchableOpacity>
           </>
@@ -65,10 +94,10 @@ function AppInfo({un, pw}: Readonly<{un: string, pw: string}>) {
           <View style={[{ flex: 0.4, alignItems: 'center', justifyContent: 'center', marginHorizontal: '4%', marginVertical: '2%'}, credentials.credentialInfoContainer]}>
             <View style={{marginHorizontal: '4%', flexDirection: 'row'}}>
               <TextInput 
-                editable={editFlag} 
-                value={username}
+                editable={!editFlag} 
+                value={editFlag ? username : usernameEdited}
                 style={[{ flex: 1, fontSize: 22}, credentials.credentialInfoText]}
-                onChangeText={text => setUsername(text)}
+                onChangeText={text => editFlag ? setUsername(text): setUsernameEdited(text)}
               />
             </View>
           </View>
@@ -84,11 +113,11 @@ function AppInfo({un, pw}: Readonly<{un: string, pw: string}>) {
           <View style={[{ flex: 0.4, alignItems: 'center', justifyContent: 'center', marginHorizontal: '4%', marginVertical: '2%'}, credentials.credentialInfoContainer]}>
             <View style={{marginHorizontal: '4%', flexDirection: 'row'}}>
               <TextInput 
-                editable={editFlag} 
-                value={password}
+                editable={!editFlag} 
+                value={editFlag ? password : passwordEdited}
                 secureTextEntry={!(!showPassword || !editFlag)}
                 style={[{ flex: 1, fontSize: 22}, credentials.credentialInfoText]}
-                onChangeText={text => setPassword(text)}
+                onChangeText={text => editFlag ? setPassword(text): setPasswordEdited(text)}
               />
               <AvaliationEmoji avaliation={avaliation}/>
             </View>
@@ -104,7 +133,6 @@ function AppInfo({un, pw}: Readonly<{un: string, pw: string}>) {
         </View>
       </View>
     </View>
-    {/* TODO: aparecer uma flash message a dizer que a edição foi ativada*/}
     <Options/>
     </>
   )
@@ -153,7 +181,7 @@ export default function CredencialPage({ route }: Readonly<{route: any}>) {
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
       <MainBox text={route.params.platform}/>
-      <AppInfo un={route.params.username} pw={route.params.password}/>
+      <AppInfo id={route.params.id} un={route.params.username} pw={route.params.password} platform={route.params.platform}/>
       <DeleteCredential id={route.params.id} />
       <Navbar/>
     </View>

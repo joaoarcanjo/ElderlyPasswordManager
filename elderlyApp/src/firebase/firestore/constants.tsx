@@ -12,6 +12,11 @@ const defaultCredencials = (data: string, nonce: string) => ({
     iv: nonce
 })
 
+const updateDataCredencial = (data: string, nonce: string) => ({
+    data: data,
+    iv: nonce
+})
+
 const defaultElderly = {
     key: '',
     caregivers: []
@@ -22,5 +27,6 @@ export {
     credencialsCollectionName, 
     keyParameter,
     defaultCredencials, 
+    updateDataCredencial,
     defaultElderly,
 }
