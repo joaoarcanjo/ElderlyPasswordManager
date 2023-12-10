@@ -11,24 +11,25 @@ import { copyValue, editCompletedFlash, editValueFlash } from '../../../componen
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
 import { deleteCredential, updateCredential } from '../../../firebase/firestore/funcionalities'
-import ModalBox from '../../../components/Modal'
+import {ModalBox, YesOrNoModal} from '../../../components/Modal'
 
 function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string, un: string, pw: string}>) {
 
   const [username, setUsername] = useState(un)
   const [password, setPassword] = useState(pw)
-
   const [usernameEdited, setUsernameEdited] = useState(un)
   const [passwordEdited, setPasswordEdited] = useState(pw)
-
   const [avaliation, setAvaliation] = useState<number>(0)
-  
-  useEffect(() => setAvaliation(getScore(password)), [password])
-  const [showPassword, setShowPassword] = useState(false); 
-  const toggleShowPassword = () => {setShowPassword(!showPassword);};
+  const [showPassword, setShowPassword] = useState(false)
+  const [modalVisible, setModalVisible] = useState(false)
+
+  useEffect(() => setAvaliation(getScore(passwordEdited)), [passwordEdited])
+  const toggleShowPassword = () => {setShowPassword(!showPassword);}
 
   const [editFlag, setEditFlag] = useState(true); 
-  const toggleEditFlag = () => {setEditFlag(!editFlag);};
+  const toggleEditFlag = () => {setEditFlag(!editFlag)}
+
+  const inputStyle = editFlag ? credentials.credentialInputContainer : credentials.credentialInputContainerV2
 
   function saveCredentialUpdate() {
     if(password == passwordEdited && username == usernameEdited) {
@@ -47,6 +48,7 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
         }
       })
     }
+    setModalVisible(false)
   }
 
   function cancelUpdate() {
@@ -68,7 +70,7 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
             </TouchableOpacity>
           </> :
           <>
-            <TouchableOpacity style={[{flex: 0.5, margin: '3%', marginVertical: '5%'}, stylesButtons.mainConfig, options.saveButton]} onPress={saveCredentialUpdate}>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%', marginVertical: '5%'}, stylesButtons.mainConfig, options.saveButton]} onPress={() => setModalVisible(true)}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>Guardar</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[{flex: 0.5, margin: '3%', marginVertical: '5%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={cancelUpdate}>
@@ -91,7 +93,7 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar</Text>
             </TouchableOpacity>
           </View>
-          <View style={[{ flex: 0.4, alignItems: 'center', justifyContent: 'center', marginHorizontal: '4%', marginVertical: '2%'}, credentials.credentialInfoContainer]}>
+          <View style={[{ flex: 0.4, alignItems: 'center', justifyContent: 'center', marginHorizontal: '4%', marginVertical: '2%'}, inputStyle]}>
             <View style={{marginHorizontal: '4%', flexDirection: 'row'}}>
               <TextInput 
                 editable={!editFlag} 
@@ -110,7 +112,7 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar</Text>
             </TouchableOpacity>
           </View>
-          <View style={[{ flex: 0.4, alignItems: 'center', justifyContent: 'center', marginHorizontal: '4%', marginVertical: '2%'}, credentials.credentialInfoContainer]}>
+          <View style={[{ flex: 0.4, alignItems: 'center', justifyContent: 'center', marginHorizontal: '4%', marginVertical: '2%'}, inputStyle]}>
             <View style={{marginHorizontal: '4%', flexDirection: 'row'}}>
               <TextInput 
                 editable={!editFlag} 
@@ -134,9 +136,14 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
       </View>
     </View>
     <Options/>
+    <ModalBox visibleFlag={modalVisible} setModalVisibility={() => setModalVisible(false)}>
+          <YesOrNoModal question={'Guardar as atualizações?'} yesFunction={() => saveCredentialUpdate()} noFunction={() => setModalVisible(false)}/>
+      </ModalBox>
+    <DeleteCredential id={id} />
     </>
   )
 }
+
 
 function DeleteCredential({id}: Readonly<{id: string}>) {
   
@@ -148,26 +155,10 @@ function DeleteCredential({id}: Readonly<{id: string}>) {
     deleteCredential(id)
   }
 
-  function ModalBody() {
-    return (
-      <>
-      <Text numberOfLines={2} adjustsFontSizeToFit style={modal.modalText}>Deseja mesmo apagar a credencial?</Text>
-      <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.saveButton]} onPress={() => deleteCredentialAction()}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Sim</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={() => setModalVisible(false)}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Não</Text>
-        </TouchableOpacity>
-      </View>
-      </>
-    )
-  }
-
   return (
     <View style= { { flex: 0.10, flexDirection: 'row', justifyContent: 'space-around', marginBottom: '2%'} }>
       <ModalBox visibleFlag={modalVisible} setModalVisibility={() => setModalVisible(false)}>
-          <ModalBody/>
+          <YesOrNoModal question={'Apagar a credencial?'} yesFunction={() => deleteCredentialAction()} noFunction={() => setModalVisible(false)}/>
       </ModalBox>
       <TouchableOpacity style={[{flex: 1, marginHorizontal: '20%', marginVertical: '3%'}, logout.logoutButton, stylesButtons.mainConfig]} onPress={() => setModalVisible(true)}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>Apagar</Text>
@@ -182,7 +173,6 @@ export default function CredencialPage({ route }: Readonly<{route: any}>) {
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
       <MainBox text={route.params.platform}/>
       <AppInfo id={route.params.id} un={route.params.username} pw={route.params.password} platform={route.params.platform}/>
-      <DeleteCredential id={route.params.id} />
       <Navbar/>
     </View>
   )

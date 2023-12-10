@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native'
-import { cancelButtonBackground, cancelButtonBorder, editCredentialsButtonBackground, editCredentialsButtonBorder, greyBackgroud, greyBorder, logoutButtonBackgroud, logoutButtonBorder, permissionsButtonBackground, permissionsButtonBorder, saveButtonBackground, saveButtonBorder, whiteBackgroud } from '../../../assets/styles/colors'
+import { blueBorder, cancelButtonBackground, cancelButtonBorder, editCredentialsButtonBackground, editCredentialsButtonBorder, greyBackgroud, greyBorder, logoutButtonBackgroud, logoutButtonBorder, permissionsButtonBackground, permissionsButtonBorder, saveButtonBackground, saveButtonBorder, whiteBackgroud } from '../../../assets/styles/colors'
 
 /**
  * Estilos da view para adicionar uma nova credencial
@@ -21,7 +21,18 @@ const credentials = StyleSheet.create({
   credentialInfoContainer: {
     borderRadius: 15, // Define o raio dos cantos para arredondá-los
     borderWidth: 2, // Largura da linha na margem
+    backgroundColor: greyBackgroud, // Cor de fundo
+  },
+  credentialInputContainer: {
+    borderRadius: 15, // Define o raio dos cantos para arredondá-los
+    borderWidth: 2, // Largura da linha na margem
     backgroundColor: whiteBackgroud, // Cor de fundo
+  },
+  credentialInputContainerV2: {
+    borderRadius: 15, // Define o raio dos cantos para arredondá-los
+    borderWidth: 3, // Largura da linha na margem
+    backgroundColor: whiteBackgroud, // Cor de fundo
+    borderColor: blueBorder
   },
   credentialInfoButton: {
       borderRadius: 15, // Define o raio dos cantos para arredondá-los
