@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import {View, Text, TouchableOpacity, TextInput} from 'react-native'
+import {View, Text, TouchableOpacity, TextInput, Image} from 'react-native'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import Navbar from '../../../navigation/actions'
-import { credentials, logout, options, modal } from '../styles/styles'
+import { credentials, logout, options } from '../styles/styles'
 import MainBox from '../../../components/MainBox'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import AvaliationEmoji from '../../../components/EmojiAvaliation'
 import { getScore } from '../../../algorithms/zxcvbn/algorithm'
-import { copyValue, editCompletedFlash, editValueFlash } from '../../../components/ShowFlashMessage'
+import { copyValue, editCanceledFlash, editCompletedFlash, editValueFlash } from '../../../components/ShowFlashMessage'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
 import { deleteCredential, updateCredential } from '../../../firebase/firestore/funcionalities'
@@ -22,6 +22,7 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
   const [avaliation, setAvaliation] = useState<number>(0)
   const [showPassword, setShowPassword] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => setAvaliation(getScore(passwordEdited)), [passwordEdited])
   const toggleShowPassword = () => {setShowPassword(!showPassword);}
@@ -30,11 +31,11 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
   const toggleEditFlag = () => {setEditFlag(!editFlag)}
 
   const inputStyle = editFlag ? credentials.credentialInputContainer : credentials.credentialInputContainerV2
+  const credentialsModified = (password != passwordEdited || username != usernameEdited)
 
   function saveCredentialUpdate() {
-    if(password == passwordEdited && username == usernameEdited) {
-      toggleEditFlag()
-    } else {
+    if(credentialsModified) {
+      setLoading(true)
       updateCredential(id, JSON.stringify({platform: platform, username: usernameEdited, password: passwordEdited}))
       .then((updated) => {
         toggleEditFlag()
@@ -46,12 +47,16 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
           setUsernameEdited(username)
           setPasswordEdited(password)
         }
+        setLoading(false)
       })
+    } else {
+      toggleEditFlag()
     }
     setModalVisible(false)
   }
 
   function cancelUpdate() {
+    editCanceledFlash()
     toggleEditFlag()
     setUsernameEdited(username)
     setPasswordEdited(password)
@@ -59,7 +64,7 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
 
   function Options() {
     return (
-      <View style= { { flex: 0.13, marginHorizontal: '10%', flexDirection: 'row', justifyContent: 'space-around'} }>
+      <View style= { { flex: 0.13, marginHorizontal: '10%', flexDirection: 'row'} }>
         {editFlag ?
           <>
             <TouchableOpacity style={[{flex: 0.35, margin: '3%', marginVertical: '5%'}, stylesButtons.mainConfig, options.editButton]} onPress={() => {toggleEditFlag(); editValueFlash();}}>
@@ -69,14 +74,14 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
               <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>Permissões</Text>
             </TouchableOpacity>
           </> :
-          <>
-            <TouchableOpacity style={[{flex: 0.5, margin: '3%', marginVertical: '5%'}, stylesButtons.mainConfig, options.saveButton]} onPress={() => setModalVisible(true)}>
+          <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
+            {credentialsModified && <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.saveButton]} onPress={() => setModalVisible(true)}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>Guardar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[{flex: 0.5, margin: '3%', marginVertical: '5%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={cancelUpdate}>
+            </TouchableOpacity>}
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={cancelUpdate}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>Cancelar</Text>
             </TouchableOpacity>
-          </>
+          </View>
         }
       </View>
     )
@@ -86,59 +91,69 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
     <>
     <View style={{ flex: 0.52, width: '100%', marginBottom: '5%'}}>
       <View style={[{ flex: 1, marginHorizontal: '4%'}, credentials.credentialInfoContainer]}>
-        <View style={{flex: 0.45}}>
-          <View style={{flex: 0.6, flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '4%'}}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '8%', justifyContent: 'center', fontSize: 20}]}>UTILIZADOR</Text>
-            <TouchableOpacity style={[{flex: 0.5, marginTop:'10%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(password)}>
+        {!loading ? 
+          <>
+            <View style={{flex: 0.45}}>
+            <View style={{flex: 0.6, flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '4%'}}>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '8%', justifyContent: 'center', fontSize: 20}]}>UTILIZADOR</Text>
+              {editFlag && 
+              <TouchableOpacity style={[{flex: 0.5, marginTop:'10%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(username)}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={[{ flex: 0.4, alignItems: 'center', justifyContent: 'center', marginHorizontal: '4%', marginVertical: '2%'}, inputStyle]}>
-            <View style={{marginHorizontal: '4%', flexDirection: 'row'}}>
-              <TextInput 
-                editable={!editFlag} 
-                value={editFlag ? username : usernameEdited}
-                style={[{ flex: 1, fontSize: 22}, credentials.credentialInfoText]}
-                onChangeText={text => editFlag ? setUsername(text): setUsernameEdited(text)}
-              />
+              </TouchableOpacity>}
             </View>
+            <View style={[{ flex: 0.4, alignItems: 'center', justifyContent: 'center', marginHorizontal: '4%', marginVertical: '2%'}, inputStyle]}>
+              <View style={{marginHorizontal: '4%', flexDirection: 'row'}}>
+                <TextInput 
+                  editable={!editFlag} 
+                  value={editFlag ? username : usernameEdited}
+                  style={[{ flex: 1, fontSize: 22}, credentials.credentialInfoText]}
+                  onChangeText={text => editFlag ? setUsername(text): setUsernameEdited(text)}
+                />
+              </View>
+            </View>
+            <Text style={{marginLeft: '6%',fontSize: 13}}>Editado por: Elisabeth, 19/11/2021</Text>   
           </View>
-          <Text style={{marginLeft: '6%',fontSize: 13}}>Editado por: Elisabeth, 19/11/2021</Text>   
-        </View>
-        <View style={{flex: 0.40}}>
-          <View style={{flex: 0.6, flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '4%'}}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '8%', justifyContent: 'center', fontSize: 20}]}>PASSWORD</Text>
-            <TouchableOpacity style={[{flex: 0.5, marginTop:'10%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(password)}>
+          <View style={{flex: 0.40}}>
+            <View style={{flex: 0.6, flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '4%'}}>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '8%', justifyContent: 'center', fontSize: 20}]}>PASSWORD</Text>
+              {editFlag && 
+              <TouchableOpacity style={[{flex: 0.5, marginTop:'10%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(password)}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={[{ flex: 0.4, alignItems: 'center', justifyContent: 'center', marginHorizontal: '4%', marginVertical: '2%'}, inputStyle]}>
-            <View style={{marginHorizontal: '4%', flexDirection: 'row'}}>
-              <TextInput 
-                editable={!editFlag} 
-                value={editFlag ? password : passwordEdited}
-                secureTextEntry={!(!showPassword || !editFlag)}
-                style={[{ flex: 1, fontSize: 22}, credentials.credentialInfoText]}
-                onChangeText={text => editFlag ? setPassword(text): setPasswordEdited(text)}
-              />
-              <AvaliationEmoji avaliation={avaliation}/>
+              </TouchableOpacity>}
             </View>
-          </View>   
-        </View>
-        <View style={{ flex: 0.14, flexDirection: 'row', justifyContent: 'space-between', marginBottom: '5%' }}>
-          <View style={{marginLeft: '6%', marginTop: '0%', height: '100%'}}>
-            <Text style={{fontSize: 13}}>Editado por: Elisabeth, 19/11/2021</Text>   
+            <View style={[{ flex: 0.4, alignItems: 'center', justifyContent: 'center', marginHorizontal: '4%', marginVertical: '2%'}, inputStyle]}>
+              <View style={{marginHorizontal: '4%', flexDirection: 'row'}}>
+                <TextInput 
+                  editable={!editFlag} 
+                  value={editFlag ? password : passwordEdited}
+                  secureTextEntry={!(!showPassword || !editFlag)}
+                  style={[{ flex: 1, fontSize: 22}, credentials.credentialInfoText]}
+                  onChangeText={text => editFlag ? setPassword(text): setPasswordEdited(text)}
+                />
+                <AvaliationEmoji avaliation={avaliation}/>
+              </View>
+            </View>   
           </View>
-          <TouchableOpacity style={[{marginRight:'5%', marginTop: '0%'}, stylesButtons.mainConfig, stylesButtons.copyButton]}  onPress={toggleShowPassword} >
-            <MaterialCommunityIcons style={{marginHorizontal: '5%'}} disabled={editFlag} name={!(!showPassword || !editFlag) ? 'eye' : 'eye-off'} size={40} color="black"/> 
-          </TouchableOpacity>   
-        </View>
+          <View style={{ flex: 0.14, flexDirection: 'row', justifyContent: 'space-between', marginBottom: '5%' }}>
+            <View style={{marginLeft: '6%', marginTop: '0%', height: '100%'}}>
+              <Text style={{fontSize: 13}}>Editado por: Elisabeth, 19/11/2021</Text>   
+            </View>
+            {editFlag &&
+            <TouchableOpacity style={[{marginRight:'5%', marginTop: '0%'}, stylesButtons.mainConfig, stylesButtons.copyButton]}  onPress={toggleShowPassword} >
+              <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={showPassword ? 'eye' : 'eye-off'} size={40} color="black"/> 
+            </TouchableOpacity>}
+          </View>
+          </> :
+          <View style={{flex: 1, alignItems: 'center',justifyContent: 'center'}}>
+            <Image source={require('../../../assets/images/spinner6.gif')} style={[{width: 300, height: 300, resizeMode: 'contain'}]}/>
+          </View>
+        }
       </View>
     </View>
     <Options/>
     <ModalBox visibleFlag={modalVisible} setModalVisibility={() => setModalVisible(false)}>
-          <YesOrNoModal question={'Guardar as atualizações?'} yesFunction={() => saveCredentialUpdate()} noFunction={() => setModalVisible(false)}/>
-      </ModalBox>
+      <YesOrNoModal question={'Guardar as alterações?'} yesFunction={() => saveCredentialUpdate()} noFunction={() => setModalVisible(false)}/>
+    </ModalBox>
     <DeleteCredential id={id} />
     </>
   )

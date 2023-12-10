@@ -3,7 +3,7 @@ import { Image } from 'react-native'
 import { showMessage } from "react-native-flash-message";
 import * as Clipboard from 'expo-clipboard'
 import React from 'react';
-import { lightBlueBackground, purpleBackground } from '../assets/styles/colors';
+import { lightBlueBackground, lightYellowBackground, purpleBackground } from '../assets/styles/colors';
 
 function copyValue(value: string) {
     Clipboard.setStringAsync(value)
@@ -25,6 +25,16 @@ function editValueFlash() {
   });
 } 
 
+function editCanceledFlash() {
+  showMessage({
+    message: 'MODO EDIÇÃO DESATIVADO',
+    type: 'info',
+    icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
+    backgroundColor: lightYellowBackground,
+    color: "black", // text color
+  });
+} 
+
 function editCompletedFlash() {
   showMessage({
     message: 'CREDENCIAL ATUALIZADA COM SUCESSO!',
@@ -35,4 +45,4 @@ function editCompletedFlash() {
   });
 } 
 
-export { copyValue, editValueFlash, editCompletedFlash }
+export { copyValue, editValueFlash, editCompletedFlash, editCanceledFlash }

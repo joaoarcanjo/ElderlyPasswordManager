@@ -4,11 +4,13 @@ export const greyBackgroud =       '#DCE0DE'
 export const purpleBackground =    '#DBB8E9'
 export const darkGreenBackgroud =  '#58b859'
 export const lightGreenBackgroud = '#7FCA82'
+export const hiperlightBlueBackground = '#f7feff'
 export const superlightBlueBackgroud = '#d0f0f7'
 export const lightBlueBackground = '#9FCFDD'
 export const lightRedBackground =  '#F197AC'
 export const darkRedBackground =   '#e35f5f'
 export const yellowBackground =    '#F5D274'
+export const lightYellowBackground = '#fcf4dc'
 
 //BORDER COLORS
 export const blackBorder =         '#000000'

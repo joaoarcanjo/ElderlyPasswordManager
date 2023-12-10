@@ -1,11 +1,12 @@
 import {StyleSheet} from 'react-native'
-import { copyButtonBackground, copyButtonBorder } from './colors'
+import { copyButtonBackground, copyButtonBorder, whiteBackgroud } from './colors'
 
 const stylesMainBox = StyleSheet.create({
     pageInfoContainer: {
         borderRadius: 20, // Define o raio dos cantos para arredondá-los
         borderWidth: 3, // Largura da linha na margem
-        marginHorizontal: '8%'
+        marginHorizontal: '8%',
+        backgroundColor: whiteBackgroud
     },
     pageInfoText: {
         marginHorizontal: '8%',
