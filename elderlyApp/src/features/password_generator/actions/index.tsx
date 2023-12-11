@@ -1,11 +1,11 @@
 import React,{ useEffect, useState} from 'react'
 import {View, Text, TouchableOpacity, Image } from 'react-native'
-import { stylesButtons, stylesMainBox } from '../../../assets/styles/main_style'
+import { stylesButtons } from '../../../assets/styles/main_style'
 import { historyStyle, passwordFirstHalf, passwordSecondHalf } from '../styles/styles'
 import Navbar from '../../../navigation/actions'
 import { savePasswordGenerated } from '../../../database'
 import Algorithm from './algorithm'
-import { copyValue } from '../../../components/ShowFlashMessage'
+import { FlashMessage, copyValue } from '../../../components/ShowFlashMessage'
 import MainBox from '../../../components/MainBox'
 
 const minusImage = "../../../assets/images/minus.png"
@@ -95,7 +95,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
   */
   function saveOnClickBoard() {
     saveNewPassword()
-    copyValue(password)
+    copyValue(password, FlashMessage.passwordCopied)
   }
 
   //Components: ---

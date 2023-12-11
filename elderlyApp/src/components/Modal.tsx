@@ -4,29 +4,28 @@ import {View, StyleSheet, Modal, TouchableOpacity, Text} from 'react-native'
 import { stylesButtons } from "../assets/styles/main_style";
 import { modal, options } from "../features/credential_interface/styles/styles";
 
-function YesOrNoModal({question, yesFunction, noFunction}: {question: string, yesFunction: Function, noFunction: Function}) {
+function YesOrNoModal({question, yesFunction, noFunction, visibleFlag}: Readonly<{question: string, yesFunction: Function, noFunction: Function, visibleFlag: boolean}>) {
   return (
-    <>
-    <Text numberOfLines={2} adjustsFontSizeToFit style={modal.modalText}>{question}</Text>
-    <View style={{flexDirection: 'row'}}>
-      <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.saveButton]} onPress={() => yesFunction()}>
-        <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Sim</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={() => noFunction()}>
-        <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Não</Text>
-      </TouchableOpacity>
-    </View>
-    </>
+    <ModalBox visibleFlag={visibleFlag}>
+      <Text numberOfLines={2} adjustsFontSizeToFit style={modal.modalText}>{question}</Text>
+      <View style={{flexDirection: 'row'}}>
+        <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.saveButton]} onPress={() => yesFunction()}>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Sim</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={() => noFunction()}>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Não</Text>
+        </TouchableOpacity>
+      </View>
+    </ModalBox>
   )
 }
 
-function ModalBox({children, visibleFlag, setModalVisibility}: Readonly<{children: ReactNode, visibleFlag: boolean, setModalVisibility: Function}>) {
+function ModalBox({children, visibleFlag}: Readonly<{children: ReactNode, visibleFlag: boolean}>) {
     return (
         <Modal
       transparent
       animationType="slide"
       visible={visibleFlag}
-      onRequestClose={() => setModalVisibility()}
       >
         <BlurView
           style={{ flex: 1 }}

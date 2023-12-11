@@ -31,7 +31,7 @@ const credentials = StyleSheet.create({
   credentialInputContainerV2: {
     borderRadius: 15, // Define o raio dos cantos para arredondá-los
     borderWidth: 3, // Largura da linha na margem
-    backgroundColor: lightYellowBackground, // Cor de fundo
+    backgroundColor: hiperlightBlueBackground, // Cor de fundo
     borderColor: blueBorder
   },
   credentialInfoButton: {

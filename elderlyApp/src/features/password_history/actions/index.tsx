@@ -6,7 +6,7 @@ import formatTimestamp from '../../../algorithms/0thers/time';
 import Navbar from '../../../navigation/actions';
 import { realizarConsulta } from '../../../database'
 import { Password } from '../../../database/types'
-import { copyValue } from '../../../components/ShowFlashMessage'
+import { FlashMessage, copyValue } from '../../../components/ShowFlashMessage'
 import MainBox from '../../../components/MainBox';
 
 export default function PasswordHistory() {
@@ -18,7 +18,7 @@ export default function PasswordHistory() {
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{fontSize: 30, margin: '3%', fontWeight: 'bold' }, styleScroolView.itemPassword]}>{thisPassword}</Text>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%', textAlign: 'right' }, styleScroolView.itemDate]}>{formatTimestamp(time)}</Text>
         </View>
-        <TouchableOpacity style={[{flex: 0.3, margin: '2%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(thisPassword) }>
+        <TouchableOpacity style={[{flex: 0.3, margin: '2%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(thisPassword, FlashMessage.passwordCopied) }>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar</Text>
         </TouchableOpacity>
       </View>

@@ -9,6 +9,7 @@ import { styles, actions } from "../styles/styles";
 import { whiteBackgroud } from "../../../assets/styles/colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { stylesButtons } from "../../../assets/styles/main_style";
+import { Spinner } from "../../../components/Spinner";
 
 const LoginPage = () => {
 
@@ -108,10 +109,7 @@ const LoginPage = () => {
                     </View>
                     <View style={{flex: 0.4}}>
                         { loading ? 
-                        <View style={{alignItems: 'center',justifyContent: 'center'}}>
-                            <Image source={require('../../../assets/images/spinner6.gif')} style={[{width: 300, height: 300, resizeMode: 'contain'}]}/>
-                        </View>
-                        : 
+                        <Spinner/> : 
                             <>
                             <TouchableOpacity style={[{flex: 0.6, width: '80%', marginBottom: '25%', marginHorizontal: '10%'}, stylesButtons.mainConfig, stylesButtons.copyButton, actions.signInButton]} onPress={signIn}>
                                 <Text style={{fontSize: 30}}>Entrar</Text>

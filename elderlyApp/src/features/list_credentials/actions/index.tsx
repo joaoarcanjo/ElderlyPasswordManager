@@ -6,8 +6,9 @@ import Navbar from '../../../navigation/actions'
 import { listAllElderlyCredencials } from '../../../firebase/firestore/funcionalities'
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
-import {copyValue} from '../../../components/ShowFlashMessage'
+import {FlashMessage, copyValue} from '../../../components/ShowFlashMessage'
 import MainBox from '../../../components/MainBox'
+import { Spinner } from '../../../components/Spinner'
 
 function AddCredencial() {
 
@@ -38,10 +39,10 @@ function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
       <View style={{flex: 0.65, marginHorizontal: '3%', marginBottom: '3%', flexDirection: 'row'}}>
 
         <View style={{flex: 0.65, marginRight: '3%'}}>
-          <TouchableOpacity style={[{flex: 0.5, margin: '2%'}, styleScroolView.itemCopyUsername, stylesButtons.mainConfig]} onPress={() => copyValue(credential.data.username)}>
+          <TouchableOpacity style={[{flex: 0.5, margin: '2%'}, styleScroolView.itemCopyUsername, stylesButtons.mainConfig]} onPress={() => copyValue(credential.data.username, FlashMessage.usernameCopied)}>
             <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar Utilizador</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[{flex: 0.5, margin: '2%'}, styleScroolView.itemCopyPassword, stylesButtons.mainConfig]} onPress={() => copyValue(credential.data.password)}>
+          <TouchableOpacity style={[{flex: 0.5, margin: '2%'}, styleScroolView.itemCopyPassword, stylesButtons.mainConfig]} onPress={() => copyValue(credential.data.password, FlashMessage.passwordCopied)}>
             <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar Password</Text>
           </TouchableOpacity>
         </View>
@@ -89,9 +90,7 @@ function CredentialsList() {
     <View style={{ flex: 0.70, flexDirection: 'row', justifyContent: 'space-around'}}>
       <View style={[{ flex: 1, flexDirection: 'row', marginTop:'5%', marginHorizontal: '4%', justifyContent: 'space-around'}, styleScroolView.credencialsContainer]}>
         {isFething ?
-        <View style={{alignItems: 'center',justifyContent: 'center'}}>
-          <Image source={require('../../../assets/images/spinner6.gif')} style={[{width: 300, height: 300, resizeMode: 'contain'}]}/>
-        </View>:
+        <Spinner/> :
         <ScrollView style={[{margin: '3%'}]}>
           {credencials.map((value) => <ScrollItemExample key={value.id} credential={value}/>)}
         </ScrollView>}
