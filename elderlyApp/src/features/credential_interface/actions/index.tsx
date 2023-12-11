@@ -13,6 +13,7 @@ import { useNavigation } from '@react-navigation/native'
 import { deleteCredential, updateCredential } from '../../../firebase/firestore/funcionalities'
 import { YesOrNoModal } from '../../../components/Modal'
 import { Spinner } from '../../../components/Spinner'
+import Algorithm from '../../password_generator/actions/algorithm'
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
@@ -30,6 +31,7 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
   const [showPassword, setShowPassword] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
   const [loading, setLoading] = useState(false)
+  const navigation = useNavigation<StackNavigationProp<any>>()
 
   useEffect(() => setAvaliation(getScore(passwordEdited)), [passwordEdited])
   const toggleShowPassword = () => {setShowPassword(!showPassword);}
@@ -79,6 +81,15 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
     setPasswordEdited(password)
   }
 
+  const permissions = () => {
+    navigation.navigate('Permissions', {platform: platform})
+  }
+
+  const regeneratePassword = () => {
+    const newPassword = Algorithm({length: 15, strict: true, symbols: true, uppercase: true, lowercase: true, numbers: true})
+    setPasswordEdited(newPassword)
+  }
+
   /**
    * Componente que apresenta as ações que o utilizador pode efetuar sobre as credenciais.
    * -> Ações relativamente a editar, selecionar as permissões, 
@@ -92,7 +103,7 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
             <TouchableOpacity style={[{flex: 0.35, margin: '3%', marginVertical: '5%'}, stylesButtons.mainConfig, options.editButton]} onPress={() => {toggleEditFlag(); editValueFlash();}}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>Editar</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[{flex: 0.65, margin: '3%', marginVertical: '5%'}, logout.logoutButton, stylesButtons.mainConfig, options.permissionButton]}>
+            <TouchableOpacity style={[{flex: 0.65, margin: '3%', marginVertical: '5%'}, logout.logoutButton, stylesButtons.mainConfig, options.permissionButton]} onPress={permissions}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>Permissões</Text>
             </TouchableOpacity>
           </> :
@@ -111,7 +122,7 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
 
   return (
     <>
-    <View style={{ flex: 0.52, width: '100%', marginBottom: '5%'}}>
+    <View style={{ flex: 0.52, width: '100%', marginVertical: '5%'}}>
       <View style={[{ flex: 1, marginHorizontal: '4%'}, credentials.credentialInfoContainer]}>
         {!loading ? 
           <>
@@ -156,17 +167,21 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
                 </View>
               </View>   
             </View>
+            {editFlag ?
             <View style={{ flex: 0.14, flexDirection: 'row', justifyContent: 'space-between', marginBottom: '5%' }}>
-              {editFlag &&
-              <>
-                <View style={{marginLeft: '6%', marginTop: '0%', height: '100%'}}>
-                  <Text style={{fontSize: 13}}>Editado por: Elisabeth, 19/11/2021</Text>   
-                </View>
-                <TouchableOpacity style={[{marginRight:'5%', marginTop: '0%'}, stylesButtons.mainConfig, stylesButtons.copyButton]}  onPress={toggleShowPassword} >
-                  <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={showPassword ? 'eye' : 'eye-off'} size={40} color="black"/> 
-                </TouchableOpacity>
-              </>}
+              <View style={{marginLeft: '6%', marginTop: '0%', height: '100%'}}>
+                <Text style={{fontSize: 13}}>Editado por: Elisabeth, 19/11/2021</Text>   
+              </View>
+              <TouchableOpacity style={[{marginRight:'5%', marginTop: '0%'}, stylesButtons.mainConfig, stylesButtons.copyButton]}  onPress={toggleShowPassword} >
+                <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={showPassword ? 'eye' : 'eye-off'} size={40} color="black"/> 
+              </TouchableOpacity>
             </View>
+            :
+            <View style={{ flex: 0.14, flexDirection: 'row', justifyContent: 'flex-end', marginBottom: '5%' }}>
+              <TouchableOpacity style={[{flex: 0.50, marginRight: '5%'}, credentials.regenerateButton, stylesButtons.mainConfig]} onPress={() => {regeneratePassword()} }>
+                <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Regenerar</Text>
+              </TouchableOpacity>
+            </View>}
           </> :
           <Spinner/>
         }

@@ -52,7 +52,7 @@ function CaregiverItemNotIncluded() {
 
 function CaregiversList() {
   return (
-    <View style={{ flex: 0.85, flexDirection: 'row', justifyContent: 'space-around'}}>
+    <View style={{ flex: 0.85, flexDirection: 'row', marginTop: '5%', justifyContent: 'space-around'}}>
       <View style={[{ flex: 1, marginHorizontal: '4%', marginBottom: '3%', justifyContent: 'space-around'}]}>
         <CaregiverItem/>
         <CaregiverItemNotIncluded/>

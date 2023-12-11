@@ -34,7 +34,7 @@ export default function PasswordHistory() {
     }, [])
     
     return (
-      <View style={{ flex: 0.85, flexDirection: 'row'}}>
+      <View style={{ flex: 0.85, marginTop: '5%', flexDirection: 'row'}}>
         <View style={[{ flex: 1, marginHorizontal: '3%'}, styleScroolView.container]}>
           <ScrollView style={[{margin: '2%'}]}>
             {passwords.map((password) => <PasswordGeneratedItem key={password.id} thisPassword={password.password} time={password.timestamp}></PasswordGeneratedItem>)}

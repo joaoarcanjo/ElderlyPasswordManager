@@ -108,7 +108,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
     }
 
     return (
-      <View style= { { flex: 0.06, width: '100%', alignItems: 'flex-end' } }>
+      <View style= { { flex: 0.06, width: '100%', marginTop: '5%', alignItems: 'flex-end' } }>
             <TouchableOpacity style={[{flex: 1,  width: '45%', marginRight: '8%'}, historyStyle.historyButton, stylesButtons.mainConfig]} onPress={() => HistoryPressed()}>
                 <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontWeight: 'bold', fontSize: 22 }]}>Histórico</Text>
             </TouchableOpacity>
@@ -164,26 +164,24 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
   
   function Requirement({name, value, func}:Readonly<{name: string, value: boolean, func: Function}>) {
     return (
-      <View style={[{flex: 0.50, height: '90%', marginHorizontal: '3%', justifyContent: 'center',  alignItems: 'center' }, passwordSecondHalf.lengthContainer]}>
+      <TouchableOpacity style={[{flex: 0.50, height: '90%', marginHorizontal: '3%', justifyContent: 'center',  alignItems: 'center' }, passwordSecondHalf.lengthContainer, stylesButtons.mainConfig]} onPress={() => func()}>
         <Text numberOfLines={1} adjustsFontSizeToFit style={[passwordSecondHalf.requirementsText]}>{name}</Text>
-        {value ? 
-        <TouchableOpacity style={[{flex: 0.60, width: '100%', marginTop: '5%'}]} onPress={() => func()}>
-          <Image source={require(checkImage)} style={[{width: '100%', height: '100%', resizeMode: 'contain'}]}/>
-        </TouchableOpacity>:
-        <TouchableOpacity style={[{flex: 0.60, width: '100%', marginTop: '5%'}]} onPress={() => func()}>
-          <Image source={require(crossImage)} style={[{width: '100%', height: '100%', resizeMode: 'contain'}]}/>
-        </TouchableOpacity>}
-      </View>
+        <View style={{flex: 0.65, width: '100%', marginTop: '5%'}}>
+          {value ? 
+          <Image source={require(checkImage)} style={[{width: '100%', height: '100%', resizeMode: 'contain'}]}/>:
+          <Image source={require(crossImage)} style={[{width: '100%', height: '100%', resizeMode: 'contain'}]}/>}
+        </View>
+      </TouchableOpacity>
     )
   }
-  
+
   function PasswordSecondBox() {
     return (
       <View style= { { flex: 0.55, flexDirection: 'row', justifyContent: 'space-around'} }>
           <View style={[{flex: 1, marginHorizontal: '4%', justifyContent: 'center',  alignItems: 'center'}, passwordSecondHalf.container]}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.10, marginTop: '2%', width: '90%', justifyContent: 'center'}, passwordSecondHalf.requirementsText]}>{requirementLabel}</Text>
               <RequirementLength/>
-              <View style={{flex: 0.70, marginHorizontal: '5%', marginBottom: '5%'}}>
+              <View style={{flex: 0.70, marginHorizontal: '5%', marginVertical: '5%'}}>
                 <View style={[{flex: 0.50, width: '90%', flexDirection: 'row', justifyContent: 'center',  alignItems: 'center'}]}>
                   <Requirement name={upperLabel} value={uppercase} func={updateUpperCase}/>
                   <Requirement name={lowerLabel} value={lowercase} func={updateLowerCase}/>

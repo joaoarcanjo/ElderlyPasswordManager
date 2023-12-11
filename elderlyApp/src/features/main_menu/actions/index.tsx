@@ -5,11 +5,6 @@ import { useNavigation } from '@react-navigation/native'
 import type { StackNavigationProp } from '@react-navigation/stack';
 import { stylesButtons } from '../../../assets/styles/main_style';
 
-/* IMPORTS PARA REALIZAR OS TESTES DE DIVERSAS FUNÇÕES */
-//import zxcvbnTest from '../../../src/algorithms/zxcvbn/algorithm';
-//import {secureStoreTest} from '../../../src/keychain/index';
-//import { firebaseTest } from '../../../firebase/firestore/funcionalities';
-
 const credentialsImage = '../images/credenciais.png'
 const generatorImage = '../images/gerador.png'
 const settingsImage = '../images/definições.png'

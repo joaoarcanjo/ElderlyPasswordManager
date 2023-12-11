@@ -14,7 +14,7 @@ const gitHubUrl = 'https://github.com/joaoarcanjo/ThesisApps'
 
 function AccountInfo() {
   return (
-    <View style={{ flex: 0.45, flexDirection: 'row', justifyContent: 'space-around'}}>
+    <View style={{ flex: 0.45, flexDirection: 'row', marginTop: '5%', justifyContent: 'space-around'}}>
       <View style={[{ flex: 1, marginTop:'2%', marginHorizontal: '4%'}, accountInfo.accountInfoContainer]}>
         <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.10, marginTop: '3%', marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: 20}]}>Informação da conta</Text>
         <View style={[{ flex: 0.32, marginTop:'2%', width: '25%', justifyContent: 'center',  alignItems: 'center', marginHorizontal: '4%'}, accountInfo.accountInfo]}>

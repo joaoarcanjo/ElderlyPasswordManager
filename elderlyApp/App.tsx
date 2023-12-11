@@ -19,6 +19,7 @@ import CredencialPage from './src/features/credential_interface/actions';
 import LoginPage from './src/features/login_interface/actions';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from './src/firebase/FirebaseConfig';
+import PermissionsPage from './src/features/permissions_interface/actions';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -31,6 +32,7 @@ export type RootStackParamList = {
   Generator: undefined;
   CredentialPage: { id: string, platform: string, username: string, password: string };
   LoginPage: undefined;
+  Permissions: { platform: string };
 };
 
 const Stack = createNativeStackNavigator()
@@ -61,7 +63,8 @@ function InsideLayout() {
       <InsideStack.Screen name="PasswordHistory" component={PasswordHistory} options={{title: "Password history", headerShown:false}}/>
       <InsideStack.Screen name="FrequentQuestions" component={FrequentQuestions} options={{title: "Frequent Questions", headerShown:false}}/>
       <InsideStack.Screen name="Caregivers" component={Caregivers} options={{title: "Caregivers", headerShown:false}}/>
-      <InsideStack.Screen name="CredentialPage" component={CredencialPage} options={{title: "CredencialPage", headerShown:false}}  />
+      <InsideStack.Screen name="CredentialPage" component={CredencialPage} options={{title: "CredencialPage", headerShown:false}}/>
+      <InsideStack.Screen name="Permissions" component={PermissionsPage} options={{title: "PermissionsPage", headerShown:false}}/>
     </InsideStack.Navigator>
   )
 }

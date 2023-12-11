@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {View, Text, TouchableOpacity, Image, ScrollView} from 'react-native'
 import { stylesAddCredential, styleScroolView } from '../styles/styles'
-import { stylesButtons, stylesMainBox } from '../../../assets/styles/main_style'
+import { stylesButtons } from '../../../assets/styles/main_style'
 import Navbar from '../../../navigation/actions'
 import { listAllElderlyCredencials } from '../../../firebase/firestore/funcionalities'
 import { useNavigation, useIsFocused } from '@react-navigation/native'
@@ -15,7 +15,7 @@ function AddCredencial() {
   const navigation = useNavigation<StackNavigationProp<any>>();
   
   return (
-    <View style= { { flex: 0.10, flexDirection: 'row'} }>
+    <View style= { { flex: 0.10, marginTop: '5%', flexDirection: 'row'} }>
       <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, stylesAddCredential.addCredentialButton, stylesButtons.mainConfig]} onPress={() => {navigation.push('AddCredential')}}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCredential.addCredentialButtonText]}>ADICIONAR CREDENCIAIS</Text>
       </TouchableOpacity>

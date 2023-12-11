@@ -26,6 +26,9 @@ export const darkRedBorder =       '#a31f1f'
 export const copyButtonBackground = yellowBackground
 export const copyButtonBorder = yellowBorder
 
+export const generatorButtonBackgroud = lightBlueBackground
+export const generatorButtonBorder = blueBorder
+
 //MAIN MENU PAGE COLORS
 export const credencialsButtonBackgroud = lightGreenBackgroud
 export const credencialsButtonBorder = darkGreenBorder
@@ -33,8 +36,6 @@ export const credencialsButtonBorder = darkGreenBorder
 export const settingsButtonBackgroud = lightRedBackground
 export const settingsButtonBorder = lightRedBorder
 
-export const generatorButtonBackgroud = lightBlueBackground
-export const generatorButtonBorder = blueBorder
 
 export const questionsButtonBackgroud = yellowBackground
 export const questionsButtonBorder = yellowBorder

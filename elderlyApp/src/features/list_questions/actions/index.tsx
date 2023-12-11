@@ -1,25 +1,14 @@
 import React,{useState} from 'react'
 import {View, Text, TouchableOpacity, Image, ScrollView, StyleSheet} from 'react-native'
-import { stylesMainBox } from '../../../assets/styles/main_style'
 import Navbar from '../../../navigation/actions'
 import { styleScroolView } from '../styles/styles'
+import MainBox from '../../../components/MainBox';
 
 const jsonData = require('./questions.json');
 
-function MainBox() {
+interface Question { response: any, question: any }
 
-  return (
-    <View style= { { flex: 0.15, flexDirection: 'row'} }>
-        <View style={[{flex: 1, margin: '5%', justifyContent: 'center',  alignItems: 'center'}, stylesMainBox.pageInfoContainer]}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesMainBox.pageInfoText]}>FAQs</Text>
-        </View>
-    </View>
-  )
-}
-
-interface question { response: any, question: any }
-
-function ScrollItemExample({question}: Readonly<{question: question}>) {
+function ScrollItemExample({question}: Readonly<{question: Question}>) {
 
   const [showInfo, setShowInfo] = useState(true);
 
@@ -58,9 +47,9 @@ function ScrollItemExample({question}: Readonly<{question: question}>) {
 
 function QuestionsList() {
   return (
-    <View style={{ flex: 0.75, flexDirection: 'row', justifyContent: 'space-around'}}>
-        <ScrollView style={[{margin: '3%'}]}>
-          {jsonData.questions.map((question: question) => <ScrollItemExample key={question.question} question={question}/>)}
+    <View style={{ flex: 0.75, flexDirection: 'row', marginTop: '5%', justifyContent: 'space-around'}}>
+        <ScrollView>
+          {jsonData.questions.map((question: Question) => <ScrollItemExample key={question.question} question={question}/>)}
         </ScrollView>
     </View>
   )
@@ -69,7 +58,7 @@ function QuestionsList() {
 export default function FrequentQuestions() {
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-      <MainBox/>
+      <MainBox text={'FQAs'}/>
       <QuestionsList/>
       <Navbar/>
     </View>
