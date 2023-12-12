@@ -10,12 +10,8 @@ const firestore = firebase.firestore()
 /**
  * Função para alterar a chave que se encontra na cloud.
  */
-async function changeKey() {
-
-    const userId = await getValueFor(elderlyId)
+async function changeKey(userId: string) {
     const key = await getValueFor(firestoreSSSKey)
-
-    console.log('UserId: ', userId)
     firebase.firestore().collection(elderlyCollectionName)
         .doc(userId).update({key: key})
         .catch((error) => {
@@ -27,20 +23,17 @@ async function changeKey() {
 /**
  * Função para obter a chave que se encontra na cloud.
  */
-async function getKey(): Promise<string> {
-
-    const userId = await getValueFor(elderlyId)
-
+async function getKey(userId: string): Promise<string> {
     return firebase.firestore().collection(elderlyCollectionName)
         .doc(userId).get().then((doc) => {
             if(doc.exists) {
                 const data = doc.data()
                 return data!.key
-            }
+            } 
         })
         .catch((error) => {
             //alert('Erro ao tentar obter a chave, tente novamente!')
-            console.log('Error: ', error)
+            //console.log('Error: ', error)
             return ''
         })
 }
@@ -92,12 +85,9 @@ async function elderlyExists(elderlyId: string): Promise<boolean> {
  * @param newCredencialId 
  * @param data 
  */
-async function addCredencial(newCredencialId: string, data: string) {
-
-    const userId = await getValueFor(elderlyId)
-
-    const key = deriveSecret([await getKey(), await getValueFor(elderlySSSKey)])
-
+async function addCredencial(userId: string, newCredencialId: string, data: string) {
+    
+    const key = deriveSecret([await getKey(userId), await getValueFor(elderlySSSKey)])
     const nonce = randomIV()
     const encrypted = encryption(data, key, nonce)
 
@@ -143,13 +133,10 @@ interface Credential {
  * Função para listar as credenciais de determinado utilizador
  * @param userId 
  */
-async function listAllElderlyCredencials(): Promise<Credential[]> {
-
-    const userId = await getValueFor(elderlyId)
-
-    const key = deriveSecret([await getKey(), await getValueFor(elderlySSSKey)])
-
-
+async function listAllElderlyCredencials(userId: string): Promise<Credential[]> {
+    console.log(userId)
+    const key = deriveSecret([await getKey(userId), await getValueFor(elderlySSSKey)])
+    console.log(key)
     return firestore.collection(elderlyCollectionName).doc(userId).collection(credencialsCollectionName).get().then((docs) => {
         const values: Credential[] = []
         docs.forEach((doc) => { 
@@ -174,9 +161,7 @@ async function listAllElderlyCredencials(): Promise<Credential[]> {
  * @param userId 
  * @param credencialId 
  */
-async function listCredencialProperties(credencialId: string) {
-
-    const userId = await getValueFor(elderlyId)
+async function listCredencialProperties(userId: string, credencialId: string) {
 
     firestore.collection(elderlyCollectionName)
         .doc(userId).collection(credencialsCollectionName)
@@ -193,9 +178,7 @@ async function listCredencialProperties(credencialId: string) {
  * Função para apagar uma credencial específica
  * @param credentialId 
  */
-async function deleteCredential(credentialId: string) {
-    
-    const userId = await getValueFor(elderlyId)
+async function deleteCredential(userId: string, credentialId: string) {
 
     firestore.collection(elderlyCollectionName)
         .doc(userId)
@@ -208,10 +191,9 @@ async function deleteCredential(credentialId: string) {
         })
 }
 
-async function updateCredential(credencialId: string, data: string): Promise<boolean> {
-    const userId = await getValueFor(elderlyId)
+async function updateCredential(userId: string, credencialId: string, data: string): Promise<boolean> {
 
-    const key = deriveSecret([await getKey(), await getValueFor(elderlySSSKey)])
+    const key = deriveSecret([await getKey(userId), await getValueFor(elderlySSSKey)])
 
     const nonce = randomIV()
     const encrypted = encryption(data, key, nonce)
@@ -230,13 +212,10 @@ async function updateCredential(credencialId: string, data: string): Promise<boo
         }).then(() => { return true })
 }
 
-async function initFirestore(): Promise<boolean> {
-
-    const id = await getValueFor(elderlyId)
-
-    return elderlyExists(id).then((result) => {
+async function initFirestore(userId: string): Promise<boolean> {
+    return elderlyExists(userId).then((result) => {
         if (!result) { //se não existir
-            createElderly(id)
+            createElderly(userId)
             console.log('Elderly created sucessfully!!')
         }
         return true

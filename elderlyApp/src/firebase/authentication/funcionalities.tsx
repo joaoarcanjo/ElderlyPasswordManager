@@ -15,7 +15,6 @@ async function signInOperation(email: string, pwd: string): Promise<boolean> {
             save(elderlyPwd, pwd)
             save(elderlyEmail, email)
             return true
-            //navigation.push('Home')
         }
     } catch (error) {
         alert('Registation failed: ' + error)

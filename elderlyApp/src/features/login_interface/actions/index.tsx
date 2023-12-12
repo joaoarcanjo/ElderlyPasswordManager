@@ -10,6 +10,7 @@ import { whiteBackgroud } from "../../../assets/styles/colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { stylesButtons } from "../../../assets/styles/main_style";
 import { Spinner } from "../../../components/Spinner";
+import { useLogin } from "./session";
 
 const LoginPage = () => {
 
@@ -20,7 +21,8 @@ const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false); 
 
     const navigation = useNavigation<StackNavigationProp<any>>()
-    const toggleShowPassword = () => {setShowPassword(!showPassword);};
+    const toggleShowPassword = () => {setShowPassword(!showPassword);}
+    const { setUserEmail, setUserPhone, setUserName } = useLogin()
 
     useEffect(() => {
         setLoadingPersistent(true)
@@ -32,9 +34,14 @@ const LoginPage = () => {
         const emailSaved = await getValueFor(elderlyEmail)
 
         if(emailSaved != '' && pwdSaved != '') {
-            signInOperation(emailSaved, pwdSaved).then((flag) => {
-                if(flag) {
+            signInOperation(emailSaved, pwdSaved).then((loginResult) => {
+                if(loginResult) {
                     setLoadingPersistent(false)
+                    setUserEmail(emailSaved)
+
+                    setUserPhone("965536775") //TODO: Para tirar daqui
+                    setUserName("João Arc.") //TODO: Para tirar daqui
+
                     navigation.push('Home')
                 }
             })
@@ -45,9 +52,9 @@ const LoginPage = () => {
 
     const signIn = async () => {
         setLoading(true)
-        signInOperation(email, password).then((flag) => {
+        signInOperation(email, password).then((loginResult) => {
             setLoading(false)
-            if(flag) {
+            if(loginResult) {
                 navigation.push('Home')
             }
         })

@@ -9,6 +9,7 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import {FlashMessage, copyValue} from '../../../components/ShowFlashMessage'
 import MainBox from '../../../components/MainBox'
 import { Spinner } from '../../../components/Spinner'
+import { useLogin } from '../../login_interface/actions/session'
 
 function AddCredencial() {
 
@@ -68,14 +69,15 @@ interface Credential {
 
 function CredentialsList() {
 
-  const [credencials, setCredencials] = useState<Credential[]>([]);
-  const isFocused = useIsFocused();
+  const [credencials, setCredencials] = useState<Credential[]>([])
+  const isFocused = useIsFocused()
+  const { userId } = useLogin()
 
-  const [isFething, setIsFething] = useState(true);
+  const [isFething, setIsFething] = useState(true)
 
   useEffect(() => {
     setIsFething(true)
-    listAllElderlyCredencials().then((credencials) => {
+    listAllElderlyCredencials(userId).then((credencials) => {
       let auxCredencials: Credential[] = [];
       credencials.forEach(value => {
         if(value.data.length != 0) {

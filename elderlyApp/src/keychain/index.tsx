@@ -40,10 +40,11 @@ async function cleanKeychain() {
  * @param userId 
  * @returns 
  */
-async function initKeychain(userId: string): Promise<boolean> {
+async function initKeychain(userId: string, userEmail: string): Promise<boolean> {
   if(await getValueFor(elderlyId) == '') {
     await cleanKeychain().then(() => {
       save(elderlyId, userId)
+      save(elderlyEmail, userEmail)
     })
   }
   if(await getValueFor(localDBKey) == '') {

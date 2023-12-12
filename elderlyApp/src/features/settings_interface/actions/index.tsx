@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {View, Text, TouchableOpacity, Image, Linking} from 'react-native'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import Navbar from '../../../navigation/actions'
@@ -9,10 +9,14 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import { FIREBASE_AUTH } from '../../../firebase/FirebaseConfig'
 import { elderlyEmail, elderlyPwd } from '../../../keychain/constants'
 import { save } from '../../../keychain'
+import { useLogin } from '../../login_interface/actions/session'
 
 const gitHubUrl = 'https://github.com/joaoarcanjo/ThesisApps'
 
 function AccountInfo() {
+  
+  const { userEmail, userPhone } = useLogin()
+
   return (
     <View style={{ flex: 0.45, flexDirection: 'row', marginTop: '5%', justifyContent: 'space-around'}}>
       <View style={[{ flex: 1, marginTop:'2%', marginHorizontal: '4%'}, accountInfo.accountInfoContainer]}>
@@ -21,11 +25,11 @@ function AccountInfo() {
           <Image source={require('../../../assets/images/elderly.png')} style={[{height: '80%', margin: '2%', resizeMode: 'contain'}]}/>
         </View>
         <View style={[{ flex: 0.20, marginTop:'2%', flexDirection: 'row', justifyContent: 'center',  alignItems: 'center', marginHorizontal: '4%'}, accountInfo.accountInfo]}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.8, marginLeft: '7%'}, accountInfo.accountInfoText]}>+351 965537775</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.8, marginLeft: '7%'}, accountInfo.accountInfoText]}>{userPhone}</Text>
           <Image source={require('../images/telephone.png')} style={[{flex: 0.2, height: '80%', marginRight: '5%', resizeMode: 'contain'}]}/>
         </View>
         <View style={[{ flex: 0.20, marginTop:'2%', flexDirection: 'row', justifyContent: 'center',  alignItems: 'center', marginHorizontal: '4%'}, accountInfo.accountInfo]}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.8, marginLeft: '7%'}, accountInfo.accountInfoText]}>joaopedro.arcanjo@hotmail.com</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.8, marginLeft: '7%'}, accountInfo.accountInfoText]}>{userEmail}</Text>
           <Image source={require('../images/email.png')} style={[{flex: 0.2, height: '80%', marginRight: '5%', resizeMode: 'contain'}]}/>
         </View>
         <TouchableOpacity style={[{flex: 0.17, margin: '2%', width: '45%'}, accountInfo.editButton, stylesButtons.mainConfig]}>
@@ -54,8 +58,6 @@ function AppInfo() {
 }
 
 function Logout() {
-  
-  const navigation = useNavigation<StackNavigationProp<any>>()
   
   const signOut = () => {
     save(elderlyEmail, '')

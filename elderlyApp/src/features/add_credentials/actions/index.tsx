@@ -14,6 +14,7 @@ import AvaliationEmoji from "../../../components/EmojiAvaliation";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { getNewId } from "../../../algorithms/0thers/cryptoOperations";
+import { useLogin } from "../../login_interface/actions/session";
 
 const placeholderPlatform = 'Insira a plataforma'
 const placeholderUsername = 'Insira o seu username'
@@ -21,18 +22,19 @@ const placeholderPassword = "Insira a password"
 
 function CredentialsInput() {
 
-    const [platform, setPlatform] = useState('');
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [platform, setPlatform] = useState('')
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
     const [avaliation, setAvaliation] = useState<number>(0)
 
-    const [showPassword, setShowPassword] = useState(false); 
-    const navigation = useNavigation<StackNavigationProp<any>>();
+    const [showPassword, setShowPassword] = useState(false)
+    const navigation = useNavigation<StackNavigationProp<any>>()
+    const { userId } = useLogin()
   
     const handleSave = () => {
         if(platform != '' && username != '' && password != '') {
             const uuid = getNewId()
-            addCredencial(uuid, JSON.stringify({platform: platform, username: username, password: password}))
+            addCredencial(userId, uuid, JSON.stringify({platform: platform, username: username, password: password}))
             navigation.goBack()
         }
     }

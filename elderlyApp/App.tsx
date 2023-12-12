@@ -20,19 +20,20 @@ import LoginPage from './src/features/login_interface/actions';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from './src/firebase/FirebaseConfig';
 import PermissionsPage from './src/features/permissions_interface/actions';
+import { LoginProvider, useLogin } from './src/features/login_interface/actions/session';
 
 export type RootStackParamList = {
-  Home: undefined;
-  Credentials: undefined;
-  AddCredential: undefined;
-  Settings: undefined;
-  PasswordHistory: undefined;
-  FrequentQuestions: undefined;
-  Caregivers: undefined;
-  Generator: undefined;
-  CredentialPage: { id: string, platform: string, username: string, password: string };
-  LoginPage: undefined;
-  Permissions: { platform: string };
+  Home: undefined
+  Credentials: undefined
+  AddCredential: undefined
+  Settings: undefined
+  PasswordHistory: undefined
+  FrequentQuestions: undefined
+  Caregivers: undefined
+  Generator: undefined
+  CredentialPage: { id: string, platform: string, username: string, password: string }
+  LoginPage: undefined
+  Permissions: { platform: string }
 };
 
 const Stack = createNativeStackNavigator()
@@ -41,6 +42,7 @@ const InsideStack = createNativeStackNavigator<RootStackParamList>()
 const im_testing = false
 
 function InsideLayout() {
+  const { userId } = useLogin()
   
   useEffect(() => {
     if(im_testing) {
@@ -48,8 +50,8 @@ function InsideLayout() {
     } else {
       initSSS()
       .then(() => initDb())
-      .then(() => initFirestore())
-      .then(() => changeKey())
+      .then(() => initFirestore(userId))
+      .then(() => changeKey(userId))
     }
   }, [])
 
@@ -69,30 +71,44 @@ function InsideLayout() {
   )
 }
 
-export default function App() {
+function Inicialization() {
 
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(null)
+  const { setUserId, setUserEmail, userId } = useLogin()
 
   useEffect(() => {
-      onAuthStateChanged(FIREBASE_AUTH, (user) =>{
-        setUser(user)
-        if(user != null) {
-          initKeychain(user.uid)
-        }
+    onAuthStateChanged(FIREBASE_AUTH, (user) =>{
+      if(userId) setUser(user)
+      else if(user != null && user.email) {
+        initKeychain(user.uid, user.email)
+        setUserId(user.uid)
+        setUserEmail(user.email)
+      }
     })
-  }, [user])
+  }, [user, userId])
 
   return (
-    <NavigationContainer>
-      <View style={{flex: 0.06}}/>
-      <Stack.Navigator initialRouteName="LoginPage">
-        {user != null ? 
-        <Stack.Screen name="Inside" component={InsideLayout} options={{title: "Inside", headerShown:false}}  />
-        :
-        <Stack.Screen name="LoginPage" component={LoginPage} options={{title: "LoginPage", headerShown:false}}  />
-        }
-      </Stack.Navigator>
-      <FlashMessage/>
-    </NavigationContainer>
+      <NavigationContainer>
+        <View style={{flex: 0.06}}/>
+        <Stack.Navigator initialRouteName="LoginPage">
+          {user != null ? 
+          <Stack.Screen name="Inside" component={InsideLayout} options={{title: "Inside", headerShown:false}}  />
+          :
+          <>
+            <Stack.Screen name="LoginPage" component={LoginPage} options={{title: "LoginPage", headerShown:false}}/>
+          </>
+          }
+        </Stack.Navigator>
+        <FlashMessage/>
+      </NavigationContainer>
   );
+}
+
+export default function App() {
+
+  return (
+    <LoginProvider>
+      <Inicialization/>
+    </LoginProvider>
+  )
 }

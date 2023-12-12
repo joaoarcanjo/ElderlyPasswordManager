@@ -4,6 +4,7 @@ import React from 'react'
 import { useNavigation } from '@react-navigation/native'
 import type { StackNavigationProp } from '@react-navigation/stack';
 import { stylesButtons } from '../../../assets/styles/main_style';
+import { useLogin } from '../../login_interface/actions/session';
 
 const credentialsImage = '../images/credenciais.png'
 const generatorImage = '../images/gerador.png'
@@ -13,6 +14,9 @@ const elderlyImage = '../../../assets/images/elderly.png'
 
 
 function ElderlyInfoBox() {
+
+    const { userName } = useLogin()
+
     return (
         <View style={[{ flex: 0.6, width: '85%', flexDirection: 'row', justifyContent: 'space-around' }, stylesFirstHalf.elderContainer]}>
             <View style={{flex: 0.55}}>
@@ -20,7 +24,7 @@ function ElderlyInfoBox() {
                     <Text numberOfLines={1} adjustsFontSizeToFit style={{fontSize: 25, fontWeight: 'bold', marginLeft: '10%'}}>Olá,</Text>
                 </View>
                 <View style={{flex: 0.50, marginLeft: '10%'}}>
-                    <Text numberOfLines={1} adjustsFontSizeToFit  style={{fontSize: 35, fontWeight: 'bold'}}>Manuel A.</Text>
+                    <Text numberOfLines={1} adjustsFontSizeToFit  style={{fontSize: 35, fontWeight: 'bold'}}>{userName}</Text>
                 </View>
             </View>
             <View style={{flex: 0.45, justifyContent: 'center', alignItems: 'center'}}>

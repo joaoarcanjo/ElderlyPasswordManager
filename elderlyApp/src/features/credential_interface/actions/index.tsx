@@ -14,6 +14,7 @@ import { deleteCredential, updateCredential } from '../../../firebase/firestore/
 import { YesOrNoModal } from '../../../components/Modal'
 import { Spinner } from '../../../components/Spinner'
 import Algorithm from '../../password_generator/actions/algorithm'
+import { useLogin } from '../../login_interface/actions/session'
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
@@ -34,9 +35,11 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
   const navigation = useNavigation<StackNavigationProp<any>>()
 
   useEffect(() => setAvaliation(getScore(passwordEdited)), [passwordEdited])
+  const { userId } = useLogin()
+
   const toggleShowPassword = () => {setShowPassword(!showPassword);}
 
-  const [editFlag, setEditFlag] = useState(true); 
+  const [editFlag, setEditFlag] = useState(true)
   const toggleEditFlag = () => {setEditFlag(!editFlag)}
 
   const inputStyle = editFlag ? credentials.credentialInputContainer : credentials.credentialInputContainerV2
@@ -50,7 +53,7 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
   function saveCredentialUpdate() {
     if(credentialsModified) {
       setLoading(true)
-      updateCredential(id, JSON.stringify({platform: platform, username: usernameEdited, password: passwordEdited}))
+      updateCredential(userId, id, JSON.stringify({platform: platform, username: usernameEdited, password: passwordEdited}))
       .then((updated) => {
         toggleEditFlag()
         if(updated) {
@@ -200,12 +203,13 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
  */
 function DeleteCredential({id}: Readonly<{id: string}>) {
   
-  const navigation = useNavigation<StackNavigationProp<any>>();
-  const [modalVisible, setModalVisible] = useState(false);
+  const navigation = useNavigation<StackNavigationProp<any>>()
+  const [modalVisible, setModalVisible] = useState(false)
+  const { userId } = useLogin()
 
   const deleteCredentialAction = () => {
     navigation.goBack()
-    deleteCredential(id)
+    deleteCredential(userId, id)
   }
 
   return (
