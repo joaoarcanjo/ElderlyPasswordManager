@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { View, TextInput, Image, Text, TouchableOpacity } from "react-native"
+import { View, TextInput, Image, Text, TouchableOpacity, StyleSheet } from "react-native"
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { signInOperation, signUpOperation } from "../../../firebase/authentication/funcionalities";
@@ -11,6 +11,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { stylesButtons } from "../../../assets/styles/main_style";
 import { Spinner } from "../../../components/Spinner";
 import { useLogin } from "./session";
+import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
 
 const LoginPage = () => {
 
@@ -42,7 +43,7 @@ const LoginPage = () => {
                     setUserPhone("965536775") //TODO: Para tirar daqui
                     setUserName("João Arc.") //TODO: Para tirar daqui
 
-                    navigation.push('Home')
+                    navigation.navigate('Home')
                 }
             })
         } else {
@@ -52,12 +53,20 @@ const LoginPage = () => {
 
     const signIn = async () => {
         setLoading(true)
-        signInOperation(email, password).then((loginResult) => {
+
+        const emailSaved = await getValueFor(elderlyEmail)
+
+        if (emailSaved != '' && email != emailSaved) {
+            console.log("Email inválido")
             setLoading(false)
-            if(loginResult) {
-                navigation.push('Home')
-            }
-        })
+        } else {
+            signInOperation(email, password).then((loginResult) => {
+                setLoading(false)
+                if(loginResult) {
+                    navigation.push('Home')
+                }
+            })
+        }
     }
 
     const signUp = async () => {
@@ -70,16 +79,16 @@ const LoginPage = () => {
         })
     }
 
-    return (
-        <View style={[styles.container]}>
-
-            { loadingPersistent ? 
-                <View style={{alignItems: 'center',justifyContent: 'center'}}>
+    return (        
+            <>
+                { loadingPersistent ? 
+                <View style={[{flex: 1, alignItems: 'center',justifyContent: 'center'}, styles.container]}>
                     <Image source={require('../../../assets/images/spinner6.gif')} style={[{width: 300, height: 300, resizeMode: 'contain'}]}/>
                 </View>
                 :
-                <>
-                    <View style={{flex: 0.20, alignItems: 'center', justifyContent: 'center'}}>
+                <KeyboardAvoidingWrapper >
+                    <View style={[{flex: 1}, styles.container]}>
+                    <View style={{flex: 0.20, alignItems: 'center', justifyContent: 'center', marginTop: '10%'}}>
                         <Text style={{fontSize: 50}}>
                             ElderAPP
                         </Text>
@@ -118,19 +127,21 @@ const LoginPage = () => {
                         { loading ? 
                         <Spinner/> : 
                             <>
-                            <TouchableOpacity style={[{flex: 0.6, width: '80%', marginBottom: '25%', marginHorizontal: '10%'}, stylesButtons.mainConfig, stylesButtons.copyButton, actions.signInButton]} onPress={signIn}>
-                                <Text style={{fontSize: 30}}>Entrar</Text>
+                            <TouchableOpacity style={[{flex: 0.6, width: '80%', marginBottom: '15%', margin: '10%'}, stylesButtons.mainConfig, stylesButtons.copyButton, actions.signInButton]} onPress={signIn}>
+                                <Text style={{fontSize: 30, marginVertical: '5%'}}>Entrar</Text>
                             </TouchableOpacity>
-                            <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginLeft: '10%', marginBottom: '2%', justifyContent: 'center', fontSize: 20}]}>Ainda não tem conta?</Text>
+                            <View style={{ borderBottomColor: 'black', borderBottomWidth: StyleSheet.hairlineWidth, margin: '3%' }}/>
+                            <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginLeft: '10%', marginBottom: '2%', marginTop: '10%', justifyContent: 'center', fontSize: 20}]}>Ainda não tem conta?</Text>
                             <TouchableOpacity style={[{flex: 0.4, width: '80%', marginBottom: '10%', marginHorizontal: '10%'}, stylesButtons.mainConfig, stylesButtons.copyButton, actions.sinUpButton]} onPress={signUp}>
-                                <Text style={{fontSize: 30}}>Criar uma conta</Text>
+                                <Text style={{fontSize: 30, marginVertical: '5%'}}>Criar uma conta</Text>
                             </TouchableOpacity>
                             </>
                         }
                     </View>
-                </>
+                    </View>
+                </KeyboardAvoidingWrapper>
             }
-        </View>
+            </>
     )
 }
 

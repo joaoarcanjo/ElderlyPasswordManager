@@ -96,6 +96,7 @@ function Inicialization() {
           :
           <>
             <Stack.Screen name="LoginPage" component={LoginPage} options={{title: "LoginPage", headerShown:false}}/>
+            <InsideStack.Screen name="Home" component={MainMenu} options={{title: "Home", headerShown:false}}/>
           </>
           }
         </Stack.Navigator>

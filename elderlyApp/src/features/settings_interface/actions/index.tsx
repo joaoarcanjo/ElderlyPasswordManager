@@ -60,7 +60,7 @@ function AppInfo() {
 function Logout() {
   
   const signOut = () => {
-    save(elderlyEmail, '')
+    //save(elderlyEmail, '')
     save(elderlyPwd, '')
     FIREBASE_AUTH.signOut()
   }
