@@ -47,6 +47,9 @@ const LoginPage = () => {
                 }
             })
         } else {
+            if(emailSaved != '') {
+                setEmail(emailSaved)
+            }
             setLoadingPersistent(false)
         }
     }
@@ -96,15 +99,21 @@ const LoginPage = () => {
                     <View style={{flex: 0.4}}>
                         <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginTop: '3%', marginLeft: '5%', justifyContent: 'center', fontSize: 20}]}>EMAIL</Text>
                         <View style={[{margin: '4%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 2, backgroundColor: whiteBackgroud }]}>
-                            <TextInput
-                            placeholder="Email"
-                            value={email}
-                            autoFocus={true} 
-                            autoCapitalize="none"
-                            style={{ flex: 1, fontSize: 18, padding: '3%', marginHorizontal: '5%', marginVertical: '2%' }}
-                            onChangeText={setEmail}
-                            />
-                        </View>
+                            {email != '' ? 
+                                <Text style={{ flex: 1, fontSize: 18, padding: '3%', marginHorizontal: '5%', marginVertical: '2%' }}>
+                                    {email}
+                                </Text>
+                                : 
+                                <TextInput
+                                placeholder="Email"
+                                value={email}
+                                autoFocus={true} 
+                                autoCapitalize="none"
+                                style={{ flex: 1, fontSize: 18, padding: '3%', marginHorizontal: '5%', marginVertical: '2%' }}
+                                onChangeText={setEmail}
+                                />
+                            }
+                        </View> 
                         <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginTop: '3%', marginLeft: '5%', justifyContent: 'center', fontSize: 20}]}>PASSWORD</Text>
                         <View style={[{marginTop: '4%', marginHorizontal: '4%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 2, backgroundColor: whiteBackgroud }]}>
                             <TextInput
