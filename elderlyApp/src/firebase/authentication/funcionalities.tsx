@@ -2,7 +2,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "fire
 import { getValueFor, save } from "../../keychain"
 import { elderlyEmail, elderlyPwd } from "../../keychain/constants"
 import { FIREBASE_AUTH } from "../FirebaseConfig"
-
+import { signinErrorResult, signupErrorResult } from "../FirebaseErrors"
 async function signInOperation(email: string, pwd: string): Promise<boolean> {
     try {
         const emailAux = await getValueFor(elderlyEmail)
@@ -17,7 +17,7 @@ async function signInOperation(email: string, pwd: string): Promise<boolean> {
             return true
         }
     } catch (error) {
-        alert('Registation failed: ' + error)
+        signinErrorResult(error)
         return false
     } 
 }
@@ -29,7 +29,7 @@ async function signUpOperation(email: string, pwd: string): Promise<boolean> {
         save(elderlyEmail, email)
         return true
     } catch (error) {
-        alert('Registation failed: ' + error)
+        signupErrorResult(error)
         return false
     } 
 }

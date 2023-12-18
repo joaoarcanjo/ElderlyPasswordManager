@@ -43,7 +43,7 @@ function CaregiverItemNotIncluded() {
     <View style={[{flex: 0.5, margin: '3%', justifyContent: 'center', alignItems: 'center'}]}>
       <View style= { { flex: 0.35, flexDirection: 'row', justifyContent: 'space-around'} }>
         <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, stylesAddCaregiver.button, stylesButtons.mainConfig]}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCaregiver.buttonText]}>VINCULAR CUIDADOR</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCaregiver.buttonText]}>VINCULAR CUIDADOR 2</Text>
         </TouchableOpacity>
       </View>
     </View>

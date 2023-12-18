@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { View, TextInput, Image, Text, TouchableOpacity, StyleSheet } from "react-native"
+import { View, TextInput, Image, Text, TouchableOpacity, StyleSheet, Alert } from "react-native"
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { signInOperation, signUpOperation } from "../../../firebase/authentication/funcionalities";
@@ -40,9 +40,8 @@ const LoginPage = () => {
                     setLoadingPersistent(false)
                     setUserEmail(emailSaved)
 
-                    setUserPhone("965536775") //TODO: Para tirar daqui
-                    setUserName("João Arc.") //TODO: Para tirar daqui
-
+                    setUserPhone("966666666") //TODO: Para tirar daqui
+                    setUserName("User name") //TODO: Para tirar daqui
                     navigation.navigate('Home')
                 }
             })
@@ -66,17 +65,19 @@ const LoginPage = () => {
             signInOperation(email, password).then((loginResult) => {
                 setLoading(false)
                 if(loginResult) {
+                    setUserPhone("966666666") //TODO: Para tirar daqui
+                    setUserName("User name") //TODO: Para tirar daqui
                     navigation.push('Home')
-                }
+                } 
             })
         }
     }
 
     const signUp = async () => {
         setLoading(true)
-        signUpOperation(email, password).then((flag) => {
+        signUpOperation(email, password).then((loginResult) => {
             setLoading(false)
-            if(flag) {
+            if(loginResult) {
                 navigation.push('Home')
             }
         })
@@ -99,20 +100,14 @@ const LoginPage = () => {
                     <View style={{flex: 0.4}}>
                         <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginTop: '3%', marginLeft: '5%', justifyContent: 'center', fontSize: 20}]}>EMAIL</Text>
                         <View style={[{margin: '4%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 2, backgroundColor: whiteBackgroud }]}>
-                            {email != '' ? 
-                                <Text style={{ flex: 1, fontSize: 18, padding: '3%', marginHorizontal: '5%', marginVertical: '2%' }}>
-                                    {email}
-                                </Text>
-                                : 
-                                <TextInput
-                                placeholder="Email"
-                                value={email}
-                                autoFocus={true} 
-                                autoCapitalize="none"
-                                style={{ flex: 1, fontSize: 18, padding: '3%', marginHorizontal: '5%', marginVertical: '2%' }}
-                                onChangeText={setEmail}
-                                />
-                            }
+                            <TextInput
+                            placeholder="Email"
+                            value={email}
+                            autoFocus={true} 
+                            autoCapitalize="none"
+                            style={{ flex: 1, fontSize: 18, padding: '3%', marginHorizontal: '5%', marginVertical: '2%' }}
+                            onChangeText={setEmail}
+                            />
                         </View> 
                         <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginTop: '3%', marginLeft: '5%', justifyContent: 'center', fontSize: 20}]}>PASSWORD</Text>
                         <View style={[{marginTop: '4%', marginHorizontal: '4%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 2, backgroundColor: whiteBackgroud }]}>
