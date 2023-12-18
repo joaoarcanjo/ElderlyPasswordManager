@@ -3,7 +3,7 @@ import * as Crypto from 'expo-crypto'
 import { Password } from './types';
 import { decryption, encryption, randomIV, wordArrayToString } from '../algorithms/0thers/cryptoOperations';
 import { getValueFor } from '../keychain';
-import { localDBKey } from '../keychain/constants';
+import { elderlyId, localDBKey } from '../keychain/constants';
 
 export let db: SQLite.SQLiteDatabase | null = null;
 
@@ -48,7 +48,9 @@ export const savePasswordGenerated = async (password: string) => {
     deleteGenerated()
 
     const nonce = randomIV()
-    const localKey = await getValueFor(localDBKey)
+
+    const id = await getValueFor(elderlyId)
+    const localKey = await getValueFor(localDBKey(id))
     const encrypted = encryption(password, localKey, nonce)
 
     if(db != null) {
@@ -75,7 +77,8 @@ export const getPasswords = () => {
 export const realizarConsulta = (): Promise<Password[]> => {
     return new Promise(async (resolve, reject) => {
         const sql = 'SELECT id, password, iv, timestamp FROM passwords ORDER BY timestamp DESC LIMIT 10';
-        const localKey =  await getValueFor(localDBKey)
+        const id = await getValueFor(elderlyId)
+        const localKey =  await getValueFor(localDBKey(id))
 
         const data: Password[] = [];
         try {

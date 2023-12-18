@@ -1,7 +1,7 @@
 import { HEX_ENCODING } from "./algorithm/constants";
 import * as Crypto from 'expo-crypto';
 import { getValueFor, save } from './../../keychain/index'
-import { caregiver1SSSKey, caregiver2SSSKey, elderlySSSKey, firestoreSSSKey } from "../../keychain/constants";
+import { caregiver1SSSKey, caregiver2SSSKey, elderlyId, elderlySSSKey, firestoreSSSKey } from "../../keychain/constants";
 
 const { split } = require('./algorithm/split')
 const { combine } = require('./algorithm/combine')
@@ -39,7 +39,9 @@ function deriveSecret(shares: string[]): string {
  * @returns 
  */
 async function initSSS() {
-    if(await getValueFor(elderlySSSKey) != '') return;
+    const id = await getValueFor(elderlyId)
+    
+    if(await getValueFor(elderlySSSKey(id)) != '') return;
     const key = Crypto.getRandomBytes(32)
     const shares = generateShares(String.fromCharCode.apply(null, Array.from(key)), 4, 2)
 
@@ -48,10 +50,10 @@ async function initSSS() {
     console.log('Caregiver 2 key: ', shares[2])
     console.log('Firestore key: ', shares[3], '\n\n')
 
-    save(elderlySSSKey, shares[0])
-    save(caregiver1SSSKey, shares[1])
-    save(caregiver2SSSKey, shares[2])
-    save(firestoreSSSKey, shares[3])
+    save(elderlySSSKey(id), shares[0])
+    save(caregiver1SSSKey(id), shares[1])
+    save(caregiver2SSSKey(id), shares[2])
+    save(firestoreSSSKey(id), shares[3])
 }
 
 export { generateShares, deriveSecret, initSSS }

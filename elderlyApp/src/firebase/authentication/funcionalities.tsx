@@ -3,13 +3,14 @@ import { getValueFor, save } from "../../keychain"
 import { elderlyEmail, elderlyPwd } from "../../keychain/constants"
 import { FIREBASE_AUTH } from "../FirebaseConfig"
 import { signinErrorResult, signupErrorResult } from "../FirebaseErrors"
+
 async function signInOperation(email: string, pwd: string): Promise<boolean> {
     try {
         const emailAux = await getValueFor(elderlyEmail)
-        if(email != emailAux && emailAux != '') {
+        /*if(email != emailAux && emailAux != '') {
             alert('Registation failed: invalid user.')
             return false
-        } else {
+        } else*/ {
             //await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
             await signInWithEmailAndPassword(FIREBASE_AUTH, email, pwd)
             save(elderlyPwd, pwd)

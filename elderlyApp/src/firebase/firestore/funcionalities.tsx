@@ -11,7 +11,8 @@ const firestore = firebase.firestore()
  * Função para alterar a chave que se encontra na cloud.
  */
 async function changeKey(userId: string) {
-    const key = await getValueFor(firestoreSSSKey)
+    const id = await getValueFor(elderlyId)
+    const key = await getValueFor(firestoreSSSKey(id))
     firebase.firestore().collection(elderlyCollectionName)
         .doc(userId).update({key: key})
         .catch((error) => {
@@ -87,7 +88,8 @@ async function elderlyExists(elderlyId: string): Promise<boolean> {
  */
 async function addCredencial(userId: string, newCredencialId: string, data: string) {
     
-    const key = deriveSecret([await getKey(userId), await getValueFor(elderlySSSKey)])
+    const id = await getValueFor(elderlyId)
+    const key = deriveSecret([await getKey(userId), await getValueFor(elderlySSSKey(id))])
     const nonce = randomIV()
     const encrypted = encryption(data, key, nonce)
 
@@ -135,7 +137,8 @@ interface Credential {
  */
 async function listAllElderlyCredencials(userId: string): Promise<Credential[]> {
     console.log(userId)
-    const key = deriveSecret([await getKey(userId), await getValueFor(elderlySSSKey)])
+    const id = await getValueFor(elderlyId)
+    const key = deriveSecret([await getKey(userId), await getValueFor(elderlySSSKey(id))])
     console.log(key)
     return firestore.collection(elderlyCollectionName).doc(userId).collection(credencialsCollectionName).get().then((docs) => {
         const values: Credential[] = []
@@ -193,7 +196,8 @@ async function deleteCredential(userId: string, credentialId: string) {
 
 async function updateCredential(userId: string, credencialId: string, data: string): Promise<boolean> {
 
-    const key = deriveSecret([await getKey(userId), await getValueFor(elderlySSSKey)])
+    const id = await getValueFor(elderlyId)
+    const key = deriveSecret([await getKey(userId), await getValueFor(elderlySSSKey(id))])
 
     const nonce = randomIV()
     const encrypted = encryption(data, key, nonce)

@@ -58,19 +58,14 @@ const LoginPage = () => {
 
         const emailSaved = await getValueFor(elderlyEmail)
 
-        if (emailSaved != '' && email != emailSaved) {
-            console.log("Email inválido")
+        signInOperation(email, password).then((loginResult) => {
             setLoading(false)
-        } else {
-            signInOperation(email, password).then((loginResult) => {
-                setLoading(false)
-                if(loginResult) {
-                    setUserPhone("966666666") //TODO: Para tirar daqui
-                    setUserName("User name") //TODO: Para tirar daqui
-                    navigation.push('Home')
-                } 
-            })
-        }
+            if(loginResult) {
+                setUserPhone("966666666") //TODO: Para tirar daqui
+                setUserName("User name") //TODO: Para tirar daqui
+                navigation.push('Home')
+            } 
+        })
     }
 
     const signUp = async () => {
