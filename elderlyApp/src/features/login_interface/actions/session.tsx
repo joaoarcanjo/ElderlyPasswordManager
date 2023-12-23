@@ -10,10 +10,12 @@ interface LoginContextProps {
     userName: string
     userPhone: string
     userId: string
+    userShared: string
     setUserPhone: (payload: string) => void
     setUserEmail: (payload: string) => void
     setUserName: (payload: string) => void
     setUserId: (payload: string) => void
+    setShared: (payload: string) => void
   } | undefined>(undefined);
   
   const LoginProvider: React.FC<LoginContextProps> = ({ children }) => {
@@ -22,9 +24,10 @@ interface LoginContextProps {
     const [userPhone, setUserPhone] = useState('')
     const [userName, setUserName] = useState('')
     const [userId, setUserId] = useState('')
+    const [userShared, setShared] = useState('')
   
     return (
-      <LoginContext.Provider value={{ userEmail, userName, userPhone, userId, setUserPhone, setUserEmail, setUserName, setUserId }}>
+      <LoginContext.Provider value={{ userEmail, userName, userPhone, userId, userShared, setUserPhone, setUserEmail, setUserName, setUserId, setShared }}>
         {children}
       </LoginContext.Provider>
     );

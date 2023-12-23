@@ -29,12 +29,12 @@ function CredentialsInput() {
 
     const [showPassword, setShowPassword] = useState(false)
     const navigation = useNavigation<StackNavigationProp<any>>()
-    const { userId } = useLogin()
+    const { userId, userShared } = useLogin()
   
     const handleSave = () => {
         if(platform != '' && username != '' && password != '') {
             const uuid = getNewId()
-            addCredencial(userId, uuid, JSON.stringify({platform: platform, username: username, password: password}))
+            addCredencial(userId, userShared, uuid, JSON.stringify({platform: platform, username: username, password: password}))
             navigation.goBack()
         }
     }

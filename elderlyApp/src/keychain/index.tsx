@@ -8,7 +8,8 @@ import * as Crypto from 'expo-crypto';
  * @param value 
  */
 async function save(key: string, value: string) {
-  await SecureStore.setItemAsync(key, value);
+  console.log(key + value)
+  await SecureStore.setItemAsync(key, value)
 }
 
 /**
@@ -26,8 +27,8 @@ async function getValueFor(key: string): Promise<string> {
  * Função para apagar todos os valores armazenados na keychain do dispositivo.
  * Apenas utilizado para debug, para limpar tudo.
  */
-async function cleanKeychain() {
-  const id = await getValueFor(elderlyId)
+async function cleanKeychain(id: string) {
+  console.log(id)
 
   await SecureStore.deleteItemAsync(firestoreSSSKey(id))
   .then(() => SecureStore.deleteItemAsync(elderlySSSKey(id)))
@@ -44,16 +45,15 @@ async function cleanKeychain() {
  * @returns 
  */
 async function initKeychain(userId: string, userEmail: string): Promise<boolean> {
-  const id = await getValueFor(elderlyId)
 
-  if(id == '') {
-    await cleanKeychain().then(() => {
+  if(await getValueFor(elderlyId) == '') {
+    await cleanKeychain(userId).then(() => {
       save(elderlyId, userId)
       save(elderlyEmail, userEmail)
     })
   }
-  if(await getValueFor(localDBKey(id)) == '') {
-    save(localDBKey(id), String.fromCharCode.apply(null, Array.from(Crypto.getRandomBytes(32)))) 
+  if(await getValueFor(localDBKey(userId)) == '') {
+    save(localDBKey(userId), String.fromCharCode.apply(null, Array.from(Crypto.getRandomBytes(32)))) 
   }
   return true
 }

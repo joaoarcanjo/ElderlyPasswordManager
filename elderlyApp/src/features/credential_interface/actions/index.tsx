@@ -15,6 +15,7 @@ import { YesOrNoModal } from '../../../components/Modal'
 import { Spinner } from '../../../components/Spinner'
 import Algorithm from '../../password_generator/actions/algorithm'
 import { useLogin } from '../../login_interface/actions/session'
+import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
@@ -103,11 +104,11 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
       <View style= { { flex: 0.13, marginHorizontal: '10%', flexDirection: 'row'} }>
         {editFlag ?
           <>
-            <TouchableOpacity style={[{flex: 0.35, margin: '3%', marginVertical: '5%'}, stylesButtons.mainConfig, options.editButton]} onPress={() => {toggleEditFlag(); editValueFlash();}}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>Editar</Text>
+            <TouchableOpacity style={[{flex: 0.35, margin: '3%'}, stylesButtons.mainConfig, options.editButton]} onPress={() => {toggleEditFlag(); editValueFlash();}}>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>Editar</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[{flex: 0.65, margin: '3%', marginVertical: '5%'}, logout.logoutButton, stylesButtons.mainConfig, options.permissionButton]} onPress={permissions}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>Permissões</Text>
+            <TouchableOpacity style={[{flex: 0.65, margin: '3%'}, logout.logoutButton, stylesButtons.mainConfig, options.permissionButton]} onPress={permissions}>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>Permissões</Text>
             </TouchableOpacity>
           </> :
           <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
@@ -115,7 +116,7 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
               <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>Guardar</Text>
             </TouchableOpacity>}
             <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={cancelUpdate}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>Cancelar</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>Cancelar</Text>
             </TouchableOpacity>
           </View>
         }
@@ -125,7 +126,7 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
 
   return (
     <>
-    <View style={{ flex: 0.52, width: '100%', marginVertical: '5%'}}>
+    <View style={{ flex: 0.85, width: '100%', marginTop: '5%'}}>
       <View style={[{ flex: 1, marginHorizontal: '4%'}, credentials.credentialInfoContainer]}>
         {!loading ? 
           <>
@@ -138,7 +139,7 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
                 </TouchableOpacity>}
               </View>
               <View style={[{ flex: 0.4, alignItems: 'center', justifyContent: 'center', marginHorizontal: '4%', marginVertical: '2%'}, inputStyle]}>
-                <View style={{marginHorizontal: '4%', flexDirection: 'row'}}>
+                <View style={{margin: '3%', flexDirection: 'row'}}>
                   <TextInput 
                     editable={!editFlag} 
                     value={editFlag ? username : usernameEdited}
@@ -158,7 +159,7 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
                 </TouchableOpacity>}
               </View>
               <View style={[{ flex: 0.4, alignItems: 'center', justifyContent: 'center', marginHorizontal: '4%', marginVertical: '2%'}, inputStyle]}>
-                <View style={{marginHorizontal: '4%', flexDirection: 'row'}}>
+                <View style={{marginHorizontal: '4%', marginVertical: '1%', flexDirection: 'row'}}>
                   <TextInput 
                     editable={!editFlag} 
                     value={editFlag ? password : passwordEdited}
@@ -225,10 +226,14 @@ function DeleteCredential({id}: Readonly<{id: string}>) {
 export default function CredencialPage({ route }: Readonly<{route: any}>) {
 
   return (
-    <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-      <MainBox text={route.params.platform}/>
-      <AppInfo id={route.params.id} un={route.params.username} pw={route.params.password} platform={route.params.platform}/>
+    <>
+      <KeyboardAvoidingWrapper>
+        <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
+          <MainBox text={route.params.platform}/>
+          <AppInfo id={route.params.id} un={route.params.username} pw={route.params.password} platform={route.params.platform}/>
+        </View>
+      </KeyboardAvoidingWrapper>
       <Navbar/>
-    </View>
+    </>
   )
 }

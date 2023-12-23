@@ -56,8 +56,6 @@ const LoginPage = () => {
     const signIn = async () => {
         setLoading(true)
 
-        const emailSaved = await getValueFor(elderlyEmail)
-
         signInOperation(email, password).then((loginResult) => {
             setLoading(false)
             if(loginResult) {
@@ -73,6 +71,8 @@ const LoginPage = () => {
         signUpOperation(email, password).then((loginResult) => {
             setLoading(false)
             if(loginResult) {
+                setUserPhone("966666666") //TODO: Para tirar daqui
+                setUserName("User name") //TODO: Para tirar daqui
                 navigation.push('Home')
             }
         })

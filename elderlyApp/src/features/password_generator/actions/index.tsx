@@ -151,8 +151,8 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
         <TouchableOpacity style={[{flex: 0.30}]} onPress={() => decLength()}>
           <Image source={require(minusImage)} style={[{width: '100%', height: 40, margin: '5%', resizeMode: 'contain'}]}/>
         </TouchableOpacity>
-        <View style={[{flex: 0.40, marginHorizontal: '5%', alignItems: 'center', backgroundColor: 'red'}, passwordSecondHalf.lengthDisplay]}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '5%'}, passwordSecondHalf.numberSelectedText]}>{length}</Text>
+        <View style={[{flex: 0.40, marginHorizontal: '5%', alignItems: 'center'}, passwordSecondHalf.lengthDisplay]}>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '1%'}, passwordSecondHalf.numberSelectedText]}>{length}</Text>
         </View>
         <TouchableOpacity style={[{flex: 0.30}]} onPress={() => incLength()}>
           <Image source={require(plusImage)} style={[{width: '100%', height: 40, margin: '5%', resizeMode: 'contain'}]}/>

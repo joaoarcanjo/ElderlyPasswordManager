@@ -38,22 +38,27 @@ function deriveSecret(shares: string[]): string {
  * Por agora, apenas é utilizado na instalação da app do idoso.
  * @returns 
  */
-async function initSSS() {
-    const id = await getValueFor(elderlyId)
-    
-    if(await getValueFor(elderlySSSKey(id)) != '') return;
+async function initSSS(userId: string) {
+    let shared = await getValueFor(elderlySSSKey(userId))
+    if(shared != '') return shared
     const key = Crypto.getRandomBytes(32)
     const shares = generateShares(String.fromCharCode.apply(null, Array.from(key)), 4, 2)
 
-    console.log('Elderly key: ', shares[0])
-    console.log('Caregiver 1 key: ', shares[1])
-    console.log('Caregiver 2 key: ', shares[2])
-    console.log('Firestore key: ', shares[3], '\n\n')
+    //console.log('Elderly key: ', shares[0])
+    //console.log('Caregiver 1 key: ', shares[1])
+    //console.log('Caregiver 2 key: ', shares[2])
+    //console.log('Firestore key: ', shares[3], '\n\n')
 
-    save(elderlySSSKey(id), shares[0])
-    save(caregiver1SSSKey(id), shares[1])
-    save(caregiver2SSSKey(id), shares[2])
-    save(firestoreSSSKey(id), shares[3])
+    save(elderlySSSKey(userId), shares[0])
+    save(caregiver1SSSKey(userId), shares[1])
+    save(caregiver2SSSKey(userId), shares[2])
+    save(firestoreSSSKey(userId), shares[3])
+
+    console.log("InitSSSUserId:  "+userId)
+    shared = await getValueFor(elderlySSSKey(userId))
+    console.log("InitSSSShared:  "+shared)
+
+    return shares[0]
 }
 
 export { generateShares, deriveSecret, initSSS }

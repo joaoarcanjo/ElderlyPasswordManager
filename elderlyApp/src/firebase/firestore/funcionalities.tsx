@@ -1,7 +1,7 @@
 import { wordArrayToString, decryption, encryption, randomIV } from '../../algorithms/0thers/cryptoOperations';
 import { deriveSecret } from '../../algorithms/sss/sss';
 import { getValueFor } from '../../keychain';
-import { elderlyId, elderlySSSKey, firestoreSSSKey } from '../../keychain/constants';
+import { caregiver1SSSKey, caregiver2SSSKey, elderlyId, elderlySSSKey, firestoreSSSKey } from '../../keychain/constants';
 import { firebase } from '../FirebaseConfig';
 import { credencialsCollectionName, defaultCredencials, defaultElderly, elderlyCollectionName, updateDataCredencial } from './constants';
 
@@ -13,6 +13,7 @@ const firestore = firebase.firestore()
 async function changeKey(userId: string) {
     const id = await getValueFor(elderlyId)
     const key = await getValueFor(firestoreSSSKey(id))
+    console.log("CHANGEKEY: "+key)
     firebase.firestore().collection(elderlyCollectionName)
         .doc(userId).update({key: key})
         .catch((error) => {
@@ -86,10 +87,9 @@ async function elderlyExists(elderlyId: string): Promise<boolean> {
  * @param newCredencialId 
  * @param data 
  */
-async function addCredencial(userId: string, newCredencialId: string, data: string) {
-    
-    const id = await getValueFor(elderlyId)
-    const key = deriveSecret([await getKey(userId), await getValueFor(elderlySSSKey(id))])
+async function addCredencial(userId: string, shared: string, newCredencialId: string, data: string) {
+    console.log(shared)
+    const key = deriveSecret([await getKey(userId), shared])
     const nonce = randomIV()
     const encrypted = encryption(data, key, nonce)
 
@@ -135,11 +135,12 @@ interface Credential {
  * Função para listar as credenciais de determinado utilizador
  * @param userId 
  */
-async function listAllElderlyCredencials(userId: string): Promise<Credential[]> {
-    console.log(userId)
-    const id = await getValueFor(elderlyId)
-    const key = deriveSecret([await getKey(userId), await getValueFor(elderlySSSKey(id))])
-    console.log(key)
+async function listAllElderlyCredencials(userId: string, shared: string): Promise<Credential[]> {
+
+    console.log(shared)
+    const key = deriveSecret([await getKey(userId), shared])
+    console.log("ListAllCredentialsKey:  "+key)
+
     return firestore.collection(elderlyCollectionName).doc(userId).collection(credencialsCollectionName).get().then((docs) => {
         const values: Credential[] = []
         docs.forEach((doc) => { 

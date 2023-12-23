@@ -69,7 +69,7 @@ const passwordSecondHalf = StyleSheet.create({
         borderColor: greyBorder
     },
     numberSelectedText: {
-        fontSize: 25,
+        fontSize: 40,
         color: 'black'
     }
 })

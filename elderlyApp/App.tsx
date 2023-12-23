@@ -12,7 +12,7 @@ import { initDb } from './src/database';
 import FlashMessage from 'react-native-flash-message';
 import Caregivers from './src/features/list_caregivers/actions';
 import { changeKey, initFirestore } from './src/firebase/firestore/funcionalities';
-import { cleanKeychain, initKeychain } from './src/keychain';
+import { cleanKeychain, getValueFor, initKeychain } from './src/keychain';
 import { AddCredencial } from './src/features/add_credentials/actions';
 import { initSSS } from './src/algorithms/sss/sss';
 import CredencialPage from './src/features/credential_interface/actions';
@@ -21,6 +21,7 @@ import { User, onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from './src/firebase/FirebaseConfig';
 import PermissionsPage from './src/features/permissions_interface/actions';
 import { LoginProvider, useLogin } from './src/features/login_interface/actions/session';
+import { elderlySSSKey } from './src/keychain/constants';
 
 export type RootStackParamList = {
   Home: undefined
@@ -42,13 +43,14 @@ const InsideStack = createNativeStackNavigator<RootStackParamList>()
 const im_testing = false
 
 function InsideLayout() {
-  const { userId } = useLogin()
+  const { userId, setShared } = useLogin()
   
   useEffect(() => {
     if(im_testing) {
-      cleanKeychain()
+      cleanKeychain(userId)
     } else {
-      initSSS()
+      initSSS(userId)
+      .then((shared) => {console.log("Shared: "+shared); setShared(shared)})
       .then(() => initDb())
       .then(() => initFirestore(userId))
       .then(() => changeKey(userId))
@@ -78,6 +80,8 @@ function Inicialization() {
 
   useEffect(() => {
     onAuthStateChanged(FIREBASE_AUTH, (user) =>{
+      console.log("User: " + user)
+      console.log("UserId: " + userId)
       if(userId) setUser(user)
       else if(user != null && user.email) {
         initKeychain(user.uid, user.email)

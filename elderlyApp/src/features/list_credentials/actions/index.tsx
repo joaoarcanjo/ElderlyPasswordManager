@@ -71,13 +71,13 @@ function CredentialsList() {
 
   const [credencials, setCredencials] = useState<Credential[]>([])
   const isFocused = useIsFocused()
-  const { userId } = useLogin()
+  const { userId, userShared } = useLogin()
 
   const [isFething, setIsFething] = useState(true)
 
   useEffect(() => {
     setIsFething(true)
-    listAllElderlyCredencials(userId).then((credencials) => {
+    listAllElderlyCredencials(userId, userShared).then((credencials) => {
       let auxCredencials: Credential[] = [];
       credencials.forEach(value => {
         if(value.data.length != 0) {
