@@ -5,7 +5,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { signInOperation, signUpOperation } from "../../../firebase/authentication/funcionalities";
 import { getValueFor } from "../../../keychain";
 import { elderlyEmail, elderlyPwd } from "../../../keychain/constants";
-import { styles, actions } from "../styles/styles";
+import { styles, actions, manualCredential } from "../styles/styles";
 import { whiteBackgroud } from "../../../assets/styles/colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { stylesButtons } from "../../../assets/styles/main_style";
@@ -19,7 +19,7 @@ const LoginPage = () => {
     const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(false)
     const [loadingPersistent, setLoadingPersistent] = useState(false)
-    const [showPassword, setShowPassword] = useState(false); 
+    const [showPassword, setShowPassword] = useState(true)
 
     const navigation = useNavigation<StackNavigationProp<any>>()
     const toggleShowPassword = () => {setShowPassword(!showPassword);}
@@ -43,13 +43,15 @@ const LoginPage = () => {
                     setUserPhone("966666666") //TODO: Para tirar daqui
                     setUserName("User name") //TODO: Para tirar daqui
                     navigation.navigate('Home')
+                } else {
+                    insert()
                 }
             })
         } else {
+            setLoadingPersistent(false)
             if(emailSaved != '') {
                 setEmail(emailSaved)
             }
-            setLoadingPersistent(false)
         }
     }
 
@@ -78,11 +80,20 @@ const LoginPage = () => {
         })
     }
 
+    const insert = async () => {
+        const pwdSaved = await getValueFor(elderlyPwd)
+        const emailSaved = await getValueFor(elderlyEmail)
+
+        setEmail(emailSaved)
+        setPassword(pwdSaved)
+        setLoadingPersistent(false)
+    }
+
     return (        
             <>
                 { loadingPersistent ? 
                 <View style={[{flex: 1, alignItems: 'center',justifyContent: 'center'}, styles.container]}>
-                    <Image source={require('../../../assets/images/spinner6.gif')} style={[{width: 300, height: 300, resizeMode: 'contain'}]}/>
+                    <Spinner/>
                 </View>
                 :
                 <KeyboardAvoidingWrapper >
@@ -123,8 +134,8 @@ const LoginPage = () => {
                         </View> 
                     </View>
                     <View style={{flex: 0.4}}>
-                        { loading ? 
-                        <Spinner/> : 
+                        { loading ? <Spinner/>
+                         : 
                             <>
                             <TouchableOpacity style={[{flex: 0.6, width: '80%', marginBottom: '15%', margin: '10%'}, stylesButtons.mainConfig, stylesButtons.copyButton, actions.signInButton]} onPress={signIn}>
                                 <Text style={{fontSize: 30, marginVertical: '5%'}}>Entrar</Text>

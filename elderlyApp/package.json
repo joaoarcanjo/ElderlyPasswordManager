@@ -30,7 +30,8 @@
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-safe-area-context": "^4.8.1",
     "react-native-screens": "^3.29.0",
-    "zxcvbn": "^4.4.2"
+    "zxcvbn": "^4.4.2",
+    "expo-network": "~5.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

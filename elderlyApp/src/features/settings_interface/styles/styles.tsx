@@ -20,7 +20,7 @@ const logout = StyleSheet.create({
 const accountInfo = StyleSheet.create({
     accountInfoContainer: {
       borderRadius: 20, // Define o raio dos cantos para arredondá-los
-      borderWidth: 2, // Largura da linha na margem
+      borderWidth: 1, // Largura da linha na margem
       backgroundColor: greyBackgroud, // Cor de fundo
     },
     accountInfo: {
@@ -43,7 +43,7 @@ const accountInfo = StyleSheet.create({
 const appInfo = StyleSheet.create({
   appInfoContainer: {
     borderRadius: 20, // Define o raio dos cantos para arredondá-los
-    borderWidth: 2, // Largura da linha na margem
+    borderWidth: 1, // Largura da linha na margem
     backgroundColor: greyBackgroud, // Cor de fundo
   },
   appInfoButton: {

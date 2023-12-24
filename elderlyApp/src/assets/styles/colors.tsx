@@ -59,6 +59,9 @@ export const desvinculateButtonBorder = darkRedBorder
 export const addCaregiverButtonBackgroud = darkGreenBackgroud
 export const addCaregiverButtonBorder = darkGreenBorder
 
+export const permissionsButtonBackground = yellowBackground
+export const permissionsButtonBorder = yellowBorder
+
 //SETTINGS PAGE COLORS
 
 export const logoutButtonBackgroud = darkRedBackground
@@ -88,9 +91,6 @@ export const addCredentialButtonBorder = darkGreenBorder
 export const editCredentialsButtonBackground = yellowBackground
 export const editCredentialsButtonBorder = yellowBorder
 
-export const permissionsButtonBackground = yellowBackground
-export const permissionsButtonBorder = yellowBorder
-
 export const saveButtonBackground = lightGreenBackgroud
 export const saveButtonBorder = darkGreenBorder
 
@@ -104,3 +104,6 @@ export const signinButtonBorder = darkGreenBorder
 
 export const signupButtonBackground = purpleBackground
 export const signupButtonBorder = purpleBorder
+
+export const manualButtonBackgroud = purpleBackground
+export const manualButtonBorder = purpleBorder

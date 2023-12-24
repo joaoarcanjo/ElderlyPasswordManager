@@ -13,16 +13,10 @@ const caregiver = StyleSheet.create({
 
 const permission = StyleSheet.create({
     container: {
-      borderRadius: 20, // Define o raio dos cantos para arredondá-los
+      borderRadius: 15, // Define o raio dos cantos para arredondá-los
       borderWidth: 2, // Largura da linha na margem
-      backgroundColor: greyBackgroud, // Cor de fundo
+      backgroundColor: whiteBackgroud, // Cor de fundo
       borderColor: greyBorder
-    },
-    button: {
-        borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        borderWidth: 2, // Largura da linha na margem
-        backgroundColor: whiteBackgroud, // Cor de fundo
-        borderColor: greyBorder
     },
     text: {
       fontSize: 20,
@@ -30,19 +24,4 @@ const permission = StyleSheet.create({
     }
 })
 
-const credentialName = StyleSheet.create({
-    container: {
-        borderBottomLeftRadius: 20, // Arredonda o canto inferior esquerdo
-        borderBottomRightRadius: 20, // Arredonda o canto inferior direito
-        borderTopWidth: 0,
-        borderWidth: 2, // Largura do contorno
-        borderColor: blackBorder, // Cor do contorno
-        backgroundColor: superlightBlueBackgroud
-    },
-    text: {
-      fontSize: 26,
-      color: 'black'
-    }
-})
-
-export { caregiver, permission, credentialName }
+export { caregiver, permission }

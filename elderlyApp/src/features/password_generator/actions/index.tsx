@@ -108,7 +108,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
     }
 
     return (
-      <View style= { { flex: 0.06, width: '100%', marginTop: '5%', alignItems: 'flex-end' } }>
+      <View style= { { flex: 0.06, width: '100%', marginTop: '2%', alignItems: 'flex-end' } }>
             <TouchableOpacity style={[{flex: 1,  width: '45%', marginRight: '8%'}, historyStyle.historyButton, stylesButtons.mainConfig]} onPress={() => HistoryPressed()}>
                 <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontWeight: 'bold', fontSize: 22 }]}>Histórico</Text>
             </TouchableOpacity>
@@ -120,15 +120,15 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
     
     return (
       <View style= { { flex: 0.24, flexDirection: 'row', justifyContent: 'space-around'} }>
-          <View style={[{flex: 1, marginTop: '5%', marginHorizontal: '8%', justifyContent: 'center',  alignItems: 'center'}, passwordFirstHalf.container]}>
+          <View style={[{flex: 1, marginTop: '2%', marginHorizontal: '8%', justifyContent: 'center',  alignItems: 'center'}, passwordFirstHalf.container]}>
               
               {/* View onde vai aparecer a password que será gerada */}
-              <View style={[{flex: 1,  width: '90%', marginTop: '5%', marginHorizontal: '5%', justifyContent: 'center', alignItems: 'center'}, passwordFirstHalf.passwordGenerated]}>
+              <View style={[{flex: 1,  width: '90%', marginTop: '5%',marginBottom: '1%', marginHorizontal: '5%', justifyContent: 'center', alignItems: 'center'}, passwordFirstHalf.passwordGenerated]}>
                 <Text numberOfLines={2} adjustsFontSizeToFit style={[{ fontSize: 22 }]}>{passGenerated}</Text>
               </View>
               
               {/* Botões para copiar a password e para gerar uma nova */}
-              <View style={{flexDirection: 'row', margin: '5%'}}>
+              <View style={{flexDirection: 'row', margin: '3%', marginBottom: '5%'}}>
                 <TouchableOpacity style={[{flex: 0.5, marginRight: '2%'}, passwordFirstHalf.copyButton, stylesButtons.mainConfig]} onPress={() => saveOnClickBoard() }>
                   <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Copiar</Text>
                 </TouchableOpacity>

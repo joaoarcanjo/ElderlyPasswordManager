@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native'
-import { addCaregiverButtonBackgroud, addCaregiverButtonBorder, desvinculateButtonBackgroud, desvinculateButtonBorder, greyBackgroud, greyBorder, whiteBackgroud } from '../../../assets/styles/colors'
+import { addCaregiverButtonBackgroud, addCaregiverButtonBorder, desvinculateButtonBackgroud, desvinculateButtonBorder, greyBackgroud, greyBorder, permissionsButtonBackground, permissionsButtonBorder, whiteBackgroud } from '../../../assets/styles/colors'
 
 /**
  * Estilos da view para adicionar uma nova credencial
@@ -59,5 +59,17 @@ const decouplingOption = StyleSheet.create({
     }
 })
 
+const permissionButton = StyleSheet.create({
+    permissionButton: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        backgroundColor: permissionsButtonBackground,
+        borderColor: permissionsButtonBorder
+    },
+    permissionButtonText: {
+      fontSize: 25,
+      color: 'black'
+    },
+})
 
-export { stylesAddCaregiver, caregiverStyle, caregiverContactInfo, decouplingOption }
+
+export { permissionButton, stylesAddCaregiver, caregiverStyle, caregiverContactInfo, decouplingOption }

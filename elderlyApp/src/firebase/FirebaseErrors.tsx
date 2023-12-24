@@ -6,7 +6,7 @@ interface SignError extends FirebaseAuthTypes.NativeFirebaseAuthError {}
 function signinErrorResult(error: any) {
     
     const firebaseError = error as SignError;
-
+    console.log(firebaseError.code)
     switch (firebaseError.code) {
         case 'auth/user-not-found':
           Alert.alert('Erro', 'Email não encontrado. Verifique suas credenciais.')
@@ -16,6 +16,9 @@ function signinErrorResult(error: any) {
           break
         case 'auth/wrong-password':
           Alert.alert('Erro', 'Senha incorreta. Verifique suas credenciais.')
+          break
+        case 'auth/network-request-failed':
+          Alert.alert('Erro', 'Não se encontra contectado à sua internet. Tente mais tarde.')
           break
         default:
           Alert.alert('Erro', 'Ocorreu um erro durante o login. Tente novamente.')

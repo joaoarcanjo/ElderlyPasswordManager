@@ -20,7 +20,7 @@ const logout = StyleSheet.create({
 const credentials = StyleSheet.create({
   credentialInfoContainer: {
     borderRadius: 15, // Define o raio dos cantos para arredondá-los
-    borderWidth: 2, // Largura da linha na margem
+    borderWidth: 1, // Largura da linha na margem
     backgroundColor: greyBackgroud, // Cor de fundo
   },
   credentialInputContainer: {
@@ -77,11 +77,6 @@ const options = StyleSheet.create({
     borderRadius: 15, // Define o raio dos cantos para arredondá-los
     backgroundColor: cancelButtonBackground,
     borderColor: cancelButtonBorder
-  },
-  permissionButton: {
-    borderRadius: 15, // Define o raio dos cantos para arredondá-los
-    backgroundColor: permissionsButtonBackground,
-    borderColor: permissionsButtonBorder
   },
   permissionsButtonText: {
     fontSize: 25,

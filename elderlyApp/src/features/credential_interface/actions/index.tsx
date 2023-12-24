@@ -85,10 +85,6 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
     setPasswordEdited(password)
   }
 
-  const permissions = () => {
-    navigation.navigate('Permissions', {platform: platform})
-  }
-
   const regeneratePassword = () => {
     const newPassword = Algorithm({length: 15, strict: true, symbols: true, uppercase: true, lowercase: true, numbers: true})
     setPasswordEdited(newPassword)
@@ -103,14 +99,11 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
     return (
       <View style= { { flex: 0.13, marginHorizontal: '10%', flexDirection: 'row'} }>
         {editFlag ?
-          <>
-            <TouchableOpacity style={[{flex: 0.35, margin: '3%'}, stylesButtons.mainConfig, options.editButton]} onPress={() => {toggleEditFlag(); editValueFlash();}}>
+          <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.editButton]} onPress={() => {toggleEditFlag(); editValueFlash();}}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>Editar</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[{flex: 0.65, margin: '3%'}, logout.logoutButton, stylesButtons.mainConfig, options.permissionButton]} onPress={permissions}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>Permissões</Text>
-            </TouchableOpacity>
-          </> :
+          </View> :
           <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
             {credentialsModified && <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.saveButton]} onPress={() => setModalVisible(true)}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>Guardar</Text>

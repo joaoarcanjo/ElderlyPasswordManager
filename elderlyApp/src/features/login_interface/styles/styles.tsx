@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native"
-import { darkGreenBorder, superlightBlueBackgroud, signinButtonBackground, signinButtonBorder, signupButtonBackground, signupButtonBorder, blueBorder } from "../../../assets/styles/colors"
+import { superlightBlueBackgroud, signinButtonBackground, signinButtonBorder, signupButtonBackground, signupButtonBorder, blueBorder, manualButtonBackgroud, manualButtonBorder } from "../../../assets/styles/colors"
 
 const styles = StyleSheet.create({
     container: {
@@ -25,4 +25,17 @@ const actions = StyleSheet.create({
     }
 })
 
-export { styles, actions }
+const manualCredential = StyleSheet.create({
+    logoutButton: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        borderWidth: 5, // Largura da linha na margem
+        backgroundColor: manualButtonBackgroud,
+        borderColor: manualButtonBorder,
+    },
+    logoutButtonText: {
+      fontSize: 25,
+      color: 'black'
+    }
+})
+
+export { styles, actions, manualCredential }

@@ -18,7 +18,7 @@ const passwordFirstHalf = StyleSheet.create({
         borderTopRightRadius: 20, // Arredonda o canto inferior direito     
         borderBottomWidth: 0,
         backgroundColor: greyBackgroud, // Cor de fundo
-        borderWidth: 2, // Largura da linha na margem
+        borderWidth: 1, // Largura da linha na margem
     },
     passwordGenerated: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
@@ -46,7 +46,7 @@ const passwordSecondHalf = StyleSheet.create({
         borderTopRightRadius: 20, // Arredonda o canto inferior direito     
         borderBottomWidth: 0,
         backgroundColor: whiteBackgroud, // Cor de fundo
-        borderWidth: 2, // Largura da linha na margem
+        borderWidth: 1, // Largura da linha na margem
     }, 
     requirementsText: {
         fontSize: 20,
