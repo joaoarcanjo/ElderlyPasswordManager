@@ -6,7 +6,7 @@ const styleScroolView = StyleSheet.create({
         borderTopLeftRadius: 20, // Arredonda o canto inferior esquerdo
         borderTopRightRadius: 20, // Arredonda o canto inferior direito        
         borderBottomWidth: 0,
-        borderWidth: 2, // Largura da linha na margem
+        borderWidth: 1 // Largura da linha na margem
     },
     item: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los

@@ -34,7 +34,7 @@ function CredentialsInput() {
     const handleSave = () => {
         if(platform != '' && username != '' && password != '') {
             const uuid = getNewId()
-            addCredencial(userId, userShared, uuid, JSON.stringify({platform: platform, username: username, password: password}))
+            addCredencial(userId, userShared,uuid, JSON.stringify({platform: platform, username: username, password: password}))
             navigation.goBack()
         }
     }

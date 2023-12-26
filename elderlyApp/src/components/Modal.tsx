@@ -1,5 +1,5 @@
 import { BlurView } from "expo-blur";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import {View, StyleSheet, Modal, TouchableOpacity, Text} from 'react-native'
 import { stylesButtons } from "../assets/styles/main_style";
 import { modal, options } from "../features/credential_interface/styles/styles";

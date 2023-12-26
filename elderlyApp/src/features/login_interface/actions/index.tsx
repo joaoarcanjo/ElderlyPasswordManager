@@ -137,12 +137,12 @@ const LoginPage = () => {
                         { loading ? <Spinner/>
                          : 
                             <>
-                            <TouchableOpacity style={[{flex: 0.6, width: '80%', marginBottom: '15%', margin: '10%'}, stylesButtons.mainConfig, stylesButtons.copyButton, actions.signInButton]} onPress={signIn}>
+                            <TouchableOpacity style={[{flex: 0.6, width: '80%', marginBottom: '5%', marginHorizontal: '10%', marginTop: '5%'}, stylesButtons.mainConfig, stylesButtons.copyButton, actions.signInButton]} onPress={signIn}>
                                 <Text style={{fontSize: 30, marginVertical: '5%'}}>Entrar</Text>
                             </TouchableOpacity>
-                            <View style={{ borderBottomColor: 'black', borderBottomWidth: StyleSheet.hairlineWidth, margin: '3%' }}/>
+                            <View style={{ borderBottomColor: 'black', borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: '3%' }}/>
                             <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginLeft: '10%', marginBottom: '2%', marginTop: '10%', justifyContent: 'center', fontSize: 20}]}>Ainda não tem conta?</Text>
-                            <TouchableOpacity style={[{flex: 0.4, width: '80%', marginBottom: '10%', marginHorizontal: '10%'}, stylesButtons.mainConfig, stylesButtons.copyButton, actions.sinUpButton]} onPress={signUp}>
+                            <TouchableOpacity style={[{flex: 0.4, width: '80%', marginBottom: '5%', marginHorizontal: '10%'}, stylesButtons.mainConfig, stylesButtons.copyButton, actions.sinUpButton]} onPress={signUp}>
                                 <Text style={{fontSize: 30, marginVertical: '5%'}}>Criar uma conta</Text>
                             </TouchableOpacity>
                             </>

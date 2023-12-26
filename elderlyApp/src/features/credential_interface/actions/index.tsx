@@ -141,7 +141,7 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
                   />
                 </View>
               </View>
-              {editFlag &&  <Text style={{marginLeft: '6%',fontSize: 13}}>Editado por: Elisabeth, 19/11/2021</Text>} 
+              <Text style={[{marginLeft: '6%',fontSize: 13}, {opacity: editFlag ? 100 : 0}]}>Editado por: Elisabeth, 19/11/2021</Text> 
             </View>
             <View style={{flex: 0.40}}>
               <View style={{flex: 0.6, flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '4%'}}>
@@ -202,15 +202,14 @@ function DeleteCredential({id}: Readonly<{id: string}>) {
   const { userId } = useLogin()
 
   const deleteCredentialAction = () => {
-    navigation.goBack()
-    deleteCredential(userId, id)
+    deleteCredential(userId, id).then(() => navigation.goBack())
   }
 
   return (
     <View style= { { flex: 0.10, flexDirection: 'row', justifyContent: 'space-around', marginBottom: '2%'} }>
       <YesOrNoModal question={'Apagar a credencial?'} yesFunction={() => deleteCredentialAction()} noFunction={() => setModalVisible(false)} visibleFlag={modalVisible}/>
       <TouchableOpacity style={[{flex: 1, marginHorizontal: '20%', marginVertical: '3%'}, logout.logoutButton, stylesButtons.mainConfig]} onPress={() => setModalVisible(true)}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>Apagar</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>Apagar credencial</Text>
       </TouchableOpacity>
     </View>
   )

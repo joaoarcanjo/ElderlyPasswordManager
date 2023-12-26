@@ -182,9 +182,9 @@ async function listCredencialProperties(userId: string, credencialId: string) {
  * Função para apagar uma credencial específica
  * @param credentialId 
  */
-async function deleteCredential(userId: string, credentialId: string) {
+async function deleteCredential(userId: string, credentialId: string): Promise<boolean> {
 
-    firestore.collection(elderlyCollectionName)
+    return firestore.collection(elderlyCollectionName)
         .doc(userId)
             .collection(credencialsCollectionName)
             .doc(credentialId)
@@ -192,7 +192,8 @@ async function deleteCredential(userId: string, credentialId: string) {
         .catch((error) => {
             //alert('Erro ao tentar adicionar a nova credencial, tente novamente!')
             console.log('Error: ', error)
-        })
+            return false
+        }).then(() => { return true })
 }
 
 async function updateCredential(userId: string, credencialId: string, data: string): Promise<boolean> {

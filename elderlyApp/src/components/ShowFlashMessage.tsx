@@ -13,6 +13,7 @@ const enum FlashMessage {
 function copyValue(value: string, message: FlashMessage) {
     Clipboard.setStringAsync(value)
     showMessage({
+      floating: true,
       message: message,
       icon: props => <Image source={require("../assets/images/copy.png")} {...props} />,
       backgroundColor: darkGreenBackgroud,
@@ -23,6 +24,7 @@ function copyValue(value: string, message: FlashMessage) {
 
 function editValueFlash() {
   showMessage({
+    floating: true,
     message: 'MODO EDIÇÃO ATIVADO',
     icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
     backgroundColor: lightBlueBackground,
@@ -33,6 +35,7 @@ function editValueFlash() {
 
 function editCanceledFlash() {
   showMessage({
+    floating: true,
     message: 'MODO EDIÇÃO DESATIVADO',
     icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
     backgroundColor: lightYellowBackground,
@@ -43,6 +46,7 @@ function editCanceledFlash() {
 
 function editCompletedFlash() {
   showMessage({
+    floating: true,
     message: 'CREDENCIAL ATUALIZADA COM SUCESSO!',
     icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
     backgroundColor: darkGreenBackgroud,
