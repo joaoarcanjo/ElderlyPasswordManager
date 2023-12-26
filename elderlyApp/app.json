@@ -22,7 +22,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.joaopbarcanjo.elderlyApp"
+      "package": "com.joaopbarcanjo.elderlyApp",
+      "versionCode": 3
     },
     "web": {
       "favicon": "./assets/favicon.png"

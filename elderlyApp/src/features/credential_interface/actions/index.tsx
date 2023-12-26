@@ -36,7 +36,7 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
   const navigation = useNavigation<StackNavigationProp<any>>()
 
   useEffect(() => setAvaliation(getScore(passwordEdited)), [passwordEdited])
-  const { userId } = useLogin()
+  const { userId, userShared } = useLogin()
 
   const toggleShowPassword = () => {setShowPassword(!showPassword);}
 
@@ -54,7 +54,7 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
   function saveCredentialUpdate() {
     if(credentialsModified) {
       setLoading(true)
-      updateCredential(userId, id, JSON.stringify({platform: platform, username: usernameEdited, password: passwordEdited}))
+      updateCredential(userId, id, userShared, JSON.stringify({platform: platform, username: usernameEdited, password: passwordEdited}))
       .then((updated) => {
         toggleEditFlag()
         if(updated) {

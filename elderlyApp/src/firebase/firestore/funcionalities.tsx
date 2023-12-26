@@ -34,7 +34,7 @@ async function getKey(userId: string): Promise<string> {
             } 
         })
         .catch((error) => {
-            //alert('Erro ao tentar obter a chave, tente novamente!')
+            alert('Erro ao tentar obter a chave, tente novamente!')
             //console.log('Error: ', error)
             return ''
         })
@@ -138,17 +138,20 @@ interface Credential {
 async function listAllElderlyCredencials(userId: string, shared: string): Promise<Credential[]> {
 
     console.log(shared)
-    const key = deriveSecret([await getKey(userId), shared])
+    const cloudKey = await getKey(userId)
+    const key = deriveSecret([cloudKey, shared])
     console.log("ListAllCredentialsKey:  "+key)
 
+    console.log("Key:  "+ key)
     return firestore.collection(elderlyCollectionName).doc(userId).collection(credencialsCollectionName).get().then((docs) => {
         const values: Credential[] = []
         docs.forEach((doc) => { 
             if(doc.data()) {
+                console.log("Value: "+doc.data().data)
                 const nonce = doc.data().iv// CryptoJS.lib.WordArray.random(16)
                 const decrypted = decryption(doc.data().data, key, nonce)
                 //console.log("Key:", key)
-                //console.log("Decryption: ", decryption, '\n')
+                console.log("Decryption: ", decrypted, '\n')
                 values.push({'id': doc.id, 'data': decrypted}) 
             }
         });
@@ -196,10 +199,10 @@ async function deleteCredential(userId: string, credentialId: string): Promise<b
         }).then(() => { return true })
 }
 
-async function updateCredential(userId: string, credencialId: string, data: string): Promise<boolean> {
+async function updateCredential(userId: string, credencialId: string, shared: string, data: string): Promise<boolean> {
 
-    const id = await getValueFor(elderlyId)
-    const key = deriveSecret([await getKey(userId), await getValueFor(elderlySSSKey(id))])
+    const cloudKey = await getKey(userId)
+    const key = deriveSecret([cloudKey, shared])
 
     const nonce = randomIV()
     const encrypted = encryption(data, key, nonce)
