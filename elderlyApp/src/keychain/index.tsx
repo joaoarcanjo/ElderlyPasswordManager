@@ -8,7 +8,6 @@ import * as Crypto from 'expo-crypto';
  * @param value 
  */
 async function save(key: string, value: string) {
-  console.log(key + value)
   await SecureStore.setItemAsync(key, value)
 }
 
@@ -18,7 +17,6 @@ async function save(key: string, value: string) {
  * @param key 
  */
 async function getValueFor(key: string): Promise<string> {
-  console.log(key)
   return SecureStore.getItemAsync(key).then((result) => result ?? ''
   );
 }
@@ -28,7 +26,6 @@ async function getValueFor(key: string): Promise<string> {
  * Apenas utilizado para debug, para limpar tudo.
  */
 async function cleanKeychain(id: string) {
-  console.log(id)
 
   await SecureStore.deleteItemAsync(firestoreSSSKey(id))
   .then(() => SecureStore.deleteItemAsync(elderlySSSKey(id)))

@@ -58,7 +58,7 @@ export const savePasswordGenerated = async (password: string) => {
             tx.executeSql('INSERT INTO passwords (id, password, iv, timestamp) VALUES (?, ?, ?, ?);',
             [Crypto.randomUUID(), encrypted, wordArrayToString(nonce), Date.now()],
             (_, result) => {
-                console.log('Novo registro inserido com sucesso:', result);
+                //console.log('Novo registro inserido com sucesso:', result);
             })
         });
     }

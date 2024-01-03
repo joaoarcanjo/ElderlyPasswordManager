@@ -13,12 +13,11 @@ const firestore = firebase.firestore()
 async function changeKey(userId: string) {
     const id = await getValueFor(elderlyId)
     const key = await getValueFor(firestoreSSSKey(id))
-    console.log("CHANGEKEY: "+key)
     firebase.firestore().collection(elderlyCollectionName)
         .doc(userId).update({key: key})
         .catch((error) => {
             alert('Erro ao tentar criar a conta, tente novamente!')
-            console.log('Error: ', error)
+            //console.log('Error: ', error)
         })
 }
 
@@ -60,7 +59,7 @@ async function createElderly(elderlyId: string) {
 
     } catch (error) {
         alert('Erro ao tentar criar a conta, tente novamente!')
-        console.log('Error: ', error)
+        //console.log('Error: ', error)
     }
 }
 
@@ -88,7 +87,6 @@ async function elderlyExists(elderlyId: string): Promise<boolean> {
  * @param data 
  */
 async function addCredencial(userId: string, shared: string, newCredencialId: string, data: string) {
-    console.log(shared)
     const key = deriveSecret([await getKey(userId), shared])
     const nonce = randomIV()
     const encrypted = encryption(data, key, nonce)
@@ -106,7 +104,7 @@ async function addCredencial(userId: string, shared: string, newCredencialId: st
             .set(defaultCredencial)
         .catch((error) => {
             //alert('Erro ao tentar adicionar a nova credencial, tente novamente!')
-            console.log('Error: ', error)
+            //console.log('Error: ', error)
         })
 }
 
@@ -137,28 +135,28 @@ interface Credential {
  */
 async function listAllElderlyCredencials(userId: string, shared: string): Promise<Credential[]> {
 
-    console.log(shared)
+    //console.log("Shared: "+shared)
     const cloudKey = await getKey(userId)
+    //console.log("cloudKey: "+cloudKey)
     const key = deriveSecret([cloudKey, shared])
-    console.log("ListAllCredentialsKey:  "+key)
+    //console.log(key)
 
-    console.log("Key:  "+ key)
     return firestore.collection(elderlyCollectionName).doc(userId).collection(credencialsCollectionName).get().then((docs) => {
         const values: Credential[] = []
         docs.forEach((doc) => { 
             if(doc.data()) {
-                console.log("Value: "+doc.data().data)
+                //console.log("Value: "+doc.data().data)
                 const nonce = doc.data().iv// CryptoJS.lib.WordArray.random(16)
                 const decrypted = decryption(doc.data().data, key, nonce)
                 //console.log("Key:", key)
-                console.log("Decryption: ", decrypted, '\n')
+                //console.log("Decryption: ", decrypted, '\n')
                 values.push({'id': doc.id, 'data': decrypted}) 
             }
         });
         return values
     }).catch((error) => {
         alert('Erro ao obter as credenciais, tente novamente!')
-        console.log('Error: ', error)
+        //console.log('Error: ', error)
         return []
     });
 }
@@ -177,7 +175,7 @@ async function listCredencialProperties(userId: string, credencialId: string) {
         })
         .catch((error) => {
             //alert('Erro ao obter a credencial , tente novamente!')
-            console.log('Error: ', error)
+            //console.log('Error: ', error)
         })
 }
 
@@ -194,7 +192,7 @@ async function deleteCredential(userId: string, credentialId: string): Promise<b
             .delete()
         .catch((error) => {
             //alert('Erro ao tentar adicionar a nova credencial, tente novamente!')
-            console.log('Error: ', error)
+            //console.log('Error: ', error)
             return false
         }).then(() => { return true })
 }
@@ -216,7 +214,7 @@ async function updateCredential(userId: string, credencialId: string, shared: st
             .update(updatedCredencial)
         .catch((error) => {
             //alert('Erro ao tentar adicionar a nova credencial, tente novamente!')
-            console.log('Error: ', error)
+            //console.log('Error: ', error)
             return false
         }).then(() => { return true })
 }
@@ -225,11 +223,11 @@ async function initFirestore(userId: string): Promise<boolean> {
     return elderlyExists(userId).then((result) => {
         if (!result) { //se não existir
             createElderly(userId)
-            console.log('Elderly created sucessfully!!')
+            //console.log('Elderly created sucessfully!!')
         }
         return true
     }).catch(error => {
-        console.log('Error initFirestore: ', error)
+        //console.log('Error initFirestore: ', error)
         return false
     });
 }

@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { signInOperation, signUpOperation } from "../../../firebase/authentication/funcionalities";
 import { getValueFor } from "../../../keychain";
-import { elderlyEmail, elderlyPwd } from "../../../keychain/constants";
+import { elderlyEmail, elderlyPwd, elderlySSSKey } from "../../../keychain/constants";
 import { styles, actions, manualCredential } from "../styles/styles";
 import { whiteBackgroud } from "../../../assets/styles/colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";

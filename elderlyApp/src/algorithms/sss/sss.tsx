@@ -39,25 +39,28 @@ function deriveSecret(shares: string[]): string {
  * @returns 
  */
 async function initSSS(userId: string) {
+
+    //Só obtem o valor da secure depois da segunda leitura da zona segura
+    await getValueFor(firestoreSSSKey(userId))
+    
     let shared = await getValueFor(elderlySSSKey(userId))
+    //console.log("InitSSS Shared:  " + shared)
+
     if(shared != '') return shared
+
     const key = Crypto.getRandomBytes(32)
     const shares = generateShares(String.fromCharCode.apply(null, Array.from(key)), 4, 2)
 
-    //console.log('Elderly key: ', shares[0])
-    //console.log('Caregiver 1 key: ', shares[1])
-    //console.log('Caregiver 2 key: ', shares[2])
-    //console.log('Firestore key: ', shares[3], '\n\n')
+    // console.log('Elderly key: ', shares[0])
+    // console.log('Caregiver 1 key: ', shares[1])
+    // console.log('Caregiver 2 key: ', shares[2])
+    // console.log('Firestore key: ', shares[3], '\n\n')
 
-    save(elderlySSSKey(userId), shares[0])
-    save(caregiver1SSSKey(userId), shares[1])
-    save(caregiver2SSSKey(userId), shares[2])
     save(firestoreSSSKey(userId), shares[3])
-
-    console.log("InitSSSUserId:  "+userId)
-    shared = await getValueFor(elderlySSSKey(userId))
-    console.log("InitSSSShared:  "+shared)
-
+    save(caregiver2SSSKey(userId), shares[2])
+    save(caregiver1SSSKey(userId), shares[1])
+    save(elderlySSSKey(userId), shares[0])
+    
     return shares[0]
 }
 

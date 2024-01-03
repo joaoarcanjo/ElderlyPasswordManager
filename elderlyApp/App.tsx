@@ -43,14 +43,14 @@ const InsideStack = createNativeStackNavigator<RootStackParamList>()
 const im_testing = false
 
 function InsideLayout() {
-  const { userId, setShared } = useLogin()
+  const { userId, userShared, setShared } = useLogin()
   
   useEffect(() => {
     if(im_testing) {
       cleanKeychain(userId)
     } else {
       initSSS(userId)
-      .then((shared) => {console.log("Shared: "+shared); setShared(shared)})
+      .then((shared) => setShared(shared))
       .then(() => initDb())
       .then(() => initFirestore(userId))
       .then(() => changeKey(userId))
@@ -79,23 +79,25 @@ function Inicialization() {
   const { setUserId, setUserEmail, userId } = useLogin()
 
   useEffect(() => {
-    onAuthStateChanged(FIREBASE_AUTH, (user) =>{
-      console.log("User: " + user)
-      console.log("UserId: " + userId)
-      if(userId) setUser(user)
-      else if(user != null && user.email) {
+    onAuthStateChanged(FIREBASE_AUTH, (user) => {
+      //console.log("User: " + user)
+      //console.log("UserId: " + userId)
+      if(userId) {
+        setUser(user)
+      }else if(user != null && user.email) {
         initKeychain(user.uid, user.email)
         setUserId(user.uid)
         setUserEmail(user.email)
+        setUser(user)
       }
     })
-  }, [user, userId])
+  }, [user])
 
   return (
       <NavigationContainer>
         <View style={{flex: 0.06}}/>
         <Stack.Navigator initialRouteName="LoginPage">
-          {user != null ? 
+          {user != null && userId != null ?
           <Stack.Screen name="Inside" component={InsideLayout} options={{title: "Inside", headerShown:false}}  />
           :
           <>
