@@ -6,16 +6,10 @@ import { signinErrorResult, signupErrorResult } from "../FirebaseErrors"
 
 async function signInOperation(email: string, pwd: string): Promise<boolean> {
     try {
-        /*if(email != emailAux && emailAux != '') {
-            alert('Registation failed: invalid user.')
-            return false
-        } else*/ {
-            //await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-            await signInWithEmailAndPassword(FIREBASE_AUTH, email, pwd)
-            save(elderlyPwd, pwd)
-            save(elderlyEmail, email)
-            return true
-        }
+        await signInWithEmailAndPassword(FIREBASE_AUTH, email, pwd)
+        save(elderlyPwd, pwd)
+        save(elderlyEmail, email)
+        return true
     } catch (error) {
         signinErrorResult(error)
         return false
@@ -33,7 +27,5 @@ async function signUpOperation(email: string, pwd: string): Promise<boolean> {
         return false
     } 
 }
-
-
 
 export { signInOperation, signUpOperation }

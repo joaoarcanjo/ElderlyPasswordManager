@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React from 'react'
 import {View, Text, TouchableOpacity, Image, StyleSheet, Linking} from 'react-native'
 import { stylesAddCaregiver, caregiverStyle, caregiverContactInfo, decouplingOption, permissionButton } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
@@ -77,7 +77,7 @@ function CaregiversList() {
 export default function Caregivers() {
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}> 
-      <MainBox text={'Caregivers'}/>
+      <MainBox text={'Cuidadores'}/>
       <CaregiversList/>
       <Navbar/>
     </View>

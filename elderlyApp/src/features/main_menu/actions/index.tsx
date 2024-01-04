@@ -97,7 +97,7 @@ function Functionalities() {
                 </TouchableOpacity>
                 <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareGenerator, stylesButtons.mainConfig]} onPress={() => GeneratorsNavigation()}>
                     <Image source={require(generatorImage)} style={[stylesOptions.squarePhoto]}/>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '0%'}, stylesOptions.squareText]}>Nova Pass</Text>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '0%'}, stylesOptions.squareText]}>Gerar nova</Text>
                 </TouchableOpacity>
            </View>
            <View style={{flex: 0.5, flexDirection: 'row', justifyContent: 'space-around' }}>

@@ -1,12 +1,15 @@
 import { FirebaseAuthTypes } from "@react-native-firebase/auth"
 import { Alert } from "react-native";
 
-interface SignError extends FirebaseAuthTypes.NativeFirebaseAuthError {}
+interface SignError extends FirebaseAuthTypes.NativeFirebaseAuthError {
+  code: any;
+}
 
 function signinErrorResult(error: any) {
     
     const firebaseError = error as SignError;
-    console.log(firebaseError.code)
+    console.log("--> Firebase signin error code: "+firebaseError.code)
+    
     switch (firebaseError.code) {
         case 'auth/user-not-found':
           Alert.alert('Erro', 'Email não encontrado. Verifique suas credenciais.')
@@ -28,7 +31,8 @@ function signinErrorResult(error: any) {
 
 function signupErrorResult(error: any) {
 
-    const firebaseError = error as SignError;
+    const firebaseError = error as SignError
+    console.log("--> Firebase signup error code: "+firebaseError.code)
 
     switch (firebaseError.code) {
         case 'auth/email-already-in-use':

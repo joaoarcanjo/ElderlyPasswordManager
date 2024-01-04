@@ -1,5 +1,3 @@
-import { WordArray } from "crypto-es/lib/core"
-
 const elderlyCollectionName = 'Elderly'
 const credencialsCollectionName = 'Credencials'
 

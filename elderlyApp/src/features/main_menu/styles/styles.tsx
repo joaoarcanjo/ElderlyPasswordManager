@@ -18,14 +18,14 @@ const stylesFirstHalf = StyleSheet.create({
     elderContainer: {
         backgroundColor: whiteBackgroud,
         borderRadius: 20, // Define o raio dos cantos para arredondá-los
-        borderWidth: 3, // Largura da linha na margem
+        borderWidth: 1, // Largura da linha na margem
     },
     caregiversContainer: {
         width: '75%',
         borderBottomLeftRadius: 20, // Arredonda o canto inferior esquerdo
         borderBottomRightRadius: 20, // Arredonda o canto inferior direito
         borderTopWidth: 0,
-        borderWidth: 3, // Largura do contorno
+        borderWidth: 1, // Largura do contorno
         borderColor: blackBorder, // Cor do contorno
         backgroundColor: whiteBackgroud
     },

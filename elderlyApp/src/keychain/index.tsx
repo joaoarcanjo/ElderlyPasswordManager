@@ -1,5 +1,5 @@
-import * as SecureStore from 'expo-secure-store';
-import { caregiver1SSSKey, caregiver2SSSKey, elderlyEmail, elderlyId, elderlySSSKey, firestoreSSSKey, localDBKey } from './constants';
+import {setItemAsync, getItemAsync, deleteItemAsync} from 'expo-secure-store';
+import { caregiver1SSSKey, elderlyEmail, elderlyId, elderlySSSKey, firestoreSSSKey, localDBKey, caregiver2SSSKey } from './constants';
 import * as Crypto from 'expo-crypto';
 /**
  * Função para armazenar o valor key-value.
@@ -8,7 +8,9 @@ import * as Crypto from 'expo-crypto';
  * @param value 
  */
 async function save(key: string, value: string) {
-  await SecureStore.setItemAsync(key, value)
+  do {
+    setItemAsync(key, value)
+  } while(value != '' && await getValueFor(key) == '')
 }
 
 /**
@@ -17,8 +19,7 @@ async function save(key: string, value: string) {
  * @param key 
  */
 async function getValueFor(key: string): Promise<string> {
-  return SecureStore.getItemAsync(key).then((result) => result ?? ''
-  );
+  return getItemAsync(key).then((result) => result ?? '')
 }
 
 /**
@@ -27,11 +28,11 @@ async function getValueFor(key: string): Promise<string> {
  */
 async function cleanKeychain(id: string) {
 
-  await SecureStore.deleteItemAsync(firestoreSSSKey(id))
-  .then(() => SecureStore.deleteItemAsync(elderlySSSKey(id)))
-  .then(() => SecureStore.deleteItemAsync(caregiver1SSSKey(id)))
-  .then(() => SecureStore.deleteItemAsync(caregiver2SSSKey(id)))
-  .then(() => SecureStore.deleteItemAsync(elderlyId))
+  await deleteItemAsync(firestoreSSSKey(id))
+  .then(() => deleteItemAsync(elderlySSSKey(id)))
+  .then(() => deleteItemAsync(caregiver1SSSKey(id)))
+  .then(() => deleteItemAsync(caregiver2SSSKey(id)))
+  .then(() => deleteItemAsync(elderlyId))
 }
 
 /**

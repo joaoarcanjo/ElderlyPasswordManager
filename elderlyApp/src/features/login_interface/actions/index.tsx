@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react"
-import { View, TextInput, Image, Text, TouchableOpacity, StyleSheet, Alert } from "react-native"
+import { View, TextInput, Text, TouchableOpacity, StyleSheet } from "react-native"
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { signInOperation, signUpOperation } from "../../../firebase/authentication/funcionalities";
 import { getValueFor } from "../../../keychain";
-import { elderlyEmail, elderlyPwd, elderlySSSKey } from "../../../keychain/constants";
-import { styles, actions, manualCredential } from "../styles/styles";
+import { elderlyEmail, elderlyPwd } from "../../../keychain/constants";
+import { styles, actions } from "../styles/styles";
 import { whiteBackgroud } from "../../../assets/styles/colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { stylesButtons } from "../../../assets/styles/main_style";

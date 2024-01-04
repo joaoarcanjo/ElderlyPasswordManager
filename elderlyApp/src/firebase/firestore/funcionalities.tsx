@@ -1,7 +1,7 @@
 import { wordArrayToString, decryption, encryption, randomIV } from '../../algorithms/0thers/cryptoOperations';
 import { deriveSecret } from '../../algorithms/sss/sss';
 import { getValueFor } from '../../keychain';
-import { caregiver1SSSKey, caregiver2SSSKey, elderlyId, elderlySSSKey, firestoreSSSKey } from '../../keychain/constants';
+import { elderlyId, firestoreSSSKey } from '../../keychain/constants';
 import { firebase } from '../FirebaseConfig';
 import { credencialsCollectionName, defaultCredencials, defaultElderly, elderlyCollectionName, updateDataCredencial } from './constants';
 
@@ -103,7 +103,7 @@ async function addCredencial(userId: string, shared: string, newCredencialId: st
             .doc(newCredencialId)
             .set(defaultCredencial)
         .catch((error) => {
-            //alert('Erro ao tentar adicionar a nova credencial, tente novamente!')
+            alert('Erro ao tentar adicionar a nova credencial, tente novamente!')
             //console.log('Error: ', error)
         })
 }
@@ -118,8 +118,8 @@ async function listAllElderly(): Promise<string[]> {
         docs.forEach((doc) => { console.log(doc.id, ' => ', doc.data()); values.push(doc.data().caregivers) });
         return values
     }).catch((error) => {
-        //alert('Erro ao obter os idosos, tente novamente!')
-        console.error('Error: ', error)
+        alert('Erro ao obter os idosos, tente novamente!')
+        //console.error('Error: ', error)
         return []
     });
 }

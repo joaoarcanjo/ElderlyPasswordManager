@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native'
-import { blackBorder, greyBackgroud, greyBorder, superlightBlueBackgroud, whiteBackgroud } from '../../../assets/styles/colors'
+import { greyBackgroud, greyBorder, whiteBackgroud } from '../../../assets/styles/colors'
 
 const caregiver = StyleSheet.create({
     container: {
