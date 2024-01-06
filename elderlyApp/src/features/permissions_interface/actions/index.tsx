@@ -52,17 +52,6 @@ function CaregiversPermissions() {
   )
 }
 
-/*
-function CredentialNameBox({name}: Readonly<{name: string}>) {
-  return (
-    <TouchableOpacity style= {{ flex: 0.08, flexDirection: 'row'}}>
-      <View style={[{flex: 1, marginHorizontal: '12%', justifyContent: 'center',  alignItems: 'center'}, credentialName.container]}>
-        <Text numberOfLines={1} adjustsFontSizeToFit style={[{padding: '5%'}, credentialName.text]}>{name}</Text>
-      </View>
-    </TouchableOpacity>
-  )
-}*/
-
 export default function PermissionsPage() {
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}> 

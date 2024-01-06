@@ -14,7 +14,7 @@ import { deleteCredential, updateCredential } from '../../../firebase/firestore/
 import { YesOrNoModal } from '../../../components/Modal'
 import { Spinner } from '../../../components/Spinner'
 import Algorithm from '../../password_generator/actions/algorithm'
-import { useLogin } from '../../login_interface/actions/session'
+import { useLogin } from '../../../firebase/authentication/session'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
 
 /**

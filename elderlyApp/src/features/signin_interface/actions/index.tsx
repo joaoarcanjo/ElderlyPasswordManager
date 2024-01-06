@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import { View, TextInput, Text, TouchableOpacity, StyleSheet } from "react-native"
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { signInOperation, signUpOperation } from "../../../firebase/authentication/funcionalities";
+import { signInOperation } from "../../../firebase/authentication/funcionalities";
 import { getValueFor } from "../../../keychain";
 import { elderlyEmail, elderlyPwd } from "../../../keychain/constants";
 import { styles, actions } from "../styles/styles";
@@ -10,10 +10,10 @@ import { whiteBackgroud } from "../../../assets/styles/colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { stylesButtons } from "../../../assets/styles/main_style";
 import { Spinner } from "../../../components/Spinner";
-import { useLogin } from "./session";
+import { useLogin } from "../../../firebase/authentication/session";
 import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
 
-const LoginPage = () => {
+const SignInPage = () => {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -23,9 +23,10 @@ const LoginPage = () => {
 
     const navigation = useNavigation<StackNavigationProp<any>>()
     const toggleShowPassword = () => {setShowPassword(!showPassword);}
-    const { setUserEmail, setUserPhone, setUserName } = useLogin()
+    const { setUserEmail } = useLogin()
 
     useEffect(() => {
+        console.debug("===> SignIn_Page: Component presented.\n")
         setLoadingPersistent(true)
         persistentLogin()
     }, [])
@@ -35,16 +36,15 @@ const LoginPage = () => {
         const emailSaved = await getValueFor(elderlyEmail)
 
         if(emailSaved != '' && pwdSaved != '') {
-            signInOperation(emailSaved, pwdSaved).then((loginResult) => {
+            signInOperation(emailSaved, pwdSaved).then(async (loginResult) => {
                 if(loginResult) {
                     setLoadingPersistent(false)
                     setUserEmail(emailSaved)
-
-                    setUserPhone("966666666") //TODO: Para tirar daqui
-                    setUserName("User name") //TODO: Para tirar daqui
                     navigation.navigate('Home')
                 } else {
-                    insert()
+                    setEmail(emailSaved)
+                    setPassword(pwdSaved)
+                    setLoadingPersistent(false)
                 }
             })
         } else {
@@ -61,32 +61,13 @@ const LoginPage = () => {
         signInOperation(email, password).then((loginResult) => {
             setLoading(false)
             if(loginResult) {
-                setUserPhone("966666666") //TODO: Para tirar daqui
-                setUserName("User name") //TODO: Para tirar daqui
                 navigation.push('Home')
             } 
         })
     }
 
     const signUp = async () => {
-        setLoading(true)
-        signUpOperation(email, password).then((loginResult) => {
-            setLoading(false)
-            if(loginResult) {
-                setUserPhone("966666666") //TODO: Para tirar daqui
-                setUserName("User name") //TODO: Para tirar daqui
-                navigation.push('Home')
-            }
-        })
-    }
-
-    const insert = async () => {
-        const pwdSaved = await getValueFor(elderlyPwd)
-        const emailSaved = await getValueFor(elderlyEmail)
-
-        setEmail(emailSaved)
-        setPassword(pwdSaved)
-        setLoadingPersistent(false)
+        navigation.navigate('SignupPage')
     }
 
     return (        
@@ -155,4 +136,4 @@ const LoginPage = () => {
     )
 }
 
-export default LoginPage
+export default SignInPage

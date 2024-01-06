@@ -1,4 +1,4 @@
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 import MainMenu from './src/features/main_menu/actions';
 import Credentials from './src/features/list_credentials/actions';
 import { NavigationContainer } from '@react-navigation/native';
@@ -12,16 +12,16 @@ import { initDb } from './src/database';
 import FlashMessage from 'react-native-flash-message';
 import Caregivers from './src/features/list_caregivers/actions';
 import { changeKey, initFirestore } from './src/firebase/firestore/funcionalities';
-import { cleanKeychain, getValueFor, initKeychain } from './src/keychain';
+import { cleanKeychain, initKeychain } from './src/keychain';
 import { AddCredencial } from './src/features/add_credentials/actions';
 import { initSSS } from './src/algorithms/sss/sss';
 import CredencialPage from './src/features/credential_interface/actions';
-import LoginPage from './src/features/login_interface/actions';
+import SignInPage from './src/features/signin_interface/actions';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from './src/firebase/FirebaseConfig';
 import PermissionsPage from './src/features/permissions_interface/actions';
-import { LoginProvider, useLogin } from './src/features/login_interface/actions/session';
-import { elderlySSSKey } from './src/keychain/constants';
+import { LoginProvider, useLogin } from './src/firebase/authentication/session';
+import SignUpPage from './src/features/signup_interface/actions';
 
 export type RootStackParamList = {
   Home: undefined
@@ -43,9 +43,11 @@ const InsideStack = createNativeStackNavigator<RootStackParamList>()
 const im_testing = false
 
 function InsideLayout() {
-  const { userId, userShared, setShared } = useLogin()
+  const { userId, setShared } = useLogin()
   
   useEffect(() => {
+    console.debug("#-> InsideLayout: useEffect called.")
+
     if(im_testing) {
       cleanKeychain(userId)
     } else {
@@ -98,10 +100,11 @@ function Inicialization() {
         <View style={{flex: 0.06}}/>
         <Stack.Navigator initialRouteName="LoginPage">
           {user != null && userId != null ?
-          <Stack.Screen name="Inside" component={InsideLayout} options={{title: "Inside", headerShown:false}}  />
+          <Stack.Screen name="Inside" component={InsideLayout} options={{title: "Inside", headerShown:false}}/>
           :
           <>
-            <Stack.Screen name="LoginPage" component={LoginPage} options={{title: "LoginPage", headerShown:false}}/>
+            <Stack.Screen name="LoginPage" component={SignInPage} options={{title: "LoginPage", headerShown:false}}/>
+            <Stack.Screen name="SignupPage" component={SignUpPage} options={{title: "SignupPage", headerShown:false}}/>
             <InsideStack.Screen name="Home" component={MainMenu} options={{title: "Home", headerShown:false}}/>
           </>
           }

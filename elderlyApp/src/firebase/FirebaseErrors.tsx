@@ -17,6 +17,9 @@ function signinErrorResult(error: any) {
         case 'auth/invalid-email':
           Alert.alert('Erro', 'O email fornecido é inválido.')
           break
+        case 'auth/missing-password':
+          Alert.alert('Erro', 'É necessário inserir a password.')
+          break
         case 'auth/wrong-password':
           Alert.alert('Erro', 'Senha incorreta. Verifique suas credenciais.')
           break
@@ -40,6 +43,9 @@ function signupErrorResult(error: any) {
           break
         case 'auth/invalid-email':
           Alert.alert('Erro', 'O email fornecido é inválido.')
+          break
+        case 'auth/missing-password':
+          Alert.alert('Erro', 'É necessário inserir a password.')
           break
         case 'auth/weak-password':
           Alert.alert('Erro', 'A password necessita de pelo menos 6 caracteres.')

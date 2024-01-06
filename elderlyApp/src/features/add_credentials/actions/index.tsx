@@ -14,7 +14,7 @@ import AvaliationEmoji from "../../../components/EmojiAvaliation";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { getNewId } from "../../../algorithms/0thers/cryptoOperations";
-import { useLogin } from "../../login_interface/actions/session";
+import { useLogin } from "../../../firebase/authentication/session";
 
 const placeholderPlatform = 'Insira a plataforma'
 const placeholderUsername = 'Insira o seu username'

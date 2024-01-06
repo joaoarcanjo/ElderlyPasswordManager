@@ -1,10 +1,12 @@
 import {View, Text, Image, TouchableOpacity} from 'react-native'
 import { stylesOptions, stylesFirstHalf } from '../styles/styles'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import type { StackNavigationProp } from '@react-navigation/stack';
 import { stylesButtons } from '../../../assets/styles/main_style';
-import { useLogin } from '../../login_interface/actions/session';
+import { useLogin } from '../../../firebase/authentication/session';
+import { getValueFor, save } from '../../../keychain';
+import { elderlyName, elderlyPhone } from '../../../keychain/constants';
 
 const credentialsImage = '../images/credenciais.png'
 const generatorImage = '../images/gerador.png'
@@ -15,7 +17,7 @@ const elderlyImage = '../../../assets/images/elderly.png'
 
 function ElderlyInfoBox() {
 
-    const { userName } = useLogin()
+    const { userId, setUserName, setUserPhone, userPhone, userName } = useLogin()
 
     return (
         <View style={[{ flex: 0.6, width: '85%', flexDirection: 'row', justifyContent: 'space-around' }, stylesFirstHalf.elderContainer]}>
@@ -114,7 +116,35 @@ function Functionalities() {
     );
 }
 
+/**
+ * Quando o componente do menu principal é renderizado, é atualizado os dados do user.
+ * @returns 
+ */
 export default function MainMenu() {
+
+    const { userId, setUserName, setUserPhone, userPhone, userName } = useLogin()
+
+    const savePhoneAndName = async () => {
+        console.log("UserId: "+userId)
+        console.log("UserPhone: "+userPhone)
+        console.log("UserName: "+userName)
+    
+        if(userPhone == '' && userName == '') {
+          const userNameAux = await getValueFor(elderlyName(userId))
+          const userPhoneAux = await getValueFor(elderlyPhone(userId))
+
+          if(userNameAux != '' && userPhoneAux != '') {
+            setUserName(userNameAux)
+            setUserPhone(userPhoneAux)
+          }
+        } else {
+          await save(elderlyName(userId), userName)
+          await save(elderlyPhone(userId), userPhone)
+        }
+    }
+
+    savePhoneAndName()
+
     return (
         <View style={{ flex: 1, flexDirection: 'column', marginTop: '5%'}}>
             <UserInfo/>
