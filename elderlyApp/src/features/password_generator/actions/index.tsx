@@ -7,6 +7,7 @@ import { savePasswordGenerated } from '../../../database'
 import Algorithm from './algorithm'
 import { FlashMessage, copyValue } from '../../../components/ShowFlashMessage'
 import MainBox from '../../../components/MainBox'
+import { useLogin } from '../../../firebase/authentication/session'
 
 const minusImage = "../../../assets/images/minus.png"
 const plusImage = "../../../assets/images/plus.png"
@@ -39,6 +40,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
   const [lowercase, setLowercase] = useState(true);
   const [numbers, setNumbers] = useState(true);
   const [special, setSpecial] = useState(true);
+  const { localDBKey } = useLogin();
 
   const incLength = () => {if(length < 40)setLength(length + 1)}
   const decLength = () => {if(length > 8)setLength(length - 1)}
@@ -81,7 +83,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
     if(passGenerated != password) {
       // You can use the 'result' object to get information about the password strength
       setPassword(passGenerated)
-      savePasswordGenerated(passGenerated)
+      savePasswordGenerated(passGenerated, localDBKey)
     }
   }
 

@@ -2,6 +2,7 @@ import { HEX_ENCODING } from "./algorithm/constants";
 import * as Crypto from 'expo-crypto';
 import { getValueFor, save } from './../../keychain/index'
 import { caregiver1SSSKey, caregiver2SSSKey, elderlySSSKey, firestoreSSSKey } from "../../keychain/constants";
+import { generateKey } from "../0thers/crypto";
 
 const { split } = require('./algorithm/split')
 const { combine } = require('./algorithm/combine')
@@ -45,8 +46,8 @@ async function initSSS(userId: string) {
 
     if(shared != '') return shared
 
-    const key = Crypto.getRandomBytes(32)
-    const shares = generateShares(String.fromCharCode.apply(null, Array.from(key)), 4, 2)
+    const key = generateKey()
+    const shares = generateShares(key, 4, 2)
 
     return await save(firestoreSSSKey(userId), shares[3])
     .then(() => save(caregiver2SSSKey(userId), shares[2]))

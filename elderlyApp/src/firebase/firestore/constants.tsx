@@ -3,16 +3,14 @@ const credencialsCollectionName = 'Credencials'
 
 const keyParameter = 'key'
 
-const defaultCredencials = (data: string, nonce: string) => ({
+const defaultCredencials = (data: string) => ({
     data: data,
     readCaregivers: [],
-    writeCaregivers: [],
-    iv: nonce
+    writeCaregivers: []
 })
 
-const updateDataCredencial = (data: string, nonce: string) => ({
+const updateDataCredencial = (data: string) => ({
     data: data,
-    iv: nonce
 })
 
 const defaultElderly = {

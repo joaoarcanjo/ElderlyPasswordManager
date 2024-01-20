@@ -57,7 +57,7 @@ const SignUpPage = () => {
                             autoCapitalize="none"
                             style={{ flex: 1, fontSize: 18, padding: '3%', marginHorizontal: '5%', marginVertical: '1%' }}
                             onChangeText={setName}
-                            maxLength={10}
+                            maxLength={36}
                             />
                         </View> 
                         <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginTop: '3%', marginLeft: '5%', justifyContent: 'center', fontSize: 20}]}>EMAIL</Text>

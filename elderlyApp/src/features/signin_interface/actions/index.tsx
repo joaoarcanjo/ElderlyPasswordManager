@@ -40,7 +40,7 @@ const SignInPage = () => {
                 if(loginResult) {
                     setLoadingPersistent(false)
                     setUserEmail(emailSaved)
-                    navigation.navigate('Home')
+                    navigation.push('Home')
                 } else {
                     setEmail(emailSaved)
                     setPassword(pwdSaved)

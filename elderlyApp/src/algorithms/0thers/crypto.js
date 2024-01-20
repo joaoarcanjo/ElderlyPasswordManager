@@ -1,0 +1,54 @@
+import { secretbox, randomBytes, setPRNG } from "tweetnacl";
+import { decode as decodeUTF8, encode as encodeUTF8 } from '@stablelib/utf8';
+import { decode as decodeBase64, encode as encodeBase64} from '@stablelib/base64';
+import { getRandomBytes, randomUUID } from 'expo-crypto';
+
+setPRNG((x, n) => {
+  const randomBytes = getRandomBytes(n);
+  for (let i = 0; i < n; i++) {
+    x[i] = randomBytes[i];
+  }
+});
+
+const newNonce = () => randomBytes(secretbox.nonceLength);
+
+const generateKey = () => encodeBase64(randomBytes(secretbox.keyLength));
+
+const encrypt = (message, key) => {
+  const keyUint8Array = decodeBase64(key);
+  const nonce = newNonce();
+  const messageUint8 = encodeUTF8(message);
+  const box = secretbox(messageUint8, nonce, keyUint8Array);
+
+  const fullMessage = new Uint8Array(nonce.length + box.length);
+  fullMessage.set(nonce);
+  fullMessage.set(box, nonce.length);
+
+  const base64FullMessage = encodeBase64(fullMessage);
+  return base64FullMessage;
+};
+
+const decrypt = (messageWithNonce, key) => {
+  const keyUint8Array = decodeBase64(key);
+  const messageWithNonceAsUint8Array = decodeBase64(messageWithNonce);
+  const nonce = messageWithNonceAsUint8Array.slice(0, secretbox.nonceLength);
+
+  const message = messageWithNonceAsUint8Array.slice(
+    secretbox.nonceLength,
+    messageWithNonce.length
+  );
+
+  const decrypted = secretbox.open(message, nonce, keyUint8Array);
+
+  if (!decrypted) {
+    throw new Error("Could not decrypt message");
+  }
+
+  const base64DecryptedMessage = decodeUTF8(decrypted);
+  return base64DecryptedMessage
+  //return JSON.parse(base64DecryptedMessage);
+};
+
+const getNewId = () => randomUUID()
+
+export { generateKey, encrypt, decrypt, getNewId }

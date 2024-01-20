@@ -1,6 +1,6 @@
 import {setItemAsync, getItemAsync, deleteItemAsync} from 'expo-secure-store';
 import { caregiver1SSSKey, elderlyEmail, elderlyId, elderlySSSKey, firestoreSSSKey, localDBKey, caregiver2SSSKey } from './constants';
-import * as Crypto from 'expo-crypto';
+import { generateKey } from '../algorithms/0thers/crypto';
 /**
  * Função para armazenar o valor key-value.
  * 
@@ -42,7 +42,7 @@ async function cleanKeychain(id: string) {
  * @param userId 
  * @returns 
  */
-async function initKeychain(userId: string, userEmail: string): Promise<boolean> {
+async function initKeychain(userId: string, userEmail: string): Promise<string> {
 
   if(await getValueFor(elderlyId) == '') {
     await cleanKeychain(userId).then(() => {
@@ -51,9 +51,9 @@ async function initKeychain(userId: string, userEmail: string): Promise<boolean>
     })
   }
   if(await getValueFor(localDBKey(userId)) == '') {
-    save(localDBKey(userId), String.fromCharCode.apply(null, Array.from(Crypto.getRandomBytes(32)))) 
+    save(localDBKey(userId), generateKey()) 
   }
-  return true
+  return await getValueFor(localDBKey(userId))
 }
 
 export { getValueFor, cleanKeychain, initKeychain, save };

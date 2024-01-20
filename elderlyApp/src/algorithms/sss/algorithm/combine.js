@@ -1,4 +1,4 @@
-const { BIN_ENCODING } = require('./constants')
+const { BIN_ENCODING, HEX_ENCODING } = require('./constants')
 const { lagrange } = require('./lagrange')
 const { parse } = require('./share')
 const codec = require('./codec')

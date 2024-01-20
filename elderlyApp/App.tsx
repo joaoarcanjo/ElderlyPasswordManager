@@ -22,6 +22,7 @@ import { FIREBASE_AUTH } from './src/firebase/FirebaseConfig';
 import PermissionsPage from './src/features/permissions_interface/actions';
 import { LoginProvider, useLogin } from './src/firebase/authentication/session';
 import SignUpPage from './src/features/signup_interface/actions';
+import { generateKey, encrypt, decrypt } from './src/algorithms/0thers/crypto';
 
 export type RootStackParamList = {
   Home: undefined
@@ -78,7 +79,7 @@ function InsideLayout() {
 function Inicialization() {
 
   const [user, setUser] = useState<User | null>(null)
-  const { setUserId, setUserEmail, userId } = useLogin()
+  const { setUserId, setUserEmail, setLocalDBKey, userId } = useLogin()
 
   useEffect(() => {
     onAuthStateChanged(FIREBASE_AUTH, (user) => {
@@ -87,7 +88,7 @@ function Inicialization() {
       if(userId) {
         setUser(user)
       }else if(user != null && user.email) {
-        initKeychain(user.uid, user.email)
+        initKeychain(user.uid, user.email).then(DBKey => setLocalDBKey(DBKey))
         setUserId(user.uid)
         setUserEmail(user.email)
         setUser(user)

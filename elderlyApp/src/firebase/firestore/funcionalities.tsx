@@ -1,7 +1,7 @@
-import { wordArrayToString, decryption, encryption, randomIV } from '../../algorithms/0thers/cryptoOperations';
+import { decrypt, encrypt } from '../../algorithms/0thers/crypto';
 import { deriveSecret } from '../../algorithms/sss/sss';
 import { getValueFor } from '../../keychain';
-import { elderlyId, firestoreSSSKey } from '../../keychain/constants';
+import { firestoreSSSKey } from '../../keychain/constants';
 import { firebase } from '../FirebaseConfig';
 import { credencialsCollectionName, defaultCredencials, defaultElderly, elderlyCollectionName, updateDataCredencial } from './constants';
 
@@ -11,8 +11,8 @@ const firestore = firebase.firestore()
  * Função para alterar a chave que se encontra na cloud.
  */
 async function changeKey(userId: string) {
-    const id = await getValueFor(elderlyId)
-    const key = await getValueFor(firestoreSSSKey(id))
+    const key = await getValueFor(firestoreSSSKey(userId))
+
     firebase.firestore().collection(elderlyCollectionName)
         .doc(userId).update({key: key})
         .catch((error) => {
@@ -88,14 +88,9 @@ async function elderlyExists(elderlyId: string): Promise<boolean> {
  */
 async function addCredencial(userId: string, shared: string, newCredencialId: string, data: string) {
     const key = deriveSecret([await getKey(userId), shared])
-    const nonce = randomIV()
-    const encrypted = encryption(data, key, nonce)
+    const encrypted = encrypt(data, key)
 
-    //console.log("Key:", key)
-    //console.log("Encryption:", encrypted)
-
-    //console.log(encrypted)
-    const defaultCredencial = defaultCredencials(encrypted, wordArrayToString(nonce))
+    const defaultCredencial = defaultCredencials(encrypted)
 
     firestore.collection(elderlyCollectionName)
         .doc(userId)
@@ -139,7 +134,6 @@ async function listAllElderlyCredencials(userId: string, shared: string): Promis
     const cloudKey = await getKey(userId)
     //console.log("cloudKey: "+cloudKey)
     const key = deriveSecret([cloudKey, shared])
-    //console.log(key)
 
     return firestore.collection(elderlyCollectionName).doc(userId).collection(credencialsCollectionName).get().then((docs) => {
         const values: Credential[] = []
@@ -147,7 +141,8 @@ async function listAllElderlyCredencials(userId: string, shared: string): Promis
             if(doc.data()) {
                 //console.log("Value: "+doc.data().data)
                 const nonce = doc.data().iv// CryptoJS.lib.WordArray.random(16)
-                const decrypted = decryption(doc.data().data, key, nonce)
+                //const decrypted = decryption(doc.data().data, key, nonce)
+                const decrypted = decrypt(doc.data().data, key)
                 //console.log("Key:", key)
                 //console.log("Decryption: ", decrypted, '\n')
                 values.push({'id': doc.id, 'data': decrypted}) 
@@ -202,10 +197,9 @@ async function updateCredential(userId: string, credencialId: string, shared: st
     const cloudKey = await getKey(userId)
     const key = deriveSecret([cloudKey, shared])
 
-    const nonce = randomIV()
-    const encrypted = encryption(data, key, nonce)
+    const encrypted = encrypt(data, key)
     
-    const updatedCredencial = updateDataCredencial(encrypted, wordArrayToString(nonce))
+    const updatedCredencial = updateDataCredencial(encrypted)
 
     return firestore.collection(elderlyCollectionName)
         .doc(userId)

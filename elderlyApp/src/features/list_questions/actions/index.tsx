@@ -58,7 +58,7 @@ function QuestionsList() {
 export default function FrequentQuestions() {
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-      <MainBox text={'FQAs'}/>
+      <MainBox text={'FAQs'}/>
       <QuestionsList/>
       <Navbar/>
     </View>

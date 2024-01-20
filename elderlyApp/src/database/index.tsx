@@ -1,9 +1,7 @@
 import * as SQLite from 'expo-sqlite'
 import * as Crypto from 'expo-crypto'
 import { Password } from './types';
-import { decryption, encryption, randomIV, wordArrayToString } from '../algorithms/0thers/cryptoOperations';
-import { getValueFor } from '../keychain';
-import { elderlyId, localDBKey } from '../keychain/constants';
+import { decrypt, encrypt } from '../algorithms/0thers/crypto';
 
 export let db: SQLite.SQLiteDatabase | null = null;
 
@@ -18,7 +16,7 @@ export function initDb() {
 
     db.transaction(tx => {
        tx.executeSql(
-        'CREATE TABLE IF NOT EXISTS passwords (id TEXT PRIMARY KEY, password TEXT, iv TEXT, timestamp INTEGER);'
+        'CREATE TABLE IF NOT EXISTS passwords (id TEXT PRIMARY KEY, password TEXT, timestamp INTEGER);'
     );
     })
     //TODO: Criar a tabela para guardar os perfis dos cuidadores.
@@ -44,19 +42,17 @@ export const deleteGenerated = () => {
 /*
 Function to save the new generated password.
 */
-export const savePasswordGenerated = async (password: string) => {
+export const savePasswordGenerated = async (password: string, localDBKey: string) => {
     deleteGenerated()
 
-    const nonce = randomIV()
-
-    const id = await getValueFor(elderlyId)
-    const localKey = await getValueFor(localDBKey(id))
-    const encrypted = encryption(password, localKey, nonce)
+    console.log(localDBKey)
+    const encrypted = encrypt(password, localDBKey)
+    console.log(encrypted)
 
     if(db != null) {
         db.transaction(tx => {
-            tx.executeSql('INSERT INTO passwords (id, password, iv, timestamp) VALUES (?, ?, ?, ?);',
-            [Crypto.randomUUID(), encrypted, wordArrayToString(nonce), Date.now()],
+            tx.executeSql('INSERT INTO passwords (id, password, timestamp) VALUES (?, ?, ?);',
+            [Crypto.randomUUID(), encrypted, Date.now()],
             (_, result) => {
                 //console.log('Novo registro inserido com sucesso:', result);
             })
@@ -67,18 +63,16 @@ export const savePasswordGenerated = async (password: string) => {
 export const getPasswords = () => {
     if(db != null) {
         db.transaction(tx => {
-            return tx.executeSql('SELECT (id, password, iv, timestamp) FROM passwords', [],
+            return tx.executeSql('SELECT (id, password, timestamp) FROM passwords', [],
                 (txObj, resultSet) => resultSet.rows._array
             );
         });
     }
 }
 
-export const realizarConsulta = (): Promise<Password[]> => {
+export const realizarConsulta = (localDBKey: string): Promise<Password[]> => {
     return new Promise(async (resolve, reject) => {
-        const sql = 'SELECT id, password, iv, timestamp FROM passwords ORDER BY timestamp DESC LIMIT 10';
-        const id = await getValueFor(elderlyId)
-        const localKey =  await getValueFor(localDBKey(id))
+        const sql = 'SELECT id, password, timestamp FROM passwords ORDER BY timestamp DESC LIMIT 10';
 
         const data: Password[] = [];
         try {
@@ -87,10 +81,11 @@ export const realizarConsulta = (): Promise<Password[]> => {
             }
             db.transaction((tx) => {
                 tx.executeSql(sql, [], (tx, results) => {
-                    for (let i = 0; i < results.rows.length; i++) {
+                    console.log("OLA")
+                    for (let i = 0; i < results.rows.length; i++) {                        
                         data.push({
-                            id: results.rows.item(i).id, 
-                            password: decryption(results.rows.item(i).password, localKey, results.rows.item(i).iv), 
+                            id: results.rows.item(i).id,  
+                            password: decrypt(results.rows.item(i).password, localDBKey), 
                             timestamp: results.rows.item(i).timestamp
                         });
                     }
