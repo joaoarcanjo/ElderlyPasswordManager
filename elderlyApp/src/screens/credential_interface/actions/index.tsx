@@ -33,14 +33,14 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
   const [showPassword, setShowPassword] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
   const [loading, setLoading] = useState(false)
-  const navigation = useNavigation<StackNavigationProp<any>>()
+
+  const { userId, userShared } = useLogin()
+  const [editFlag, setEditFlag] = useState(false)
 
   useEffect(() => setAvaliation(getScore(passwordEdited)), [passwordEdited])
-  const { userId, userShared } = useLogin()
 
   const toggleShowPassword = () => {setShowPassword(!showPassword);}
 
-  const [editFlag, setEditFlag] = useState(true)
   const toggleEditFlag = () => {setEditFlag(!editFlag)}
 
   const inputStyle = editFlag ? credentials.credentialInputContainer : credentials.credentialInputContainerV2
@@ -170,7 +170,7 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
                 <Text style={{fontSize: 13}}>Editado por: Elisabeth, 19/11/2021</Text>   
               </View>
               <TouchableOpacity style={[{marginRight:'5%', marginTop: '0%'}, stylesButtons.mainConfig, stylesButtons.copyButton]}  onPress={toggleShowPassword} >
-                <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={showPassword ? 'eye' : 'eye-off'} size={40} color="black"/> 
+                <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={!showPassword ? 'eye' : 'eye-off'} size={40} color="black"/> 
               </TouchableOpacity>
             </View>
             :
@@ -220,7 +220,7 @@ export default function CredencialPage({ route }: Readonly<{route: any}>) {
   return (
     <>
       <KeyboardAvoidingWrapper>
-        <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
           <MainBox text={route.params.platform}/>
           <AppInfo id={route.params.id} un={route.params.username} pw={route.params.password} platform={route.params.platform}/>
         </View>
