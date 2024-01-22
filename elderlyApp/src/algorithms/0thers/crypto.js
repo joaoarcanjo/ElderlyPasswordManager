@@ -10,7 +10,7 @@ setPRNG((x, n) => {
   }
 })
 
-const newNonce = () => randomBytes(256)
+const newNonce = () => randomBytes(secretbox.nonceLength)
 
 const generateKey = () => encodeBase64(randomBytes(secretbox.keyLength))
 
