@@ -22,6 +22,7 @@ import { FIREBASE_AUTH } from './src/firebase/FirebaseConfig';
 import PermissionsPage from './src/screens/permissions_interface/actions';
 import { LoginProvider, useLogin } from './src/firebase/authentication/session';
 import SignUpPage from './src/screens/signup_interface/actions';
+import { usePushNotifications } from './src/notifications/usePushNotifications';
 
 export type RootStackParamList = {
   Home: undefined
@@ -116,6 +117,9 @@ function Inicialization() {
 
 export default function App() {
 
+  const { expoPushToken } = usePushNotifications()
+  console.log("Expo token: "+expoPushToken?.data)
+  
   return (
     <LoginProvider>
       <Inicialization/>
