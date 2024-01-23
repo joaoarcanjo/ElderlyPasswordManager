@@ -6,7 +6,7 @@ import { styles, actions } from "../styles/styles";
 import { whiteBackgroud } from "../../../assets/styles/colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { stylesButtons } from "../../../assets/styles/main_style";
-import { Spinner } from "../../../components/Spinner";
+import { Spinner } from "../../../components/LoadingComponents";
 import { useLogin } from "../../../firebase/authentication/session";
 import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
 import { signUpOperation } from "../../../firebase/authentication/funcionalities";

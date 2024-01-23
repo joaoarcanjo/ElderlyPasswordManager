@@ -7,7 +7,7 @@ import Settings from './src/screens/settings_interface/actions';
 import FrequentQuestions from './src/screens/list_questions/actions';
 import Generator from './src/screens/password_generator/actions';
 import PasswordHistory from './src/screens/password_history/actions';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { initDb } from './src/database';
 import FlashMessage from 'react-native-flash-message';
 import Caregivers from './src/screens/list_caregivers/actions';
@@ -24,15 +24,18 @@ import { LoginProvider, useLogin } from './src/firebase/authentication/session';
 import SignUpPage from './src/screens/signup_interface/actions';
 import { usePushNotifications } from './src/notifications/usePushNotifications';
 import { StatusBar } from 'expo-status-bar';
-
+import SplashScreen from './src/screens/splash_screen/actions';
+import * as SplashFunctions from 'expo-splash-screen';
 
 const Stack = createNativeStackNavigator()
 const InsideStack = createNativeStackNavigator()
+//SplashFunctions.preventAutoHideAsync()
 
 const im_testing = false
 
 function InsideLayout() {
   const { userId, setShared } = useLogin()
+  const [appIsReady, setAppIsReady] = useState(false)
   
   useEffect(() => {
     console.debug("#-> InsideLayout: useEffect called.")
@@ -45,9 +48,14 @@ function InsideLayout() {
       .then(() => initDb())
       .then(() => initFirestore(userId))
       .then(() => changeKey(userId))
+      .then(() => {if(!appIsReady) return new Promise(resolve => setTimeout(resolve, 5000))})
+      .then(() => setAppIsReady(true))
     }
   }, [])
 
+  const onLayoutRootView = useCallback(async () => { if(!appIsReady) await SplashFunctions.hideAsync()}, [appIsReady]);
+
+  if (!appIsReady) return <SplashScreen test={onLayoutRootView}/>
   return (
     <InsideStack.Navigator initialRouteName="Home">
       <InsideStack.Screen name="Home" component={MainMenu} options={{title: "Home", headerShown:false}}/>
@@ -89,12 +97,10 @@ function Inicialization() {
         <View style={{flex: 0.06}}/>
         <Stack.Navigator initialRouteName="LoginPage">
           {user != null && userId != null ?
-          <Stack.Screen name="Inside" component={InsideLayout} options={{title: "Inside", headerShown:false}}/>
-          :
+          <Stack.Screen name="InsideLayout" component={InsideLayout} options={{title: "InsideLayout", headerShown:false}}/>:
           <>
             <Stack.Screen name="LoginPage" component={SignInPage} options={{title: "LoginPage", headerShown:false}}/>
             <Stack.Screen name="SignupPage" component={SignUpPage} options={{title: "SignupPage", headerShown:false}}/>
-            <InsideStack.Screen name="Home" component={MainMenu} options={{title: "Home", headerShown:false}}/>
           </>
           }
         </Stack.Navigator>

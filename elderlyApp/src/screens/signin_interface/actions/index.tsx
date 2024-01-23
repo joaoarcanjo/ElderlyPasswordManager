@@ -9,7 +9,7 @@ import { styles, actions } from "../styles/styles";
 import { whiteBackgroud } from "../../../assets/styles/colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { stylesButtons } from "../../../assets/styles/main_style";
-import { Spinner } from "../../../components/Spinner";
+import { Spinner } from "../../../components/LoadingComponents";
 import { useLogin } from "../../../firebase/authentication/session";
 import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
 
@@ -40,7 +40,7 @@ const SignInPage = () => {
                 if(loginResult) {
                     setLoadingPersistent(false)
                     setUserEmail(emailSaved)
-                    navigation.push('Home')
+                    navigation.push('InsideLayout')
                 } else {
                     setEmail(emailSaved)
                     setPassword(pwdSaved)
@@ -61,7 +61,7 @@ const SignInPage = () => {
         signInOperation(email, password).then((loginResult) => {
             setLoading(false)
             if(loginResult) {
-                navigation.push('Home')
+                navigation.push('InsideLayout')
             } 
         })
     }

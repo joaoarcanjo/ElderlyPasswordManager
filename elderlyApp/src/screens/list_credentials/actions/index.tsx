@@ -8,7 +8,7 @@ import { useNavigation, useIsFocused } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import {FlashMessage, copyValue} from '../../../components/ShowFlashMessage'
 import MainBox from '../../../components/MainBox'
-import { Spinner } from '../../../components/Spinner'
+import { Spinner } from '../../../components/LoadingComponents'
 import { useLogin } from '../../../firebase/authentication/session'
 
 function AddCredencial() {
