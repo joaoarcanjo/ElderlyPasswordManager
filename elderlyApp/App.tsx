@@ -25,22 +25,9 @@ import SignUpPage from './src/screens/signup_interface/actions';
 import { usePushNotifications } from './src/notifications/usePushNotifications';
 import { StatusBar } from 'expo-status-bar';
 
-export type RootStackParamList = {
-  Home: undefined
-  Credentials: undefined
-  AddCredential: undefined
-  Settings: undefined
-  PasswordHistory: undefined
-  FrequentQuestions: undefined
-  Caregivers: undefined
-  Generator: undefined
-  CredentialPage: { id: string, platform: string, username: string, password: string }
-  LoginPage: undefined
-  Permissions: { platform: string }
-};
 
 const Stack = createNativeStackNavigator()
-const InsideStack = createNativeStackNavigator<RootStackParamList>()
+const InsideStack = createNativeStackNavigator()
 
 const im_testing = false
 

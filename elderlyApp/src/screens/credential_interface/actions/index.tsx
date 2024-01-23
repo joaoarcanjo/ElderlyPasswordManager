@@ -35,7 +35,7 @@ function AppInfo({id, platform, un, pw}: Readonly<{id: string, platform: string,
   const [loading, setLoading] = useState(false)
 
   const { userId, userShared } = useLogin()
-  const [editFlag, setEditFlag] = useState(false)
+  const [editFlag, setEditFlag] = useState(true)
 
   useEffect(() => setAvaliation(getScore(passwordEdited)), [passwordEdited])
 
