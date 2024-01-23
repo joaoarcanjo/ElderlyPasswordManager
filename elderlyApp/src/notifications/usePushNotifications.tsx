@@ -59,8 +59,10 @@ export const usePushNotifications = (): PushNotificationState => {
     }
 
     useEffect(() => {
-        console.log("ola")
-        registerForPushNotificationsAsync().then((token) => { setExpoPushToken(token); })
+
+        //TODO: O tokenId das push notifications vai ser armazenado localmente, na base de dados. Se, por exemplo, o token alterar, 
+        //vai reenviar aos membros da relação, imaginemos que mudou de dispositivo.
+        registerForPushNotificationsAsync().then((token) => { console.log(token); setExpoPushToken(token); })
 
         notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
             setNotification(notification)
