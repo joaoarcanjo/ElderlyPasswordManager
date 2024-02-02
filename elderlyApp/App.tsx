@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { initDb } from './src/database';
 import FlashMessage from 'react-native-flash-message';
 import Caregivers from './src/screens/list_caregivers/actions';
-import { changeKey, initFirestore } from './src/firebase/firestore/funcionalities';
+import { changeKey, initFirestore } from './src/firebase/firestore/functionalities';
 import { cleanKeychain, initKeychain } from './src/keychain';
 import { AddCredencial } from './src/screens/add_credentials/actions';
 import { initSSS } from './src/algorithms/sss/sss';
@@ -20,9 +20,8 @@ import SignInPage from './src/screens/signin_interface/actions';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from './src/firebase/FirebaseConfig';
 import PermissionsPage from './src/screens/permissions_interface/actions';
-import { LoginProvider, useLogin } from './src/firebase/authentication/session';
+import { SessionProvider, useSessionInfo } from './src/firebase/authentication/session';
 import SignUpPage from './src/screens/signup_interface/actions';
-import { usePushNotifications } from './src/notifications/usePushNotifications';
 import { StatusBar } from 'expo-status-bar';
 import SplashScreen from './src/screens/splash_screen/actions';
 import * as SplashFunctions from 'expo-splash-screen';
@@ -32,9 +31,10 @@ const InsideStack = createNativeStackNavigator()
 //SplashFunctions.preventAutoHideAsync()
 
 const im_testing = false
+const time = 0
 
 function InsideLayout() {
-  const { userId, setShared } = useLogin()
+  const { userId, setShared } = useSessionInfo()
   const [appIsReady, setAppIsReady] = useState(false)
   
   useEffect(() => {
@@ -48,7 +48,7 @@ function InsideLayout() {
       .then(() => initDb())
       .then(() => initFirestore(userId))
       .then(() => changeKey(userId))
-      .then(() => {if(!appIsReady) return new Promise(resolve => setTimeout(resolve, 5000))})
+      .then(() => {if(!appIsReady) return new Promise(resolve => setTimeout(resolve, time))})
       .then(() => setAppIsReady(true))
     }
   }, [])
@@ -75,9 +75,10 @@ function InsideLayout() {
 function Inicialization() {
 
   const [user, setUser] = useState<User | null>(null)
-  const { setUserId, setUserEmail, setLocalDBKey, userId } = useLogin()
+  const { setUserId, setUserEmail, setLocalDBKey, userId } = useSessionInfo()
 
   useEffect(() => {
+    
     onAuthStateChanged(FIREBASE_AUTH, (user) => {
       //console.log("User: " + user)
       //console.log("UserId: " + userId)
@@ -110,14 +111,10 @@ function Inicialization() {
 }
 
 export default function App() {
-
-  //const { expoPushToken } = usePushNotifications()
-  //console.log("Expo token: "+expoPushToken?.data)
-
   return (
-    <LoginProvider>
+    <SessionProvider>
       <StatusBar hidden />
       <Inicialization/>
-    </LoginProvider>
+    </SessionProvider>
   )
 }

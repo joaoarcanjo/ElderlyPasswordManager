@@ -7,7 +7,7 @@ import { savePasswordGenerated } from '../../../database'
 import Algorithm from './algorithm'
 import { FlashMessage, copyValue } from '../../../components/ShowFlashMessage'
 import MainBox from '../../../components/MainBox'
-import { useLogin } from '../../../firebase/authentication/session'
+import { useSessionInfo } from '../../../firebase/authentication/session'
 
 const minusImage = "../../../assets/images/minus.png"
 const plusImage = "../../../assets/images/plus.png"
@@ -40,7 +40,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
   const [lowercase, setLowercase] = useState(true);
   const [numbers, setNumbers] = useState(true);
   const [special, setSpecial] = useState(true);
-  const { localDBKey } = useLogin();
+  const { localDBKey } = useSessionInfo();
 
   const incLength = () => {if(length < 40)setLength(length + 1)}
   const decLength = () => {if(length > 8)setLength(length - 1)}

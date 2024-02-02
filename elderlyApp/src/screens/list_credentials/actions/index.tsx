@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import {View, Text, TouchableOpacity, Image, ScrollView} from 'react-native'
+import {View, Text, TouchableOpacity, Image, ScrollView, Linking} from 'react-native'
 import { stylesAddCredential, styleScroolView } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import Navbar from '../../../navigation/actions'
-import { listAllElderlyCredencials } from '../../../firebase/firestore/funcionalities'
+import { listAllElderlyCredencials } from '../../../firebase/firestore/functionalities'
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
-import {FlashMessage, copyValue} from '../../../components/ShowFlashMessage'
 import MainBox from '../../../components/MainBox'
 import { Spinner } from '../../../components/LoadingComponents'
-import { useLogin } from '../../../firebase/authentication/session'
+import { useSessionInfo } from '../../../firebase/authentication/session'
+import { usePushNotifications } from '../../../notifications/usePushNotifications'
+import { sendPushNotification } from '../../../notifications/functionalities'
 
 function AddCredencial() {
 
@@ -27,8 +28,32 @@ function AddCredencial() {
 function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
 
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const { setUsernameCopied, setPasswordCopied, usernameCopied, passwordCopied } = useSessionInfo()
+  const { expoPushToken } = usePushNotifications()
 
-  const NavigateToCredentialPage = () => navigation.navigate('CredentialPage', {id: credential.id, platform: credential.data.platform, username: credential.data.username, password: credential.data.password})
+  const OpenCredentialPage = () => {
+    navigation.navigate('CredentialPage', { id: credential.id, platform: credential.data.platform, uri: credential.data.uri, username: credential.data.username, password: credential.data.password })
+  }
+
+  const NavigateToApp = async (uri: string, plataforma: string, username: string, password: string) => { 
+    console.log("Username: "+username)
+    setUsernameCopied(username)
+    setPasswordCopied(password)
+    console.log("USERNAME: "+usernameCopied)
+    console.log("PASSWORD: "+passwordCopied)
+
+    const message = {
+      to: expoPushToken?.data,
+      sound: "default",
+      title: "Credenciais " + plataforma,
+      body: "Copie em seguida o que necessita:",
+      data: {},
+      categoryId: `credentials`
+    }
+    
+    sendPushNotification(message)
+    Linking.openURL('https://'+uri)
+  }
 
   return (
     <View style={[{margin: '3%'}, styleScroolView.itemContainer]}>
@@ -38,8 +63,8 @@ function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
       </View>
 
       <View style={{flex: 0.65, marginHorizontal: '3%', marginBottom: '3%', flexDirection: 'row'}}>
-
-        <View style={{flex: 0.65, marginRight: '3%'}}>
+        {/*
+        <View style={{flex: 0.65, marginRight: '3%'}}>          
           <TouchableOpacity style={[{flex: 0.5, margin: '2%'}, styleScroolView.itemCopyUsername, stylesButtons.mainConfig]} onPress={() => copyValue(credential.data.username, FlashMessage.usernameCopied)}>
             <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar Utilizador</Text>
           </TouchableOpacity>
@@ -47,10 +72,13 @@ function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
             <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar Password</Text>
           </TouchableOpacity>
         </View>
-
-        <View style={{flex: 0.35}}>
-          <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.itemMoreInfoButton, stylesButtons.mainConfig]} onPress={() => {NavigateToCredentialPage()}}>
-              <Image source={require('../../../assets/images/more_info.png')} style={[{width: '60%', height: 60, marginRight: '5%', resizeMode: 'contain'}]}/>
+        */}   
+        <View style={{flex: 1, marginHorizontal: '3%', flexDirection: 'row'}}>
+          <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.itemMoreInfoButton, stylesButtons.mainConfig]} onPress={() => {OpenCredentialPage()}}>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Editar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.navigateButton, stylesButtons.mainConfig]} onPress={() => {NavigateToApp(credential.data.uri, credential.data.platform, credential.data.username, credential.data.password)}}>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Navegar</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -62,6 +90,7 @@ interface Credential {
   id: string,
   data: {
     platform: string,
+    uri: string,
     username: string,
     password: string
   }
@@ -71,7 +100,7 @@ function CredentialsList() {
 
   const [credencials, setCredencials] = useState<Credential[]>([])
   const isFocused = useIsFocused()
-  const { userId, userShared } = useLogin()
+  const { userId, userShared } = useSessionInfo()
 
   const [isFething, setIsFething] = useState(true)
 
@@ -94,7 +123,7 @@ function CredentialsList() {
         {isFething ?
         <Spinner/> :
         <ScrollView style={[{margin: '3%'}]}>
-          {credencials.map((value) => <ScrollItemExample key={value.id} credential={value}/>)}
+          {credencials.map((value: Credential) => <ScrollItemExample key={value.id} credential={value}/>)}
         </ScrollView>}
       </View>
     </View>

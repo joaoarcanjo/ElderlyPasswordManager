@@ -8,7 +8,7 @@ import { realizarConsulta } from '../../../database'
 import { Password } from '../../../database/types'
 import { FlashMessage, copyValue } from '../../../components/ShowFlashMessage'
 import MainBox from '../../../components/MainBox';
-import { useLogin } from '../../../firebase/authentication/session';
+import { useSessionInfo } from '../../../firebase/authentication/session';
 
 export default function PasswordHistory() {
   
@@ -29,7 +29,7 @@ export default function PasswordHistory() {
   function PasswordsList() {
 
     const [passwords, setPasswords] = useState<Password[]>([]);
-    const { localDBKey } = useLogin();
+    const { localDBKey } = useSessionInfo();
 
     useEffect(() => {
       realizarConsulta(localDBKey).then(value => setPasswords(value))

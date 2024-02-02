@@ -1,11 +1,12 @@
 
 import { Image } from 'react-native'
 import { showMessage } from "react-native-flash-message";
-import * as Clipboard from 'expo-clipboard'
+import * as Clipboard from 'expo-clipboard';
 import React from 'react';
 import { darkGreenBackgroud, lightBlueBackground, lightYellowBackground } from '../assets/styles/colors';
 
 const enum FlashMessage {
+  uriCopied = 'URI COPIADO!!',
   usernameCopied = 'UTILIZADOR COPIADO!!',
   passwordCopied = 'PASSWORD COPIADA!!',
 }

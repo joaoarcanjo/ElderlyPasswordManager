@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
 import * as Device from "expo-device"
 import * as Notifications from "expo-notifications"
-
 import Contants from "expo-constants"
+import * as Clipboard from 'expo-clipboard';
+
 
 import { Platform } from 'react-native'
+import { useSessionInfo } from '../firebase/authentication/session';
 
 export interface PushNotificationState {
     expoPushToken?: Notifications.ExpoPushToken
@@ -12,16 +14,18 @@ export interface PushNotificationState {
 }
 
 export const usePushNotifications = (): PushNotificationState => {
-   Notifications.setNotificationHandler({
+
+    Notifications.setNotificationHandler({
         handleNotification: async () => ({
-            shouldPlaySound: false,
+            shouldPlaySound: true,
             shouldShowAlert: true,
-            shouldSetBadge: false,
+            shouldSetBadge: true,
         }),
     })
 
-    const [expoPushToken, setExpoPushToken] = useState<Notifications.ExpoPushToken | undefined>()
+    const { passwordCopied, usernameCopied} = useSessionInfo()
 
+    const [expoPushToken, setExpoPushToken] = useState<Notifications.ExpoPushToken | undefined>()
     const [notification, setNotification] = useState<Notifications.Notification | undefined>()
 
     const notificationListener = useRef<Notifications.Subscription>()
@@ -31,7 +35,6 @@ export const usePushNotifications = (): PushNotificationState => {
         let token;
         if (Device.isDevice) {
             const {status: existingStatus} = await Notifications.getPermissionsAsync()
-            let finalStatus = existingStatus
 
             if(existingStatus !== 'granted') {
                 alert("Failed to get push token for push notifications")
@@ -42,7 +45,7 @@ export const usePushNotifications = (): PushNotificationState => {
                 projectId: Contants.expoConfig?.extra?.eas.projectId,
             })
         } else {
-            alert("Must be using a physical device for Push notifications")
+            //alert("Must be using a physical device for Push notifications")
         }
 
 
@@ -60,16 +63,50 @@ export const usePushNotifications = (): PushNotificationState => {
 
     useEffect(() => {
 
+        const category = 'credentials';
+
+        const actions = [
+            {
+                buttonTitle: 'UTILIZADOR 👁️',
+                identifier: 'username',
+                options: {
+                    opensAppToForeground: false
+                }
+            },
+            {
+                buttonTitle: 'PASSWORD 🔑',
+                identifier: 'password',
+                options: {
+                    opensAppToForeground: false
+                }
+            }
+        ];
+
+        Notifications.setNotificationCategoryAsync(category, actions);
+
         //TODO: O tokenId das push notifications vai ser armazenado localmente, na base de dados. Se, por exemplo, o token alterar, 
         //vai reenviar aos membros da relação, imaginemos que mudou de dispositivo.
         registerForPushNotificationsAsync().then((token) => { console.log(token); setExpoPushToken(token); })
 
-        notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
+        notificationListener.current = Notifications.addNotificationReceivedListener((notification: any) => {
             setNotification(notification)
         })
-
-        responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
-            console.log(response)
+            
+        responseListener.current = Notifications.addNotificationResponseReceivedListener((response: { actionIdentifier: any; }) => {
+            switch(response.actionIdentifier) {
+                case 'username': {
+                    console.log("USERNAME: "+usernameCopied)
+                    console.log("PASSWORD: "+passwordCopied)
+                    console.log(usernameCopied)
+                    Clipboard.setStringAsync(usernameCopied)
+                    break
+                }
+                case 'password': {
+                    console.log(passwordCopied)
+                    Clipboard.setStringAsync(passwordCopied)
+                    break
+                }
+              }
         })
 
         return () => {

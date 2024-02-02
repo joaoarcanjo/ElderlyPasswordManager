@@ -50,6 +50,12 @@ const styleScroolView = StyleSheet.create({
         borderWidth: 5, // Largura da linha na margem
         backgroundColor: '#F3E7AB',
         borderColor: '#E1C748',
+    },
+    navigateButton: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        borderWidth: 5, // Largura da linha na margem
+        backgroundColor: '#9FCFDD',
+        borderColor: '#297D95',
     }
 })
 

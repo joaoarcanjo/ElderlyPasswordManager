@@ -1,12 +1,13 @@
-import {View, Text, Image, TouchableOpacity, Linking} from 'react-native'
+import {View, Text, Image, TouchableOpacity, Linking, Button} from 'react-native'
 import { stylesOptions, stylesFirstHalf } from '../styles/styles'
 import React, { useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import type { StackNavigationProp } from '@react-navigation/stack';
 import { stylesButtons } from '../../../assets/styles/main_style';
-import { useLogin } from '../../../firebase/authentication/session';
+import { useSessionInfo } from '../../../firebase/authentication/session';
 import { getValueFor, save } from '../../../keychain';
 import { elderlyName, elderlyPhone } from '../../../keychain/constants';
+import { usePushNotifications } from '../../../notifications/usePushNotifications';
 
 const credentialsImage = '../images/credenciais.png'
 const generatorImage = '../images/gerador.png'
@@ -17,7 +18,7 @@ const elderlyImage = '../../../assets/images/elderly.png'
 
 function ElderlyInfoBox() {
 
-    const { userId, setUserName, setUserPhone, userPhone, userName } = useLogin()
+    const { userName } = useSessionInfo()
 
     return (
         <View style={[{ flex: 0.6, width: '85%', flexDirection: 'row', justifyContent: 'space-around' }, stylesFirstHalf.elderContainer]}>
@@ -122,12 +123,13 @@ function Functionalities() {
  */
 export default function MainMenu() {
 
-    const { userId, setUserName, setUserPhone, userPhone, userName } = useLogin()
+    const { userId, setUserName, setUserPhone, userPhone, userName } = useSessionInfo()
+    const { expoPushToken } = usePushNotifications()
 
     const savePhoneAndName = async () => {
-        console.log("UserId: "+userId)
-        console.log("UserPhone: "+userPhone)
-        console.log("UserName: "+userName)
+        //console.log("UserId: "+userId)
+        //console.log("UserPhone: "+userPhone)
+        //console.log("UserName: "+userName)
     
         if(userPhone == '' && userName == '') {
           const userNameAux = await getValueFor(elderlyName(userId))
@@ -149,6 +151,29 @@ export default function MainMenu() {
         <View style={{ flex: 1, flexDirection: 'column', marginTop: '5%'}}>
             <UserInfo/>
             <Functionalities/>
+            {<Button title="Press to schedule a notification" onPress={async () => await sendPushNotification(expoPushToken.data)}/>}
         </View>
     );
+
+    async function sendPushNotification(expoPushToken: string) {
+
+        const messageUsername = {
+            to: expoPushToken,
+            sound: "default",
+            title: "Username",
+            body: "Copie o seu username:",
+            data: { someData: "goes here" },
+            categoryId: `usernameCredential`
+          };
+      
+        await fetch("https://exp.host/--/api/v2/push/send", {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Accept-encoding": "gzip, deflate",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(messageUsername),
+        });
+    } 
 }

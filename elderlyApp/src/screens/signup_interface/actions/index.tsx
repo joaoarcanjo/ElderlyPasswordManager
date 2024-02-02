@@ -7,7 +7,7 @@ import { whiteBackgroud } from "../../../assets/styles/colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { stylesButtons } from "../../../assets/styles/main_style";
 import { Spinner } from "../../../components/LoadingComponents";
-import { useLogin } from "../../../firebase/authentication/session";
+import { useSessionInfo } from "../../../firebase/authentication/session";
 import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
 import { signUpOperation } from "../../../firebase/authentication/funcionalities";
 
@@ -23,7 +23,7 @@ const SignUpPage = () => {
 
     const navigation = useNavigation<StackNavigationProp<any>>()
     const toggleShowPassword = () => {setShowPassword(!showPassword)}
-    const { setUserEmail, setUserPhone, setUserName, userPhone, userName, userEmail } = useLogin()
+    const { setUserEmail, setUserPhone, setUserName, userPhone, userName, userEmail } = useSessionInfo()
 
     useEffect(() => console.debug("===> Signup_Page: Component presented.\n"), [])
 

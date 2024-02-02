@@ -3,6 +3,7 @@ import React, { ReactNode } from "react";
 import {View, StyleSheet, Modal, TouchableOpacity, Text} from 'react-native'
 import { stylesButtons } from "../assets/styles/main_style";
 import { modal, options } from "../screens/credential_interface/styles/styles";
+import { Spinner } from "./LoadingComponents";
 
 function YesOrNoModal({question, yesFunction, noFunction, visibleFlag}: Readonly<{question: string, yesFunction: Function, noFunction: Function, visibleFlag: boolean}>) {
   return (
@@ -16,6 +17,29 @@ function YesOrNoModal({question, yesFunction, noFunction, visibleFlag}: Readonly
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Não</Text>
         </TouchableOpacity>
       </View>
+    </ModalBox>
+  )
+}
+
+function YesOrNoSpinnerModal({question, yesFunction, noFunction, visibleFlag, loading}: Readonly<{question: string, yesFunction: Function, noFunction: Function, visibleFlag: boolean, loading: boolean}>) {
+
+  return (
+    <ModalBox visibleFlag={visibleFlag}>
+      {loading ?
+        <Spinner/>
+        :  
+        <>
+          <Text numberOfLines={2} adjustsFontSizeToFit style={modal.modalText}>{question}</Text>
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.saveButton]} onPress={() => yesFunction()}>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Sim</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={() => noFunction()}>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Não</Text>
+            </TouchableOpacity>
+          </View>
+        </>
+    }
     </ModalBox>
   )
 }
@@ -41,7 +65,7 @@ function ModalBox({children, visibleFlag}: Readonly<{children: ReactNode, visibl
     )
 }
 
-export { YesOrNoModal, ModalBox }
+export { YesOrNoSpinnerModal, YesOrNoModal, ModalBox }
 
 const styles = StyleSheet.create({
     centeredView: {

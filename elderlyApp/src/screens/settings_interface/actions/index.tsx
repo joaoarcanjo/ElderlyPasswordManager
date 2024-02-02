@@ -7,13 +7,13 @@ import MainBox from '../../../components/MainBox'
 import { FIREBASE_AUTH } from '../../../firebase/FirebaseConfig'
 import { elderlyPwd } from '../../../keychain/constants'
 import { save } from '../../../keychain'
-import { useLogin } from '../../../firebase/authentication/session'
+import { useSessionInfo } from '../../../firebase/authentication/session'
 
 const gitHubUrl = 'https://github.com/joaoarcanjo/ThesisApps'
 
 function AccountInfo() {
   
-  const { userEmail, userPhone } = useLogin()
+  const { userEmail, userPhone } = useSessionInfo()
 
   return (
     <View style={{ flex: 0.45, flexDirection: 'row', marginTop: '5%', justifyContent: 'space-around'}}>
@@ -57,7 +57,7 @@ function AppInfo() {
 
 function Logout() {
 
-  const { setUserId, setUserName, setUserPhone } = useLogin()
+  const { setUserId, setUserName, setUserPhone } = useSessionInfo()
 
   const signOut = () => {
     //save(elderlyEmail, '')

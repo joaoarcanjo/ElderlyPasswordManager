@@ -45,9 +45,9 @@ Function to save the new generated password.
 export const savePasswordGenerated = async (password: string, localDBKey: string) => {
     deleteGenerated()
 
-    console.log(localDBKey)
+    //console.log(localDBKey)
     const encrypted = encrypt(password, localDBKey)
-    console.log(encrypted)
+    //console.log(encrypted)
 
     if(db != null) {
         db.transaction(tx => {
@@ -81,7 +81,6 @@ export const realizarConsulta = (localDBKey: string): Promise<Password[]> => {
             }
             db.transaction((tx) => {
                 tx.executeSql(sql, [], (tx, results) => {
-                    console.log("OLA")
                     for (let i = 0; i < results.rows.length; i++) {                        
                         data.push({
                             id: results.rows.item(i).id,  
