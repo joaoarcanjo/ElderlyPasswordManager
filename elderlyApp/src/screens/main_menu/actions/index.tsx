@@ -1,6 +1,6 @@
-import {View, Text, Image, TouchableOpacity, Linking, Button} from 'react-native'
+import {View, Text, Image, TouchableOpacity} from 'react-native'
 import { stylesOptions, stylesFirstHalf } from '../styles/styles'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useNavigation } from '@react-navigation/native'
 import type { StackNavigationProp } from '@react-navigation/stack';
 import { stylesButtons } from '../../../assets/styles/main_style';
@@ -151,29 +151,23 @@ export default function MainMenu() {
         <View style={{ flex: 1, flexDirection: 'column', marginTop: '5%'}}>
             <UserInfo/>
             <Functionalities/>
-            {<Button title="Press to schedule a notification" onPress={async () => await sendPushNotification(expoPushToken.data)}/>}
         </View>
     );
 
-    async function sendPushNotification(expoPushToken: string) {
+    /*
+    import * as Signal from '@privacyresearch/libsignal-protocol-typescript'
 
-        const messageUsername = {
-            to: expoPushToken,
-            sound: "default",
-            title: "Username",
-            body: "Copie o seu username:",
-            data: { someData: "goes here" },
-            categoryId: `usernameCredential`
-          };
-      
-        await fetch("https://exp.host/--/api/v2/push/send", {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Accept-encoding": "gzip, deflate",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(messageUsername),
-        });
-    } 
+    {<Button title="Press to schedule a notification" onPress={() => test()}/>}
+
+    async function test() {
+        const preKey = await Signal.KeyHelper.generatePreKey(123)
+
+        let uint8Array = new Uint8Array(preKey.keyPair.privKey)
+        let resultString = String.fromCharCode(...uint8Array)
+        console.log(resultString)
+
+        uint8Array = new Uint8Array(preKey.keyPair.pubKey)  
+        resultString = String.fromCharCode(...uint8Array)
+        console.log(resultString)
+    }*/
 }

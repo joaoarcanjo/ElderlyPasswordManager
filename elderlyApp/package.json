@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
+    "@privacyresearch/libsignal-protocol-typescript": "^0.0.16",
     "@react-native-community/blur": "^4.3.2",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",
