@@ -6,6 +6,7 @@ import Navbar from '../../../navigation/actions'
 import MainBox from '../../../components/MainBox'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
+import { sendMessage } from '../../../p2p/socket.io/socket'
 
 const caregiverImage = '../../../assets/images/caregiver.png'
 const telephoneImage = '../../../assets/images/telephone.png'
@@ -44,7 +45,7 @@ function CaregiverItemNotIncluded() {
   return (
     <View style={[{flex: 0.5, margin: '3%', justifyContent: 'center', alignItems: 'center'}]}>
       <View style= { { flex: 0.35, flexDirection: 'row', justifyContent: 'space-around'} }>
-        <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, stylesAddCaregiver.button, stylesButtons.mainConfig]}>
+        <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, stylesAddCaregiver.button, stylesButtons.mainConfig]} onPress={() => sendMessage("FODAA")}>
             <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCaregiver.buttonText]}>VINCULAR CUIDADOR 2</Text>
         </TouchableOpacity>
       </View>

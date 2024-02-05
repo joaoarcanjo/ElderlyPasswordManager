@@ -36,41 +36,42 @@ const time = 0
 function InsideLayout() {
   const { userId, setShared } = useSessionInfo()
   const [appIsReady, setAppIsReady] = useState(false)
-  
+
   useEffect(() => {
     console.debug("#-> InsideLayout: useEffect called.")
 
-    if(im_testing) {
+    if (im_testing) {
       cleanKeychain(userId)
     } else {
       initSSS(userId)
-      .then((shared) => setShared(shared))
-      .then(() => initDb())
-      .then(() => initFirestore(userId))
-      .then(() => changeKey(userId))
-      .then(() => {if(!appIsReady) return new Promise(resolve => setTimeout(resolve, time))})
-      .then(() => setAppIsReady(true))
+        .then((shared) => setShared(shared))
+        .then(() => initDb())
+        .then(() => initFirestore(userId))
+        .then(() => changeKey(userId))
+        .then(() => { if (!appIsReady) return new Promise(resolve => setTimeout(resolve, time)) })
+        .then(() => setAppIsReady(true))
     }
   }, [])
 
-  const onLayoutRootView = useCallback(async () => { if(!appIsReady) await SplashFunctions.hideAsync()}, [appIsReady]);
+  const onLayoutRootView = useCallback(async () => { if (!appIsReady) await SplashFunctions.hideAsync() }, [appIsReady]);
 
-  if (!appIsReady) return <SplashScreen test={onLayoutRootView}/>
+  if (!appIsReady) return <SplashScreen test={onLayoutRootView} />
   return (
     <InsideStack.Navigator initialRouteName="Home">
-      <InsideStack.Screen name="Home" component={MainMenu} options={{title: "Home", headerShown:false}}/>
-      <InsideStack.Screen name="Credentials" component={Credentials} options={{title: "Credencials", headerShown:false}}/>
-      <InsideStack.Screen name="AddCredential" component={AddCredencial} options={{title: "AddCredencial", headerShown:false}}/>
-      <InsideStack.Screen name="Settings" component={Settings} options={{title: "Settings", headerShown:false}}/>
-      <InsideStack.Screen name="Generator" component={Generator} options={{title: "Generator", headerShown:false}}/>
-      <InsideStack.Screen name="PasswordHistory" component={PasswordHistory} options={{title: "Password history", headerShown:false}}/>
-      <InsideStack.Screen name="FrequentQuestions" component={FrequentQuestions} options={{title: "Frequent Questions", headerShown:false}}/>
-      <InsideStack.Screen name="Caregivers" component={Caregivers} options={{title: "Caregivers", headerShown:false}}/>
-      <InsideStack.Screen name="CredentialPage" component={CredencialPage} options={{title: "CredencialPage", headerShown:false}}/>
-      <InsideStack.Screen name="Permissions" component={PermissionsPage} options={{title: "PermissionsPage", headerShown:false}}/>
+      <InsideStack.Screen name="Home" component={MainMenu} options={{ title: "Home", headerShown: false }} />
+      <InsideStack.Screen name="Credentials" component={Credentials} options={{ title: "Credencials", headerShown: false }} />
+      <InsideStack.Screen name="AddCredential" component={AddCredencial} options={{ title: "AddCredencial", headerShown: false }} />
+      <InsideStack.Screen name="Settings" component={Settings} options={{ title: "Settings", headerShown: false }} />
+      <InsideStack.Screen name="Generator" component={Generator} options={{ title: "Generator", headerShown: false }} />
+      <InsideStack.Screen name="PasswordHistory" component={PasswordHistory} options={{ title: "Password history", headerShown: false }} />
+      <InsideStack.Screen name="FrequentQuestions" component={FrequentQuestions} options={{ title: "Frequent Questions", headerShown: false }} />
+      <InsideStack.Screen name="Caregivers" component={Caregivers} options={{ title: "Caregivers", headerShown: false }} />
+      <InsideStack.Screen name="CredentialPage" component={CredencialPage} options={{ title: "CredencialPage", headerShown: false }} />
+      <InsideStack.Screen name="Permissions" component={PermissionsPage} options={{ title: "PermissionsPage", headerShown: false }} />
     </InsideStack.Navigator>
   )
 }
+
 
 function Inicialization() {
 

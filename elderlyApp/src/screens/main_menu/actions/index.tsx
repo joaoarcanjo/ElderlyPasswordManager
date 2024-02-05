@@ -1,6 +1,6 @@
 import {View, Text, Image, TouchableOpacity} from 'react-native'
 import { stylesOptions, stylesFirstHalf } from '../styles/styles'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import type { StackNavigationProp } from '@react-navigation/stack';
 import { stylesButtons } from '../../../assets/styles/main_style';
