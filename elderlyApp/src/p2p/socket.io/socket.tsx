@@ -1,8 +1,8 @@
 const io = require('socket.io-client')
 const https = false
-const url = 'http://192.168.1.68:443'
+const url = https ? 'https://192.168.1.68:443' : 'http://192.168.1.68:443'
 
-const socket = io(url, { rejectUnauthorized: false })
+const socket = io(url, { transports: ['websocket'], rejectUnauthorized: false })
 
 socket.on('connect', () => {
   console.log('Connected to server')
