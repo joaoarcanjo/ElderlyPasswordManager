@@ -7,9 +7,13 @@ import { networkInfoSubject } from "../network/state";
 /**
  * Vai criar a identidade no servidor
  * @param username 
- * @param url 
  */
-export async function createIdentity(username: string, url: string): Promise<void> {
+export async function createIdentity(username: string): Promise<void> {
+
+    if (usernameSubject.value === username) return
+
+    //TODO: este url tem que ser obtido da firebase, porque o url do server pode alterar.
+    const url = 'http://192.168.1.68:442'
     
     //Inicia a ligação ao servidor 
     initializeSignalWebsocket(url)
@@ -26,12 +30,12 @@ export async function createIdentity(username: string, url: string): Promise<voi
 
     const identityKeyPair = await KeyHelper.generateIdentityKeyPair()
     signalStore.put('identityKey', identityKeyPair)
-    console.log('Generated identity key', { identityKeyPair })
+    //console.log('Generated identity key', { identityKeyPair })
 
     const baseKeyId = Math.floor(10000 * Math.random())
     const preKey = await KeyHelper.generatePreKey(baseKeyId)
     signalStore.storePreKey(`${baseKeyId}`, preKey.keyPair)
-    console.log('Generated pre key', { preKey })
+    //console.log('Generated pre key', { preKey })
 
     const signedPreKeyId = Math.floor(10000 * Math.random())
     const signedPreKey = await KeyHelper.generateSignedPreKey(identityKeyPair, signedPreKeyId)

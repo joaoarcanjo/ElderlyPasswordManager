@@ -1,9 +1,9 @@
 import { BlurView } from "expo-blur";
 import React, { ReactNode } from "react";
 import {View, StyleSheet, Modal, TouchableOpacity, Text} from 'react-native'
-import { stylesButtons } from "../assets/styles/main_style";
-import { modal, options } from "../screens/credential_interface/styles/styles";
-import { Spinner } from "./LoadingComponents";
+import { stylesButtons } from "../assets/styles/main_style"
+import { modal, options } from "../screens/credential_interface/styles/styles"
+import { Spinner } from "./LoadingComponents"
 
 function YesOrNoModal({question, yesFunction, noFunction, visibleFlag}: Readonly<{question: string, yesFunction: Function, noFunction: Function, visibleFlag: boolean}>) {
   return (

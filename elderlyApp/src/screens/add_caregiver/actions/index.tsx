@@ -10,7 +10,7 @@ import { startSession } from '../../../e2e/session/functions';
 import { createIdentity } from '../../../e2e/identity/functions';
 import * as Crypto from 'expo-crypto'
 
-function AddCaregiver() {
+function ChatPageTest() {
     const username = useObservable(usernameSubject, '')
     const currSession = useObservable(currentSessionSubject, null)
     return (
@@ -34,7 +34,7 @@ function CreateIdentity() {
   const [url, setUrl] = useState('http://192.168.1.68:442');
 
   const createID = async () => {
-    await createIdentity(username, url)
+    await createIdentity(username)
   };
 
   return (
@@ -244,4 +244,4 @@ function useObservable<T>(observable: Observable<T>, initialValue: T): T {
   return value
 }
 
-export default AddCaregiver
+export default ChatPageTest

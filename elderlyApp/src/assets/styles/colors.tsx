@@ -109,7 +109,15 @@ export const signupButtonBorder = purpleBorder
 export const manualButtonBackgroud = purpleBackground
 export const manualButtonBorder = purpleBorder
 
-//LOGIN PAGE
+//SIGNUP PAGE
 
 export const signupButtonBackgroundU = lightGreenBackgroud
 export const signupButtonBorderU = darkGreenBorder
+
+//ELDERLY LIST (TODO: MOVE TO CAREGIVER APP)
+
+export const rejectButtonBackground = lightRedBackground
+export const rejectButtonBorder = lightRedBorder
+
+export const acceptButtonBackground = lightGreenBackgroud
+export const acceptButtonBorder = darkGreenBorder

@@ -1,4 +1,4 @@
-import {View, Text, Image, TouchableOpacity} from 'react-native'
+import {View, Text, Image, TouchableOpacity, Button} from 'react-native'
 import { stylesOptions, stylesFirstHalf } from '../styles/styles'
 import React, { useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native'
@@ -113,6 +113,7 @@ function Functionalities() {
                     <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>Perguntas</Text>
                 </TouchableOpacity>
            </View>
+           <Button title='App Cuidador' onPress={() => {navigation.push('ElderlyList')}}></Button>
         </View>
     );
 }

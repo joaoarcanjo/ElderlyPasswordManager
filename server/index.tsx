@@ -26,12 +26,11 @@ const options = {
 const http = https ? require("https").Server(options, app) : require("http").Server(app)
 
 const clientSockets = new Map()
+const clientSocketsInverse = new Map()
 const clientBundles = new Map()
 
 // Handle WebSocket connections
 wss.on('connection', function connection(ws) {
-
-    console.log('Client connected!')
 
     // When the client sends a message, publish it to the subject
     ws.on('message', function incoming(message) {
@@ -42,7 +41,9 @@ wss.on('connection', function connection(ws) {
         switch(userAction) {
             case('subscribe'): {
                 console.log('Client subscribed!')
-                clientSockets.set(messageObj.username, ws);
+                console.log('- Username: ', messageObj.username)
+                clientSockets.set(messageObj.username, ws)
+                clientSocketsInverse.set(ws, messageObj.username)
                 break;
             }
             case('sendMessage'): {
@@ -63,8 +64,13 @@ wss.on('connection', function connection(ws) {
     // When the client disconnects, unsubscribe from the subject
     ws.on('close', function close() {
         console.log('Client disconnected')
-    });
-});
+        const username = clientSocketsInverse.get(ws)
+        
+        clientSocketsInverse.delete(ws)
+        clientSockets.delete(username)
+        clientBundles.delete(username)
+    })
+})
 
 app.get("/isAlive", (req, res) => {
     res.send("Hello World!")

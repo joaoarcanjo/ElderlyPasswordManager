@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { initDb } from './src/database';
 import FlashMessage from 'react-native-flash-message';
 import Caregivers from './src/screens/list_caregivers/actions';
-import { changeKey, initFirestore } from './src/firebase/firestore/functionalities';
+import { changeKey, initFirestore, listAllElderly } from './src/firebase/firestore/functionalities';
 import { cleanKeychain, initKeychain } from './src/keychain';
 import { AddCredencial } from './src/screens/add_credentials/actions';
 import { initSSS } from './src/algorithms/sss/sss';
@@ -25,7 +25,9 @@ import SignUpPage from './src/screens/signup_interface/actions';
 import { StatusBar } from 'expo-status-bar';
 import SplashScreen from './src/screens/splash_screen/actions';
 import * as SplashFunctions from 'expo-splash-screen';
-import AddCaregiver from './src/screens/add_caregiver/actions';
+import { createIdentity } from './src/e2e/identity/functions';
+import Elderly from './src/screens/list_elderly/actions';
+import ChatPageTest from './src/screens/add_caregiver/actions';
 
 const Stack = createNativeStackNavigator()
 const InsideStack = createNativeStackNavigator()
@@ -35,7 +37,7 @@ const im_testing = false
 const time = 0
 
 function InsideLayout() {
-  const { userId, setShared } = useSessionInfo()
+  const { userId, userEmail, setShared } = useSessionInfo()
   const [appIsReady, setAppIsReady] = useState(false)
 
   useEffect(() => {
@@ -49,6 +51,7 @@ function InsideLayout() {
         .then(() => initDb())
         .then(() => initFirestore(userId))
         .then(() => changeKey(userId))
+        .then(() => createIdentity(userEmail))
         .then(() => { if (!appIsReady) return new Promise(resolve => setTimeout(resolve, time)) })
         .then(() => setAppIsReady(true))
     }
@@ -69,7 +72,10 @@ function InsideLayout() {
       <InsideStack.Screen name="Caregivers" component={Caregivers} options={{ title: "Caregivers", headerShown: false }} />
       <InsideStack.Screen name="CredentialPage" component={CredencialPage} options={{ title: "CredencialPage", headerShown: false }} />
       <InsideStack.Screen name="Permissions" component={PermissionsPage} options={{ title: "PermissionsPage", headerShown: false }} />
-      <InsideStack.Screen name="AddCaregiver" component={AddCaregiver} options={{ title: "AddCaregiver", headerShown: false }} />
+
+      
+      <InsideStack.Screen name="ElderlyList" component={Elderly} options={{ title: "listElderly", headerShown: false }} />
+      <InsideStack.Screen name="ChatTest" component={ChatPageTest} options={{ title: "listElderly", headerShown: false }} />
     </InsideStack.Navigator>
   )
 }
