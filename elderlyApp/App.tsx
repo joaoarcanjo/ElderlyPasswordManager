@@ -25,6 +25,7 @@ import SignUpPage from './src/screens/signup_interface/actions';
 import { StatusBar } from 'expo-status-bar';
 import SplashScreen from './src/screens/splash_screen/actions';
 import * as SplashFunctions from 'expo-splash-screen';
+import AddCaregiver from './src/screens/add_caregiver/actions';
 
 const Stack = createNativeStackNavigator()
 const InsideStack = createNativeStackNavigator()
@@ -68,6 +69,7 @@ function InsideLayout() {
       <InsideStack.Screen name="Caregivers" component={Caregivers} options={{ title: "Caregivers", headerShown: false }} />
       <InsideStack.Screen name="CredentialPage" component={CredencialPage} options={{ title: "CredencialPage", headerShown: false }} />
       <InsideStack.Screen name="Permissions" component={PermissionsPage} options={{ title: "PermissionsPage", headerShown: false }} />
+      <InsideStack.Screen name="AddCaregiver" component={AddCaregiver} options={{ title: "AddCaregiver", headerShown: false }} />
     </InsideStack.Navigator>
   )
 }
