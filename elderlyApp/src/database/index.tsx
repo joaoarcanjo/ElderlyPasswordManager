@@ -15,11 +15,30 @@ export function initDb() {
     })
 
     db.transaction(tx => {
-       tx.executeSql(
-        'CREATE TABLE IF NOT EXISTS passwords (id TEXT PRIMARY KEY, password TEXT, timestamp INTEGER);'
-    );
+        tx.executeSql(
+            'CREATE TABLE IF NOT EXISTS passwords (id TEXT PRIMARY KEY, password TEXT, timestamp INTEGER);'
+        )
     })
-    //TODO: Criar a tabela para guardar os perfis dos cuidadores.
+
+    db.transaction(tx => {
+        tx.executeSql(
+            'CREATE TABLE IF NOT EXISTS caregivers (id TEXT PRIMARY KEY, email TEXT, phoneNumber TEXT);'
+        )
+    })
+}
+
+export const saveCaregiver = async (id: string, email: string, phoneNumber: string) => {
+    if(db != null) {
+        db.transaction(tx => {
+            tx.executeSql(
+                'INSERT INTO caregivers (id, email, phoneNumber) VALUES (?,?,?)',
+                [id, email, phoneNumber],
+                (_, result) => {
+                    //console.log('Tuplo inserido com sucesso:', result);
+                }
+            );
+        });
+    }
 }
 
 /*
