@@ -20,18 +20,18 @@ const stylesAddCaregiver = StyleSheet.create({
 
 const elderlyStyle = StyleSheet.create({
     container: {
-        borderRadius: 20, // Define o raio dos cantos para arredondá-los
+        borderRadius: 10, // Define o raio dos cantos para arredondá-los
         borderWidth: 2, // Largura da linha na margem
-        backgroundColor: greyBackgroud, // Cor de fundo
+        backgroundColor: whiteBackgroud, // Cor de fundo
         borderColor: greyBorder,
-        marginVertical: 8, // Margem vertical entre os itens
+        marginBottom: 15,
     },
     newElderlyContainer: {
-        borderRadius: 20, // Define o raio dos cantos para arredondá-los
+        borderRadius: 10, // Define o raio dos cantos para arredondá-los
         borderWidth: 2, // Largura da linha na margem
         backgroundColor: superlightBlueBackgroud, // Cor de fundo
         borderColor: blueBorder,
-        marginVertical: 8, // Margem vertical entre os itens
+        marginBottom: 15,
     }
 })
 

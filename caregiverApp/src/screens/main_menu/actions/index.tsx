@@ -1,27 +1,23 @@
 import {View, Text, Image, TouchableOpacity} from 'react-native'
-import { stylesOptions, stylesFirstHalf } from '../styles/styles'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
-import type { StackNavigationProp } from '@react-navigation/stack';
-import { stylesButtons } from '../../../assets/styles/main_style';
-import { useSessionInfo } from '../../../firebase/authentication/session';
-import { getValueFor, save } from '../../../keychain';
-import { elderlyName, elderlyPhone } from '../../../keychain/constants';
-import { usePushNotifications } from '../../../notifications/usePushNotifications';
+import { StackNavigationProp } from '@react-navigation/stack'
+import { stylesOptions, stylesFirstHalf } from '../styles/sytles'
+import { stylesButtons } from '../../../assets/styles/main_style'
+import { createIdentity } from '../../../e2e/identity/functions'
 
-const credentialsImage = '../images/credenciais.png'
 const generatorImage = '../images/gerador.png'
 const settingsImage = '../images/definições.png'
 const questionsImage = '../images/perguntas.png'
-const elderlyImage = '../../../assets/images/elderly.png'
+const elderlyImage = '../images/elderly.png'
 
 
 function ElderlyInfoBox() {
 
-    const { userName } = useSessionInfo()
+    const userName = "Elisabeth"
 
     return (
-        <View style={[{ flex: 0.6, width: '85%', flexDirection: 'row', justifyContent: 'space-around' }, stylesFirstHalf.elderContainer]}>
+        <View style={[{ flex: 0.6, width: '85%', flexDirection: 'row', justifyContent: 'space-around' }, stylesFirstHalf.caregiverContainer]}>
             <View style={{flex: 0.55}}>
                 <View style={{flex: 0.50, justifyContent: 'center'}}>
                     <Text numberOfLines={1} adjustsFontSizeToFit style={{fontSize: 25, fontWeight: 'bold', marginLeft: '10%'}}>Olá,</Text>
@@ -40,16 +36,14 @@ function ElderlyInfoBox() {
 function CaregiversButtonBox() {
 
     const navigation = useNavigation<StackNavigationProp<any>>();
-
+    //navigation.push('Caregivers')
     const GeneratorsNavigation = () => {
-        navigation.push('Caregivers')
+        //navigation.push('Caregivers')
     }
 
     return (
-        <View style={[{flex: 0.4}, stylesFirstHalf.caregiversContainer]}>
-            <TouchableOpacity style={[{flex: 1, justifyContent: 'center', alignItems: 'center'}, stylesFirstHalf.caregiversButton, stylesButtons.mainConfig]} onPress={() => {GeneratorsNavigation()}}>
-                <Text style={stylesFirstHalf.caregiversButtonText}>Cuidadores</Text>
-            </TouchableOpacity>
+        <View style={[{flex: 0.3}, stylesFirstHalf.numberOfElderlyContainer]}>
+             <Text style={stylesFirstHalf.caregiversButtonText}>Número de idosos: 4</Text>
         </View>
     )
 }
@@ -70,33 +64,34 @@ function Functionalities() {
     const CredencialsNavigation = async () => {
         // Your code to handle the click event
         //console.log('Credentials button clicked!');
-        navigation.push('Credentials')
+        await createIdentity('caregivertest@gmail.com') //TODO: não ficará aqui, por agora apenas para teste.
+        navigation.push('ElderlyList')
     }
 
     const GeneratorsNavigation = () => {
         // Your code to handle the click event
         //console.log('Generator button clicked!');
-        navigation.push('Generator')
+        //navigation.push('Generator')
     }
 
     const FrequentQuestionsNavigation = () => {
         // Your code to handle the click event
         //console.log('Questions button clicked!');
-        navigation.push('FrequentQuestions')
+        //navigation.push('FrequentQuestions')
     }
 
     const SettingsNavigation = () => {
         // Your code to handle the click event
         //console.log('Questions button clicked!');
-        navigation.push('Settings')
+        //navigation.push('Settings')
     }
 
     return (
         <View style={{flex: 0.65, marginTop: '10%', marginBottom: '10%', justifyContent: 'center', alignItems: 'center' }}>
            <View style={{flex: 0.5, flexDirection: 'row', justifyContent: 'space-around' }}>
                 <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareCredentials, stylesButtons.mainConfig]} onPress={() => CredencialsNavigation()}>
-                    <Image source={require(credentialsImage)} style={[stylesOptions.squarePhoto]}/>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>Credenciais</Text>
+                    <Image source={require(elderlyImage)} style={[stylesOptions.squarePhoto]}/>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>Idosos</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareGenerator, stylesButtons.mainConfig]} onPress={() => GeneratorsNavigation()}>
                     <Image source={require(generatorImage)} style={[stylesOptions.squarePhoto]}/>
@@ -122,30 +117,6 @@ function Functionalities() {
  * @returns 
  */
 export default function MainMenu() {
-
-    const { userId, setUserName, setUserPhone, userPhone, userName } = useSessionInfo()
-    const { expoPushToken } = usePushNotifications()
-
-    const savePhoneAndName = async () => {
-        //console.log("UserId: "+userId)
-        //console.log("UserPhone: "+userPhone)
-        //console.log("UserName: "+userName)
-    
-        if(userPhone == '' && userName == '') {
-          const userNameAux = await getValueFor(elderlyName(userId))
-          const userPhoneAux = await getValueFor(elderlyPhone(userId))
-
-          if(userNameAux != '' && userPhoneAux != '') {
-            setUserName(userNameAux)
-            setUserPhone(userPhoneAux)
-          }
-        } else {
-          await save(elderlyName(userId), userName)
-          await save(elderlyPhone(userId), userPhone)
-        }
-    }
-
-    savePhoneAndName()
 
     return (
         <View style={{ flex: 1, flexDirection: 'column', marginTop: '5%'}}>

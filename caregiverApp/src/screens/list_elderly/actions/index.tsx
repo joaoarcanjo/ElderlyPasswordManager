@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, ScrollView, TouchableOpacity, Text } from 'react-native'
+import { View, ScrollView, TouchableOpacity, Text, Image } from 'react-native'
 import Navbar from '../../../navigation/actions'
 import MainBox from '../../../components/MainBox'
 import CaregiverItem from './elderly_item'
@@ -13,13 +13,36 @@ function NewElderly() {
   //TODO: VERIFICAR SE A NOVA CONEXÃO É DE UM IDOSO COM QUEM NÃO HÁ QUALQUER RELAÇÃO
   //Se aceitar, vai enviar para o idoso os seus dados.
   //Vai receber os dados do idoso e vai armazenar localmente.
+  
+  const caregiverImage = '../../../assets/images/elderly.png'
 
-
-  if (sessionList.length === 0) return 
+  if (sessionList.length !== 0) return 
   else {
     return (
-      <View style={[{flex: 0.5}, elderlyStyle.newElderlyContainer]}>
-        <View style={{marginLeft: '10%'}}>
+      <View style={[{flex: 1}, elderlyStyle.newElderlyContainer]}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: '3%' }}>
+        <Image source={require(caregiverImage)} style={{ width: 80, height: 80, borderRadius: 40, marginRight: 15 }} />
+        <View style={{ flex: 1 }}>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{"Rita"}</Text>
+            <Text style={{ fontSize: 18 }}>{" enviou-lhe um pedido!"}</Text>
+          </View>
+          <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }} />
+          <View style={{flex: 1, flexDirection: 'row', marginRight: '5%'}}>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, newElderlyOptions.acceptButton, stylesButtons.mainConfig]} onPress={() => {}}>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginVertical: '5%' }, newElderlyOptions.buttonText]}>Aceitar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, newElderlyOptions.rejectButton, stylesButtons.mainConfig]} onPress={() => {}}>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginVertical: '5%' }, newElderlyOptions.buttonText]}>Recusar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+      </View>
+    )
+  }
+}/*
+<View style={{marginLeft: '10%'}}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 20, marginTop: '5%' }]}>Elisabeth</Text>
         </View>
         <View style={{flex: 0.45, margin: '0%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
@@ -29,28 +52,23 @@ function NewElderly() {
           <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, newElderlyOptions.rejectButton, stylesButtons.mainConfig]} onPress={() => {}}>
             <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginVertical: '5%' }, newElderlyOptions.buttonText]}>Recusar</Text>
           </TouchableOpacity>
-        </View>
-    </View>
-    )
-  }
-}
-
+        </View>*/
 function ElderlyList() {
+
   return (
     <View style={{ flex: 0.85, flexDirection: 'row', marginTop: '5%', justifyContent: 'space-around'}}>
       <View style={[{ flex: 1, marginHorizontal: '4%', marginBottom: '3%', justifyContent: 'space-around'}]}>
         <ScrollView style={[{margin: '3%'}]}>
           <NewElderly/>
-          <CaregiverItem/>
-          <CaregiverItem/>
-          <CaregiverItem/>
+          <CaregiverItem name={'Elisabeth'}/>
+          <CaregiverItem name={'Elisabeth'}/>
+          <CaregiverItem name={'Elisabeth'}/>
         </ScrollView>
       </View>
     </View>
   )
 }
 
-//TODO: construir um main componente para ter receber apenas os components childs de cada page
 export default function Elderly() {
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}> 
