@@ -203,7 +203,7 @@ export interface MessageListProps {
   remoteUserName: string
 }
 
-export function MessageList(props: MessageListProps): JSX.Element {
+function MessageList(props: MessageListProps): JSX.Element {
   return (
       <View>
           {props.messages.map((m) => (

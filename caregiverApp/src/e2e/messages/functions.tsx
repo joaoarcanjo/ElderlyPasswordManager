@@ -5,7 +5,7 @@ import { signalStore, usernameSubject } from "../identity/state"
 import { stringToArrayBuffer } from "../signal/signal-store"
 import { signalWebsocket } from "../network/webSockets"
 import { ChatSession } from "../session/types"
-import { ProcessedChatMessage } from "./types"
+import { ChatMessageType, ProcessedChatMessage } from "./types"
 import { randomUUID } from 'expo-crypto'
 
 /**
@@ -33,7 +33,7 @@ export async function processPreKeyMessage(address: string, message: MessageType
         plaintext = plaintext.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F]/g, '')
         cm = JSON.parse(plaintext) as ProcessedChatMessage
         addMessageToSession(address, cm, type)
-        encryptAndSendMessage(address, 'firstMessage', true)
+        encryptAndSendMessage(address, 'firstMessage', true, ChatMessageType.START_SESSION)
     } catch (e) {
         console.log(e)
     }
@@ -80,7 +80,7 @@ export async function processRegularMessage(address: string, message: string, ty
  * @param to 
  * @param message 
  */
-export async function encryptAndSendMessage(to: string, message: string, firstMessage: boolean): Promise<void> {
+export async function encryptAndSendMessage(to: string, message: string, firstMessage: boolean, type: ChatMessageType): Promise<void> {
     const address = new SignalProtocolAddress(to, 1)
     const cipher = new SessionCipher(signalStore, address)
 
@@ -91,6 +91,7 @@ export async function encryptAndSendMessage(to: string, message: string, firstMe
         timestamp: Date.now(),
         firstMessage: firstMessage,
         body: message,
+        type: type,
     }
 
     addMessageToSession(to, cm, 1)  

@@ -1,6 +1,6 @@
 import * as SQLite from 'expo-sqlite'
 import * as Crypto from 'expo-crypto'
-import { Password } from './types';
+import { Elderly, Password } from './types';
 import { decrypt, encrypt } from '../algorithms/0thers/crypto';
 
 export let db: SQLite.SQLiteDatabase | null = null;
@@ -8,6 +8,7 @@ export let db: SQLite.SQLiteDatabase | null = null;
 export function initDb() {
     db = SQLite.openDatabase('elderly.db')
     
+    //Os cuidadores também vão guardar as suas passwords
     db.transaction(tx => {
         tx.executeSql(
             'DROP TABLE IF EXISTS passwords;'
@@ -22,16 +23,16 @@ export function initDb() {
 
     db.transaction(tx => {
         tx.executeSql(
-            'CREATE TABLE IF NOT EXISTS caregivers (id TEXT PRIMARY KEY, name TEXT, email TEXT, phoneNumber TEXT);'
+            'CREATE TABLE IF NOT EXISTS elderly (id TEXT PRIMARY KEY, name TEXT, email TEXT, phoneNumber TEXT);'
         )
     })
 }
 
-export const saveCaregiver = async (id: string, email: string, phoneNumber: string) => {
+export const saveElderly = async (id: string, email: string, phoneNumber: string) => {
     if(db != null) {
         db.transaction(tx => {
             tx.executeSql(
-                'INSERT INTO caregivers (id, email, phoneNumber) VALUES (?,?,?)',
+                'INSERT INTO elderly (id, email, phoneNumber) VALUES (?,?,?)',
                 [id, email, phoneNumber],
                 (_, result) => {
                     //console.log('Tuplo inserido com sucesso:', result);
@@ -44,11 +45,11 @@ export const saveCaregiver = async (id: string, email: string, phoneNumber: stri
 /*
 This function is used to delete the older password generated. 
 */
-export const deleteGenerated = () => {
+export const deleteElderly = async (id: string) => {
     if(db != null) {
         db.transaction((tx) => {
             tx.executeSql(
-              'DELETE FROM passwords WHERE id IN (SELECT id FROM passwords ORDER BY timestamp DESC LIMIT -10 OFFSET 9)',
+              'DELETE FROM elderly WHERE id = ?',
               [],
               (_, result) => {
                 //console.log('Tuplo com timestamp mais antigo excluído com sucesso:', result);
@@ -57,43 +58,13 @@ export const deleteGenerated = () => {
         });
     }
 }
-  
-/*
-Function to save the new generated password.
-*/
-export const savePasswordGenerated = async (password: string, localDBKey: string) => {
-    deleteGenerated()
 
-    //console.log(localDBKey)
-    const encrypted = encrypt(password, localDBKey)
-    //console.log(encrypted)
-
-    if(db != null) {
-        db.transaction(tx => {
-            tx.executeSql('INSERT INTO passwords (id, password, timestamp) VALUES (?, ?, ?);',
-            [Crypto.randomUUID(), encrypted, Date.now()],
-            (_, result) => {
-                //console.log('Novo registro inserido com sucesso:', result);
-            })
-        });
-    }
-}
-  
-export const getPasswords = () => {
-    if(db != null) {
-        db.transaction(tx => {
-            return tx.executeSql('SELECT (id, password, timestamp) FROM passwords', [],
-                (txObj, resultSet) => resultSet.rows._array
-            );
-        });
-    }
-}
-
-export const realizarConsulta = (localDBKey: string): Promise<Password[]> => {
+//TODO: Colocar a DBKey
+export const selectAllElderly = (/*localDBKey: string*/): Promise<Elderly[]> => {
     return new Promise(async (resolve, reject) => {
-        const sql = 'SELECT id, password, timestamp FROM passwords ORDER BY timestamp DESC LIMIT 10';
+        const sql = 'SELECT id, name, email, phoneNumber FROM elderly';
 
-        const data: Password[] = [];
+        const data: Elderly[] = [];
         try {
             if(db == null) {
                 throw (new Error("Database is not connected."))
@@ -102,9 +73,10 @@ export const realizarConsulta = (localDBKey: string): Promise<Password[]> => {
                 tx.executeSql(sql, [], (tx, results) => {
                     for (let i = 0; i < results.rows.length; i++) {                        
                         data.push({
-                            id: results.rows.item(i).id,  
-                            password: decrypt(results.rows.item(i).password, localDBKey), 
-                            timestamp: results.rows.item(i).timestamp
+                            id: results.rows.item(i).id,
+                            name: results.rows.item(i).name,//decrypt(results.rows.item(i).name, localDBKey),   
+                            email: results.rows.item(i).password,//decrypt(results.rows.item(i).password, localDBKey), 
+                            phoneNumber: results.rows.item(i).phoneNumber//decrypt(results.rows.item(i).phoneNumber, localDBKey),   
                         });
                     }
                     resolve(data)

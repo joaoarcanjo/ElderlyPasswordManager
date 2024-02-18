@@ -47,13 +47,13 @@ wss.on('connection', function connection(ws) {
                 break;
             }
             case('sendMessage'): {
-                console.log('Client sent a message!')
+                console.log(`Client ${messageObj.from} sent a message!`)
                 const to = messageObj.address
                 clientSockets.get(to).send(JSON.stringify(messageObj))
                 break;
             }
             case('acknowledge'): {
-                console.log('Client sent an acknowledge!')
+                console.log(`Client ${messageObj.from} sent an acknowledgement!`)
                 const to = messageObj.address
                 clientSockets.get(to).send(JSON.stringify(messageObj))
                 break;

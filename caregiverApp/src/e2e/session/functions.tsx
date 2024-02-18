@@ -4,7 +4,7 @@ import { ChatSession } from "./types"
 import { sessionListSubject } from "./state"
 import { sendSignalProtocolMessage } from "../messages/functions"
 import { stringToArrayBuffer } from "../signal/signal-store"
-import { ProcessedChatMessage } from "../messages/types"
+import { ChatMessageType, ProcessedChatMessage } from "../messages/types"
 import { randomUUID } from 'expo-crypto'
 
 /**
@@ -33,6 +33,7 @@ export async function startSession(recipient: string): Promise<void> {
         timestamp: Date.now(),
         firstMessage: true,
         body: 'firstMessage',
+        type: ChatMessageType.START_SESSION,
     }
 
     // Now we can send an encrypted message
@@ -50,4 +51,8 @@ export async function startSession(recipient: string): Promise<void> {
     const sessionList = [...sessionListSubject.value]
     sessionList.unshift(newSession)
     sessionListSubject.next(sessionList)
+}
+
+export async function removeSession(recipient: string): Promise<void> {
+    console.log("--> Remove session!")
 }

@@ -6,5 +6,6 @@ export const currentSessionSubject = new BehaviorSubject<ChatSession | null>(nul
 
 //Retorna a sessão, caso exista, com o utilizador que se pretende comunicar.
 export function sessionForRemoteUser(username: string): ChatSession | undefined {
-    return sessionListSubject.value.find((session) => session.remoteUsername === username)
+    const session = sessionListSubject.value.find((session) => session.remoteUsername === username)
+    return session
 }

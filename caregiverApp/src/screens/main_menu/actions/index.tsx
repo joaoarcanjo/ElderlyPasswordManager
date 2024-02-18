@@ -64,7 +64,7 @@ function Functionalities() {
     const CredencialsNavigation = async () => {
         // Your code to handle the click event
         //console.log('Credentials button clicked!');
-        await createIdentity('caregivertest@gmail.com') //TODO: não ficará aqui, por agora apenas para teste.
+        await createIdentity('care@g.com') //TODO: não ficará aqui, por agora apenas para teste.
         navigation.push('ElderlyList')
     }
 

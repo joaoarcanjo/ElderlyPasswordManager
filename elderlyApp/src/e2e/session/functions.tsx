@@ -4,7 +4,7 @@ import { ChatSession } from "./types"
 import { sessionListSubject } from "./state"
 import { sendSignalProtocolMessage } from "../messages/functions"
 import { stringToArrayBuffer } from "../signal/signal-store"
-import { ProcessedChatMessage } from "../messages/types"
+import { ChatMessageType, ProcessedChatMessage } from "../messages/types"
 import { randomUUID } from 'expo-crypto'
 
 /**
@@ -33,6 +33,7 @@ export async function startSession(recipient: string): Promise<void> {
         timestamp: Date.now(),
         firstMessage: true,
         body: 'firstMessage',
+        type: ChatMessageType.START_SESSION,
     }
 
     // Now we can send an encrypted message

@@ -5,7 +5,7 @@ import { signalStore, usernameSubject } from "../identity/state"
 import { stringToArrayBuffer } from "../signal/signal-store"
 import { signalWebsocket } from "../network/webSockets"
 import { ChatSession } from "../session/types"
-import { ProcessedChatMessage } from "./types"
+import { ChatMessageType, ProcessedChatMessage } from "./types"
 import { randomUUID } from 'expo-crypto'
 
 /**
@@ -33,7 +33,7 @@ export async function processPreKeyMessage(address: string, message: MessageType
         plaintext = plaintext.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F]/g, '')
         cm = JSON.parse(plaintext) as ProcessedChatMessage
         addMessageToSession(address, cm, type)
-        encryptAndSendMessage(address, 'firstMessage', true)
+        encryptAndSendMessage(address, 'firstMessage', true, ChatMessageType.START_SESSION)
     } catch (e) {
         console.log(e)
     }
@@ -80,7 +80,7 @@ export async function processRegularMessage(address: string, message: string, ty
  * @param to 
  * @param message 
  */
-export async function encryptAndSendMessage(to: string, message: string, firstMessage: boolean): Promise<void> {
+export async function encryptAndSendMessage(to: string, message: string, firstMessage: boolean, type: ChatMessageType): Promise<void> {
     const address = new SignalProtocolAddress(to, 1)
     const cipher = new SessionCipher(signalStore, address)
 
@@ -91,6 +91,7 @@ export async function encryptAndSendMessage(to: string, message: string, firstMe
         timestamp: Date.now(),
         firstMessage: firstMessage,
         body: message,
+        type: type,
     }
 
     addMessageToSession(to, cm, 1)  
@@ -117,7 +118,17 @@ export function addMessageToSession(address: string, cm: ProcessedChatMessage, t
     console.log('-> addMessageToSession')
     const userSession = { ...sessionForRemoteUser(address)! }
 
-    if(type !== 3 && !cm.firstMessage) userSession.messages.push(cm)
+    //Se for uma mensagem de dados do cuidador
+    //não queremos adicionar ao userSession, apenas queremos atualizar os dados internamente.
+    if(cm.type === ChatMessageType.PERSONAL_DATA) {
+        processPersonalData(cm)
+    } else if (cm.type === ChatMessageType.ACCEPTED_SESSION) {
+        userSession.messages.push(cm)  
+    } else if (cm.type === ChatMessageType.REJECT_SESSION) {
+        userSession.messages.push(cm)  
+    }else if(type !== 3 && !cm.firstMessage){
+        userSession.messages.push(cm)
+    }
     
     const sessionList = sessionListSubject.value.filter((session) => session.remoteUsername !== address)
     //console.log('Filtered session list', { sessionList })
@@ -126,4 +137,10 @@ export function addMessageToSession(address: string, cm: ProcessedChatMessage, t
     if (currentSessionSubject.value?.remoteUsername === address) {
         currentSessionSubject.next(userSession)
     }
+}
+
+function processPersonalData(cm: ProcessedChatMessage) {
+    //TODO: 
+    // -> guardar a chave se existir. (apenas caso da aplicação do cuidador)
+    // -> atualizar os dados que temos do respetivo membro.
 }

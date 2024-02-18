@@ -1,13 +1,13 @@
 import React from 'react'
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity, Button } from 'react-native'
 import { permissionButton } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import Navbar from '../../../navigation/actions'
 import MainBox from '../../../components/MainBox'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
-import AddCaregiver from './add_caregiver'
-import CaregiverItem from './caregiver_item'
+import AddCaregiver from './addCaregiver'
+import CaregiverItem from './caregiverItem'
 
 function CaregiversList() {
 
@@ -32,9 +32,12 @@ function CaregiversList() {
 
 //TODO: construir um main componente para ter receber apenas os components childs de cada page
 export default function Caregivers() {
+  const navigation = useNavigation<StackNavigationProp<any>>()
+
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}> 
       <MainBox text={'Cuidadores'}/>
+      <Button title="TEST" onPress={() => navigation.push('ChatTest')}></Button>
       <CaregiversList/>
       <Navbar/>
     </View>
