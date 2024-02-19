@@ -31,10 +31,6 @@ async function auxFunction(sessionList: ChatSession[]): Promise<any> {
 
   if(elderly.size == 0) return []
 
-  //console.log("----> Elderly List length: " + elderly.size)
-  //esperar x tempo pela mensagem?
-  //Verificar se ja recebi uma mensagem de dados do idoso (com o seu nome e afins)
-
   const toReturn: ChatSession[] = []
   
   elderly.forEach((elderly) => {
@@ -56,7 +52,7 @@ export default function NewElderlyList() {
     }
   }, [sessionList])
 
-  if(newElderlyList.length == 0) return <></>
+  if(newElderlyList.length == 0 || sessionList.length == 0) return <></>
 
   return (
     newElderlyList.map((session, index) => {

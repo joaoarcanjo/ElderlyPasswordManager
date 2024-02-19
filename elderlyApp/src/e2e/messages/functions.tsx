@@ -142,5 +142,8 @@ export function addMessageToSession(address: string, cm: ProcessedChatMessage, t
 function processPersonalData(cm: ProcessedChatMessage) {
     //TODO: 
     // -> guardar a chave se existir. (apenas caso da aplicação do cuidador)
+    // -> criar o objeto em sql caso ainda não exista.
     // -> atualizar os dados que temos do respetivo membro.
+
+    
 }
