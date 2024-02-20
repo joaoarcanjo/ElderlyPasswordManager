@@ -29,7 +29,8 @@ function AddCaregiverModal({visibility, concludeAction}: Readonly<{visibility: b
     if(loading && currSession?.remoteUsername === caregiverEmail) {
       currSession?.messages.forEach(async (message) => {
         
-        if(message.type === ChatMessageType.ACCEPTED_SESSION) {          
+        if(message.type === ChatMessageType.PERSONAL_DATA) {
+
           const data: PersonalDataBody = {
             key: await getValueFor(caregiver1SSSKey(userId)),
             name: userName,
@@ -37,10 +38,10 @@ function AddCaregiverModal({visibility, concludeAction}: Readonly<{visibility: b
             phone: userPhone,
             photo: ""
           }
+
+          console.log("--> Accepted received")
           await encryptAndSendMessage(caregiverEmail, JSON.stringify(data), true, ChatMessageType.PERSONAL_DATA) 
 
-        }
-        if(message.type === ChatMessageType.PERSONAL_DATA) {
           console.log("Message personal data received")
           concludeAction()
           setLoading(false)

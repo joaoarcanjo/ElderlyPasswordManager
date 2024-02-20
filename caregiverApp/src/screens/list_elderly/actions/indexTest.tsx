@@ -66,9 +66,7 @@ function AddSession(): JSX.Element {
   const [remoteUsername, setRemoteUsername] = useState('insere')
 
   const createSession = () => {
-      console.log("RemoteUsername: ", remoteUsername)
       startSession(remoteUsername)
-
       const session = sessionForRemoteUser(remoteUsername)
       currentSessionSubject.next(session || null)
       setRemoteUsername('')
@@ -117,7 +115,7 @@ function SessionSummary(props: SessionSummaryProps): JSX.Element {
   const { messages, remoteUsername } = session
   const lastActivity = (messages.length && Math.max(...messages.map((m) => m.timestamp))) || Date.now()
 
-  console.log({ lastActivity })
+  //console.log({ lastActivity })
 
   const viewChatSession = (username: string) => {
       currentSessionSubject.next(sessionForRemoteUser(username || '') || null)
@@ -138,7 +136,7 @@ function SessionDetails(): JSX.Element {
   const session = useObservable(currentSessionSubject, null)
   const username = useObservable(usernameSubject, '')
 
-  console.log({ session })
+  //console.log({ session })
 
   const clearCurrentSession = () => {
       currentSessionSubject.next(null)

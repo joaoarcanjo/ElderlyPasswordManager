@@ -5,8 +5,9 @@ import { signalStore, usernameSubject } from "../identity/state"
 import { stringToArrayBuffer } from "../signal/signal-store"
 import { signalWebsocket } from "../network/webSockets"
 import { ChatSession } from "../session/types"
-import { ChatMessageType, ProcessedChatMessage } from "./types"
+import { ChatMessageType, PersonalDataBody, ProcessedChatMessage } from "./types"
 import { randomUUID } from 'expo-crypto'
+import { checkElderlyByEmail, saveElderly, updateElderly } from "../../database"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -35,7 +36,7 @@ export async function processPreKeyMessage(address: string, message: MessageType
         addMessageToSession(address, cm, type)
         encryptAndSendMessage(address, 'firstMessage', true, ChatMessageType.START_SESSION)
     } catch (e) {
-        console.log(e)
+       // console.log(e)
     }
 }
 
@@ -94,7 +95,7 @@ export async function encryptAndSendMessage(to: string, message: string, firstMe
         type: type,
     }
 
-    addMessageToSession(to, cm, 1)  
+    addMessageToSession(to, cm, 1, true)  
     const signalMessage = await cipher.encrypt(stringToArrayBuffer(JSON.stringify(cm)))
     sendSignalProtocolMessage(to, usernameSubject.value, signalMessage)
 }
@@ -114,11 +115,20 @@ export function sendSignalProtocolMessage(to: string, from: string, message: Mes
     signalWebsocket.next(wsm)
 }
 
-export function addMessageToSession(address: string, cm: ProcessedChatMessage, type: number): void {
+export async function addMessageToSession(address: string, cm: ProcessedChatMessage, type: number, itsMine?: boolean): Promise<void> {
     console.log('-> addMessageToSession')
     const userSession = { ...sessionForRemoteUser(address)! }
 
-    if(type !== 3 && !cm.firstMessage) userSession.messages.push(cm)
+    //Se for uma mensagem de dados do idoso e não for uma mensagem nossa (tipo 0)
+    if(cm.type === ChatMessageType.PERSONAL_DATA && !itsMine) {
+        await processPersonalData(cm)
+        userSession.messages.push(cm)  
+    } else if (cm.type === ChatMessageType.REJECT_SESSION) {
+        //vai apagar a sessão que foi criada com o possível cuidador
+        userSession.messages.push(cm)  
+    }else if(type !== 3 && !cm.firstMessage) {
+        userSession.messages.push(cm)
+    }
     
     const sessionList = sessionListSubject.value.filter((session) => session.remoteUsername !== address)
     //console.log('Filtered session list', { sessionList })
@@ -127,4 +137,18 @@ export function addMessageToSession(address: string, cm: ProcessedChatMessage, t
     if (currentSessionSubject.value?.remoteUsername === address) {
         currentSessionSubject.next(userSession)
     }
+}
+
+async function processPersonalData(cm: ProcessedChatMessage) {
+    const data = JSON.parse(cm.body) as PersonalDataBody
+
+    if (await checkElderlyByEmail(cm.from)) {  
+        await updateElderly(data.name, data.email, data.phone)
+    } else {
+        await saveElderly(data.name, data.email, data.phone)
+    }
+    //TODO: 
+    // -> guardar a chave se existir. (apenas caso da aplicação do cuidador)
+    // -> criar o objeto em sql caso ainda não exista.
+    // -> atualizar os dados que temos do respetivo membro.
 }

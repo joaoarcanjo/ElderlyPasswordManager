@@ -52,17 +52,6 @@ export const historyButtonBorder = blueBorder
 export const regenerateButtonBackgroud = darkGreenBackgroud
 export const regenerateButtonBorder = darkGreenBorder
 
-//CAREGIVERS PAGE COLORS
-
-export const desvinculateButtonBackgroud = darkRedBackground
-export const desvinculateButtonBorder = darkRedBorder
-
-export const addCaregiverButtonBackgroud = darkGreenBackgroud
-export const addCaregiverButtonBorder = darkGreenBorder
-
-export const permissionsButtonBackground = yellowBackground
-export const permissionsButtonBorder = yellowBorder
-
 //SETTINGS PAGE COLORS
 
 export const logoutButtonBackgroud = darkRedBackground
@@ -121,3 +110,12 @@ export const rejectButtonBorder = lightRedBorder
 
 export const acceptButtonBackground = lightGreenBackgroud
 export const acceptButtonBorder = darkGreenBorder
+
+
+//ELDERLY PAGE COLORS
+
+export const addElderlyButtonBackgroud = darkGreenBackgroud
+export const addElderlyButtonBorder = darkGreenBorder
+
+export const permissionsButtonBackground = yellowBackground
+export const permissionsButtonBorder = yellowBorder 

@@ -62,7 +62,7 @@ export class SignalDirectory {
     }
 
     async getPreKeyBundle(address: string): Promise<DeviceType | undefined> {
-        console.log("--> getPreKeyBundle: "+address)
+        console.log("-> getPreKeyBundle: "+address)
         const res = await fetch(`http://192.168.1.68:443/getBundle/${address}`/*, { headers: { 'x-api-key': this._apiKey } }*/)
         
         const bundle = await res.json()

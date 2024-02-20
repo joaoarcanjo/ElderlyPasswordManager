@@ -40,14 +40,13 @@ export async function startSession(recipient: string): Promise<void> {
     const sessionCipher = new SessionCipher(signalStore, recipientAddress)
     const ciphertext = await sessionCipher.encrypt(stringToArrayBuffer(JSON.stringify(cm)))
 
-    console.log("RemoteRecipient: ", recipient)
+    console.log("- RemoteRecipient: ", recipient)
     sendSignalProtocolMessage(recipient, usernameSubject.value, ciphertext)
 
     const newSession: ChatSession = {
         remoteUsername: recipient,
         messages: [],
     }
-    console.log(`Starting session with ${recipient}`, { ciphertext })
     const sessionList = [...sessionListSubject.value]
     sessionList.unshift(newSession)
     sessionListSubject.next(sessionList)

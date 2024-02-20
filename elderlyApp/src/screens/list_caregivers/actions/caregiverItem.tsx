@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import { TouchableOpacity, View, Text, Image, StyleSheet, Linking } from "react-native"
 import { stylesButtons } from "../../../assets/styles/main_style"
 import { caregiverContactInfo, caregiverStyle, decouplingOption } from "../styles/styles"
-import { unlinkCaregiver } from "./functions"
+import { decouplingCaregiver } from "./functions"
 
 const caregiverImage = '../../../assets/images/caregiver.png'
 const telephoneImage = '../../../assets/images/telephone.png'
@@ -11,9 +11,9 @@ const emailImage = '../../../assets/images/email.png'
 export default function CaregiverItem({name, phone, email, setRefresh}: Readonly<{name: string, phone: string, email: string, setRefresh: Function}>) {
 
   const deleteCaregiver = () => {
-    unlinkCaregiver(email).then(() => setRefresh())
+    decouplingCaregiver(email).then(() => setRefresh())
   }
-
+  //TODO: desvincular popup.
   return (
     <View style={[{flex: 0.5, margin: '3%'}, caregiverStyle.container]}>
       <View style={{flex: 0.45, margin: '3%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>

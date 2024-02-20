@@ -19,13 +19,13 @@ export function initializeSignalWebsocket(uri: string): Subscription {
 
     const sub = signalWebsocket.subscribe({
         next: (msg) => {
-            console.log(`received message on signal wss`)
+            //console.log(`received message on signal wss`)
             if (isSendWebSocketMessage(msg)) {
                 processWebsocketMessage(msg).catch((e) => {
                     console.warn(`error accepting signal message`, { e })
                 })
             } else if (isAcknowledgeMessage(msg)) {
-                console.log(`Acknowledge received`)
+                console.log(`- Acknowledge received`)
             } else {
                 console.error('Message on wss is not recognized', { msg })
             }
@@ -34,7 +34,7 @@ export function initializeSignalWebsocket(uri: string): Subscription {
             console.error(err)
         },
         complete: () => {
-            console.log(`signal websocket complete`)
+            console.log(`- signal websocket complete`)
         },
     })
 
@@ -49,8 +49,7 @@ export function initializeSignalWebsocket(uri: string): Subscription {
 export async function processWebsocketMessage(wsm: SendWebSocketMessage): Promise<void> {
     console.log('-> processWebsocketMessage')
     const signalMessage = JSON.parse(wsm.message) as MessageType
-    //console.log(`processing signal message`, {signalMessage})
-    console.log("Message type:" + signalMessage.type)
+
     if (signalMessage.type === 1) {
         await processRegularMessage(wsm.from, signalMessage.body!, signalMessage.type)
     } else if (signalMessage.type === 3) {

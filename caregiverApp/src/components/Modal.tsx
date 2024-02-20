@@ -26,7 +26,7 @@ function YesOrNoSpinnerModal({question, yesFunction, noFunction, visibleFlag, lo
   return (
     <ModalBox visibleFlag={visibleFlag}>
       {loading ?
-        <Spinner/>
+        <Spinner width={300} height={300} />
         :  
         <>
           <Text numberOfLines={2} adjustsFontSizeToFit style={modal.modalText}>{question}</Text>

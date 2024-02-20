@@ -194,7 +194,6 @@ export function arrayBufferToString(b: ArrayBuffer): string {
 
 export function uint8ArrayToString(arr: Uint8Array): string {
     const end = arr.length
-    console.log(end)
     let begin = 0
     if (begin === end) return ''
     let chars: number[] = []

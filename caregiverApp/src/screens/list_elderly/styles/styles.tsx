@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native'
-import { addCaregiverButtonBackgroud, addCaregiverButtonBorder, greyBackgroud, greyBorder, whiteBackgroud, acceptButtonBackground, acceptButtonBorder, rejectButtonBorder, rejectButtonBackground, superlightBlueBackgroud, blueBorder } from '../../../assets/styles/colors'
+import { addElderlyButtonBackgroud, addElderlyButtonBorder, greyBackgroud, greyBorder, whiteBackgroud, acceptButtonBackground, acceptButtonBorder, rejectButtonBorder, rejectButtonBackground, superlightBlueBackgroud, blueBorder, desvinculateButtonBackgroud, desvinculateButtonBorder } from '../../../assets/styles/colors'
 
 /**
  * Estilos da view para adicionar uma nova credencial
@@ -7,8 +7,8 @@ import { addCaregiverButtonBackgroud, addCaregiverButtonBorder, greyBackgroud, g
 const stylesAddCaregiver = StyleSheet.create({
     button: {
         borderRadius: 20, // Define o raio dos cantos para arredondá-los
-        backgroundColor: addCaregiverButtonBackgroud,
-        borderColor: addCaregiverButtonBorder,
+        backgroundColor: addElderlyButtonBackgroud,
+        borderColor: addElderlyButtonBorder,
         borderWidth: 3, // Largura da linha na marge
     },
     buttonText: {
@@ -71,5 +71,17 @@ const newElderlyOptions = StyleSheet.create({
     },
 })
 
+const decouplingOption = StyleSheet.create({
+    button: {
+      borderRadius: 15, // Define o raio dos cantos para arredondá-los
+      backgroundColor: desvinculateButtonBackgroud,
+      borderColor: desvinculateButtonBorder,
+      borderWidth: 3
+    },
+    buttonText: {
+        color: '#f5f5f5'
+    }
+})
 
-export { newElderlyOptions, stylesAddCaregiver, elderlyStyle, caregiverContactInfo }
+
+export { decouplingOption, newElderlyOptions, stylesAddCaregiver, elderlyStyle, caregiverContactInfo }

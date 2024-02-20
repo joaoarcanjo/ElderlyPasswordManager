@@ -8,7 +8,7 @@ export async function startSessionWithCaregiver(email: string) {
     currentSessionSubject.next(session ?? null)
 }
 
-export async function unlinkCaregiver(email: string) {
+export async function decouplingCaregiver(email: string) {
     //TODO: Enviar notificação a informar do desligamento.
     //TODO: Atualizar a firebase porque o cuidador ja n tem acesso às suas credenciais.
     //TODO: Atualizar na firebase a chave de encriptação.

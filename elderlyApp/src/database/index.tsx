@@ -22,7 +22,7 @@ export function initDb() {
 
     db.transaction(tx => {
         tx.executeSql(
-            'CREATE TABLE IF NOT EXISTS caregivers (id TEXT PRIMARY KEY, name TEXT, email TEXT, phoneNumber TEXT);'
+            'CREATE TABLE IF NOT EXISTS caregivers (id TEXT, name TEXT, email TEXT PRIMARY KEY, phoneNumber TEXT, UNIQUE(email, phoneNumber));'
         )
     })
 }
@@ -40,7 +40,7 @@ export const saveCaregiver = async (name: string, email: string, phoneNumber: st
                 'INSERT INTO caregivers (id, name, email, phoneNumber) VALUES (?,?,?,?)',
                 [Crypto.randomUUID(), name, email, phoneNumber],
                 (_, result) => {
-                    console.log('Caregiver inserido com sucesso:', result)
+                    console.log('- Caregiver inserido com sucesso:', result)
                 }
             );
         });
@@ -56,9 +56,9 @@ export const updateCaregiver = async (email: string, newName: string, newPhoneNu
                 (_, result) => {
                     // Verifique se houve alguma linha afetada para confirmar se a atualização foi bem-sucedida.
                     if (result.rowsAffected > 0) {
-                        console.log('Cuidador atualizado com sucesso.')
+                        console.log('- Cuidador atualizado com sucesso.')
                     } else {
-                        console.log('Nenhum cuidador foi atualizado. Verifique o email fornecido.')
+                        console.log('- Nenhum cuidador foi atualizado. Verifique o email fornecido.')
                     }
                 }
             );
@@ -74,9 +74,9 @@ export const deleteCaregiver = async (email: string) => {
                 [email],
                 (_, result) => {
                     if (result.rowsAffected > 0) {
-                        console.log('Cuidador apagado com sucesso.');
+                        console.log('- Cuidador apagado com sucesso.');
                     } else {
-                        console.log('Nenhum cuidador foi apagado. Verifique o email fornecido.');
+                        console.log('- Nenhum cuidador foi apagado. Verifique o email fornecido.');
                     }
                 }
             );
@@ -121,7 +121,6 @@ export const getCaregivers = (): Promise<Caregiver[]> => {
                             email: results.rows.item(i).email,
                             phoneNumber: results.rows.item(i).phoneNumber
                         });
-                        console.log(results.rows.item(i).name)
                     }
                     resolve(data)
                     }

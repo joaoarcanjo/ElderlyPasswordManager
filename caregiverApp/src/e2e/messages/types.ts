@@ -12,7 +12,6 @@ export enum ChatMessageType {
     NORMAL_DATA, //mensagem normal (texto)
     START_SESSION, //primeira mensagem enviada (quando se começa a sessão)
     PERSONAL_DATA, //mensagem enviada com os primeiros dados (chave + others)
-    ACCEPTED_SESSION, //mensagem enviada quando o outro membro aceita
     REJECT_SESSION, //mensagem enviada quando o outro membro aceita
 }
 

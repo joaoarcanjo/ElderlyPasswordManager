@@ -22,14 +22,11 @@ function CaregiversList() {
   }
 
   const refreshValue = () => {
-    console.log("refreshed")
     setRefresh(!refresh)
   }
 
   useEffect(() => {
-    console.log("Caregivers list refresh")
     getCaregivers().then(value => setCaregivers(value))
-    console.log(caregivers.length)
   }, [refresh])
 
   return (

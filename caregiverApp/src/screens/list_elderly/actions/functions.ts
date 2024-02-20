@@ -1,6 +1,7 @@
+import { deleteElderly } from "../../../database"
 import { encryptAndSendMessage } from "../../../e2e/messages/functions"
 import { ChatMessageType, PersonalDataBody } from "../../../e2e/messages/types"
-import { removeSession } from "../../../e2e/session/state"
+import { currentSessionSubject, removeSession, sessionForRemoteUser } from "../../../e2e/session/state"
 
 //
 // ESTAS FUNÇÕES SÃO UTILIZADAS TENDO EM CONTA A DECISÃO DO CUIDADOR QUANDO RECEBE A NOTIFICAÇÃO.
@@ -12,6 +13,9 @@ import { removeSession } from "../../../e2e/session/state"
  */
 export async function acceptElderly(to: string) {
 
+    const session = sessionForRemoteUser(to)
+    currentSessionSubject.next(session || null)
+
     //TODO: remove estes valores default e usar valores verdadeiros.
     const data: PersonalDataBody = {
         key: "",
@@ -20,8 +24,7 @@ export async function acceptElderly(to: string) {
         phone: "918826447",
         photo: ""
     }
-    
-    await encryptAndSendMessage(to, 'acceptSession', true, ChatMessageType.ACCEPTED_SESSION)
+    //await encryptAndSendMessage(to, 'acceptSession', true, ChatMessageType.ACCEPTED_SESSION)
     await encryptAndSendMessage(to, JSON.stringify(data), true, ChatMessageType.PERSONAL_DATA)
 }
 
@@ -33,4 +36,14 @@ export async function acceptElderly(to: string) {
 export async function refuseElderly(to: string) {
     await encryptAndSendMessage(to, 'rejectSession', true, ChatMessageType.REJECT_SESSION)
     removeSession(to)
+}
+
+/**
+ * Todas as ações que têm que ser realizadas quando se realiza a desvinculação do idoso.
+ * @param email 
+ */
+export async function decouplingElderly(email: string) {
+    //TODO: Enviar notificação a informar do desligamento.
+    //TODO: Apagar os dados do idoso que se encontram armazenados localmente.
+    await deleteElderly(email)
 }

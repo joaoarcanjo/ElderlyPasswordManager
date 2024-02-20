@@ -1,6 +1,8 @@
 import React from "react"
-import { View, Text, Image } from "react-native"
-import { elderlyStyle } from "../styles/styles"
+import { View, Text, Image, TouchableOpacity } from "react-native"
+import { decouplingOption, elderlyStyle } from "../styles/styles"
+import { stylesButtons } from "../../../assets/styles/main_style";
+import { decouplingElderly } from "./functions";
 
 interface ElderlyProps {
   name: string;
@@ -9,7 +11,31 @@ interface ElderlyProps {
 
 const caregiverImage = '../../../assets/images/elderly.png'
 
-export default function CaregiverItem({ name }: Readonly<ElderlyProps>) {
+export function ElderlyItem({name, phone, email, setRefresh}: Readonly<{name: string, phone: string, email: string, setRefresh: Function}>) {
+
+  const lastUpdated = '2021-05-12'
+  const credentialLastUpdated = '2021-05-12' 
+
+  const deleteElderly = () => {
+    decouplingElderly(email).then(() => setRefresh())
+  }
+
+  return (
+    <View style={[{flex: 1}, elderlyStyle.container]}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: '3%' }}>
+        <Image source={require(caregiverImage)} style={{ width: 80, height: 80, borderRadius: 40, marginRight: 15 }} />
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 5 }}>{name}</Text>
+          <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }} />
+          <Text style={{ fontSize: 14, color: '#555' }}>Última atualização pessoal: {lastUpdated}</Text>
+          <Text style={{ fontSize: 14, color: '#555' }}>Última atualização credenciais: {credentialLastUpdated}</Text>
+        </View>
+      </View>
+    </View>
+  )
+}
+
+export function ElderlyItemMockup({ name }: Readonly<ElderlyProps>) {
 
   const lastUpdated = '2021-05-12'
   const credentialLastUpdated = '2021-05-12' 

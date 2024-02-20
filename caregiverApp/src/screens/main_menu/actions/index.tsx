@@ -5,6 +5,7 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import { stylesOptions, stylesFirstHalf } from '../styles/sytles'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import { createIdentity } from '../../../e2e/identity/functions'
+import { sessionRejectedFlash } from '../../../components/ShowFlashMessage'
 
 const generatorImage = '../images/gerador.png'
 const settingsImage = '../images/definições.png'
@@ -69,6 +70,7 @@ function Functionalities() {
     }
 
     const GeneratorsNavigation = () => {
+        sessionRejectedFlash()
         // Your code to handle the click event
         //console.log('Generator button clicked!');
         //navigation.push('Generator')

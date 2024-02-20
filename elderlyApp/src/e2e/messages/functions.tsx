@@ -36,7 +36,7 @@ export async function processPreKeyMessage(address: string, message: MessageType
         addMessageToSession(address, cm, type, true)
         encryptAndSendMessage(address, 'firstMessage', true, ChatMessageType.START_SESSION)
     } catch (e) {
-        console.log(e)
+        //console.log(e)
     }
 }
 
@@ -123,11 +123,7 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
     if(cm.type === ChatMessageType.PERSONAL_DATA && !itsMine) {
         await processPersonalData(cm)
         userSession.messages.push(cm)  
-    } else if (cm.type === ChatMessageType.ACCEPTED_SESSION) {
-        //vai enviar os seus dados para o cuidador
-        userSession.messages.push(cm)  
     } else if (cm.type === ChatMessageType.REJECT_SESSION) {
-        //vai apagar a sessão que foi criada com o possível cuidador
         userSession.messages.push(cm)  
     }else if(type !== 3 && !cm.firstMessage) {
         userSession.messages.push(cm)

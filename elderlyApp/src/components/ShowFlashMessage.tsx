@@ -3,7 +3,7 @@ import { Image } from 'react-native'
 import { showMessage } from "react-native-flash-message";
 import * as Clipboard from 'expo-clipboard';
 import React from 'react';
-import { darkGreenBackgroud, lightBlueBackground, lightRedBackground, lightYellowBackground, yellowBackground } from '../assets/styles/colors';
+import { darkGreenBackgroud, lightBlueBackground, lightRedBackground, lightYellowBackground } from '../assets/styles/colors';
 
 const enum FlashMessage {
   uriCopied = 'URI COPIADO!!',

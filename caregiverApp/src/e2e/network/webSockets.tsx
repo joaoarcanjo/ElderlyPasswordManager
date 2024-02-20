@@ -19,7 +19,6 @@ function subscribeWebsocket(username: string): void {
         action: 'subscribe',
         username: username,
     }
-    console.log('subscribeWebsocket', wsm)
     signalWebsocket.next(wsm)
 }
 
