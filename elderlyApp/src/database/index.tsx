@@ -1,6 +1,6 @@
 import * as SQLite from 'expo-sqlite'
 import * as Crypto from 'expo-crypto'
-import { Password } from './types';
+import { Caregiver, Password } from './types';
 import { decrypt, encrypt } from '../algorithms/0thers/crypto';
 
 export let db: SQLite.SQLiteDatabase | null = null;
@@ -27,24 +27,116 @@ export function initDb() {
     })
 }
 
-export const saveCaregiver = async (id: string, email: string, phoneNumber: string) => {
+/**
+ * Função para guardar os dados de determinado cuidador.
+ * @param id 
+ * @param email 
+ * @param phoneNumber 
+ */
+export const saveCaregiver = async (name: string, email: string, phoneNumber: string) => {
     if(db != null) {
         db.transaction(tx => {
             tx.executeSql(
-                'INSERT INTO caregivers (id, email, phoneNumber) VALUES (?,?,?)',
-                [id, email, phoneNumber],
+                'INSERT INTO caregivers (id, name, email, phoneNumber) VALUES (?,?,?,?)',
+                [Crypto.randomUUID(), name, email, phoneNumber],
                 (_, result) => {
-                    //console.log('Tuplo inserido com sucesso:', result);
+                    console.log('Caregiver inserido com sucesso:', result)
                 }
             );
         });
     }
 }
 
+export const updateCaregiver = async (email: string, newName: string, newPhoneNumber: string) => {
+    if (db != null) {
+        db.transaction(tx => {
+            tx.executeSql(
+                'UPDATE caregivers SET name = ?, phoneNumber = ? WHERE email = ?',
+                [newName, newPhoneNumber, email],
+                (_, result) => {
+                    // Verifique se houve alguma linha afetada para confirmar se a atualização foi bem-sucedida.
+                    if (result.rowsAffected > 0) {
+                        console.log('Cuidador atualizado com sucesso.')
+                    } else {
+                        console.log('Nenhum cuidador foi atualizado. Verifique o email fornecido.')
+                    }
+                }
+            );
+        });
+    }
+}
+
+export const deleteCaregiver = async (email: string) => {
+    if (db != null) {
+        db.transaction(tx => {
+            tx.executeSql(
+                'DELETE FROM caregivers WHERE email = ?',
+                [email],
+                (_, result) => {
+                    if (result.rowsAffected > 0) {
+                        console.log('Cuidador apagado com sucesso.');
+                    } else {
+                        console.log('Nenhum cuidador foi apagado. Verifique o email fornecido.');
+                    }
+                }
+            );
+        });
+    }
+}
+
+export const checkCaregiverByEmail = async (email: string): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+        if (db != null) {
+            db.transaction(tx => {
+                tx.executeSql(
+                    'SELECT COUNT(*) AS count FROM caregivers WHERE email = ?',
+                    [email],
+                    (_, result) => {
+                        const count = result.rows.item(0).count;
+                        resolve(count > 0); 
+                    }
+                );
+            });
+        } else {
+            reject(new Error('Database not initialized.')); 
+        }
+    })
+}
+
+export const getCaregivers = (): Promise<Caregiver[]> => {
+    return new Promise(async (resolve, reject) => {
+        const sql = 'SELECT id, name, email, phoneNumber FROM caregivers LIMIT 2';
+
+        const data: Caregiver[] = [];
+        try {
+            if(db == null) {
+                throw (new Error("Database is not connected."))
+            }
+            db.transaction((tx) => {
+                tx.executeSql(sql, [], (tx, results) => {
+                    for (let i = 0; i < results.rows.length; i++) {                        
+                        data.push({
+                            id: results.rows.item(i).id,  
+                            name: results.rows.item(i).name, 
+                            email: results.rows.item(i).email,
+                            phoneNumber: results.rows.item(i).phoneNumber
+                        });
+                        console.log(results.rows.item(i).name)
+                    }
+                    resolve(data)
+                    }
+                );
+            });
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
 /*
 This function is used to delete the older password generated. 
 */
-export const deleteGenerated = () => {
+const deletePasswordGenerated = () => {
     if(db != null) {
         db.transaction((tx) => {
             tx.executeSql(
@@ -62,7 +154,7 @@ export const deleteGenerated = () => {
 Function to save the new generated password.
 */
 export const savePasswordGenerated = async (password: string, localDBKey: string) => {
-    deleteGenerated()
+    deletePasswordGenerated()
 
     //console.log(localDBKey)
     const encrypted = encrypt(password, localDBKey)
@@ -89,7 +181,7 @@ export const getPasswords = () => {
     }
 }
 
-export const realizarConsulta = (localDBKey: string): Promise<Password[]> => {
+export const getGeneratedPasswords = (localDBKey: string): Promise<Password[]> => {
     return new Promise(async (resolve, reject) => {
         const sql = 'SELECT id, password, timestamp FROM passwords ORDER BY timestamp DESC LIMIT 10';
 
@@ -114,5 +206,5 @@ export const realizarConsulta = (localDBKey: string): Promise<Password[]> => {
         } catch (error) {
             reject(error)
         }
-    });
-};
+    })
+}

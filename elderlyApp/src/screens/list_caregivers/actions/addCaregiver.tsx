@@ -11,36 +11,49 @@ import { Observable } from "rxjs/internal/Observable"
 import { currentSessionSubject } from "../../../e2e/session/state"
 import { MessageList } from "../../add_caregiver/actions"
 import { startSessionWithCaregiver } from "./functions"
-import { ChatMessageType } from "../../../e2e/messages/types"
+import { ChatMessageType, PersonalDataBody } from "../../../e2e/messages/types"
 import { sessionAcceptedFlash, sessionRejectedFlash } from "../../../components/ShowFlashMessage"
+import { useSessionInfo } from "../../../firebase/authentication/session"
+import { getValueFor } from "../../../keychain"
+import { caregiver1SSSKey } from "../../../keychain/constants"
+import { encryptAndSendMessage } from "../../../e2e/messages/functions"
 
-function AddCaregiverModal({visibility, setVisibility}: Readonly<{visibility: boolean, setVisibility: Function}>) {
+function AddCaregiverModal({visibility, concludeAction}: Readonly<{visibility: boolean, concludeAction: Function}>) {
 
   const [caregiverEmail, setCaregiverEmail] = useState('')
   const currSession = useObservable(currentSessionSubject, null)
   const [loading, setLoading] = useState(false)
+  const { userId, userEmail, userName, userPhone } = useSessionInfo()
 
   useEffect(() => {
     if(loading && currSession?.remoteUsername === caregiverEmail) {
-      console.log(currSession?.messages.forEach((message) => {
-        console.log("Message: ", message)
-        if(message.type === ChatMessageType.ACCEPTED_SESSION) {
-          
-          //TODO: criar no sql a identidade do cuidador com o email, sendo os outros valores default
-          //Os restantes valores serao preenchidos com a informação que o cuidador vai enviar à posteriori.
+      currSession?.messages.forEach(async (message) => {
+        
+        if(message.type === ChatMessageType.ACCEPTED_SESSION) {          
+          const data: PersonalDataBody = {
+            key: await getValueFor(caregiver1SSSKey(userId)),
+            name: userName,
+            email: userEmail,
+            phone: userPhone,
+            photo: ""
+          }
+          await encryptAndSendMessage(caregiverEmail, JSON.stringify(data), true, ChatMessageType.PERSONAL_DATA) 
 
-          //TODO: Enviar ao cuidador os seus dados. com o tipo PERSONAL_DATA.
-          setVisibility(false)
+        }
+        if(message.type === ChatMessageType.PERSONAL_DATA) {
+          console.log("Message personal data received")
+          concludeAction()
           setLoading(false)
           sessionAcceptedFlash()
         }
+
         if(message.type === ChatMessageType.REJECT_SESSION) {
           
-          setVisibility(false)
+          concludeAction()
           setLoading(false)
           sessionRejectedFlash()
         }
-      }))
+      })
     }
   }, [currentSessionSubject.value])
 
@@ -66,13 +79,12 @@ function AddCaregiverModal({visibility, setVisibility}: Readonly<{visibility: bo
               onChangeText={setCaregiverEmail}
             />
           </View> 
-          {currSession &&  <MessageList messages={currSession.messages} remoteUserName={currSession.remoteUsername} />}
           <View style={{ borderBottomColor: 'black', borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: '3%' }}/>
           <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
             {(caregiverEmail != '') && <TouchableOpacity style={[{flex: 0.5, marginVertical: '3%', marginRight: '3%'}, stylesButtons.mainConfig, options.saveButton]} onPress={() => addCaregiver(caregiverEmail)}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Vincular</Text>
             </TouchableOpacity> }
-            <TouchableOpacity style={[{flex: 0.5, marginVertical: '3%', marginLeft: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={() => {setCaregiverEmail(''); setVisibility(false)}}>
+            <TouchableOpacity style={[{flex: 0.5, marginVertical: '3%', marginLeft: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={() => {setCaregiverEmail(''); concludeAction()}}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Cancelar</Text>
             </TouchableOpacity>
           </View>
@@ -82,16 +94,23 @@ function AddCaregiverModal({visibility, setVisibility}: Readonly<{visibility: bo
   )
 }
 
-export default function AddCaregiver() {
+export default function AddCaregiver({number, setRefresh}: {number: number, setRefresh: Function}) {
 
     const [modalVisible, setModalVisible] = useState(false)
     
+    const buttonName = 'Adicionar cuidador ' + number
+
+    const concludeAction = () => {
+      setRefresh()
+      setModalVisible(false)
+    } 
+
     return (
         <View style={[{flex: 0.5, margin: '3%', justifyContent: 'center', alignItems: 'center'}]}>
           <View style= { { flex: 0.35, flexDirection: 'row', justifyContent: 'space-around'} }>
-             <AddCaregiverModal setVisibility={setModalVisible} visibility={modalVisible}/>
+            <AddCaregiverModal concludeAction={concludeAction} visibility={modalVisible}/>
             <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, stylesAddCaregiver.button, stylesButtons.mainConfig]} onPress={() => {setModalVisible(true)}}>
-                <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCaregiver.buttonText]}>VINCULAR CUIDADOR 2</Text>
+                <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCaregiver.buttonText]}>{buttonName}</Text>
             </TouchableOpacity>
           </View>
         </View>

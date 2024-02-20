@@ -4,7 +4,7 @@ import { stylesButtons } from '../../../assets/styles/main_style'
 import { styleScroolView } from '../styles/styles'
 import formatTimestamp from '../../../algorithms/0thers/time';
 import Navbar from '../../../navigation/actions';
-import { realizarConsulta } from '../../../database'
+import { getGeneratedPasswords } from '../../../database'
 import { Password } from '../../../database/types'
 import { FlashMessage, copyValue } from '../../../components/ShowFlashMessage'
 import MainBox from '../../../components/MainBox';
@@ -32,7 +32,7 @@ export default function PasswordHistory() {
     const { localDBKey } = useSessionInfo();
 
     useEffect(() => {
-      realizarConsulta(localDBKey).then(value => setPasswords(value))
+      getGeneratedPasswords(localDBKey).then(value => setPasswords(value))
     }, [])
     
     return (

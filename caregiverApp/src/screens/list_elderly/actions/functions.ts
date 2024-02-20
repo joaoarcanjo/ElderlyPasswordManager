@@ -1,5 +1,5 @@
 import { encryptAndSendMessage } from "../../../e2e/messages/functions"
-import { ChatMessageType } from "../../../e2e/messages/types"
+import { ChatMessageType, PersonalDataBody } from "../../../e2e/messages/types"
 import { removeSession } from "../../../e2e/session/state"
 
 //
@@ -11,9 +11,18 @@ import { removeSession } from "../../../e2e/session/state"
  * @param to 
  */
 export async function acceptElderly(to: string) {
-    //TODO: criar no sql a identidade do idoso com o email, sendo os outros valores default
-    //Os restantes valores serao preenchidos com a informação que o idoso vai enviar à posteriori.
+
+    //TODO: remove estes valores default e usar valores verdadeiros.
+    const data: PersonalDataBody = {
+        key: "",
+        name: "José Augusto",
+        email: "care@g.com",
+        phone: "918826447",
+        photo: ""
+    }
+    
     await encryptAndSendMessage(to, 'acceptSession', true, ChatMessageType.ACCEPTED_SESSION)
+    await encryptAndSendMessage(to, JSON.stringify(data), true, ChatMessageType.PERSONAL_DATA)
 }
 
 /**

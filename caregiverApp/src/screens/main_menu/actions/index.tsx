@@ -14,7 +14,7 @@ const elderlyImage = '../images/elderly.png'
 
 function ElderlyInfoBox() {
 
-    const userName = "Elisabeth"
+    const userName = "José Augusto"
 
     return (
         <View style={[{ flex: 0.6, width: '85%', flexDirection: 'row', justifyContent: 'space-around' }, stylesFirstHalf.caregiverContainer]}>

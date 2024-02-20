@@ -4,4 +4,11 @@ interface Password {
     timestamp: number
 }
 
-export { Password }
+interface Caregiver {
+    id: string,
+    name: string,
+    email: string,
+    phoneNumber: string,
+}
+
+export { Password, Caregiver }
