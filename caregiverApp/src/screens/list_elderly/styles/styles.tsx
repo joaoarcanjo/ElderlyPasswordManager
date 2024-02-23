@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native'
-import { addElderlyButtonBackgroud, addElderlyButtonBorder, greyBackgroud, greyBorder, whiteBackgroud, acceptButtonBackground, acceptButtonBorder, rejectButtonBorder, rejectButtonBackground, superlightBlueBackgroud, blueBorder, desvinculateButtonBackgroud, desvinculateButtonBorder } from '../../../assets/styles/colors'
+import { addElderlyButtonBackgroud, addElderlyButtonBorder, greyBackgroud, greyBorder, whiteBackgroud, acceptButtonBackground, acceptButtonBorder, rejectButtonBorder, rejectButtonBackground, superlightBlueBackgroud, blueBorder } from '../../../assets/styles/colors'
 
 /**
  * Estilos da view para adicionar uma nova credencial
@@ -71,17 +71,4 @@ const newElderlyOptions = StyleSheet.create({
     },
 })
 
-const decouplingOption = StyleSheet.create({
-    button: {
-      borderRadius: 15, // Define o raio dos cantos para arredondá-los
-      backgroundColor: desvinculateButtonBackgroud,
-      borderColor: desvinculateButtonBorder,
-      borderWidth: 3
-    },
-    buttonText: {
-        color: '#f5f5f5'
-    }
-})
-
-
-export { decouplingOption, newElderlyOptions, stylesAddCaregiver, elderlyStyle, caregiverContactInfo }
+export { newElderlyOptions, stylesAddCaregiver, elderlyStyle, caregiverContactInfo }

@@ -9,9 +9,10 @@ const enum FlashMessage {
   uriCopied = 'URI COPIADO!!',
   usernameCopied = 'UTILIZADOR COPIADO!!',
   passwordCopied = 'PASSWORD COPIADA!!',
-  caregiverReject = 'O CUIDADOR REJEITOU A CONEXÃO!',
-  caregiverAccept = 'O CUIDADOR ACEITOU A CONEXÃO!',
-  relationEstablishedFlash = 'A RELAÇÃO FOI ESTABELECIDA!',
+  elderlyReject = 'O IDOSO REJEITOU A CONEXÃO!',
+  elderlyAccept = 'O IDOSO ACEITOU A CONEXÃO!',
+  sessionAccepted = 'A CONEXÃO FOI ESTABELECIDA!',
+  sessionRejected = 'A CONEXÃO NÃO FOI ESTABELECIDA!',
   editModeActive = 'MODO EDIÇÃO ATIVADO',
   editModeCanceled = 'MODO EDIÇÃO DESATIVADO',
   credentialUpdated = 'CREDENCIAL ATUALIZADA COM SUCESSO!'
@@ -62,10 +63,10 @@ function editCompletedFlash() {
   });
 } 
 
-function sessionAcceptedFlash() {
+function sessionEstablishedFlash(byMe: boolean) {
   showMessage({
     floating: true,
-    message: FlashMessage.caregiverAccept,
+    message: byMe ? FlashMessage.sessionAccepted : FlashMessage.elderlyAccept,
     icon: props => <Image source={require("../assets/images/check.png")} {...props} />,
     backgroundColor: darkGreenBackgroud,
     duration: 3000,
@@ -73,22 +74,10 @@ function sessionAcceptedFlash() {
   });
 }
 
-function sessionEstablishedFlash() {
+function sessionRejectedFlash(byMe: boolean) {
   showMessage({
     floating: true,
-    message: FlashMessage.relationEstablishedFlash,
-    icon: props => <Image source={require("../assets/images/check.png")} {...props} />,
-    backgroundColor: darkGreenBackgroud,
-    duration: 3000,
-    color: "black", // text color
-  });
-}
-
-function sessionRejectedFlash() {
-  console.log("Ola")
-  showMessage({
-    floating: true,
-    message: FlashMessage.caregiverReject,
+    message: byMe ? FlashMessage.sessionRejected : FlashMessage.elderlyReject,
     icon: props => <Image source={require("../assets/images/cross.png")} {...props} />,
     backgroundColor: lightRedBackground,
     duration: 3000,
@@ -96,4 +85,4 @@ function sessionRejectedFlash() {
   });
 }
 
-export { sessionEstablishedFlash, sessionRejectedFlash, sessionAcceptedFlash, copyValue, editValueFlash, editCompletedFlash, editCanceledFlash, FlashMessage }
+export { sessionEstablishedFlash, sessionRejectedFlash, copyValue, editValueFlash, editCompletedFlash, editCanceledFlash, FlashMessage }

@@ -5,31 +5,39 @@ import MainBox from '../../../components/MainBox'
 import { ElderlyItem, ElderlyItemMockup } from './elderlyItem'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
-import NewElderlyList from './newElderly'
 import { Elderly } from '../../../database/types'
 import { getAllElderly } from '../../../database'
-import { currentSessionSubject } from '../../../e2e/session/state'
-import { Observable } from 'rxjs/internal/Observable'
+import { elderlyListUpdated } from './state'
 
 function ElderlyList() {
 
   const [elderlyList, setElderlyList] = useState<Elderly[]>([])
-  const [refresh, setRefresh] = useState(false)
-
-  const refreshValue = () => {
-    setRefresh(!refresh)
-  }
 
   useEffect(() => {
+    const subscription = elderlyListUpdated.subscribe(() => {
+        getAllElderly().then(value => setElderlyList(value))
+    })
+    return () => subscription.unsubscribe()
+}, [elderlyListUpdated])
+
+  const refreshValue = () => {
     getAllElderly().then(value => setElderlyList(value))
-  }, [refresh])
+  }
 
   return (
     <View style={{ flex: 0.85, flexDirection: 'row', marginTop: '5%', justifyContent: 'space-around'}}>
       <View style={[{ flex: 1, marginHorizontal: '4%', marginBottom: '3%', justifyContent: 'space-around'}]}>
         <ScrollView style={[{margin: '3%'}]}>
-          <NewElderlyList setRefresh={refreshValue}/>
-          {elderlyList.map((elderly, index) => <ElderlyItem key={index} name={elderly.name} phone={elderly.phoneNumber} email={elderly.email} setRefresh={refreshValue}/>)}
+          {/*<NewElderlyList setRefresh={refreshValue}/> */}
+          {elderlyList.map((elderly, index) => 
+            <ElderlyItem 
+              key={index}
+              name={elderly.name}
+              phone={elderly.phoneNumber}
+              email={elderly.email}
+              setRefresh={refreshValue} 
+              accepted={elderly.accepted}/>
+          )}
           <ElderlyItemMockup name={'Elisabeth'}/>
         </ScrollView>
       </View>
@@ -48,17 +56,4 @@ export default function ElderlyListScreen() {
       <Navbar/>
     </View>
   )
-}
-
-function useObservable<T>(observable: Observable<T>, initialValue: T): T {
-  const [value, setValue] = useState(initialValue)
-
-  useEffect(() => {
-      const subscription = observable.subscribe((newValue) => {
-          setValue(newValue)
-      })
-      return () => subscription.unsubscribe()
-  }, [observable])
-
-  return value
 }

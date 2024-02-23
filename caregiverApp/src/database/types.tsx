@@ -7,7 +7,8 @@ interface Password {
 interface Elderly {
     name: string,
     email: string,
-    phoneNumber: string
+    phoneNumber: string,
+    accepted: number
 }
 
 export { Password, Elderly }

@@ -10,24 +10,29 @@ import AddCaregiver from './addCaregiver'
 import CaregiverItem from './caregiverItem'
 import { Caregiver } from '../../../database/types'
 import { getCaregivers } from '../../../database'
+import { caregiverListUpdated } from './state'
 
 function CaregiversList() {
 
   const [caregivers, setCaregivers] = useState<Caregiver[]>([])
   const navigation = useNavigation<StackNavigationProp<any>>()
-  const [refresh, setRefresh] = useState(false)
   
   const permissions = () => {
     navigation.navigate('Permissions')
   }
 
   const refreshValue = () => {
-    setRefresh(!refresh)
+    getCaregivers().then(value => setCaregivers(value))
   }
 
   useEffect(() => {
-    getCaregivers().then(value => setCaregivers(value))
-  }, [refresh])
+    const subscription = caregiverListUpdated.subscribe(() => {
+      console.log("updated.")
+      getCaregivers().then(value => setCaregivers(value))
+    })
+    return () => subscription.unsubscribe()
+}, [caregiverListUpdated])
+
 
   return (
     <View style={{ flex: 0.85, flexDirection: 'row', marginTop: '5%', justifyContent: 'space-around'}}>
@@ -44,7 +49,6 @@ function CaregiversList() {
   )
 }
 
-//TODO: construir um main componente para ter receber apenas os components childs de cada page
 export default function Caregivers() {
   const navigation = useNavigation<StackNavigationProp<any>>()
 

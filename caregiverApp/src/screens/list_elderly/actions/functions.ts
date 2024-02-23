@@ -1,7 +1,9 @@
-import { deleteElderly } from "../../../database"
+import { sessionEstablishedFlash, sessionRejectedFlash } from "../../../components/ShowFlashMessage"
+import { acceptElderlyOnDatabase, deleteElderly } from "../../../database"
 import { encryptAndSendMessage } from "../../../e2e/messages/functions"
 import { ChatMessageType, PersonalDataBody } from "../../../e2e/messages/types"
 import { currentSessionSubject, removeSession, sessionForRemoteUser } from "../../../e2e/session/state"
+import { elderlyListUpdated, setElderlyListUpdated } from "./state"
 
 //
 // ESTAS FUNÇÕES SÃO UTILIZADAS TENDO EM CONTA A DECISÃO DO CUIDADOR QUANDO RECEBE A NOTIFICAÇÃO.
@@ -26,6 +28,8 @@ export async function acceptElderly(to: string) {
     }
     //await encryptAndSendMessage(to, 'acceptSession', true, ChatMessageType.ACCEPTED_SESSION)
     await encryptAndSendMessage(to, JSON.stringify(data), true, ChatMessageType.PERSONAL_DATA)
+    await acceptElderlyOnDatabase(to)
+    sessionEstablishedFlash(true)
 }
 
 /**
@@ -35,7 +39,10 @@ export async function acceptElderly(to: string) {
  */
 export async function refuseElderly(to: string) {
     await encryptAndSendMessage(to, 'rejectSession', true, ChatMessageType.REJECT_SESSION)
+    await deleteElderly(to)
+    setElderlyListUpdated()
     removeSession(to)
+    sessionRejectedFlash(true)
 }
 
 /**

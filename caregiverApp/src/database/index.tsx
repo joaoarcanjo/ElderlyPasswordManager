@@ -26,7 +26,7 @@ export function initDb() {
 
     db.transaction(tx => {
         tx.executeSql(
-            'CREATE TABLE IF NOT EXISTS elderly (name TEXT, email TEXT PRIMARY KEY, phoneNumber TEXT, UNIQUE(email, phoneNumber));'
+            'CREATE TABLE IF NOT EXISTS elderly (name TEXT, email TEXT PRIMARY KEY, phoneNumber TEXT, accepted INTEGER DEFAULT 0, UNIQUE(email, phoneNumber));'
         )
     })
 }
@@ -69,6 +69,25 @@ export const updateElderly = async (email: string, newName: string, newPhoneNumb
     }
 }
 
+export const acceptElderlyOnDatabase = async (email: string) => {
+    if (db != null) {
+        db.transaction(tx => {
+            tx.executeSql(
+                'UPDATE elderly SET accepted = ? WHERE email = ?',
+                [1, email],
+                (_, result) => {
+                    // Verifique se houve alguma linha afetada para confirmar se a atualização foi bem-sucedida.
+                    if (result.rowsAffected > 0) {
+                        console.log('-> Idoso aceite.')
+                    } else {
+                        console.log('-> Idoso não aceite, erro.')
+                    }
+                }
+            );
+        });
+    }
+}
+
 /*
 This function is used to delete the older password generated. 
 */
@@ -76,10 +95,17 @@ export const deleteElderly = async (id: string) => {
     if(db != null) {
         db.transaction((tx) => {
             tx.executeSql(
-              'DELETE FROM elderly WHERE id = ?',
-              [],
+              'DELETE FROM elderly WHERE email = ?',
+              [id],
               (_, result) => {
-                //console.log('Tuplo com timestamp mais antigo excluído com sucesso:', result);
+                if (result.rowsAffected > 0) {
+                    console.log("Idoso apagado da base de dados.")
+                } else {
+                    console.log('-> Idoso não apagado, erro.')
+                }
+              },
+              (_, error) => {
+               console.log('-> Error deleting elderly from database', error)
               }
             );
         });
@@ -108,7 +134,7 @@ export const checkElderlyByEmail = async (email: string): Promise<boolean> => {
 //TODO: Colocar a DBKey
 export const getAllElderly = (/*localDBKey: string*/): Promise<Elderly[]> => {
     return new Promise(async (resolve, reject) => {
-        const sql = 'SELECT name, email, phoneNumber FROM elderly';
+        const sql = 'SELECT name, email, phoneNumber, accepted FROM elderly';
 
         const data: Elderly[] = [];
         try {
@@ -121,7 +147,8 @@ export const getAllElderly = (/*localDBKey: string*/): Promise<Elderly[]> => {
                         data.push({
                             name: results.rows.item(i).name,//decrypt(results.rows.item(i).name, localDBKey),   
                             email: results.rows.item(i).email,//decrypt(results.rows.item(i).password, localDBKey), 
-                            phoneNumber: results.rows.item(i).phoneNumber//decrypt(results.rows.item(i).phoneNumber, localDBKey),   
+                            phoneNumber: results.rows.item(i).phoneNumber,//decrypt(results.rows.item(i).phoneNumber, localDBKey),   
+                            accepted: results.rows.item(i).accepted
                         });
                     }
                     resolve(data)

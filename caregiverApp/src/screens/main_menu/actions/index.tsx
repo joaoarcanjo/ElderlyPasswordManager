@@ -70,7 +70,6 @@ function Functionalities() {
     }
 
     const GeneratorsNavigation = () => {
-        sessionRejectedFlash()
         // Your code to handle the click event
         //console.log('Generator button clicked!');
         //navigation.push('Generator')

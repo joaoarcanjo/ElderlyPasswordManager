@@ -1,11 +1,25 @@
 import { deleteCaregiver } from "../../../database"
+import { encryptAndSendMessage } from "../../../e2e/messages/functions"
+import { ChatMessageType, PersonalDataBody } from "../../../e2e/messages/types"
 import { startSession } from "../../../e2e/session/functions"
 import { currentSessionSubject, sessionForRemoteUser } from "../../../e2e/session/state"
+import { getValueFor } from "../../../keychain"
+import { caregiver1SSSKey } from "../../../keychain/constants"
 
-export async function startSessionWithCaregiver(email: string) {
-    await startSession(email)
-    const session = sessionForRemoteUser(email)
+export async function startSessionWithCaregiver(caregiverEmail: string, userId: string, userName: string, userEmail: string, userPhone: string) {
+    await startSession(caregiverEmail)
+    const session = sessionForRemoteUser(caregiverEmail)
     currentSessionSubject.next(session ?? null)
+
+    const data: PersonalDataBody = {
+        key: await getValueFor(caregiver1SSSKey(userId)),
+        name: userName,
+        email: userEmail,
+        phone: userPhone,
+        photo: ""
+      }
+
+      await encryptAndSendMessage(caregiverEmail, JSON.stringify(data), true, ChatMessageType.PERSONAL_DATA) 
 }
 
 export async function decouplingCaregiver(email: string) {

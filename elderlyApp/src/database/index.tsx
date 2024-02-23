@@ -40,7 +40,7 @@ export const saveCaregiver = async (name: string, email: string, phoneNumber: st
                 'INSERT INTO caregivers (id, name, email, phoneNumber) VALUES (?,?,?,?)',
                 [Crypto.randomUUID(), name, email, phoneNumber],
                 (_, result) => {
-                    console.log('- Caregiver inserido com sucesso:', result)
+                    return Promise.resolve(result.rowsAffected > 0)
                 }
             );
         });

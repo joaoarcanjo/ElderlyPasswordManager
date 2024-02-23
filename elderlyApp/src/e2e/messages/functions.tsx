@@ -8,6 +8,8 @@ import { ChatSession } from "../session/types"
 import { ChatMessageType, PersonalDataBody, ProcessedChatMessage } from "./types"
 import { randomUUID } from 'expo-crypto'
 import { checkCaregiverByEmail, saveCaregiver, updateCaregiver } from "../../database"
+import { findCaregiverRequest, setCaregiverListUpdated } from "../../screens/list_caregivers/actions/state"
+import { editCompletedFlash, sessionAcceptedFlash, sessionRejectedFlash } from "../../components/ShowFlashMessage"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -122,9 +124,10 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
     //Se for uma mensagem de dados do cuidador e não for uma mensagem nossa (tipo 0)
     if(cm.type === ChatMessageType.PERSONAL_DATA && !itsMine) {
         await processPersonalData(cm)
-        userSession.messages.push(cm)  
+        //userSession.messages.push(cm)  
     } else if (cm.type === ChatMessageType.REJECT_SESSION) {
-        userSession.messages.push(cm)  
+        //userSession.messages.push(cm)  
+        await processRejectMessage(cm)
     }else if(type !== 3 && !cm.firstMessage) {
         userSession.messages.push(cm)
     }
@@ -144,10 +147,18 @@ async function processPersonalData(cm: ProcessedChatMessage) {
     if (await checkCaregiverByEmail(cm.from)) {  
         await updateCaregiver(data.name, data.email, data.phone)
     } else {
-        await saveCaregiver(data.name, data.email, data.phone)
+        if(findCaregiverRequest(cm.from)) {
+            await saveCaregiver(data.name, data.email, data.phone)
+                .then(() => setCaregiverListUpdated())
+                .then(() => sessionAcceptedFlash())
+        }
     }
     //TODO: 
     // -> guardar a chave se existir. (apenas caso da aplicação do cuidador)
     // -> criar o objeto em sql caso ainda não exista.
     // -> atualizar os dados que temos do respetivo membro.
+}
+
+async function processRejectMessage(cm: ProcessedChatMessage) {
+    sessionRejectedFlash()
 }

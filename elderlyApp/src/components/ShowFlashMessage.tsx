@@ -14,7 +14,6 @@ const enum FlashMessage {
   editModeActive = 'MODO EDIÇÃO ATIVADO',
   editModeCanceled = 'MODO EDIÇÃO DESATIVADO',
   credentialUpdated = 'CREDENCIAL ATUALIZADA COM SUCESSO!',
-
 }
 
 function copyValue(value: string, message: FlashMessage) {
@@ -52,6 +51,7 @@ function editCanceledFlash() {
 } 
 
 function editCompletedFlash() {
+  console.log('editCompletedFlash')
   showMessage({
     floating: true,
     message: FlashMessage.credentialUpdated,

@@ -8,6 +8,7 @@ import { ChatSession } from "../session/types"
 import { ChatMessageType, PersonalDataBody, ProcessedChatMessage } from "./types"
 import { randomUUID } from 'expo-crypto'
 import { checkElderlyByEmail, saveElderly, updateElderly } from "../../database"
+import { elderlyListUpdated, setElderlyListUpdated } from "../../screens/list_elderly/actions/state"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -70,8 +71,9 @@ export async function processRegularMessage(address: string, message: string, ty
     const plaintextBytes = await cipher.decryptWhisperMessage(message, 'binary')
     
     let plaintext = String.fromCharCode(...new Uint8Array(plaintextBytes))
-    plaintext = plaintext.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F]/g, '');
+    plaintext = plaintext.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F]/g, '')
     const cm: ProcessedChatMessage = JSON.parse(plaintext)
+
     addMessageToSession(address, cm, type)
     sendAcknowledgement(address, cm.id)
 }
@@ -119,6 +121,7 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
     console.log('-> addMessageToSession')
     console.log("---> Message: "+cm.body)
     const userSession = { ...sessionForRemoteUser(address)! }
+    console.log("User session: " +userSession.remoteUsername)
 
     //Se for uma mensagem de dados do idoso e não for uma mensagem nossa (tipo 0)
     if(cm.type === ChatMessageType.PERSONAL_DATA && !itsMine) {
@@ -146,7 +149,7 @@ async function processPersonalData(cm: ProcessedChatMessage) {
     if (await checkElderlyByEmail(cm.from)) {  
         await updateElderly(data.name, data.email, data.phone)
     } else {
-        await saveElderly(data.name, data.email, data.phone)
+        await saveElderly(data.name, data.email, data.phone).then(() => setElderlyListUpdated())
     }
     //TODO: 
     // -> guardar a chave se existir. (apenas caso da aplicação do cuidador)
