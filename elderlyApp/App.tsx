@@ -27,10 +27,15 @@ import SplashScreen from './src/screens/splash_screen/actions';
 import * as SplashFunctions from 'expo-splash-screen';
 import { createIdentity } from './src/e2e/identity/functions';
 import ChatPageTest from './src/screens/add_caregiver/actions';
+import * as Notifications from "expo-notifications";
 
 const Stack = createNativeStackNavigator()
 const InsideStack = createNativeStackNavigator()
 //SplashFunctions.preventAutoHideAsync()
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => { return { shouldShowAlert: true }}
+})
 
 const im_testing = false
 const time = 0
@@ -85,7 +90,7 @@ function Inicialization() {
 
   useEffect(() => {
     
-    onAuthStateChanged(FIREBASE_AUTH, (user) => {
+    onAuthStateChanged(FIREBASE_AUTH, async (user) => {
       //console.log("User: " + user)
       //console.log("UserId: " + userId)
       if(userId) {
@@ -95,6 +100,12 @@ function Inicialization() {
         setUserId(user.uid)
         setUserEmail(user.email)
         setUser(user)
+      }
+
+      let { status } = await Notifications.requestPermissionsAsync();
+      if (status !== 'granted') {
+        console.log('Permission to access location was denied');
+        return;
       }
     })
   }, [user])

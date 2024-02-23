@@ -5,7 +5,7 @@ import { historyStyle, passwordFirstHalf, passwordSecondHalf } from '../styles/s
 import Navbar from '../../../navigation/actions'
 import { savePasswordGenerated } from '../../../database'
 import Algorithm from './algorithm'
-import { FlashMessage, copyValue } from '../../../components/ShowFlashMessage'
+import { FlashMessage, copyValue } from '../../../components/UserMessages'
 import MainBox from '../../../components/MainBox'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 

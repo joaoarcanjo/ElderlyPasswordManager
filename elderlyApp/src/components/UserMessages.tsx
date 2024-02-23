@@ -4,8 +4,10 @@ import { showMessage } from "react-native-flash-message";
 import * as Clipboard from 'expo-clipboard';
 import React from 'react';
 import { darkGreenBackgroud, lightBlueBackground, lightRedBackground, lightYellowBackground } from '../assets/styles/colors';
+import { AppState } from 'react-native';
+import { triggerNotifications } from '../notifications/localNotifications';
 
-const enum FlashMessage {
+export const enum FlashMessage {
   uriCopied = 'URI COPIADO!!',
   usernameCopied = 'UTILIZADOR COPIADO!!',
   passwordCopied = 'PASSWORD COPIADA!!',
@@ -14,10 +16,10 @@ const enum FlashMessage {
   editModeActive = 'MODO EDIÇÃO ATIVADO',
   editModeCanceled = 'MODO EDIÇÃO DESATIVADO',
   credentialUpdated = 'CREDENCIAL ATUALIZADA COM SUCESSO!',
-
+  sessionRequest = 'PEDIDO DE SESSÃO ENVIADO!',
 }
 
-function copyValue(value: string, message: FlashMessage) {
+export function copyValue(value: string, message: FlashMessage) {
     Clipboard.setStringAsync(value)
     showMessage({
       floating: true,
@@ -29,7 +31,7 @@ function copyValue(value: string, message: FlashMessage) {
     });
 }
 
-function editValueFlash() {
+export function editValueFlash() {
   showMessage({
     floating: true,
     message: FlashMessage.editModeActive,
@@ -40,7 +42,7 @@ function editValueFlash() {
   });
 } 
 
-function editCanceledFlash() {
+export function editCanceledFlash() {
   showMessage({
     floating: true,
     message: FlashMessage.editModeCanceled,
@@ -51,7 +53,8 @@ function editCanceledFlash() {
   });
 } 
 
-function editCompletedFlash() {
+export function editCompletedFlash() {
+  console.log('editCompletedFlash')
   showMessage({
     floating: true,
     message: FlashMessage.credentialUpdated,
@@ -62,26 +65,46 @@ function editCompletedFlash() {
   });
 } 
 
-function sessionAcceptedFlash() {
+export function sessionRequestSent() {
+  console.log('sessionRequestFlashSent')
   showMessage({
     floating: true,
-    message: FlashMessage.caregiverAccept,
+    message: FlashMessage.sessionRequest,
     icon: props => <Image source={require("../assets/images/check.png")} {...props} />,
-    backgroundColor: darkGreenBackgroud,
+    backgroundColor: lightBlueBackground,
     duration: 3000,
     color: "black", // text color
   });
+} 
+
+export function sessionAcceptedFlash(from: string) {
+  console.log(AppState.currentState)
+  if(AppState.currentState !== 'background') {
+    showMessage({
+      floating: true,
+      message: FlashMessage.sessionRequest,
+      icon: props => <Image source={require("../assets/images/check.png")} {...props} />,
+      backgroundColor: darkGreenBackgroud,
+      duration: 3000,
+      color: "black", // text color
+    });
+  } else {
+    triggerNotifications('Conexão aceite!! 🎉', `O cuidador ${from} aceitou a conexão.`, "")
+  }
 }
 
-function sessionRejectedFlash() {
-  showMessage({
-    floating: true,
-    message: FlashMessage.caregiverReject,
-    icon: props => <Image source={require("../assets/images/cross.png")} {...props} />,
-    backgroundColor: lightRedBackground,
-    duration: 3000,
-    color: "black", // text color
-  });
+export function sessionRejectedFlash(from: string) {
+  console.log(AppState.currentState)
+  if(AppState.currentState !== 'background') {
+    showMessage({
+      floating: true,
+      message: FlashMessage.caregiverReject,
+      icon: props => <Image source={require("../assets/images/cross.png")} {...props} />,
+      backgroundColor: lightRedBackground,
+      duration: 3000,
+      color: "black", // text color
+    });
+  } else {
+    triggerNotifications('Conexão rejeitada!! 😓', `O cuidador ${from} rejeitou a conexão.`, "")
+  }
 }
-
-export { sessionRejectedFlash, sessionAcceptedFlash, copyValue, editValueFlash, editCompletedFlash, editCanceledFlash, FlashMessage }

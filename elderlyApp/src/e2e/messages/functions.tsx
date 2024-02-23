@@ -9,7 +9,7 @@ import { ChatMessageType, PersonalDataBody, ProcessedChatMessage } from "./types
 import { randomUUID } from 'expo-crypto'
 import { checkCaregiverByEmail, saveCaregiver, updateCaregiver } from "../../database"
 import { findCaregiverRequest, setCaregiverListUpdated } from "../../screens/list_caregivers/actions/state"
-import { editCompletedFlash, sessionAcceptedFlash, sessionRejectedFlash } from "../../components/ShowFlashMessage"
+import { editCompletedFlash, sessionAcceptedFlash, sessionRejectedFlash } from "../../components/UserMessages"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -149,8 +149,8 @@ async function processPersonalData(cm: ProcessedChatMessage) {
     } else {
         if(findCaregiverRequest(cm.from)) {
             await saveCaregiver(data.name, data.email, data.phone)
+                .then(() => sessionAcceptedFlash(cm.from))
                 .then(() => setCaregiverListUpdated())
-                .then(() => sessionAcceptedFlash())
         }
     }
     //TODO: 
@@ -160,5 +160,5 @@ async function processPersonalData(cm: ProcessedChatMessage) {
 }
 
 async function processRejectMessage(cm: ProcessedChatMessage) {
-    sessionRejectedFlash()
+    sessionRejectedFlash(cm.from)
 }

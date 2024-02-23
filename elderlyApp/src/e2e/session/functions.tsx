@@ -36,7 +36,7 @@ export async function startSession(recipient: string): Promise<void> {
         type: ChatMessageType.START_SESSION,
     }
 
-    // Now we can send an encrypted message
+    // Now we can send an encrypted message😓
     const sessionCipher = new SessionCipher(signalStore, recipientAddress)
     const ciphertext = await sessionCipher.encrypt(stringToArrayBuffer(JSON.stringify(cm)))
 

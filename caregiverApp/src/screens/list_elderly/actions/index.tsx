@@ -51,7 +51,7 @@ export default function ElderlyListScreen() {
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}> 
       <MainBox text={'Idosos'}/>
-      <Button title="TEST" onPress={() => navigation.push('ChatTest')}></Button>
+      {/*<Button title="TEST" onPress={() => navigation.push('ChatTest')}></Button>*/}
       <ElderlyList/>
       <Navbar/>
     </View>

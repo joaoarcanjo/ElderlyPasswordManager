@@ -27,7 +27,6 @@ function CaregiversList() {
 
   useEffect(() => {
     const subscription = caregiverListUpdated.subscribe(() => {
-      console.log("updated.")
       getCaregivers().then(value => setCaregivers(value))
     })
     return () => subscription.unsubscribe()
@@ -55,7 +54,7 @@ export default function Caregivers() {
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}> 
       <MainBox text={'Cuidadores'}/>
-      <Button title="TEST" onPress={() => navigation.push('ChatTest')}></Button>
+      {/*<Button title="TEST" onPress={() => navigation.push('ChatTest')}></Button>*/}
       <CaregiversList/>
       <Navbar/>
     </View>

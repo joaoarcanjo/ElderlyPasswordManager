@@ -6,7 +6,7 @@ import formatTimestamp from '../../../algorithms/0thers/time';
 import Navbar from '../../../navigation/actions';
 import { getGeneratedPasswords } from '../../../database'
 import { Password } from '../../../database/types'
-import { FlashMessage, copyValue } from '../../../components/ShowFlashMessage'
+import { FlashMessage, copyValue } from '../../../components/UserMessages'
 import MainBox from '../../../components/MainBox';
 import { useSessionInfo } from '../../../firebase/authentication/session';
 

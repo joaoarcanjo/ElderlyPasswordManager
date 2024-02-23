@@ -8,6 +8,7 @@ import { Observable } from "rxjs/internal/Observable"
 import { startSessionWithCaregiver } from "./functions"
 import { useSessionInfo } from "../../../firebase/authentication/session"
 import { addCaregiverRequested } from "./state"
+import { sessionRequestSent } from "../../../components/UserMessages"
 
 function AddCaregiverModal({visibility, concludeAction}: Readonly<{visibility: boolean, concludeAction: Function}>) {
 
@@ -17,6 +18,8 @@ function AddCaregiverModal({visibility, concludeAction}: Readonly<{visibility: b
   const addCaregiver = async (email: string) => {
     addCaregiverRequested(email)
     startSessionWithCaregiver(email, userId, userName, userEmail, userPhone)
+      .then(() => sessionRequestSent())
+    
     concludeAction()
   }
 
