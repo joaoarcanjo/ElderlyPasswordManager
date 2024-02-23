@@ -51,7 +51,7 @@ export default function Caregivers() {
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}> 
       <MainBox text={'Cuidadores'}/>
-      {/*<Button title="TEST" onPress={() => navigation.push('ChatTest')}></Button> */}
+      <Button title="TEST" onPress={() => navigation.push('ChatTest')}></Button>
       <CaregiversList/>
       <Navbar/>
     </View>

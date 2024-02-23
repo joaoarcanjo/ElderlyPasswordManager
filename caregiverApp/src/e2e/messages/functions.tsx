@@ -34,7 +34,7 @@ export async function processPreKeyMessage(address: string, message: MessageType
         plaintext = plaintext.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F]/g, '')
         cm = JSON.parse(plaintext) as ProcessedChatMessage
         addMessageToSession(address, cm, type)
-        encryptAndSendMessage(address, 'firstMessage', true, ChatMessageType.START_SESSION)
+        //encryptAndSendMessage(address, 'firstMessage', true, ChatMessageType.START_SESSION)
     } catch (e) {
        // console.log(e)
     }
@@ -117,6 +117,7 @@ export function sendSignalProtocolMessage(to: string, from: string, message: Mes
 
 export async function addMessageToSession(address: string, cm: ProcessedChatMessage, type: number, itsMine?: boolean): Promise<void> {
     console.log('-> addMessageToSession')
+    console.log("---> Message: "+cm.body)
     const userSession = { ...sessionForRemoteUser(address)! }
 
     //Se for uma mensagem de dados do idoso e não for uma mensagem nossa (tipo 0)

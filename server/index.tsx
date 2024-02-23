@@ -27,13 +27,15 @@ const http = https ? require("https").Server(options, app) : require("http").Ser
 
 const clientSockets = new Map()
 const clientSocketsInverse = new Map()
+
 const clientBundles = new Map()
+const clientMessagesWaiting = new Map()
 
 // Handle WebSocket connections
 wss.on('connection', function connection(ws) {
 
     // When the client sends a message, publish it to the subject
-    ws.on('message', function incoming(message) {
+    ws.on('message', async function incoming(message) {
     
         const messageObj = JSON.parse(message)
         const userAction = messageObj.action
@@ -44,17 +46,43 @@ wss.on('connection', function connection(ws) {
                 console.log('- Username: ', messageObj.username)
                 clientSockets.set(messageObj.username, ws)
                 clientSocketsInverse.set(ws, messageObj.username)
+
+                const list = clientMessagesWaiting.get(messageObj.username)
+                if(list) {
+                    for(let message of list) {
+                        ws.send(JSON.stringify(message))
+                    }
+                    clientMessagesWaiting.delete(messageObj.username)
+                }
                 break;
             }
             case('sendMessage'): {
                 console.log(`Client ${messageObj.from} sent a message!`)
                 const to = messageObj.address
-                clientSockets.get(to).send(JSON.stringify(messageObj))
+                
+                const socket = clientSockets.get(to)
+
+                if(!socket) {
+                    console.log('Client not active!')
+                    const list = clientMessagesWaiting.get(to)
+
+                    if(!list) {
+                        clientMessagesWaiting.set(to, [messageObj])
+                    } else {
+                        list.push(messageObj)
+                    }
+
+                } else {
+                    console.log("Client active!")
+                    clientSockets.get(to).send(JSON.stringify(messageObj))
+                }
+
                 break;
             }
             case('acknowledge'): {
                 console.log(`Client ${messageObj.from} sent an acknowledgement!`)
                 const to = messageObj.address
+
                 clientSockets.get(to).send(JSON.stringify(messageObj))
                 break;
             }
@@ -77,6 +105,7 @@ app.get("/isAlive", (req, res) => {
 });
 
 app.get("/getBundles", (req, res) => {
+    console.log("GetBundlesCalled!")
     let identities = ""
     clientBundles.forEach((value, key) => {
         identities += key + ", " + JSON + ",\n "

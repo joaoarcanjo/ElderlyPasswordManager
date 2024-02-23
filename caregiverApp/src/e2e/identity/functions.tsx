@@ -33,13 +33,18 @@ export async function createIdentity(username: string): Promise<void> {
     //console.log('Generated identity key', { identityKeyPair })
 
     const baseKeyId = Math.floor(10000 * Math.random())
+    console.log("baseKeyId: ", baseKeyId)
     const preKey = await KeyHelper.generatePreKey(baseKeyId)
     signalStore.storePreKey(`${baseKeyId}`, preKey.keyPair)
+    console.log("baseKeyId 2: ", preKey.keyId)
     //console.log('Generated pre key', { preKey })
 
     const signedPreKeyId = Math.floor(10000 * Math.random())
+    console.log("signedPreKeyId: ", signedPreKeyId)
     const signedPreKey = await KeyHelper.generateSignedPreKey(identityKeyPair, signedPreKeyId)
     signalStore.storeSignedPreKey(signedPreKeyId, signedPreKey.keyPair)
+    console.log("signedPreKeyId 2: ", signedPreKey.keyId)
+
     const publicSignedPreKey: SignedPublicPreKeyType = {
         keyId: signedPreKeyId,
         publicKey: signedPreKey.keyPair.pubKey,

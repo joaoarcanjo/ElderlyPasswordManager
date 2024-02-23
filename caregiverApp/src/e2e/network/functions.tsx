@@ -20,6 +20,7 @@ export function initializeSignalWebsocket(uri: string): Subscription {
     const sub = signalWebsocket.subscribe({
         next: (msg) => {
             if (isSendWebSocketMessage(msg)) {
+                console.log(`====> Message received`, { msg })
                 processWebsocketMessage(msg).catch((e) => {
                     console.warn(`error accepting signal message`, { e })
                 })

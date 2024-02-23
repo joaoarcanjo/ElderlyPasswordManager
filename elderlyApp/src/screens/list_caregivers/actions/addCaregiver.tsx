@@ -28,7 +28,6 @@ function AddCaregiverModal({visibility, concludeAction}: Readonly<{visibility: b
   useEffect(() => {
     if(loading && currSession?.remoteUsername === caregiverEmail) {
       currSession?.messages.forEach(async (message) => {
-        
         if(message.type === ChatMessageType.PERSONAL_DATA) {
 
           const data: PersonalDataBody = {
