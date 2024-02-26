@@ -10,14 +10,14 @@ import { useSessionInfo } from "../../../firebase/authentication/session"
 import { addCaregiverRequested } from "./state"
 import { sessionRequestSent } from "../../../components/UserMessages"
 
-function AddCaregiverModal({visibility, concludeAction}: Readonly<{visibility: boolean, concludeAction: Function}>) {
+function AddCaregiverModal({number, visibility, concludeAction}: Readonly<{number: number, visibility: boolean, concludeAction: Function}>) {
 
   const [caregiverEmail, setCaregiverEmail] = useState('')
   const { userId, userEmail, userName, userPhone } = useSessionInfo()
 
   const addCaregiver = async (email: string) => {
     addCaregiverRequested(email)
-    startSessionWithCaregiver(email, userId, userName, userEmail, userPhone)
+    startSessionWithCaregiver(number, email, userId, userName, userEmail, userPhone)
       .then(() => sessionRequestSent())
     
     concludeAction()
@@ -63,7 +63,7 @@ export default function AddCaregiver({number, setRefresh}: {number: number, setR
   return (
     <View style={[{flex: 0.5, margin: '3%', justifyContent: 'center', alignItems: 'center'}]}>
       <View style= { { flex: 0.35, flexDirection: 'row', justifyContent: 'space-around'} }>
-        <AddCaregiverModal concludeAction={concludeAction} visibility={modalVisible}/>
+        <AddCaregiverModal number={number} concludeAction={concludeAction} visibility={modalVisible}/>
         <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, stylesAddCaregiver.button, stylesButtons.mainConfig]} onPress={() => {setModalVisible(true)}}>
             <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCaregiver.buttonText]}>{buttonName}</Text>
         </TouchableOpacity>

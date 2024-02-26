@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { initDb } from './src/database';
 import FlashMessage from 'react-native-flash-message';
 import Caregivers from './src/screens/list_caregivers/actions';
-import { changeKey, initFirestore, listAllElderly } from './src/firebase/firestore/functionalities';
+import { changeKey, initFirestore } from './src/firebase/firestore/functionalities';
 import { cleanKeychain, initKeychain } from './src/keychain';
 import { AddCredencial } from './src/screens/add_credentials/actions';
 import { initSSS } from './src/algorithms/sss/sss';

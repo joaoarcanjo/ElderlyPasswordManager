@@ -1,18 +1,21 @@
 import { deleteCaregiver } from "../../../database"
 import { encryptAndSendMessage } from "../../../e2e/messages/functions"
-import { ChatMessageType, PersonalDataBody } from "../../../e2e/messages/types"
+import { ChatMessageType, ElderlyDataBody } from "../../../e2e/messages/types"
 import { startSession } from "../../../e2e/session/functions"
 import { currentSessionSubject, sessionForRemoteUser } from "../../../e2e/session/state"
 import { getValueFor } from "../../../keychain"
-import { caregiver1SSSKey } from "../../../keychain/constants"
+import { caregiver1SSSKey, caregiver2SSSKey } from "../../../keychain/constants"
 
-export async function startSessionWithCaregiver(caregiverEmail: string, userId: string, userName: string, userEmail: string, userPhone: string) {
+export async function startSessionWithCaregiver(number: number, caregiverEmail: string, userId: string, userName: string, userEmail: string, userPhone: string) {
     await startSession(caregiverEmail)
     const session = sessionForRemoteUser(caregiverEmail)
     currentSessionSubject.next(session ?? null)
 
-    const data: PersonalDataBody = {
-        key: await getValueFor(caregiver1SSSKey(userId)),
+    const valueKey = number == 1 ? await getValueFor(caregiver1SSSKey(userId)) :  await getValueFor(caregiver2SSSKey(userId))
+    
+    const data: ElderlyDataBody = {
+        userId: userId,
+        key: valueKey,
         name: userName,
         email: userEmail,
         phone: userPhone,

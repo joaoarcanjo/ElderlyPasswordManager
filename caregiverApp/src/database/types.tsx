@@ -5,6 +5,7 @@ interface Password {
 }
 
 interface Elderly {
+    userId: string,
     name: string,
     email: string,
     phoneNumber: string,

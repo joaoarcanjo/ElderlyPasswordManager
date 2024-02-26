@@ -5,10 +5,12 @@ import { signalStore, usernameSubject } from "../identity/state"
 import { stringToArrayBuffer } from "../signal/signal-store"
 import { signalWebsocket } from "../network/webSockets"
 import { ChatSession } from "../session/types"
-import { ChatMessageType, PersonalDataBody, ProcessedChatMessage } from "./types"
+import { ChatMessageType, ElderlyDataBody, ProcessedChatMessage } from "./types"
 import { randomUUID } from 'expo-crypto'
 import { checkElderlyByEmail, saveElderly, updateElderly } from "../../database"
 import { elderlyListUpdated, setElderlyListUpdated } from "../../screens/list_elderly/actions/state"
+import { saveKeychainValue } from "../../keychain"
+import { elderlySSSKey } from "../../keychain/constants"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -144,12 +146,16 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
 }
 
 async function processPersonalData(cm: ProcessedChatMessage) {
-    const data = JSON.parse(cm.body) as PersonalDataBody
+    const data = JSON.parse(cm.body) as ElderlyDataBody
 
     if (await checkElderlyByEmail(cm.from)) {  
         await updateElderly(data.name, data.email, data.phone)
     } else {
-        await saveElderly(data.name, data.email, data.phone).then(() => setElderlyListUpdated())
+        console.log("User Id: "+data.userId)
+        console.log("User key: "+data.key)
+        await saveKeychainValue(elderlySSSKey(data.userId), data.key)
+            .then(() => saveElderly(data.userId, data.name, data.email, data.phone))
+            .then(() => setElderlyListUpdated())
     }
     //TODO: 
     // -> guardar a chave se existir. (apenas caso da aplicação do cuidador)

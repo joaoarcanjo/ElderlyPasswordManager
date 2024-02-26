@@ -15,7 +15,8 @@ export enum ChatMessageType {
     REJECT_SESSION, //mensagem enviada quando o outro membro aceita
 }
 
-export interface PersonalDataBody {
+export interface ElderlyDataBody {
+    userId: string,
     key: string,
     name: string,
     email: string,

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {View, Text, TouchableOpacity, Image, ScrollView, Linking} from 'react-native'
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 import { stylesAddCredential, styleScroolView } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import Navbar from '../../../navigation/actions'
@@ -8,13 +8,10 @@ import { useNavigation, useIsFocused } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import MainBox from '../../../components/MainBox'
 import { Spinner } from '../../../components/LoadingComponents'
-import { useSessionInfo } from '../../../firebase/authentication/session'
-import { usePushNotifications } from '../../../notifications/usePushNotifications'
-import { sendPushNotification } from '../../../notifications/functionalities'
 
 function AddCredencial() {
 
-  const navigation = useNavigation<StackNavigationProp<any>>();
+  const navigation = useNavigation<StackNavigationProp<any>>()
   
   return (
     <View style= { { flex: 0.10, marginTop: '5%', flexDirection: 'row'} }>
@@ -28,8 +25,8 @@ function AddCredencial() {
 function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
 
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const { setUsernameCopied, setPasswordCopied, usernameCopied, passwordCopied } = useSessionInfo()
-  const { expoPushToken } = usePushNotifications()
+  //const { setUsernameCopied, setPasswordCopied, usernameCopied, passwordCopied } = useSessionInfo()
+  //const { expoPushToken } = usePushNotifications()
 
   const OpenCredentialPage = () => {
     navigation.navigate('CredentialPage', { id: credential.id, platform: credential.data.platform, uri: credential.data.uri, username: credential.data.username, password: credential.data.password })
@@ -37,13 +34,13 @@ function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
 
   const NavigateToApp = async (uri: string, plataforma: string, username: string, password: string) => { 
     console.log("Username: "+username)
-    setUsernameCopied(username)
-    setPasswordCopied(password)
-    console.log("USERNAME: "+usernameCopied)
-    console.log("PASSWORD: "+passwordCopied)
+    //setUsernameCopied(username)
+    //setPasswordCopied(password)
+    //console.log("USERNAME: "+usernameCopied)
+    //console.log("PASSWORD: "+passwordCopied)
 
     const message = {
-      to: expoPushToken?.data,
+      //to: expoPushToken?.data,
       sound: "default",
       title: "Credenciais " + plataforma,
       body: "Copie em seguida o que necessita:",
@@ -51,8 +48,8 @@ function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
       categoryId: `credentials`
     }
     
-    sendPushNotification(message)
-    Linking.openURL('https://'+uri)
+    //sendPushNotification(message)
+    //Linking.openURL('https://'+uri)
   }
 
   return (
@@ -62,17 +59,7 @@ function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
         <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 30, fontWeight: 'bold' }]}>{credential.data.platform}</Text>
       </View>
 
-      <View style={{flex: 0.65, marginHorizontal: '3%', marginBottom: '3%', flexDirection: 'row'}}>
-        {/*
-        <View style={{flex: 0.65, marginRight: '3%'}}>          
-          <TouchableOpacity style={[{flex: 0.5, margin: '2%'}, styleScroolView.itemCopyUsername, stylesButtons.mainConfig]} onPress={() => copyValue(credential.data.username, FlashMessage.usernameCopied)}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar Utilizador</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[{flex: 0.5, margin: '2%'}, styleScroolView.itemCopyPassword, stylesButtons.mainConfig]} onPress={() => copyValue(credential.data.password, FlashMessage.passwordCopied)}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar Password</Text>
-          </TouchableOpacity>
-        </View>
-        */}   
+      <View style={{flex: 0.65, marginHorizontal: '3%', marginBottom: '3%', flexDirection: 'row'}}> 
         <View style={{flex: 1, marginHorizontal: '3%', flexDirection: 'row'}}>
           <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.itemMoreInfoButton, stylesButtons.mainConfig]} onPress={() => {OpenCredentialPage()}}>
             <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Editar</Text>
@@ -96,17 +83,14 @@ interface Credential {
   }
 }
 
-function CredentialsList() {
+function ElderlyCredentialsList({ userId, userShared }: {userId: string, userShared: string}) {
 
   const [credencials, setCredencials] = useState<Credential[]>([])
   const isFocused = useIsFocused()
-  const { userId, userShared } = useSessionInfo()
-
   const [isFething, setIsFething] = useState(true)
 
   useEffect(() => {
     setIsFething(true)
-    console.log(userShared)
     listAllElderlyCredencials(userId, userShared).then((credencials) => {
       let auxCredencials: Credential[] = [];
       credencials.forEach(value => {
@@ -122,22 +106,22 @@ function CredentialsList() {
     <View style={{ flex: 0.70, flexDirection: 'row', justifyContent: 'space-around'}}>
       <View style={[{ flex: 1, flexDirection: 'row', marginTop:'5%', marginHorizontal: '4%', justifyContent: 'space-around'}, styleScroolView.credencialsContainer]}>
         {isFething ?
-        <Spinner/> :
+        <Spinner width={300} height={300}/> :
         <ScrollView style={[{margin: '3%'}]}>
-          {credencials.map((value: Credential) => <ScrollItemExample key={value.id} credential={value}/>)}
+          {credencials.map((value, index) => <ScrollItemExample key={index} credential={value}/>)}
         </ScrollView>}
       </View>
     </View>
   )
 }
 
-export default function Credentials() {
+export default function ElderlyCredentials({ route }: Readonly<{route: any}>) {
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
       <MainBox text={'Credenciais'}/>
-      <AddCredencial/>
-      <CredentialsList/>
-      <Navbar/>
+       <AddCredencial/>
+       <ElderlyCredentialsList userId={route.params.userId} userShared={route.params.userShared}/>
+       <Navbar/> 
     </View>
   )
 }

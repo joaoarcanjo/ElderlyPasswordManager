@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native'
-import { addElderlyButtonBackgroud, addElderlyButtonBorder, greyBackgroud, greyBorder, whiteBackgroud, acceptButtonBackground, acceptButtonBorder, rejectButtonBorder, rejectButtonBackground, superlightBlueBackgroud, blueBorder } from '../../../assets/styles/colors'
+import { addElderlyButtonBackgroud, addElderlyButtonBorder, greyBackgroud, greyBorder, whiteBackgroud, acceptButtonBackground, acceptButtonBorder, rejectButtonBorder, rejectButtonBackground, superlightBlueBackgroud, blueBorder, desvinculateButtonBackgroud, desvinculateButtonBorder } from '../../../assets/styles/colors'
 
 /**
  * Estilos da view para adicionar uma nova credencial
@@ -35,7 +35,7 @@ const elderlyStyle = StyleSheet.create({
     }
 })
 
-const caregiverContactInfo = StyleSheet.create({
+const elderlyContactInfo = StyleSheet.create({
     contactContainer: {
       borderRadius: 20, // Define o raio dos cantos para arredondá-los
       borderWidth: 2, // Largura da linha na margem
@@ -71,4 +71,34 @@ const newElderlyOptions = StyleSheet.create({
     },
 })
 
-export { newElderlyOptions, stylesAddCaregiver, elderlyStyle, caregiverContactInfo }
+/**
+ * Estilos ações sobre idoso
+ */
+const elderlyOptions = StyleSheet.create({
+    openCredentials: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        borderWidth: 3, // Largura da linha na margem
+        backgroundColor: '#9FCFDD',
+        borderColor: '#297D95',
+    },
+    elderlyMoreInfo: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        borderWidth: 3, // Largura da linha na margem
+        backgroundColor: '#F5D274',
+        borderColor: '#D09C11',
+    }
+})
+
+const decouplingOption = StyleSheet.create({
+    button: {
+      borderRadius: 15, // Define o raio dos cantos para arredondá-los
+      backgroundColor: desvinculateButtonBackgroud,
+      borderColor: desvinculateButtonBorder,
+      borderWidth: 3
+    },
+    buttonText: {
+        color: '#f5f5f5'
+    }
+})
+
+export { decouplingOption, elderlyOptions, newElderlyOptions, stylesAddCaregiver, elderlyStyle, elderlyContactInfo }

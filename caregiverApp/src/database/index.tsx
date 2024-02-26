@@ -26,19 +26,19 @@ export function initDb() {
 
     db.transaction(tx => {
         tx.executeSql(
-            'CREATE TABLE IF NOT EXISTS elderly (name TEXT, email TEXT PRIMARY KEY, phoneNumber TEXT, accepted INTEGER DEFAULT 0, UNIQUE(email, phoneNumber));'
+            'CREATE TABLE IF NOT EXISTS elderly (id TEXT, name TEXT, email TEXT PRIMARY KEY, phoneNumber TEXT, accepted INTEGER DEFAULT 0, UNIQUE(email, phoneNumber));'
         )
     })
 }
 
-export const saveElderly = async (name: string, email: string, phoneNumber: string) => {
+export const saveElderly = async (id: string, name: string, email: string, phoneNumber: string) => {
     if(db != null) {
         try {
             db.transaction(tx => { 
                 tx.executeSql(
-                    `INSERT INTO elderly (name, email, phoneNumber) VALUES (?, ?, ?)
+                    `INSERT INTO elderly (id, name, email, phoneNumber) VALUES (?, ?, ?, ?)
                     `,
-                    [name, email, phoneNumber],
+                    [id, name, email, phoneNumber],
                     (_, result) => {
                         //console.log('Tuplo inserido com sucesso:', result);
                     }
@@ -54,7 +54,7 @@ export const updateElderly = async (email: string, newName: string, newPhoneNumb
     if (db != null) {
         db.transaction(tx => {
             tx.executeSql(
-                'UPDATE elderly SET name = ?, phoneNumber = ? WHERE email = ?',
+                'UPDATE elderly SET name = CASE WHEN ? != \'\' THEN ? ELSE name END, phoneNumber = CASE WHEN ? != \'\' THEN ? ELSE phoneNumber END WHERE email = ?',
                 [newName, newPhoneNumber, email],
                 (_, result) => {
                     // Verifique se houve alguma linha afetada para confirmar se a atualização foi bem-sucedida.
@@ -99,7 +99,7 @@ export const deleteElderly = async (id: string) => {
               [id],
               (_, result) => {
                 if (result.rowsAffected > 0) {
-                    console.log("Idoso apagado da base de dados.")
+                    console.log("-> Idoso apagado da base de dados.")
                 } else {
                     console.log('-> Idoso não apagado, erro.')
                 }
@@ -134,7 +134,7 @@ export const checkElderlyByEmail = async (email: string): Promise<boolean> => {
 //TODO: Colocar a DBKey
 export const getAllElderly = (/*localDBKey: string*/): Promise<Elderly[]> => {
     return new Promise(async (resolve, reject) => {
-        const sql = 'SELECT name, email, phoneNumber, accepted FROM elderly';
+        const sql = 'SELECT id, name, email, phoneNumber, accepted FROM elderly';
 
         const data: Elderly[] = [];
         try {
@@ -145,6 +145,7 @@ export const getAllElderly = (/*localDBKey: string*/): Promise<Elderly[]> => {
                 tx.executeSql(sql, [], (tx, results) => {
                     for (let i = 0; i < results.rows.length; i++) {                        
                         data.push({
+                            userId: results.rows.item(i).id,
                             name: results.rows.item(i).name,//decrypt(results.rows.item(i).name, localDBKey),   
                             email: results.rows.item(i).email,//decrypt(results.rows.item(i).password, localDBKey), 
                             phoneNumber: results.rows.item(i).phoneNumber,//decrypt(results.rows.item(i).phoneNumber, localDBKey),   

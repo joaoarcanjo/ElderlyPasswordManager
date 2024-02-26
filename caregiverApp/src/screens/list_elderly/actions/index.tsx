@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { View, ScrollView, Button } from 'react-native'
+import { View, ScrollView } from 'react-native'
 import Navbar from '../../../navigation/actions'
 import MainBox from '../../../components/MainBox'
-import { ElderlyItem, ElderlyItemMockup } from './elderlyItem'
+import { ElderlyItem, Elderly as ElderlyItemMockup } from './elderlyItem'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { Elderly } from '../../../database/types'
@@ -24,21 +24,25 @@ function ElderlyList() {
     getAllElderly().then(value => setElderlyList(value))
   }
 
+  elderlyList.map(value => console.log("UserId: "+value.userId +", Name: "+value.name))
+
   return (
     <View style={{ flex: 0.85, flexDirection: 'row', marginTop: '5%', justifyContent: 'space-around'}}>
       <View style={[{ flex: 1, marginHorizontal: '4%', marginBottom: '3%', justifyContent: 'space-around'}]}>
         <ScrollView style={[{margin: '3%'}]}>
           {/*<NewElderlyList setRefresh={refreshValue}/> */}
           {elderlyList.map((elderly, index) => 
+          
             <ElderlyItem 
               key={index}
+              userId={elderly.userId}
               name={elderly.name}
               phone={elderly.phoneNumber}
               email={elderly.email}
               setRefresh={refreshValue} 
               accepted={elderly.accepted}/>
           )}
-          <ElderlyItemMockup name={'Elisabeth'}/>
+          <ElderlyItemMockup name={'Elisabeth'} phone={'966666666'} email={'elisabeth@gmail.com'} userId={'BO37mI4ZkaQIk2glsufoSVkHgGf2'}/>
         </ScrollView>
       </View>
     </View>
