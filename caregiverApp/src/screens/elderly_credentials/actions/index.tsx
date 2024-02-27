@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
-import { stylesAddCredential, styleScroolView } from '../styles/styles'
+import { elderlyName, stylesAddCredential, styleScroolView } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import Navbar from '../../../navigation/actions'
 import { listAllElderlyCredencials } from '../../../firebase/firestore/functionalities'
@@ -103,7 +103,7 @@ function ElderlyCredentialsList({ userId, userShared }: {userId: string, userSha
   }, [isFocused])
 
   return (
-    <View style={{ flex: 0.70, flexDirection: 'row', justifyContent: 'space-around'}}>
+    <View style={{ flex: 0.60, flexDirection: 'row', justifyContent: 'space-around'}}>
       <View style={[{ flex: 1, flexDirection: 'row', marginTop:'5%', marginHorizontal: '4%', justifyContent: 'space-around'}, styleScroolView.credencialsContainer]}>
         {isFething ?
         <Spinner width={300} height={300}/> :
@@ -119,9 +119,12 @@ export default function ElderlyCredentials({ route }: Readonly<{route: any}>) {
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
       <MainBox text={'Credenciais'}/>
-       <AddCredencial/>
-       <ElderlyCredentialsList userId={route.params.userId} userShared={route.params.userShared}/>
-       <Navbar/> 
+      <View style={[{flex: 0.1, justifyContent: 'center', alignItems: 'center'}, elderlyName.container]}>
+          <Text style={elderlyName.text}>{route.params.elderlyName}</Text>
+      </View>
+      <AddCredencial/>
+      <ElderlyCredentialsList userId={route.params.userId} userShared={route.params.userShared}/>
+      <Navbar/> 
     </View>
   )
 }

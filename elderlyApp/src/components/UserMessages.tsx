@@ -82,7 +82,7 @@ export function sessionAcceptedFlash(from: string) {
   if(AppState.currentState !== 'background') {
     showMessage({
       floating: true,
-      message: FlashMessage.sessionRequest,
+      message: FlashMessage.caregiverAccept,
       icon: props => <Image source={require("../assets/images/check.png")} {...props} />,
       backgroundColor: darkGreenBackgroud,
       duration: 3000,

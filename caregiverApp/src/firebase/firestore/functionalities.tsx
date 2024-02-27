@@ -131,9 +131,7 @@ interface Credential {
  */
 async function listAllElderlyCredencials(userId: string, shared: string): Promise<Credential[]> {
 
-    console.log("Shared: "+shared)
     const cloudKey = await getKey(userId)
-    console.log("cloudKey: "+cloudKey)
     const key = deriveSecret([cloudKey, shared])
 
     return firestore.collection(elderlyCollectionName).doc(userId).collection(credencialsCollectionName).get().then((docs) => {

@@ -8,6 +8,7 @@ import { initDb } from './src/database';
 import ChatPageTest from './src/screens/list_elderly/actions/indexTest';
 import FlashMessage from "react-native-flash-message";
 import ElderlyCredentials from './src/screens/elderly_credentials/actions';
+import { AddCredencial } from './src/screens/add_credentials/actions';
 
 const Stack = createNativeStackNavigator()
 
@@ -27,6 +28,7 @@ function Inicialization() {
           <Stack.Screen name="ElderlyList" component={ElderlyListScreen} options={{ title: "listElderly", headerShown: false }} />
           <Stack.Screen name="ElderlyCredentials" component={ElderlyCredentials} options={{ title: "ElderlyCredencials", headerShown: false }} />
           <Stack.Screen name="ChatTest" component={ChatPageTest} options={{ title: "listElderly", headerShown: false }} />
+          <Stack.Screen name="AddCredential" component={AddCredencial} options={{ title: "AddCredencial", headerShown: false }} />
         </Stack.Navigator>
         <FlashMessage/>
       </NavigationContainer>

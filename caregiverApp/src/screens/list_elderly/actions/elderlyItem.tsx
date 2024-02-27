@@ -62,13 +62,8 @@ export function Elderly({ userId, name, phone, email }: Readonly<ElderlyProps>) 
   const changeInfoState = () => setShowInfo(!showInfo)
 
   const navigateToElderlyCredentials = async () => {
-    const userId2 = 'BO37mI4ZkaQIk2glsufoSVkHgGf2'
-    //const userShared2 = '0801827269009200000172bd00382450006c0066196f0074006b464406750014644c006e695e75491051006800710061005f0015006205e121bf5379033974490079353800357536004900790062007a384b21520039005300327270003200560064'
-    console.log(userId)
     const a = elderlySSSKey(userId)
-    console.log(a)
     const userShared = await getKeychainValueFor(elderlySSSKey(userId))
-    console.log("UserShared: "+ userShared)
     navigation.navigate('ElderlyCredentials', { elderlyEmail: email, elderlyName: name, userId: userId, userShared: userShared })
   }
 

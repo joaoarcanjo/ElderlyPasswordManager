@@ -1,4 +1,5 @@
 import {StyleSheet} from 'react-native'
+import { blackBorder, whiteBackgroud } from '../../../assets/styles/colors'
 
 /**
  * Estilos da view para adicionar uma nova credencial
@@ -59,5 +60,19 @@ const styleScroolView = StyleSheet.create({
     }
 })
 
+const elderlyName = StyleSheet.create({
+    container: {
+        borderBottomLeftRadius: 20, // Arredonda o canto inferior esquerdo
+        borderBottomRightRadius: 20, // Arredonda o canto inferior direito
+        borderTopWidth: 0,
+        borderWidth: 1, // Largura do contorno
+        borderColor: blackBorder, // Cor do contorno
+        backgroundColor: whiteBackgroud
+    },
+    text: {
+        fontSize: 30,
+        marginHorizontal: '20%'
+    }
+})
 
-export { stylesAddCredential, styleScroolView }
+export { elderlyName, stylesAddCredential, styleScroolView }
