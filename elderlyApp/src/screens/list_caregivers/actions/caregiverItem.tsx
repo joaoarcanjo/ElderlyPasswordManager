@@ -3,7 +3,7 @@ import { TouchableOpacity, View, Text, Image, StyleSheet, Linking } from "react-
 import { stylesButtons } from "../../../assets/styles/main_style"
 import { caregiverContactInfo, caregiverStyle, decouplingOption } from "../styles/styles"
 import { decouplingCaregiver } from "./functions"
-import { YesOrNoModal, YesOrNoSpinnerModal } from "../../../components/Modal"
+import { YesOrNoModal } from "../../../components/Modal"
 
 const caregiverImage = '../../../assets/images/caregiver.png'
 const telephoneImage = '../../../assets/images/telephone.png'

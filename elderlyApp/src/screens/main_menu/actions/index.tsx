@@ -8,8 +8,6 @@ import { useSessionInfo } from '../../../firebase/authentication/session';
 import { getValueFor, save } from '../../../keychain';
 import { elderlyName, elderlyPhone } from '../../../keychain/constants';
 import { usePushNotifications } from '../../../notifications/usePushNotifications';
-import * as Notifications from "expo-notifications";
-import { triggerNotifications } from '../../../notifications/localNotifications';
 
 const credentialsImage = '../images/credenciais.png'
 const generatorImage = '../images/gerador.png'

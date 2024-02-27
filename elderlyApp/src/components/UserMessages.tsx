@@ -1,10 +1,9 @@
 
-import { Image } from 'react-native'
+import { Image, AppState } from 'react-native';
 import { showMessage } from "react-native-flash-message";
 import * as Clipboard from 'expo-clipboard';
 import React from 'react';
 import { darkGreenBackgroud, lightBlueBackground, lightRedBackground, lightYellowBackground } from '../assets/styles/colors';
-import { AppState } from 'react-native';
 import { triggerNotifications } from '../notifications/localNotifications';
 
 export const enum FlashMessage {
@@ -78,8 +77,9 @@ export function sessionRequestSent() {
 } 
 
 export function sessionAcceptedFlash(from: string) {
+  console.log('sessionAcceptedFlash')
   console.log(AppState.currentState)
-  if(AppState.currentState !== 'background') {
+  if(AppState.currentState === 'active') {
     showMessage({
       floating: true,
       message: FlashMessage.caregiverAccept,
@@ -95,7 +95,7 @@ export function sessionAcceptedFlash(from: string) {
 
 export function sessionRejectedFlash(from: string) {
   console.log(AppState.currentState)
-  if(AppState.currentState !== 'background') {
+  if(AppState.currentState === 'active') {
     showMessage({
       floating: true,
       message: FlashMessage.caregiverReject,

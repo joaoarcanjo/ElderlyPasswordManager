@@ -34,8 +34,12 @@ const InsideStack = createNativeStackNavigator()
 //SplashFunctions.preventAutoHideAsync()
 
 Notifications.setNotificationHandler({
-  handleNotification: async () => { return { shouldShowAlert: true }}
-})
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
 
 const im_testing = false
 const time = 0
