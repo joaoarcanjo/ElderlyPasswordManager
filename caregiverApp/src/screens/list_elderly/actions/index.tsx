@@ -42,7 +42,7 @@ function ElderlyList() {
               setRefresh={refreshValue} 
               accepted={elderly.accepted}/>
           )}
-          <ElderlyItemMockup name={'Elisabeth'} phone={'966666666'} email={'elisabeth@gmail.com'} userId={'BO37mI4ZkaQIk2glsufoSVkHgGf2'}/>
+          <ElderlyItemMockup name={'Elisabeth'} phone={'966666666'} email={'elisabeth@gmail.com'} userId={'BO37mI4ZkaQIk2glsufoSVkHgGf2'} setRefresh={refreshValue}/>
         </ScrollView>
       </View>
     </View>
