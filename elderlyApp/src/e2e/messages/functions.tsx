@@ -5,11 +5,11 @@ import { signalStore, usernameSubject } from "../identity/state"
 import { stringToArrayBuffer } from "../signal/signal-store"
 import { signalWebsocket } from "../network/webSockets"
 import { ChatSession } from "../session/types"
-import { ChatMessageType, PersonalDataBody, ProcessedChatMessage } from "./types"
+import { ChatMessageType, CaregiverDataBody, ProcessedChatMessage } from "./types"
 import { randomUUID } from 'expo-crypto'
 import { checkCaregiverByEmail, saveCaregiver, updateCaregiver } from "../../database"
 import { findCaregiverRequest, setCaregiverListUpdated } from "../../screens/list_caregivers/actions/state"
-import { editCompletedFlash, sessionAcceptedFlash, sessionRejectedFlash } from "../../components/UserMessages"
+import { sessionAcceptedFlash, sessionRejectedFlash } from "../../components/UserMessages"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -142,17 +142,16 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
 }
 
 async function processPersonalData(cm: ProcessedChatMessage) {
-    const data = JSON.parse(cm.body) as PersonalDataBody
+    const data = JSON.parse(cm.body) as CaregiverDataBody
 
     if (await checkCaregiverByEmail(cm.from)) {  
         await updateCaregiver(data.name, data.email, data.phone)
-    } else {
-        if(findCaregiverRequest(cm.from)) {
-            await saveCaregiver(data.name, data.email, data.phone)
-                .then(() => sessionAcceptedFlash(cm.from))
-                .then(() => setCaregiverListUpdated())
-        }
+    } else if(findCaregiverRequest(cm.from)) {
+        await saveCaregiver(data.name, data.email, data.phone)
+        .then(() => sessionAcceptedFlash(cm.from))
+        .then(() => setCaregiverListUpdated())
     }
+    
     //TODO: 
     // -> guardar a chave se existir. (apenas caso da aplicação do cuidador)
     // -> criar o objeto em sql caso ainda não exista.

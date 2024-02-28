@@ -5,7 +5,9 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import { stylesOptions, stylesFirstHalf } from '../styles/sytles'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import { createIdentity } from '../../../e2e/identity/functions'
-import { sessionRejectedFlash } from '../../../components/ShowFlashMessage'
+import { useSessionInfo } from '../../../firebase/authentication/session'
+import { getKeychainValueFor, saveKeychainValue } from '../../../keychain'
+import { caregiverName, caregiverPhone } from '../../../keychain/constants'
 
 const generatorImage = '../images/gerador.png'
 const settingsImage = '../images/definições.png'
@@ -13,9 +15,9 @@ const questionsImage = '../images/perguntas.png'
 const elderlyImage = '../images/elderly.png'
 
 
-function ElderlyInfoBox() {
+function CaregiverInfoBox() {
 
-    const userName = "José Augusto"
+    const { userName } = useSessionInfo()
 
     return (
         <View style={[{ flex: 0.6, width: '85%', flexDirection: 'row', justifyContent: 'space-around' }, stylesFirstHalf.caregiverContainer]}>
@@ -53,7 +55,7 @@ function UserInfo() {
     
     return (
         <View style={{ flex: 0.35, justifyContent: 'center', alignItems: 'center'}}>
-            <ElderlyInfoBox/>
+            <CaregiverInfoBox/>
             <CaregiversButtonBox/>
         </View>
     );
@@ -65,26 +67,25 @@ function Functionalities() {
     const CredencialsNavigation = async () => {
         // Your code to handle the click event
         //console.log('Credentials button clicked!');
-        await createIdentity('care@g.com') //TODO: não ficará aqui, por agora apenas para teste.
         navigation.push('ElderlyList')
     }
 
     const GeneratorsNavigation = () => {
         // Your code to handle the click event
         //console.log('Generator button clicked!');
-        //navigation.push('Generator')
+        navigation.push('Generator')
     }
 
     const FrequentQuestionsNavigation = () => {
         // Your code to handle the click event
         //console.log('Questions button clicked!');
-        //navigation.push('FrequentQuestions')
+        navigation.push('FrequentQuestions')
     }
 
     const SettingsNavigation = () => {
         // Your code to handle the click event
         //console.log('Questions button clicked!');
-        //navigation.push('Settings')
+        navigation.push('Settings')
     }
 
     return (
@@ -118,6 +119,31 @@ function Functionalities() {
  * @returns 
  */
 export default function MainMenu() {
+
+    const { userId, setUserName, setUserPhone, userPhone, userName } = useSessionInfo()
+    //const { expoPushToken } = usePushNotifications()
+
+    const savePhoneAndName = async () => {
+        //console.log("UserId: "+userId)
+        //console.log("UserPhone: "+userPhone)
+        //console.log("UserName: "+userName)
+    
+        if(userPhone == '' && userName == '') {
+          const userNameAux = await getKeychainValueFor(caregiverName(userId))
+          const userPhoneAux = await getKeychainValueFor(caregiverPhone(userId))
+
+            if(userNameAux != '' && userPhoneAux != '') {
+                setUserName(userNameAux)
+                setUserPhone(userPhoneAux)
+            }
+            
+        } else {
+          await saveKeychainValue(caregiverName(userId), userName)
+          await saveKeychainValue(caregiverPhone(userId), userPhone)
+        }
+    }
+
+    savePhoneAndName()
 
     return (
         <View style={{ flex: 1, flexDirection: 'column', marginTop: '5%'}}>

@@ -1,8 +1,4 @@
 import { HEX_ENCODING } from "./algorithm/constants";
-import * as Crypto from 'expo-crypto';
-import { getValueFor, save } from './../../keychain/index'
-import { caregiver1SSSKey, caregiver2SSSKey, elderlySSSKey, firestoreSSSKey } from "../../keychain/constants";
-import { generateKey } from "../0thers/crypto";
 
 const { split } = require('./algorithm/split')
 const { combine } = require('./algorithm/combine')
@@ -34,29 +30,7 @@ function deriveSecret(shares: string[]): string {
     return String.fromCharCode.apply(null, Array.from(recovered))
 }
 
-/**
- * Esta função vai inicializar o algoritmo SSS caso este ainda não o tenha sido inicializado.
- * Por agora, apenas é utilizado na instalação da app do idoso.
- * @returns 
- */
-async function initSSS(userId: string) {
-    
-    let shared = await getValueFor(elderlySSSKey(userId))
-    //console.log("InitSSS Shared:  " + shared)
-
-    if(shared != '') return shared
-
-    const key = generateKey()
-    const shares = generateShares(key, 4, 2)
-
-    return await save(firestoreSSSKey(userId), shares[3])
-    .then(() => save(caregiver2SSSKey(userId), shares[2]))
-    .then(() => save(caregiver1SSSKey(userId), shares[1]))
-    .then(() => save(elderlySSSKey(userId), shares[0]))
-    .then(async () => await getValueFor(elderlySSSKey(userId)))
-}
-
-export { generateShares, deriveSecret, initSSS }
+export { generateShares, deriveSecret }
 
 
 /*

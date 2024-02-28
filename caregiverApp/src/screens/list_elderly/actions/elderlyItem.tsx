@@ -8,6 +8,7 @@ import { useNavigation } from "@react-navigation/native";
 import { getKeychainValueFor } from "../../../keychain";
 import { elderlySSSKey } from "../../../keychain/constants";
 import { YesOrNoModal } from "../../../components/Modal";
+import { useSessionInfo } from "../../../firebase/authentication/session";
 
 const caregiverImage = '../../../assets/images/elderly.png'
 const telephoneImage = '../../../assets/images/telephone.png'
@@ -23,9 +24,11 @@ export function ElderlyItem({userId, name, phone, email, setRefresh, accepted}: 
 }
 
 export function ElderlyPending({ name, email, setRefresh }: Readonly<{name: string, email: string, setRefresh: Function}>) {
+
+  const { userId, userEmail, userName, userPhone } = useSessionInfo()
   
-  const accept = () => { acceptElderly(email).then(() => setRefresh()); }
-  const refuse = () => { refuseElderly(email).then(() => setRefresh()); } 
+  const accept = () => { acceptElderly(userId, email, userName, userEmail, userPhone).then(() => setRefresh()) }
+  const refuse = () => { refuseElderly(email).then(() => setRefresh()) } 
 
   return (
     <View style={[{flex: 1}, elderlyStyle.newElderlyContainer]}>
@@ -62,7 +65,6 @@ export function Elderly({ userId, name, phone, email, setRefresh }: Readonly<{us
   const changeInfoState = () => setShowInfo(!showInfo)
 
   const navigateToElderlyCredentials = async () => {
-    const a = elderlySSSKey(userId)
     const userShared = await getKeychainValueFor(elderlySSSKey(userId))
     navigation.navigate('ElderlyCredentials', { elderlyEmail: email, elderlyName: name, userId: userId, userShared: userShared })
   }

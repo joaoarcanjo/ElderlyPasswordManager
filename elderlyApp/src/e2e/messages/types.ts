@@ -23,3 +23,11 @@ export interface ElderlyDataBody {
     phone: string,
     photo: string
 }
+
+export interface CaregiverDataBody {
+    userId: string,
+    name: string,
+    email: string,
+    phone: string,
+    photo: string
+}

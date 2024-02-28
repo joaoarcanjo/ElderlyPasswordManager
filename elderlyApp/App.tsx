@@ -69,8 +69,8 @@ function InsideLayout() {
 
   if (!appIsReady) return <SplashScreen test={onLayoutRootView} />
   return (
-    <InsideStack.Navigator initialRouteName="Home">
-      <InsideStack.Screen name="Home" component={MainMenu} options={{ title: "Home", headerShown: false }} />
+    <InsideStack.Navigator initialRouteName="MainMenu">
+      <InsideStack.Screen name="MainMenu" component={MainMenu} options={{ title: "MainMenu", headerShown: false }} />
       <InsideStack.Screen name="Credentials" component={Credentials} options={{ title: "Credencials", headerShown: false }} />
       <InsideStack.Screen name="AddCredential" component={AddCredencial} options={{ title: "AddCredencial", headerShown: false }} />
       <InsideStack.Screen name="Settings" component={Settings} options={{ title: "Settings", headerShown: false }} />
@@ -99,7 +99,7 @@ function Inicialization() {
       //console.log("UserId: " + userId)
       if(userId) {
         setUser(user)
-      }else if(user != null && user.email) {
+      }else if(user?.email) {
         initKeychain(user.uid, user.email).then(DBKey => setLocalDBKey(DBKey))
         setUserId(user.uid)
         setUserEmail(user.email)
@@ -108,8 +108,7 @@ function Inicialization() {
 
       let { status } = await Notifications.requestPermissionsAsync();
       if (status !== 'granted') {
-        console.log('Permission to access location was denied');
-        return;
+        console.log('Permission to access location was denied')
       }
     })
   }, [user])

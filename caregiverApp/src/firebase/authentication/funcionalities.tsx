@@ -1,14 +1,14 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
 import { saveKeychainValue } from "../../keychain"
-import { elderlyEmail, elderlyPwd } from "../../keychain/constants"
+import { caregiverEmail, caregiverPwd } from "../../keychain/constants"
 import { FIREBASE_AUTH } from "../FirebaseConfig"
 import { signinErrorResult, signupErrorResult } from "../FirebaseErrors"
 
 async function signInOperation(email: string, pwd: string): Promise<boolean> {
     try {
         await signInWithEmailAndPassword(FIREBASE_AUTH, email, pwd)
-        saveKeychainValue(elderlyPwd, pwd)
-        saveKeychainValue(elderlyEmail, email)
+        saveKeychainValue(caregiverPwd, pwd)
+        saveKeychainValue(caregiverEmail, email)
         return true
     } catch (error) {
         signinErrorResult(error)
@@ -19,8 +19,8 @@ async function signInOperation(email: string, pwd: string): Promise<boolean> {
 async function signUpOperation(email: string, pwd: string): Promise<boolean> {
     try {
         await createUserWithEmailAndPassword(FIREBASE_AUTH, email, pwd)
-        saveKeychainValue(elderlyPwd, pwd)
-        saveKeychainValue(elderlyEmail, email)
+        saveKeychainValue(caregiverPwd, pwd)
+        saveKeychainValue(caregiverEmail, email)
         return true
     } catch (error) {
         signupErrorResult(error)
