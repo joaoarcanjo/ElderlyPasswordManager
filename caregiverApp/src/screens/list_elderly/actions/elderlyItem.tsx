@@ -14,10 +14,10 @@ const caregiverImage = '../../../assets/images/elderly.png'
 const telephoneImage = '../../../assets/images/telephone.png'
 const emailImage = '../../../assets/images/email.png'
 
-export function ElderlyItem({userId, name, phone, email, setRefresh, accepted}: Readonly<{userId: string, name: string, phone: string, email: string, setRefresh: Function, accepted: number}>) {
+export function ElderlyItem({elderlyId, name, phone, email, setRefresh, accepted}: Readonly<{elderlyId: string, name: string, phone: string, email: string, setRefresh: Function, accepted: number}>) {
   return (
     accepted == 1 ? 
-      <Elderly name={name} phone={phone} email={email} userId={userId} setRefresh={setRefresh}/>
+      <Elderly name={name} phone={phone} email={email} elderlyId={elderlyId} setRefresh={setRefresh}/>
     : 
       <ElderlyPending name={name} email={email} setRefresh={setRefresh}/>
   )
@@ -52,7 +52,7 @@ export function ElderlyPending({ name, email, setRefresh }: Readonly<{name: stri
   )
 }
 
-export function Elderly({ userId, name, phone, email, setRefresh }: Readonly<{userId: string, name: string, phone: string, email: string, setRefresh: Function}>) {
+export function Elderly({ elderlyId, name, phone, email, setRefresh }: Readonly<{elderlyId: string, name: string, phone: string, email: string, setRefresh: Function}>) {
 
   const [showInfo, setShowInfo] = useState(true)
   const navigation = useNavigation<StackNavigationProp<any>>()
@@ -65,8 +65,8 @@ export function Elderly({ userId, name, phone, email, setRefresh }: Readonly<{us
   const changeInfoState = () => setShowInfo(!showInfo)
 
   const navigateToElderlyCredentials = async () => {
-    const userShared = await getKeychainValueFor(elderlySSSKey(userId))
-    navigation.navigate('ElderlyCredentials', { elderlyEmail: email, elderlyName: name, userId: userId, userShared: userShared })
+    const userShared = await getKeychainValueFor(elderlySSSKey(elderlyId))
+    navigation.navigate('ElderlyCredentials', { elderlyEmail: email, elderlyName: name, elderlyId: elderlyId, userShared: userShared })
   }
 
   return (

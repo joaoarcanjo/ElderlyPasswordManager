@@ -20,7 +20,7 @@ import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
  * @returns 
  */
-function AppInfo({id, platform, uri, un, pw}: Readonly<{id: string, platform: string, uri: string, un: string, pw: string}>) {
+function AppInfo({elderlyId, id, platform, uri, un, pw, userShared}: Readonly<{elderlyId: string, id: string, platform: string, uri: string, un: string, pw: string, userShared: string}>) {
 
   const [username, setUsername] = useState(un)
   const [currUri, setURI] = useState(uri)
@@ -35,7 +35,6 @@ function AppInfo({id, platform, uri, un, pw}: Readonly<{id: string, platform: st
   const [modalVisible, setModalVisible] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const { userId, userShared } = useSessionInfo()
   const [editFlag, setEditFlag] = useState(true)
 
   useEffect(() => setAvaliation(getScore(passwordEdited)), [passwordEdited])
@@ -52,10 +51,10 @@ function AppInfo({id, platform, uri, un, pw}: Readonly<{id: string, platform: st
    * -> Manipula o estado de loading, atualiza as credenciais e manipula 
    * os estados de edição e normais.
    */
-  function saveCredentialUpdate() {
+  async function saveCredentialUpdate() {
     if(credentialsModified) {
       setLoading(true)
-      updateCredential(userId, id, userShared, JSON.stringify({platform: platform, uri: uriEditted, username: usernameEdited, password: passwordEdited}))
+      updateCredential(elderlyId, id, userShared, JSON.stringify({platform: platform, uri: uriEditted, username: usernameEdited, password: passwordEdited}))
       .then((updated) => {
         toggleEditFlag()
         if(updated) {
@@ -207,7 +206,7 @@ function AppInfo({id, platform, uri, un, pw}: Readonly<{id: string, platform: st
     </View>
     <Options/>
     <YesOrNoSpinnerModal question={'Guardar as alterações?'} yesFunction={saveCredentialUpdate} noFunction={dontSaveCredentialsUpdate} visibleFlag={modalVisible} loading={loading}/>
-    {editFlag && <DeleteCredential id={id} />}
+    {editFlag && <DeleteCredential elderlyId={elderlyId} id={id} />}
     </>
   )
 }
@@ -216,14 +215,13 @@ function AppInfo({id, platform, uri, un, pw}: Readonly<{id: string, platform: st
  * Componente que representa o botão para apagar a credencial
  * @returns 
  */
-function DeleteCredential({id}: Readonly<{id: string}>) {
+function DeleteCredential({elderlyId, id}: Readonly<{elderlyId: string, id: string}>) {
   
   const navigation = useNavigation<StackNavigationProp<any>>()
   const [modalVisible, setModalVisible] = useState(false)
-  const { userId } = useSessionInfo()
 
   const deleteCredentialAction = () => {
-    deleteCredential(userId, id).then(() => navigation.goBack())
+    deleteCredential(elderlyId, id).then(() => navigation.goBack())
   }
 
   return (
@@ -243,7 +241,15 @@ export default function CredencialPage({ route }: Readonly<{route: any}>) {
       <KeyboardAvoidingWrapper>
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
           <MainBox text={route.params.platform}/>
-          <AppInfo id={route.params.id} un={route.params.username} pw={route.params.password} platform={route.params.platform} uri={route.params.uri}/>
+          <AppInfo 
+            elderlyId={route.params.elderlyId}
+            id={route.params.id} 
+            un={route.params.username} 
+            pw={route.params.password} 
+            platform={route.params.platform} 
+            uri={route.params.uri} 
+            userShared={route.params.userShared}
+          />
         </View>
       </KeyboardAvoidingWrapper>
       <Navbar/>

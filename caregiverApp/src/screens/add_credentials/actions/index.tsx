@@ -15,13 +15,15 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useSessionInfo } from "../../../firebase/authentication/session";
 import { getNewId } from "../../../algorithms/0thers/crypto";
+import { getKeychainValueFor } from "../../../keychain";
+import { elderlySSSKey } from "../../../keychain/constants";
 
 const placeholderPlatform = 'Insira a plataforma'
 const placeholderURI = 'Insira o URI da plataforma'
 const placeholderUsername = 'Insira o seu username'
 const placeholderPassword = "Insira a password"
 
-function CredentialsInput() {
+function CredentialsInput({ userId, userShared }: {userId: string, userShared: string}) {
 
     const [platform, setPlatform] = useState('')
     const [uri, setURI] = useState('')
@@ -31,12 +33,10 @@ function CredentialsInput() {
 
     const [showPassword, setShowPassword] = useState(false)
     const navigation = useNavigation<StackNavigationProp<any>>()
-    const { userId, userShared } = useSessionInfo()
   
-    const handleSave = () => {
+    const handleSave = async () => {
         if(platform != '' && uri != '' && username != '' && password != '') {
-            const uuid = getNewId()
-            addCredencial(userId, userShared, uuid, JSON.stringify({platform: platform, uri: uri, username: username, password: password}))
+            await addCredencial(userId, userShared, getNewId(), JSON.stringify({platform: platform, uri: uri, username: username, password: password}))
             navigation.goBack()
         }
     }
@@ -116,13 +116,13 @@ function CredentialsInput() {
     )
 }
 
-function AddCredencial() {
+function AddCredencial({ route }: Readonly<{route: any}>) {
     return (
         <>
         <KeyboardAvoidingWrapper>
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <MainBox text="Adicionar credencial"/>
-                <CredentialsInput />
+                <CredentialsInput userId={route.params.userId} userShared={route.params.userShared}/>
             </View>
         </KeyboardAvoidingWrapper>
         <Navbar/>

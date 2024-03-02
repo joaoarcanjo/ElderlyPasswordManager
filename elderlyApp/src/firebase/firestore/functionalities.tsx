@@ -3,7 +3,7 @@ import { deriveSecret } from '../../algorithms/sss/sss';
 import { getValueFor } from '../../keychain';
 import { firestoreSSSKey } from '../../keychain/constants';
 import { firebase } from '../FirebaseConfig';
-import { credencialsCollectionName, defaultCredencials, defaultElderly, elderlyCollectionName, updateDataCredencial } from './constants';
+import { credencialsCollectionName, defaultCaregivers, defaultCredencials, defaultElderly, elderlyCollectionName, keyCollectionName, keyDocumentName, privateCaregiversDocumentName, privateCollectionName, updateDataCredencial } from './constants';
 
 const firestore = firebase.firestore()
 
@@ -14,10 +14,10 @@ async function changeKey(userId: string) {
     const key = await getValueFor(firestoreSSSKey(userId))
 
     firebase.firestore().collection(elderlyCollectionName)
-        .doc(userId).update({key: key})
+        .doc(userId).collection(keyCollectionName).doc(keyDocumentName).set({key: key})
         .catch((error) => {
             alert('Erro ao tentar criar a conta, tente novamente!')
-            //console.log('Error: ', error)
+            console.log('Error: ', error)
         })
 }
 
@@ -26,7 +26,7 @@ async function changeKey(userId: string) {
  */
 async function getKey(userId: string): Promise<string> {
     return firebase.firestore().collection(elderlyCollectionName)
-        .doc(userId).get().then((doc) => {
+        .doc(userId).collection(keyCollectionName).doc(keyDocumentName).get().then((doc) => {
             if(doc.exists) {
                 const data = doc.data()
                 return data!.key
@@ -51,16 +51,105 @@ async function createElderly(elderlyId: string) {
 
         //Cria na coleção o elemento do idoso.
         const novoDocumentoRef = elderlyCollectionRef.doc(elderlyId)
-        novoDocumentoRef.set(defaultElderly)
+        novoDocumentoRef
+            .set(defaultElderly)
+
+        novoDocumentoRef
+            .collection(privateCollectionName)
+            .doc(privateCaregiversDocumentName)
+            .set(defaultCaregivers)
     
-        //Cria a subcoleção credenciais e adiciona um valor default.
-       // novoDocumentoRef.collection(credencialsCollectionName)
-            //.doc('defaultCredencial').set(defaultCredencials("defaultData"))
 
     } catch (error) {
         alert('Erro ao tentar criar a conta, tente novamente!')
         //console.log('Error: ', error)
     }
+}
+
+export async function addCaregiverToArray(elderlyId: string, caregiverId: string, permission: string): Promise<boolean> {
+
+    const privateCaregiverDocRef = firebase.firestore()
+        .collection(elderlyCollectionName).doc(elderlyId)
+        .collection(privateCollectionName).doc(privateCaregiversDocumentName)
+
+    //Cria na coleção o elemento do idoso.
+    return privateCaregiverDocRef.get().then(doc => {
+        if(!doc.exists) {
+            return false
+        }
+        const elderlyDoc = doc.data()
+
+        if(!elderlyDoc) {
+            return false
+        }
+
+        const currentArray = elderlyDoc[permission] || []
+        if(!currentArray.includes(caregiverId)) {
+            const newArray = [...currentArray, caregiverId]
+            privateCaregiverDocRef.update({ [permission]: newArray });
+        }
+        
+        return true
+    })
+    .catch(error => {
+        alert('Erro ao tentar adicionar caregiver de leitura, tente novamente!')
+        console.log(error)
+        return false
+    })
+}
+
+export async function removeCaregiverFromArray(elderlyId: string, caregiverId: string, permission: string): Promise<boolean> {
+
+    const privateCaregiverDocRef = firebase.firestore()
+        .collection(elderlyCollectionName).doc(elderlyId)
+        .collection(privateCollectionName).doc(privateCaregiversDocumentName)
+
+    // Retrieve the document
+    return privateCaregiverDocRef.get().then(doc => {
+        if (!doc.exists) {
+            return false
+        }
+        const elderlyDoc = doc.data();
+
+        if (!elderlyDoc) {
+            return false
+        }
+
+        const currentArray = elderlyDoc[permission] || [];
+        const newArray = currentArray.filter((id: string) => id !== caregiverId); // Remove the caregiverId from the array
+        privateCaregiverDocRef.update({ [permission]: newArray });
+
+        return true
+    })
+    .catch(error => {
+        alert('Erro ao tentar remover caregiver, tente novamente!')
+        //console.log(error)
+        return false
+    })
+}
+
+export async function getCaregiversArray(elderlyId: string, permission: string) {
+    const privateCaregiverDocRef = firebase.firestore()
+        .collection(elderlyCollectionName).doc(elderlyId)
+        .collection(privateCollectionName).doc(privateCaregiversDocumentName)
+
+    return privateCaregiverDocRef.get().then(doc => { 
+        if(!doc.exists) {
+            return []
+        }
+        const elderlyDoc = doc.data()
+        
+        if(!elderlyDoc) {
+            return
+        }
+
+        return elderlyDoc[permission] || []
+    })
+    .catch((error) => {
+        alert('Erro ao obter os cuidadores que conseguem ler, tente novamente!')
+        //console.error('Error: ', error)
+        return []
+    });
 }
 
 /**
@@ -90,13 +179,13 @@ async function addCredencial(userId: string, shared: string, newCredencialId: st
     const key = deriveSecret([await getKey(userId), shared])
     const encrypted = encrypt(data, key)
 
-    const defaultCredencial = defaultCredencials(encrypted)
+    const credential = defaultCredencials(encrypted)
 
     firestore.collection(elderlyCollectionName)
         .doc(userId)
             .collection(credencialsCollectionName)
             .doc(newCredencialId)
-            .set(defaultCredencial)
+            .set(credential)
         .catch((error) => {
             alert('Erro ao tentar adicionar a nova credencial, tente novamente!')
             //console.log('Error: ', error)
@@ -130,7 +219,7 @@ interface Credential {
  */
 async function listAllElderlyCredencials(userId: string, shared: string): Promise<Credential[]> {
 
-    //console.log("Shared: "+shared)
+    console.log("Shared: "+shared)
     const cloudKey = await getKey(userId)
     //console.log("cloudKey: "+cloudKey)
     const key = deriveSecret([cloudKey, shared])
@@ -140,18 +229,16 @@ async function listAllElderlyCredencials(userId: string, shared: string): Promis
         docs.forEach((doc) => { 
             if(doc.data()) {
                 //console.log("Value: "+doc.data().data)
-                const nonce = doc.data().iv// CryptoJS.lib.WordArray.random(16)
-                //const decrypted = decryption(doc.data().data, key, nonce)
                 const decrypted = decrypt(doc.data().data, key)
                 //console.log("Key:", key)
                 //console.log("Decryption: ", decrypted, '\n')
-                values.push({'id': doc.id, 'data': decrypted}) 
+                values.push({id: doc.id, data: decrypted}) 
             }
         });
         return values
     }).catch((error) => {
         alert('Erro ao obter as credenciais, tente novamente!')
-        //console.log('Error: ', error)
+        console.log('Error: ', error.message)
         return []
     });
 }

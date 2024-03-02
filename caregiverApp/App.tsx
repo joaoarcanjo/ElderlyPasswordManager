@@ -18,6 +18,7 @@ import SignInPage from './src/screens/signin_interface/actions';
 import SignUpPage from './src/screens/signup_interface/actions';
 import Settings from './src/screens/settings_interface/actions';
 import { createIdentity } from './src/e2e/identity/functions';
+import CredencialPage from './src/screens/credential_interface/actions';
 
 const Stack = createNativeStackNavigator()
 const InsideStack = createNativeStackNavigator()
@@ -39,8 +40,9 @@ function InsideLayout() {
       <InsideStack.Screen name="ElderlyList" component={ElderlyListScreen} options={{ title: "listElderly", headerShown: false }} />
       <InsideStack.Screen name="ElderlyCredentials" component={ElderlyCredentials} options={{ title: "ElderlyCredencials", headerShown: false }} />
       <InsideStack.Screen name="ChatTest" component={ChatPageTest} options={{ title: "listElderly", headerShown: false }} />
-      <InsideStack.Screen name="AddCredential" component={AddCredencial} options={{ title: "AddCredencial", headerShown: false }} />
+      <InsideStack.Screen name="AddCredential" component={AddCredencial} options={{ title: "AddCredential", headerShown: false }} />
       <InsideStack.Screen name="Settings" component={Settings} options={{ title: "Settings", headerShown: false }} />
+      <InsideStack.Screen name="CredentialPage" component={CredencialPage} options={{ title: "CredencialPage", headerShown: false }} />
     </InsideStack.Navigator>
   );
 }
@@ -53,7 +55,7 @@ function Inicialization() {
 
   useEffect(() => {
     
-    onAuthStateChanged(FIREBASE_AUTH, async (user) => {
+    onAuthStateChanged(FIREBASE_AUTH, async (user: any) => {
       //console.log("User: " + user)
       //console.log("UserId: " + userId)
       if(userId) {

@@ -8,8 +8,12 @@ import { ChatSession } from "../session/types"
 import { ChatMessageType, CaregiverDataBody, ProcessedChatMessage } from "./types"
 import { randomUUID } from 'expo-crypto'
 import { checkCaregiverByEmail, saveCaregiver, updateCaregiver } from "../../database"
-import { findCaregiverRequest, setCaregiverListUpdated } from "../../screens/list_caregivers/actions/state"
+import { findCaregiverRequest, removeCaregiverRequested, setCaregiverListUpdated } from "../../screens/list_caregivers/actions/state"
 import { sessionAcceptedFlash, sessionRejectedFlash } from "../../components/UserMessages"
+import { getValueFor } from "../../keychain"
+import { elderlyId } from "../../keychain/constants"
+import { addCaregiverToArray } from "../../firebase/firestore/functionalities"
+import { startSession } from "../session/functions"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -84,6 +88,7 @@ export async function processRegularMessage(address: string, message: string, ty
  * @param message 
  */
 export async function encryptAndSendMessage(to: string, message: string, firstMessage: boolean, type: ChatMessageType): Promise<void> {
+    
     const address = new SignalProtocolAddress(to, 1)
     const cipher = new SessionCipher(signalStore, address)
 
@@ -144,11 +149,17 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
 async function processPersonalData(cm: ProcessedChatMessage) {
     const data = JSON.parse(cm.body) as CaregiverDataBody
 
+    const id = await getValueFor(elderlyId)
+
+    console.log("OLAAAA")
     if (await checkCaregiverByEmail(cm.from)) {  
         await updateCaregiver(data.name, data.email, data.phone)
+
     } else if(findCaregiverRequest(cm.from)) {
-        await saveCaregiver(data.name, data.email, data.phone)
+        await saveCaregiver(data.userId, data.name, data.email, data.phone)
+        .then(() => addCaregiverToArray(id, data.userId, "readCaregivers"))
         .then(() => sessionAcceptedFlash(cm.from))
+        .then(() => removeCaregiverRequested(cm.from))
         .then(() => setCaregiverListUpdated())
     }
     

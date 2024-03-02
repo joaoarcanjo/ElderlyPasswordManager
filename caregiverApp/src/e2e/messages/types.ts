@@ -13,6 +13,7 @@ export enum ChatMessageType {
     START_SESSION, //primeira mensagem enviada (quando se começa a sessão)
     PERSONAL_DATA, //mensagem enviada com os primeiros dados (chave + others)
     REJECT_SESSION, //mensagem enviada quando o outro membro aceita
+    PERMISSION_DATA, //mensagem que indica que houve atualização de permissões
 }
 
 export interface ElderlyDataBody {

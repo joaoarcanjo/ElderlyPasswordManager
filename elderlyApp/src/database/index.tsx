@@ -9,9 +9,9 @@ export function initDb() {
     db = SQLite.openDatabase('elderly.db')
     
     db.transaction(tx => {
-        tx.executeSql(
+          /*tx.executeSql(
             'DROP TABLE IF EXISTS passwords;'
-        )
+        )*/
     })
 
     db.transaction(tx => {
@@ -27,18 +27,18 @@ export function initDb() {
     })
 }
 
-/**
+  /**
  * Função para guardar os dados de determinado cuidador.
  * @param id 
  * @param email 
  * @param phoneNumber 
  */
-export const saveCaregiver = async (name: string, email: string, phoneNumber: string) => {
+export const saveCaregiver = async (id: string, name: string, email: string, phoneNumber: string) => {
     if(db != null) {
         db.transaction(tx => {
             tx.executeSql(
                 'INSERT INTO caregivers (id, name, email, phoneNumber) VALUES (?,?,?,?)',
-                [Crypto.randomUUID(), name, email, phoneNumber],
+                [id, name, email, phoneNumber],
                 (_, result) => {
                     return Promise.resolve(result.rowsAffected > 0)
                 }
@@ -54,7 +54,7 @@ export const updateCaregiver = async (email: string, newName: string, newPhoneNu
                 'UPDATE caregivers SET name = ?, phoneNumber = ? WHERE email = ?',
                 [newName, newPhoneNumber, email],
                 (_, result) => {
-                    // Verifique se houve alguma linha afetada para confirmar se a atualização foi bem-sucedida.
+                      // Verifique se houve alguma linha afetada para confirmar se a atualização foi bem-sucedida.
                     if (result.rowsAffected > 0) {
                         console.log('- Cuidador atualizado com sucesso.')
                     } else {
@@ -116,9 +116,9 @@ export const getCaregivers = (): Promise<Caregiver[]> => {
                 tx.executeSql(sql, [], (tx, results) => {
                     for (let i = 0; i < results.rows.length; i++) {                        
                         data.push({
-                            id: results.rows.item(i).id,  
-                            name: results.rows.item(i).name, 
-                            email: results.rows.item(i).email,
+                            id         : results.rows.item(i).id,
+                            name       : results.rows.item(i).name,
+                            email      : results.rows.item(i).email,
                             phoneNumber: results.rows.item(i).phoneNumber
                         });
                     }
@@ -132,7 +132,7 @@ export const getCaregivers = (): Promise<Caregiver[]> => {
     })
 }
 
-/*
+  /*
 This function is used to delete the older password generated. 
 */
 const deletePasswordGenerated = () => {
@@ -142,29 +142,29 @@ const deletePasswordGenerated = () => {
               'DELETE FROM passwords WHERE id IN (SELECT id FROM passwords ORDER BY timestamp DESC LIMIT -10 OFFSET 9)',
               [],
               (_, result) => {
-                //console.log('Tuplo com timestamp mais antigo excluído com sucesso:', result);
+                  //console.log('Tuplo com timestamp mais antigo excluído com sucesso:', result);
               }
             );
         });
     }
 }
   
-/*
+  /*
 Function to save the new generated password.
 */
 export const savePasswordGenerated = async (password: string, localDBKey: string) => {
     deletePasswordGenerated()
 
-    //console.log(localDBKey)
+      //console.log(localDBKey)
     const encrypted = encrypt(password, localDBKey)
-    //console.log(encrypted)
+      //console.log(encrypted)
 
     if(db != null) {
         db.transaction(tx => {
             tx.executeSql('INSERT INTO passwords (id, password, timestamp) VALUES (?, ?, ?);',
             [Crypto.randomUUID(), encrypted, Date.now()],
             (_, result) => {
-                //console.log('Novo registro inserido com sucesso:', result);
+                  //console.log('Novo registro inserido com sucesso:', result);
             })
         });
     }
@@ -193,8 +193,8 @@ export const getGeneratedPasswords = (localDBKey: string): Promise<Password[]> =
                 tx.executeSql(sql, [], (tx, results) => {
                     for (let i = 0; i < results.rows.length; i++) {                        
                         data.push({
-                            id: results.rows.item(i).id,  
-                            password: decrypt(results.rows.item(i).password, localDBKey), 
+                            id       : results.rows.item(i).id,
+                            password : decrypt(results.rows.item(i).password, localDBKey),
                             timestamp: results.rows.item(i).timestamp
                         });
                     }

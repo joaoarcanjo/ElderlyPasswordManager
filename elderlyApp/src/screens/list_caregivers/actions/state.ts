@@ -1,10 +1,10 @@
 import { BehaviorSubject } from "rxjs";
 
-export const caregiverListUpdated = new BehaviorSubject<Boolean>(false)
+export const caregiverListUpdated = new BehaviorSubject<boolean>(false)
 export const caregiversRequested = new BehaviorSubject<string[]>([])
 
 export const setCaregiverListUpdated = () => {
-    caregiverListUpdated.next(caregiverListUpdated.value)
+    caregiverListUpdated.next(!caregiverListUpdated.value)
 }
 
 export const addCaregiverRequested = (caregiver: string) => { 

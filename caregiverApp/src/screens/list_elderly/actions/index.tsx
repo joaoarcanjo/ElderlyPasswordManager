@@ -14,17 +14,14 @@ function ElderlyList() {
   const [elderlyList, setElderlyList] = useState<Elderly[]>([])
 
   useEffect(() => {
-    const subscription = elderlyListUpdated.subscribe(() => {
+    elderlyListUpdated.subscribe(() => {
         getAllElderly().then(value => setElderlyList(value))
     })
-    return () => subscription.unsubscribe()
-}, [elderlyListUpdated])
+  }, [elderlyListUpdated])
 
   const refreshValue = () => {
     getAllElderly().then(value => setElderlyList(value))
   }
-
-  elderlyList.map(value => console.log("UserId: "+value.userId +", Name: "+value.name))
 
   return (
     <View style={{ flex: 0.85, flexDirection: 'row', marginTop: '5%', justifyContent: 'space-around'}}>
@@ -35,7 +32,7 @@ function ElderlyList() {
           
             <ElderlyItem 
               key={index}
-              userId={elderly.userId}
+              elderlyId={elderly.userId}
               name={elderly.name}
               phone={elderly.phoneNumber}
               email={elderly.email}

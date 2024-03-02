@@ -20,9 +20,9 @@ export async function startSessionWithCaregiver(number: number, caregiverEmail: 
         email: userEmail,
         phone: userPhone,
         photo: ""
-      }
+    }
 
-      await encryptAndSendMessage(caregiverEmail, JSON.stringify(data), true, ChatMessageType.PERSONAL_DATA) 
+    await encryptAndSendMessage(caregiverEmail, JSON.stringify(data), true, ChatMessageType.PERSONAL_DATA) 
 }
 
 export async function decouplingCaregiver(email: string) {

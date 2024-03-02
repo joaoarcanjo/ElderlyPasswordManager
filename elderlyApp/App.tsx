@@ -19,7 +19,6 @@ import CredencialPage from './src/screens/credential_interface/actions';
 import SignInPage from './src/screens/signin_interface/actions';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from './src/firebase/FirebaseConfig';
-import PermissionsPage from './src/screens/permissions_interface/actions';
 import { SessionProvider, useSessionInfo } from './src/firebase/authentication/session';
 import SignUpPage from './src/screens/signup_interface/actions';
 import { StatusBar } from 'expo-status-bar';
@@ -50,7 +49,7 @@ function InsideLayout() {
 
   useEffect(() => {
     console.debug("#-> InsideLayout: useEffect called.")
-
+    console.log("userid", userId)
     if (im_testing) {
       cleanKeychain(userId)
     } else {
@@ -79,8 +78,6 @@ function InsideLayout() {
       <InsideStack.Screen name="FrequentQuestions" component={FrequentQuestions} options={{ title: "Frequent Questions", headerShown: false }} />
       <InsideStack.Screen name="Caregivers" component={Caregivers} options={{ title: "Caregivers", headerShown: false }} />
       <InsideStack.Screen name="CredentialPage" component={CredencialPage} options={{ title: "CredencialPage", headerShown: false }} />
-      <InsideStack.Screen name="Permissions" component={PermissionsPage} options={{ title: "PermissionsPage", headerShown: false }} />
-
       <InsideStack.Screen name="ChatTest" component={ChatPageTest} options={{ title: "listElderly", headerShown: false }} />
     </InsideStack.Navigator>
   )

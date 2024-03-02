@@ -10,12 +10,12 @@ export function initDb() {
     
     //Os cuidadores também vão guardar as suas passwords
     db.transaction(tx => {
-        tx.executeSql(
+        /*tx.executeSql(
             'DROP TABLE IF EXISTS passwords;'
         )
         tx.executeSql(
             'DROP TABLE IF EXISTS elderly;'
-        )
+        )*/
     })
 
     db.transaction(tx => {
@@ -104,7 +104,7 @@ export const deleteElderly = async (id: string) => {
                     console.log('-> Idoso não apagado, erro.')
                 }
               },
-              (_, error) => {
+              (error) => {
                console.log('-> Error deleting elderly from database', error)
               }
             );

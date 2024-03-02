@@ -1,28 +1,24 @@
-const elderlyCollectionName = 'Elderly'
-const credencialsCollectionName = 'Credencials'
+export const elderlyCollectionName = 'Elderly'
+export const credencialsCollectionName = 'Credencials'
 
-const keyParameter = 'key'
+export const keyParameter = 'key'
+export const keyCollectionName = 'Key'
+export const keyDocumentName = 'Value'
+export const privateCollectionName = 'Private'
+export const privateCaregiversDocumentName = 'Caregivers'
 
-const defaultCredencials = (data: string) => ({
-    data: data,
-    readCaregivers: [],
-    writeCaregivers: []
+export const defaultCredencials = (data: string) => ({
+    data: data
 })
 
-const updateDataCredencial = (data: string) => ({
+export const updateDataCredencial = (data: string) => ({
     data: data,
 })
 
-const defaultElderly = {
-    key: '',
-    caregivers: []
+export const defaultElderly = {
 }
 
-export { 
-    elderlyCollectionName, 
-    credencialsCollectionName, 
-    keyParameter,
-    defaultCredencials, 
-    updateDataCredencial,
-    defaultElderly,
+export const defaultCaregivers = {
+    readCaregivers: [],
+    writeCaregivers: []
 }

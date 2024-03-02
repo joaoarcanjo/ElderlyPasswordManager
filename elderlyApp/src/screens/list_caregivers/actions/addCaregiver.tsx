@@ -18,8 +18,7 @@ function AddCaregiverModal({number, visibility, concludeAction}: Readonly<{numbe
     addCaregiverRequested(email)
     startSessionWithCaregiver(number, email, userId, userName, userEmail, userPhone)
       .then(() => sessionRequestSent())
-    
-    concludeAction()
+      .then(() => concludeAction())
   }
 
   return (

@@ -8,7 +8,7 @@ import { ChatSession } from "../session/types"
 import { ChatMessageType, ElderlyDataBody, ProcessedChatMessage } from "./types"
 import { randomUUID } from 'expo-crypto'
 import { checkElderlyByEmail, saveElderly, updateElderly } from "../../database"
-import { elderlyListUpdated, setElderlyListUpdated } from "../../screens/list_elderly/actions/state"
+import { setElderlyListUpdated } from "../../screens/list_elderly/actions/state"
 import { saveKeychainValue } from "../../keychain"
 import { elderlySSSKey } from "../../keychain/constants"
 
@@ -131,8 +131,10 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
         userSession.messages.push(cm)  
     } else if (cm.type === ChatMessageType.REJECT_SESSION) {
         //vai apagar a sessão que foi criada com o possível cuidador
-        userSession.messages.push(cm)  
-    }else if(type !== 3 && !cm.firstMessage) {
+        userSession.messages.push(cm) 
+    } else if (cm.type === ChatMessageType.PERMISSION_DATA) {
+        setElderlyListUpdated()
+    } else if (type !== 3 && !cm.firstMessage) {
         userSession.messages.push(cm)
     }
     
@@ -151,14 +153,8 @@ async function processPersonalData(cm: ProcessedChatMessage) {
     if (await checkElderlyByEmail(cm.from)) {  
         await updateElderly(data.name, data.email, data.phone)
     } else {
-        console.log("User Id: "+data.userId)
-        console.log("User key: "+data.key)
         await saveKeychainValue(elderlySSSKey(data.userId), data.key)
             .then(() => saveElderly(data.userId, data.name, data.email, data.phone))
             .then(() => setElderlyListUpdated())
     }
-    //TODO: 
-    // -> guardar a chave se existir. (apenas caso da aplicação do cuidador)
-    // -> criar o objeto em sql caso ainda não exista.
-    // -> atualizar os dados que temos do respetivo membro.
 }

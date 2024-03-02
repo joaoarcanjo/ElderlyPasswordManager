@@ -9,7 +9,6 @@ import { generateKey } from '../algorithms/0thers/crypto';
  * @param value 
  */
 async function saveKeychainValue(key: string, value: string) {
-  console.log("Key: " + key + " Value: " + value)
   do {
     setItemAsync(key, value)
   } while(value != '' && await getKeychainValueFor(key) == '')
