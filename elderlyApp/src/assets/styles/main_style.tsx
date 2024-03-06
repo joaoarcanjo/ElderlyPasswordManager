@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native'
-import { copyButtonBackground, copyButtonBorder, whiteBackgroud } from './colors'
+import { copyButtonBackground, copyButtonBorder, regenerateButtonBackgroud, regenerateButtonBorder, whiteBackgroud } from './colors'
 
 const stylesMainBox = StyleSheet.create({
     pageInfoContainer: {
@@ -29,6 +29,11 @@ const stylesButtons = StyleSheet.create({
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         backgroundColor: copyButtonBackground,
         borderColor: copyButtonBorder
+    },
+    regenerateButton: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        backgroundColor: regenerateButtonBackgroud,
+        borderColor: regenerateButtonBorder,
     }
 })
 

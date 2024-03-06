@@ -13,9 +13,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 
+var ip = require("ip");
+
 // Create a WebSocket server instance
 const wss = new webSocket.Server({ port: 442 })
-
 
 const options = {
     key: fs.readFileSync('./certificates/file.pem'),
@@ -134,5 +135,6 @@ app.get("/getBundle/:username", (req, res) => {
 })
 
 http.listen(PORT, () => {
+    console.log ( ip.address() );
     console.log(`Server listening on ${PORT}`);
 })

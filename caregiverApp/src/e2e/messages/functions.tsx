@@ -7,10 +7,12 @@ import { signalWebsocket } from "../network/webSockets"
 import { ChatSession } from "../session/types"
 import { ChatMessageType, ElderlyDataBody, ProcessedChatMessage } from "./types"
 import { randomUUID } from 'expo-crypto'
-import { checkElderlyByEmail, saveElderly, updateElderly } from "../../database"
+import { checkElderlyByEmail, deleteElderly, saveElderly, updateElderly } from "../../database"
 import { setElderlyListUpdated } from "../../screens/list_elderly/actions/state"
 import { saveKeychainValue } from "../../keychain"
 import { elderlySSSKey } from "../../keychain/constants"
+import { decouplingElderly } from "../../screens/list_elderly/actions/functions"
+import { sessionEndedFlash, sessionPermissionsFlash, sessionRequestReceivedFlash } from "../../components/UserMessages"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -121,7 +123,7 @@ export function sendSignalProtocolMessage(to: string, from: string, message: Mes
 
 export async function addMessageToSession(address: string, cm: ProcessedChatMessage, type: number, itsMine?: boolean): Promise<void> {
     console.log('-> addMessageToSession')
-    console.log("---> Message: "+cm.body)
+    console.log("---> Message: "+cm)
     const userSession = { ...sessionForRemoteUser(address)! }
     console.log("User session: " +userSession.remoteUsername)
 
@@ -133,7 +135,13 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
         //vai apagar a sessão que foi criada com o possível cuidador
         userSession.messages.push(cm) 
     } else if (cm.type === ChatMessageType.PERMISSION_DATA) {
+        //Quando o idoso atualiza as permissoes. 
         setElderlyListUpdated()
+        sessionPermissionsFlash(cm.from)
+    } else if (cm.type === ChatMessageType.DECOUPLING_SESSION) {
+        await deleteElderly(cm.from)
+        setElderlyListUpdated()
+        sessionEndedFlash(cm.from)
     } else if (type !== 3 && !cm.firstMessage) {
         userSession.messages.push(cm)
     }
@@ -151,10 +159,13 @@ async function processPersonalData(cm: ProcessedChatMessage) {
     const data = JSON.parse(cm.body) as ElderlyDataBody
 
     if (await checkElderlyByEmail(cm.from)) {  
-        await updateElderly(data.name, data.email, data.phone)
+        await updateElderly(data.email, data.name, data.phone)
+        setElderlyListUpdated()
+        
     } else {
         await saveKeychainValue(elderlySSSKey(data.userId), data.key)
             .then(() => saveElderly(data.userId, data.name, data.email, data.phone))
+            .then(() => sessionRequestReceivedFlash(cm.from))
             .then(() => setElderlyListUpdated())
     }
 }

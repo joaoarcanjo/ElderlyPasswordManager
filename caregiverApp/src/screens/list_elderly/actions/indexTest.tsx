@@ -31,7 +31,7 @@ function getRandomNumber(min: number, max: number) {
 
 function CreateIdentity() {
   const [username, setUsername] = useState(`${getRandomNumber(1, 1000)}`);
-  const [url, setUrl] = useState('http://192.168.1.68:442');
+  const [url, setUrl] = useState('http://192.168.1.84:442');
 
   const createID = async () => {
     await createIdentity(username)

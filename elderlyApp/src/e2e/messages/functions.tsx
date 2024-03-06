@@ -7,9 +7,9 @@ import { signalWebsocket } from "../network/webSockets"
 import { ChatSession } from "../session/types"
 import { ChatMessageType, CaregiverDataBody, ProcessedChatMessage } from "./types"
 import { randomUUID } from 'expo-crypto'
-import { checkCaregiverByEmail, saveCaregiver, updateCaregiver } from "../../database"
+import { checkCaregiverByEmail, deleteCaregiver, saveCaregiver, updateCaregiver } from "../../database"
 import { findCaregiverRequest, removeCaregiverRequested, setCaregiverListUpdated } from "../../screens/list_caregivers/actions/state"
-import { sessionAcceptedFlash, sessionRejectedFlash } from "../../components/UserMessages"
+import { sessionAcceptedFlash, sessionEndedFlash, sessionRejectedFlash } from "../../components/UserMessages"
 import { getValueFor } from "../../keychain"
 import { elderlyId } from "../../keychain/constants"
 import { addCaregiverToArray } from "../../firebase/firestore/functionalities"
@@ -133,7 +133,12 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
     } else if (cm.type === ChatMessageType.REJECT_SESSION) {
         //userSession.messages.push(cm)  
         await processRejectMessage(cm)
-    }else if(type !== 3 && !cm.firstMessage) {
+    } else if (cm.type === ChatMessageType.DECOUPLING_SESSION) {
+        await deleteCaregiver(cm.from)
+        setCaregiverListUpdated()
+        sessionEndedFlash(cm.from)
+        
+    } else if(type !== 3 && !cm.firstMessage) {
         userSession.messages.push(cm)
     }
     
@@ -151,10 +156,10 @@ async function processPersonalData(cm: ProcessedChatMessage) {
 
     const id = await getValueFor(elderlyId)
 
-    console.log("OLAAAA")
     if (await checkCaregiverByEmail(cm.from)) {  
-        await updateCaregiver(data.name, data.email, data.phone)
-
+        await updateCaregiver(data.email, data.name, data.phone)
+        setCaregiverListUpdated()
+        
     } else if(findCaregiverRequest(cm.from)) {
         await saveCaregiver(data.userId, data.name, data.email, data.phone)
         .then(() => addCaregiverToArray(id, data.userId, "readCaregivers"))
@@ -162,11 +167,6 @@ async function processPersonalData(cm: ProcessedChatMessage) {
         .then(() => removeCaregiverRequested(cm.from))
         .then(() => setCaregiverListUpdated())
     }
-    
-    //TODO: 
-    // -> guardar a chave se existir. (apenas caso da aplicação do cuidador)
-    // -> criar o objeto em sql caso ainda não exista.
-    // -> atualizar os dados que temos do respetivo membro.
 }
 
 async function processRejectMessage(cm: ProcessedChatMessage) {

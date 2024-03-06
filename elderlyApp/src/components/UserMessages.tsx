@@ -14,8 +14,13 @@ export const enum FlashMessage {
   caregiverAccept = 'O CUIDADOR ACEITOU A CONEXÃO!',
   editModeActive = 'MODO EDIÇÃO ATIVADO',
   editModeCanceled = 'MODO EDIÇÃO DESATIVADO',
+  editCredentialCompleted = 'CREDENCIAL ATUALIZADA COM SUCESSO!',
+  editPersonalInfoCompleted = 'INFORMAÇÕES PESSOAIS ATUALIZADAS COM SUCESSO!',
+  editCredentialCanceled = 'CREDENCIAL ATUALIZADA COM SUCESSO!',
+  editPersonalInfoCanceled = 'INFORMAÇÕES PESSOAIS ATUALIZADAS COM SUCESSO!',
   credentialUpdated = 'CREDENCIAL ATUALIZADA COM SUCESSO!',
   sessionRequest = 'PEDIDO DE SESSÃO ENVIADO!',
+  sessionEnded = 'RELAÇÃO COM O CUIDADOR TERMINADA!',
 }
 
 export function copyValue(value: string, message: FlashMessage) {
@@ -41,10 +46,10 @@ export function editValueFlash() {
   });
 } 
 
-export function editCanceledFlash() {
+export function editCanceledFlash(flashMessage: FlashMessage) {
   showMessage({
     floating: true,
-    message: FlashMessage.editModeCanceled,
+    message: flashMessage,
     icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
     backgroundColor: lightYellowBackground,
     duration: 3000,
@@ -52,11 +57,11 @@ export function editCanceledFlash() {
   });
 } 
 
-export function editCompletedFlash() {
+export function editCompletedFlash(flashMessage: FlashMessage) {
   console.log('editCompletedFlash')
   showMessage({
     floating: true,
-    message: FlashMessage.credentialUpdated,
+    message: flashMessage,
     icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
     backgroundColor: darkGreenBackgroud,
     duration: 3000,
@@ -106,5 +111,20 @@ export function sessionRejectedFlash(from: string) {
     });
   } else {
     triggerNotifications('Conexão rejeitada!! 😓', `O cuidador ${from} rejeitou a conexão.`, "")
+  }
+}
+
+export function sessionEndedFlash(from: string) {
+  if(AppState.currentState === 'active') {
+    showMessage({
+      floating: true,
+      message: FlashMessage.sessionEnded,
+      icon: props => <Image source={require("../assets/images/minus.png")} {...props} />,
+      backgroundColor: lightRedBackground,
+      duration: 3000,
+      color: "black", // text color
+    });
+  } else {
+    triggerNotifications('Relação terminada!!', `O cuidador ${from} terminou a conexão.`, "")
   }
 }

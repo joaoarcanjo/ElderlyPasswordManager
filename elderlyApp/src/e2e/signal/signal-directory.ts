@@ -48,7 +48,7 @@ export class SignalDirectory {
     constructor(private _url: string/*, private _apiKey: string*/) {}
 
     async storeKeyBundle(username: string, bundle: FullDirectoryEntry): Promise<void> {
-        const res = await fetch(`http://192.168.1.68:443/addBundle`, {
+        const res = await fetch(`http://http://192.168.1.84:443/addBundle`, {
             method: 'PUT',
             //headers: { 'x-api-key': this._apiKey },
             headers: {
@@ -63,7 +63,7 @@ export class SignalDirectory {
 
     async getPreKeyBundle(address: string): Promise<DeviceType | undefined> {
         console.log("-> getPreKeyBundle: "+address)
-        const res = await fetch(`http://192.168.1.68:443/getBundle/${address}`/*, { headers: { 'x-api-key': this._apiKey } }*/)
+        const res = await fetch(`http://192.168.1.84:443/getBundle/${address}`/*, { headers: { 'x-api-key': this._apiKey } }*/)
         
         const bundle = await res.json()
         if (!bundle) {

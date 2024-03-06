@@ -13,7 +13,7 @@ export async function createIdentity(username: string): Promise<void> {
     if (usernameSubject.value === username) return
 
     //TODO: este url tem que ser obtido da firebase, porque o url do server pode alterar.
-    const url = 'http://192.168.1.68:442'
+    const url = 'http://192.168.1.84:442'
     
     //Inicia a ligação ao servidor 
     initializeSignalWebsocket(url)

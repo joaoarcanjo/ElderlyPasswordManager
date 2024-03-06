@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native'
-import { editButtonBackgroud, editButtonBorder, greyBackgroud, greyBorder, logoutButtonBackgroud, logoutButtonBorder, whiteBackgroud } from '../../../assets/styles/colors'
+import { blueBorder, cancelButtonBackground, cancelButtonBorder, editButtonBackgroud, editButtonBorder, editCredentialsButtonBackground, editCredentialsButtonBorder, greyBackgroud, greyBorder, hiperlightBlueBackground, logoutButtonBackgroud, logoutButtonBorder, saveButtonBackground, saveButtonBorder, whiteBackgroud } from '../../../assets/styles/colors'
 
 /**
  * Estilos da view para adicionar uma nova credencial
@@ -23,16 +23,26 @@ const accountInfo = StyleSheet.create({
       borderWidth: 1, // Largura da linha na margem
       backgroundColor: greyBackgroud, // Cor de fundo
     },
-    accountInfo: {
-        borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        borderWidth: 2, // Largura da linha na margem
-        backgroundColor: whiteBackgroud, // Cor de fundo
+    accountInputContainer: {
+      borderRadius: 15, // Define o raio dos cantos para arredondá-los
+      borderWidth: 1, // Largura da linha na margem
+      backgroundColor: whiteBackgroud, // Cor de fundo
+    },
+    accountInputContainerV2: {
+      borderRadius: 15, // Define o raio dos cantos para arredondá-los
+      borderWidth: 2, // Largura da linha na margem
+      backgroundColor: hiperlightBlueBackground, // Cor de fundo
+      borderColor: blueBorder
     },
     editButton: {
       borderRadius: 15, // Define o raio dos cantos para arredondá-los
       borderWidth: 3, // Largura da linha na margem
       backgroundColor: editButtonBackgroud,
       borderColor: editButtonBorder,
+    },
+    emailInfoText: {
+      fontSize: 25,
+      color: 'black'
     },
     accountInfoText: {
       fontSize: 20,
@@ -52,7 +62,34 @@ const appInfo = StyleSheet.create({
       borderColor: greyBorder
   },
   appInfoText: {
-    fontSize: 20,
+    fontSize: 25,
+    color: 'black'
+  }
+})
+
+
+const options = StyleSheet.create({
+  editButton: {
+    borderRadius: 15, // Define o raio dos cantos para arredondá-los
+    backgroundColor: editCredentialsButtonBackground,
+    borderColor: editCredentialsButtonBorder
+  },
+  saveButton: {
+    borderRadius: 15, // Define o raio dos cantos para arredondá-los
+    backgroundColor: saveButtonBackground,
+    borderColor: saveButtonBorder
+  },
+  cancelButton: {
+    borderRadius: 15, // Define o raio dos cantos para arredondá-los
+    backgroundColor: cancelButtonBackground,
+    borderColor: cancelButtonBorder
+  },
+  permissionsButtonText: {
+    fontSize: 25,
+    color: 'black'
+  },
+  editButtonText: {
+    fontSize: 25,
     color: 'black'
   }
 })

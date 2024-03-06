@@ -9,9 +9,11 @@ import { generateKey } from '../algorithms/0thers/crypto';
  * @param value 
  */
 async function saveKeychainValue(key: string, value: string) {
+  let savedValue = ''
   do {
     setItemAsync(key, value)
-  } while(value != '' && await getKeychainValueFor(key) == '')
+    savedValue = (await getKeychainValueFor(key)).trim()
+  } while(savedValue !== value)
 }
 
 /**

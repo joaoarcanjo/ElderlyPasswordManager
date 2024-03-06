@@ -27,7 +27,7 @@ function ElderlyInfoBox() {
                     <Text numberOfLines={1} adjustsFontSizeToFit style={{fontSize: 25, fontWeight: 'bold', marginLeft: '10%'}}>Olá,</Text>
                 </View>
                 <View style={{flex: 0.50, marginLeft: '10%'}}>
-                    <Text numberOfLines={1} adjustsFontSizeToFit  style={{fontSize: 35, fontWeight: 'bold'}}>{userName}</Text>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={{fontSize: 35, fontWeight: 'bold'}}>{userName}</Text>
                 </View>
             </View>
             <View style={{flex: 0.45, justifyContent: 'center', alignItems: 'center'}}>
