@@ -109,12 +109,6 @@ function Functionalities() {
                     <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>Perguntas</Text>
                 </TouchableOpacity>
            </View>
-           <Button
-                onPress={() => {navigation.push('ChatTest')}}
-                title="Learn More"
-                color="#841584"
-                accessibilityLabel="Learn more about this purple button"
-            />
         </View>
     );
 }
