@@ -44,8 +44,8 @@ export const settingsButtonBorder = lightRedBorder
 export const questionsButtonBackgroud = yellowBackground
 export const questionsButtonBorder = yellowBorder
 
-export const caregiversButtonBackgroud = purpleBackground
-export const caregiversButtonBorder = purpleBorder
+export const elderlyButtonBackgroud = purpleBackground
+export const elderlyButtonBorder = purpleBorder
 
 //GENERATOR PAGE COLORS
 

@@ -10,8 +10,7 @@ import {
   caregiversButtonBackgroud,
   caregiversButtonBorder, 
   settingsButtonBorder,
-  whiteBackgroud,
-  blackBorder
+  whiteBackgroud
 } from '../../../assets/styles/colors';
 
 const stylesFirstHalf = StyleSheet.create({

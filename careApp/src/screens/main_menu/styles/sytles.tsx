@@ -9,7 +9,9 @@ import {
   questionsButtonBorder,
   settingsButtonBorder,
   whiteBackgroud,
-  blackBorder
+  blackBorder,
+  elderlyButtonBackgroud,
+  elderlyButtonBorder
 } from '../../../assets/styles/colors';
 
 const stylesFirstHalf = StyleSheet.create({
@@ -18,16 +20,12 @@ const stylesFirstHalf = StyleSheet.create({
         borderRadius: 20, // Define o raio dos cantos para arredondá-los
         borderWidth: 1, // Largura da linha na margem
     },
-    numberOfElderlyContainer: {
-        width: '75%',
-        borderBottomLeftRadius: 20, // Arredonda o canto inferior esquerdo
-        borderBottomRightRadius: 20, // Arredonda o canto inferior direito
-        borderTopWidth: 0,
-        borderWidth: 1, // Largura do contorno
-        borderColor: blackBorder, // Cor do contorno
-        backgroundColor: whiteBackgroud, 
-        justifyContent: 'center', 
-        alignItems: 'center'
+    caregiversButton: {
+        borderRadius: 20, // Define o raio dos cantos para arredondá-los
+        borderWidth: 3, // Largura da linha na margem
+        margin: '3%',
+        backgroundColor: elderlyButtonBackgroud,
+        borderColor: elderlyButtonBorder
     },
     caregiversButtonText: {
         fontSize: 25,

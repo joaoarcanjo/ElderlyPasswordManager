@@ -1,4 +1,4 @@
-import {View, Text, Image, TouchableOpacity, Button} from 'react-native'
+import {View, Text, Image, TouchableOpacity} from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
@@ -8,6 +8,7 @@ import { useSessionInfo } from '../../../firebase/authentication/session'
 import { getKeychainValueFor, saveKeychainValue } from '../../../keychain'
 import { caregiverName, caregiverPhone } from '../../../keychain/constants'
 
+const credentialsImage = '../images/credenciais.png'
 const generatorImage = '../images/gerador.png'
 const settingsImage = '../images/definições.png'
 const questionsImage = '../images/perguntas.png'
@@ -19,7 +20,7 @@ function CaregiverInfoBox() {
     const { userName } = useSessionInfo()
 
     return (
-        <View style={[{ flex: 0.6, width: '85%', flexDirection: 'row', justifyContent: 'space-around' }, stylesFirstHalf.caregiverContainer]}>
+        <View style={[{ flex: 0.2, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginHorizontal: '5%', marginTop: '2%' }, stylesFirstHalf.caregiverContainer]}>
             <View style={{flex: 0.55}}>
                 <View style={{flex: 0.50, justifyContent: 'center'}}>
                     <Text numberOfLines={1} adjustsFontSizeToFit style={{fontSize: 25, fontWeight: 'bold', marginLeft: '10%'}}>Olá,</Text>
@@ -35,38 +36,17 @@ function CaregiverInfoBox() {
     )
 }
 
-function CaregiversButtonBox() {
-
-    const navigation = useNavigation<StackNavigationProp<any>>();
-    //navigation.push('Caregivers')
-    const GeneratorsNavigation = () => {
-        //navigation.push('Caregivers')
-    }
-
-    return (
-        <View style={[{flex: 0.3}, stylesFirstHalf.numberOfElderlyContainer]}>
-             <Text style={stylesFirstHalf.caregiversButtonText}>Número de idosos: 4</Text>
-        </View>
-    )
-}
-
-function UserInfo() {
-    
-    return (
-        <View style={{ flex: 0.35, justifyContent: 'center', alignItems: 'center'}}>
-            <CaregiverInfoBox/>
-            <CaregiversButtonBox/>
-        </View>
-    );
-}
-
 function Functionalities() {
     const navigation = useNavigation<StackNavigationProp<any>>();
+
+    const ElderlyNavigation = () => {
+        navigation.push('ElderlyList')
+    }
 
     const CredencialsNavigation = async () => {
         // Your code to handle the click event
         //console.log('Credentials button clicked!');
-        navigation.push('ElderlyList')
+        navigation.push('Credentials')
     }
 
     const GeneratorsNavigation = () => {
@@ -88,11 +68,16 @@ function Functionalities() {
     }
 
     return (
-        <View style={{flex: 0.65, marginTop: '10%', marginBottom: '10%', justifyContent: 'center', alignItems: 'center' }}>
+        <View style={{flex: 0.80, marginBottom: '10%', justifyContent: 'center', alignItems: 'center' }}>
+            <View style={[{flex: 0.25, marginVertical: '2%', width: '90%'}]} >
+                <TouchableOpacity style={[{flex: 1, justifyContent: 'center', alignItems: 'center'}, stylesFirstHalf.caregiversButton, stylesButtons.mainConfig]} onPress={ElderlyNavigation}>
+                    <Text style={[stylesFirstHalf.caregiversButtonText]}>Idosos</Text>
+                </TouchableOpacity>
+            </View>
            <View style={{flex: 0.5, flexDirection: 'row', justifyContent: 'space-around' }}>
                 <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareCredentials, stylesButtons.mainConfig]} onPress={() => CredencialsNavigation()}>
-                    <Image source={require(elderlyImage)} style={[stylesOptions.squarePhoto]}/>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>Idosos</Text>
+                    <Image source={require(credentialsImage)} style={[stylesOptions.squarePhoto]}/>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>Credenciais</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareGenerator, stylesButtons.mainConfig]} onPress={() => GeneratorsNavigation()}>
                     <Image source={require(generatorImage)} style={[stylesOptions.squarePhoto]}/>
@@ -146,7 +131,7 @@ export default function MainMenu() {
 
     return (
         <View style={{ flex: 1, flexDirection: 'column', marginTop: '5%'}}>
-            <UserInfo/>
+            <CaregiverInfoBox/>
             <Functionalities/>
         </View>
     );

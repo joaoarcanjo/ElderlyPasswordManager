@@ -86,7 +86,7 @@ function Functionalities() {
     }
 
     return (
-        <View style={{flex: 0.80, marginTop: '0%', marginBottom: '10%', justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{flex: 0.80, marginBottom: '10%', justifyContent: 'center', alignItems: 'center'}}>
              <View style={[{flex: 0.25, marginVertical: '2%', width: '90%'}]} >
                 <TouchableOpacity style={[{flex: 1, justifyContent: 'center', alignItems: 'center'}, stylesFirstHalf.caregiversButton, stylesButtons.mainConfig]} onPress={() => {CaregiversNavigation()}}>
                     <Text style={[stylesFirstHalf.caregiversButtonText]}>Cuidadores</Text>
