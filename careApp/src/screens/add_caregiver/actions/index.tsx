@@ -9,7 +9,7 @@ import { startSession } from '../../../e2e/session/functions';
 import { createIdentity } from '../../../e2e/identity/functions';
 import * as Crypto from 'expo-crypto'
 import { encryptAndSendMessage } from '../../../e2e/messages/functions';
-import { ipAddress } from '../../../algorithms/assets/constants';
+import { ipAddress } from '../../../assets/constants';
 
 function ChatPageTest() {
     const username = useObservable(usernameSubject, '')
@@ -118,7 +118,7 @@ function SessionSummary(props: SessionSummaryProps): JSX.Element {
   const { messages, remoteUsername } = session
   const lastActivity = (messages.length && Math.max(...messages.map((m) => m.timestamp))) || Date.now()
 
- // console.log({ lastActivity })
+  console.log({ lastActivity })
 
   const viewChatSession = (username: string) => {
       currentSessionSubject.next(sessionForRemoteUser(username || '') || null)
@@ -139,7 +139,7 @@ function SessionDetails(): JSX.Element {
   const session = useObservable(currentSessionSubject, null)
   const username = useObservable(usernameSubject, '')
 
-  //console.log({ session })
+  console.log({ session })
 
   const clearCurrentSession = () => {
       currentSessionSubject.next(null)

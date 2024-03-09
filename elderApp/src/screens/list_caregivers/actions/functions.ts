@@ -1,10 +1,10 @@
-import { deleteCaregiver } from "../../../database"
+import { deleteCaregiver } from "../../../database/caregivers"
 import { encryptAndSendMessage } from "../../../e2e/messages/functions"
 import { ChatMessageType, ElderlyDataBody } from "../../../e2e/messages/types"
 import { startSession } from "../../../e2e/session/functions"
 import { currentSessionSubject, sessionForRemoteUser } from "../../../e2e/session/state"
 import { removeCaregiverFromArray } from "../../../firebase/firestore/functionalities"
-import { getValueFor } from "../../../keychain"
+import { getKeychainValueFor } from "../../../keychain"
 import { caregiver1SSSKey, caregiver2SSSKey, elderlyId, elderlyPhone, firestoreSSSKey } from "../../../keychain/constants"
 
 export async function startSessionWithCaregiver(number: number, caregiverEmail: string, userId: string, userName: string, userEmail: string, userPhone: string) {
@@ -12,8 +12,7 @@ export async function startSessionWithCaregiver(number: number, caregiverEmail: 
     const session = sessionForRemoteUser(caregiverEmail)
     currentSessionSubject.next(session ?? null)
 
-    const valueKey = number == 1 ? await getValueFor(caregiver1SSSKey(userId)) :  await getValueFor(caregiver2SSSKey(userId))
-    console.log("Value Key shared: " + valueKey)
+    const valueKey = number == 1 ? await getKeychainValueFor(caregiver1SSSKey(userId)) :  await getKeychainValueFor(caregiver2SSSKey(userId))
 
     const data: ElderlyDataBody = {
         userId: userId,

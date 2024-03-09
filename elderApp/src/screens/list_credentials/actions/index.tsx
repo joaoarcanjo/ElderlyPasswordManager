@@ -36,11 +36,8 @@ function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
   }
 
   const NavigateToApp = async (uri: string, plataforma: string, username: string, password: string) => { 
-    console.log("Username: "+username)
     setUsernameCopied(username)
     setPasswordCopied(password)
-    console.log("USERNAME: "+usernameCopied)
-    console.log("PASSWORD: "+passwordCopied)
 
     const message = {
       to: expoPushToken?.data,
@@ -106,7 +103,6 @@ function CredentialsList() {
 
   useEffect(() => {
     setIsFething(true)
-    console.log(userShared)
     listAllElderlyCredencials(userId, userShared).then((credencials) => {
       let auxCredencials: Credential[] = [];
       credencials.forEach(value => {

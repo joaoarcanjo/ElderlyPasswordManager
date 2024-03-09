@@ -6,7 +6,7 @@ import { accountInfo, appInfo, logout } from '../styles/styles'
 import MainBox from '../../../components/MainBox'
 import { FIREBASE_AUTH } from '../../../firebase/FirebaseConfig'
 import { elderlyName, elderlyPhone, elderlyPwd } from '../../../keychain/constants'
-import { getValueFor, save } from '../../../keychain'
+import { getKeychainValueFor, saveKeychainValue } from '../../../keychain'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { FlashMessage, editCanceledFlash, editCompletedFlash, editValueFlash } from '../../../components/UserMessages'
 import { options } from '../../credential_interface/styles/styles'
@@ -31,7 +31,7 @@ function AccountInfo() {
   const [userpasswordEdited, setUserpasswordEdited] = useState('')
   const [userphoneEdited, setUserphoneEdited] = useState(userphone)
 
-  const [showPassword, setShowPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(true)
   const [modalVisible, setModalVisible] = useState(false)
   const [loading, setLoading] = useState(false)
   const [editFlag, setEditFlag] = useState(true)
@@ -43,7 +43,7 @@ function AccountInfo() {
   const infoModified = (userphone != userphoneEdited || userpassword != userpasswordEdited || username != usernameEdited)
 
   const updateElderlyPassword = async () => { 
-    const password = await getValueFor(elderlyPwd)
+    const password = await getKeychainValueFor(elderlyPwd)
     setUserpassword(password)
     setUserpasswordEdited(password)
    }
@@ -57,13 +57,13 @@ function AccountInfo() {
 
   const updateInfo = async () => {
     if(username != usernameEdited) {
-      await save(elderlyName(userId), usernameEdited).then(() => {
+      await saveKeychainValue(elderlyName(userId), usernameEdited).then(() => {
         setUserName(usernameEdited)
         setUsername(usernameEdited)
       })
     }
     if(userphone != userphoneEdited) {
-      await save(elderlyPhone(userId), userphoneEdited).then(() => {
+      await saveKeychainValue(elderlyPhone(userId), userphoneEdited).then(() => {
         setUserPhone(userphoneEdited)
         setUserphone(userphoneEdited)
       })
@@ -71,7 +71,7 @@ function AccountInfo() {
     if(userpassword != userpasswordEdited) {
       await updatePasswordOperation(userEmail, userpassword, userpasswordEdited).then(async result => {
         if(result) {
-          save(elderlyPwd, userpasswordEdited).then(() => {
+          saveKeychainValue(elderlyPwd, userpasswordEdited).then(() => {
             setUserpassword(userpasswordEdited)
           })
         }
@@ -226,11 +226,11 @@ function Logout() {
   const { setUserId, setUserName, setUserPhone } = useSessionInfo()
 
   const signOut = () => {
-    //save(elderlyEmail, '')
+    //saveKeychainValue(elderlyEmail, '')
     setUserId('')
     setUserName('')
     setUserPhone('')
-    save(elderlyPwd, '')
+    saveKeychainValue(elderlyPwd, '')
 
     FIREBASE_AUTH.signOut()
   }

@@ -39,10 +39,11 @@ function InsideLayout() {
       <InsideStack.Screen name="MainMenu" component={MainMenu} options={{ title: "MainMenu", headerShown: false }} />
       <InsideStack.Screen name="ElderlyList" component={ElderlyListScreen} options={{ title: "listElderly", headerShown: false }} />
       <InsideStack.Screen name="ElderlyCredentials" component={ElderlyCredentials} options={{ title: "ElderlyCredencials", headerShown: false }} />
-      <InsideStack.Screen name="ChatTest" component={ChatPageTest} options={{ title: "listElderly", headerShown: false }} />
       <InsideStack.Screen name="AddCredential" component={AddCredencial} options={{ title: "AddCredential", headerShown: false }} />
       <InsideStack.Screen name="Settings" component={Settings} options={{ title: "Settings", headerShown: false }} />
       <InsideStack.Screen name="CredentialPage" component={CredencialPage} options={{ title: "CredencialPage", headerShown: false }} />
+    
+      <InsideStack.Screen name="ChatTest" component={ChatPageTest} options={{ title: "ChatTest", headerShown: false }} />
     </InsideStack.Navigator>
   );
 }

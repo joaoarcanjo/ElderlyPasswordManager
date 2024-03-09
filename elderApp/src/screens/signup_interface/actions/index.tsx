@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { View, TextInput, Text, TouchableOpacity } from "react-native"
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { styles, actions } from "../styles/styles";
 import { whiteBackgroud } from "../../../assets/styles/colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -23,8 +21,6 @@ const SignUpPage = () => {
 
     const toggleShowPassword = () => {setShowPassword(!showPassword)}
     const { setUserEmail, setUserPhone, setUserName, userPhone, userName, userEmail } = useSessionInfo()
-
-    useEffect(() => console.debug("===> Signup_Page: Component presented.\n"), [])
 
     const signUp = async () => {
         setLoading(true)

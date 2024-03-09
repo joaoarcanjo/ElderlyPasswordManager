@@ -7,10 +7,14 @@ import { generateKey } from '../algorithms/0thers/crypto';
  * @param key
  * @param value 
  */
-async function save(key: string, value: string) {
+export async function saveKeychainValue(key: string, value: string) {
+  let auxKey = key
+  if(key.indexOf('@') > -1) {
+    auxKey = key.replace('@', '_')
+  }
   do {
-    await setItemAsync(key, value)
-  } while(value != '' && await getValueFor(key) == '')
+    await setItemAsync(auxKey, value)
+  } while(value != '' && await getKeychainValueFor(auxKey) == '')
 }
 
 /**
@@ -18,15 +22,26 @@ async function save(key: string, value: string) {
  * 
  * @param key 
  */
-async function getValueFor(key: string): Promise<string> {
-  return await getItemAsync(key).then((result) => result ?? '')
+export async function getKeychainValueFor(key: string): Promise<string> {
+  let auxKey = key
+  if(key.indexOf('@') > -1) {
+    auxKey = key.replace('@', '_')
+  }
+  return await getItemAsync(auxKey).then((result) => result ?? '')
+}
+
+/**
+ * 
+ */
+export async function deleteKeychainValueFor(key: string): Promise<void> {
+  return await deleteItemAsync(key)
 }
 
 /**
  * Função para apagar todos os valores armazenados na keychain do dispositivo.
  * Apenas utilizado para debug, para limpar tudo.
  */
-async function cleanKeychain(id: string) {
+export async function cleanKeychain(id: string) {
 
   await deleteItemAsync(firestoreSSSKey(id))
   .then(() => deleteItemAsync(elderlySSSKey(id)))
@@ -42,19 +57,17 @@ async function cleanKeychain(id: string) {
  * @param userId 
  * @returns 
  */
-async function initKeychain(userId: string, userEmail: string): Promise<string> {
+export async function initKeychain(userId: string, userEmail: string): Promise<string> {
 
-  if(await getValueFor(elderlyId) !== userId) {
+  if(await getKeychainValueFor(elderlyId) !== userId) {
     await cleanKeychain(userId).then(async () => {
-      await save(elderlyId, userId).then(async () => {
-        await save(elderlyEmail, userEmail) 
+      await saveKeychainValue(elderlyId, userId).then(async () => {
+        await saveKeychainValue(elderlyEmail, userEmail) 
       }) 
     })
   }
-  if(await getValueFor(localDBKey(userId)) == '') {
-    await save(localDBKey(userId), generateKey()) 
+  if(await getKeychainValueFor(localDBKey(userId)) == '') {
+    await saveKeychainValue(localDBKey(userId), generateKey()) 
   }
-  return await getValueFor(localDBKey(userId))
+  return await getKeychainValueFor(localDBKey(userId))
 }
-
-export { getValueFor, cleanKeychain, initKeychain, save };

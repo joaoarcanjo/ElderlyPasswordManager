@@ -1,4 +1,4 @@
-import {View, Text, Image, TouchableOpacity} from 'react-native'
+import {View, Text, Image, TouchableOpacity, Button} from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
@@ -109,6 +109,12 @@ function Functionalities() {
                     <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>Perguntas</Text>
                 </TouchableOpacity>
            </View>
+           <Button
+                onPress={() => {navigation.push('ChatTest')}}
+                title="Learn More"
+                color="#841584"
+                accessibilityLabel="Learn more about this purple button"
+            />
         </View>
     );
 }

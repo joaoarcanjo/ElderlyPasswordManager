@@ -1,7 +1,7 @@
 import { View } from 'react-native';
 import MainMenu from './src/screens/main_menu/actions';
 import Credentials from './src/screens/list_credentials/actions';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Settings from './src/screens/settings_interface/actions';
 import FrequentQuestions from './src/screens/list_questions/actions';
@@ -27,7 +27,6 @@ import * as SplashFunctions from 'expo-splash-screen';
 import { createIdentity } from './src/e2e/identity/functions';
 import ChatPageTest from './src/screens/add_caregiver/actions';
 import * as Notifications from "expo-notifications";
-import { StackNavigationProp } from '@react-navigation/stack/lib/typescript/src/types';
 
 const Stack = createNativeStackNavigator()
 const InsideStack = createNativeStackNavigator()
@@ -45,9 +44,8 @@ const im_testing = false
 const time = 1000
 
 function InsideLayout() {
-  const { userId, userEmail, setShared } = useSessionInfo()
+  const { userEmail, userId, setShared } = useSessionInfo()
   const [appIsReady, setAppIsReady] = useState(false)
-  const navigation = useNavigation<StackNavigationProp<any>>()
 
   const flashTimeoutPromise = () => { if (!appIsReady) { return new Promise(resolve => setTimeout(resolve, time)) } else return Promise.resolve() }
 
@@ -56,7 +54,7 @@ function InsideLayout() {
       setShared(await initSSS(userId))
       await initFirestore(userId).then(() => initDb())
       await changeKey(userId)
-      await createIdentity(userEmail)
+      await createIdentity(userId, userEmail)
     /*} catch (error) {
       alert(error)
       navigation.push("LoginPage")
@@ -66,7 +64,7 @@ function InsideLayout() {
   }
 
   useEffect(() => {
-    console.debug("#-> InsideLayout: useEffect called.")
+    console.log("#-> InsideLayout: useEffect called.")
     console.log("userid", userId)
     if (im_testing) {
       cleanKeychain(userId)
@@ -89,9 +87,10 @@ function InsideLayout() {
       <InsideStack.Screen name="FrequentQuestions" component={FrequentQuestions} options={{ title: "Frequent Questions", headerShown: false }} />
       <InsideStack.Screen name="Caregivers" component={Caregivers} options={{ title: "Caregivers", headerShown: false }} />
       <InsideStack.Screen name="CredentialPage" component={CredencialPage} options={{ title: "CredencialPage", headerShown: false }} />
-      <InsideStack.Screen name="ChatTest" component={ChatPageTest} options={{ title: "listElderly", headerShown: false }} />
       <InsideStack.Screen name="LoginPage" component={SignInPage} options={{title: "LoginPage", headerShown:false}}/>
       <InsideStack.Screen name="SignupPage" component={SignUpPage} options={{title: "SignupPage", headerShown:false}}/>
+
+      <InsideStack.Screen name="ChatTest" component={ChatPageTest} options={{ title: "ChatTest", headerShown: false }} />
     </InsideStack.Navigator>
   )
 }

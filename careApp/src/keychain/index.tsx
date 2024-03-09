@@ -8,7 +8,7 @@ import { generateKey } from '../algorithms/0thers/crypto';
  * @param key
  * @param value 
  */
-async function saveKeychainValue(key: string, value: string) {
+export async function saveKeychainValue(key: string, value: string) {
   let savedValue = ''
   do {
     await setItemAsync(key, value)
@@ -21,15 +21,15 @@ async function saveKeychainValue(key: string, value: string) {
  * 
  * @param key 
  */
-async function getKeychainValueFor(key: string): Promise<string> {
+export async function getKeychainValueFor(key: string): Promise<string> {
   return await getItemAsync(key).then((result) => result ?? '')
 }
 
 /**
  * 
  */
-async function deleteKeychainValueFor(key: string): Promise<void> {
-  return deleteItemAsync(key)
+export async function deleteKeychainValueFor(key: string): Promise<void> {
+  return await deleteItemAsync(key)
 }
 
 /**
@@ -37,7 +37,7 @@ async function deleteKeychainValueFor(key: string): Promise<void> {
  * Apenas utilizado para debug, para limpar tudo.
  */
 //TODO: Fazer delete de todos os outros valores que vou adicionar à keychain
-async function cleanKeychain(id: string) {
+export async function cleanKeychain(id: string) {
   await deleteItemAsync(caregiverId)
 }
 
@@ -49,7 +49,7 @@ async function cleanKeychain(id: string) {
  * @param userId 
  * @returns 
  */
-async function initKeychain(userId: string, userEmail: string): Promise<string> {
+export async function initKeychain(userId: string, userEmail: string): Promise<string> {
 
   if(await getKeychainValueFor(caregiverId) == '') {
     await cleanKeychain(userId).then(() => {
@@ -62,5 +62,3 @@ async function initKeychain(userId: string, userEmail: string): Promise<string> 
   }
   return await getKeychainValueFor(localDBKey(userId))
 }
-
-export { initKeychain, deleteKeychainValueFor, getKeychainValueFor, saveKeychainValue }

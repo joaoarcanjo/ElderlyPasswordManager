@@ -3,7 +3,7 @@ import { View, TextInput, Text, TouchableOpacity, StyleSheet } from "react-nativ
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { signInOperation } from "../../../firebase/authentication/funcionalities";
-import { getValueFor } from "../../../keychain";
+import { getKeychainValueFor } from "../../../keychain";
 import { elderlyEmail, elderlyPwd } from "../../../keychain/constants";
 import { styles, actions } from "../styles/styles";
 import { whiteBackgroud } from "../../../assets/styles/colors";
@@ -26,14 +26,14 @@ const SignInPage = () => {
     const { setUserEmail } = useSessionInfo()
 
     useEffect(() => {
-        console.debug("===> SignIn_Page: Component presented.\n")
+        console.log("===> SignIn_Page: Component presented.\n")
         setLoadingPersistent(true)
         persistentLogin()
     }, [])
 
     async function persistentLogin() {
-        const pwdSaved = await getValueFor(elderlyPwd)
-        const emailSaved = await getValueFor(elderlyEmail)
+        const pwdSaved = await getKeychainValueFor(elderlyPwd)
+        const emailSaved = await getKeychainValueFor(elderlyEmail)
 
         if(emailSaved != '' && pwdSaved != '') {
             signInOperation(emailSaved, pwdSaved).then(async (loginResult) => {

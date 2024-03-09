@@ -59,7 +59,7 @@ export function editCanceledFlash(flashMessage: FlashMessage) {
 } 
 
 export function editCompletedFlash(flashMessage: FlashMessage) {
-  console.log('editCompletedFlash')
+  //console.log('editCompletedFlash')
   showMessage({
     floating: true,
     message: flashMessage,
@@ -71,7 +71,7 @@ export function editCompletedFlash(flashMessage: FlashMessage) {
 } 
 
 export function sessionRequestSent() {
-  console.log('sessionRequestFlashSent')
+  //console.log('sessionRequestFlashSent')
   showMessage({
     floating: true,
     message: FlashMessage.sessionRequest,
@@ -83,8 +83,7 @@ export function sessionRequestSent() {
 } 
 
 export function sessionAcceptedFlash(from: string) {
-  console.log('sessionAcceptedFlash')
-  console.log(AppState.currentState)
+  //console.log('sessionAcceptedFlash')
   if(AppState.currentState === 'active') {
     showMessage({
       floating: true,
@@ -100,7 +99,7 @@ export function sessionAcceptedFlash(from: string) {
 }
 
 export function sessionRejectedFlash(from: string) {
-  console.log(AppState.currentState)
+  //console.log(AppState.currentState)
   if(AppState.currentState === 'active') {
     showMessage({
       floating: true,

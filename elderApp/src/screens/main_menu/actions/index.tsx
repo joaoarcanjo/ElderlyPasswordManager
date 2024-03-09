@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native'
 import type { StackNavigationProp } from '@react-navigation/stack';
 import { stylesButtons } from '../../../assets/styles/main_style';
 import { useSessionInfo } from '../../../firebase/authentication/session';
-import { getValueFor, save } from '../../../keychain';
+import { getKeychainValueFor, saveKeychainValue } from '../../../keychain';
 import { elderlyName, elderlyPhone } from '../../../keychain/constants';
 import { usePushNotifications } from '../../../notifications/usePushNotifications';
 
@@ -113,6 +113,12 @@ function Functionalities() {
                     <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>Perguntas</Text>
                 </TouchableOpacity>
            </View>
+           <Button
+                onPress={() => {navigation.push('ChatTest')}}
+                title="Learn More"
+                color="#841584"
+                accessibilityLabel="Learn more about this purple button"
+            />
         </View>
     );
 }
@@ -132,16 +138,16 @@ export default function MainMenu() {
         //console.log("UserName: "+userName)
     
         if(userPhone == '' && userName == '') {
-          const userNameAux = await getValueFor(elderlyName(userId))
-          const userPhoneAux = await getValueFor(elderlyPhone(userId))
+          const userNameAux = await getKeychainValueFor(elderlyName(userId))
+          const userPhoneAux = await getKeychainValueFor(elderlyPhone(userId))
 
           if(userNameAux != '' && userPhoneAux != '') {
             setUserName(userNameAux)
             setUserPhone(userPhoneAux)
           }
         } else {
-          await save(elderlyName(userId), userName)
-          await save(elderlyPhone(userId), userPhone)
+          await saveKeychainValue(elderlyName(userId), userName)
+          await saveKeychainValue(elderlyPhone(userId), userPhone)
         }
     }
 

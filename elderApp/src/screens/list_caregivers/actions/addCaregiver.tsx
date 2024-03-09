@@ -16,6 +16,7 @@ function AddCaregiverModal({number, visibility, concludeAction}: Readonly<{numbe
 
   const addCaregiver = async (email: string) => {
     addCaregiverRequested(email)
+    console.log("AHHHHHH")
     startSessionWithCaregiver(number, email, userId, userName, userEmail, userPhone)
       .then(() => sessionRequestSent())
       .then(() => concludeAction())

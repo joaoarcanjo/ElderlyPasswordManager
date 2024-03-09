@@ -1,4 +1,5 @@
-import { getCaregivers } from "../../../database";
+
+import { getCaregivers } from "../../../database/caregivers";
 import { encryptAndSendMessage } from "../../../e2e/messages/functions";
 import { ChatMessageType, ElderlyDataBody } from "../../../e2e/messages/types";
 import { startSession } from "../../../e2e/session/functions";

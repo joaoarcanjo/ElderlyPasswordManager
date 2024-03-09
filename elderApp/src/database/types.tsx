@@ -1,14 +1,16 @@
-interface Password {
+export interface Password {
     id: string,
     password: string,
     timestamp: number
 }
 
-interface Caregiver {
+export interface Caregiver {
     id: string,
     name: string,
     email: string,
     phoneNumber: string,
 }
 
-export { Password, Caregiver }
+export interface SessionSignal {
+    record: string,
+}

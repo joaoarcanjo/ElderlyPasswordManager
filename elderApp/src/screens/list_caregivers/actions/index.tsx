@@ -9,10 +9,10 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import AddCaregiver from './addCaregiver'
 import CaregiverItem from './caregiverItem'
 import { Caregiver } from '../../../database/types'
-import { getCaregivers } from '../../../database'
 import { caregiverListUpdated } from './state'
 import { getCaregiversArray } from '../../../firebase/firestore/functionalities'
 import { useSessionInfo } from '../../../firebase/authentication/session'
+import { getCaregivers } from '../../../database/caregivers'
 
 interface CaregiverPermission {
   canRead: boolean,

@@ -1,6 +1,6 @@
 import { decrypt, encrypt } from '../../algorithms/0thers/crypto';
 import { deriveSecret } from '../../algorithms/sss/sss';
-import { getValueFor } from '../../keychain';
+import { getKeychainValueFor } from '../../keychain';
 import { firestoreSSSKey } from '../../keychain/constants';
 import { firebase } from '../FirebaseConfig';
 import { caregiversCollectionName, caregiversDocumentName, credencialsCollectionName, defaultCaregivers, defaultCredencials, defaultElderly, elderlyCollectionName, keyCollectionName, keyDocumentName, updateDataCredencial } from './constants';
@@ -11,12 +11,12 @@ const firestore = firebase.firestore()
  * Função para alterar a chave que se encontra na cloud.
  */
 async function changeKey(userId: string) {
-    const firestoreKey = await getValueFor(firestoreSSSKey(userId))
+    const firestoreKey = await getKeychainValueFor(firestoreSSSKey(userId))
     //console.log("Firestore Key: " + firestoreKey)
     firebase.firestore().collection(elderlyCollectionName)
         .doc(userId).collection(keyCollectionName).doc(keyDocumentName).set({key: firestoreKey})
         .catch((error) => {
-            console.log('Error: ', error)
+            //console.log('Error: ', error)
             throw new Error('Erro ao alterar a chave na firestore, tente novamente!')
         })
 }
@@ -65,7 +65,6 @@ async function createElderly(elderlyId: string) {
 }
 
 export async function addCaregiverToArray(elderlyId: string, caregiverId: string, permission: string): Promise<boolean> {
-    console.log("ahahahsdhahsdhasd")
     const caregiverDocRef = firebase.firestore()
         .collection(elderlyCollectionName).doc(elderlyId)
         .collection(caregiversCollectionName).doc(caregiversDocumentName)
@@ -84,7 +83,6 @@ export async function addCaregiverToArray(elderlyId: string, caregiverId: string
         const currentArray = elderlyDoc[permission] || []
         if(!currentArray.includes(caregiverId)) {
             const newArray = [...currentArray, caregiverId]
-            console.log(newArray.length)
             caregiverDocRef.update({ [permission]: newArray });
         }
         return true
@@ -236,7 +234,7 @@ async function listAllElderlyCredencials(userId: string, shared: string): Promis
         return values
     }).catch((error) => {
         alert('Erro ao obter as credenciais, tente novamente!')
-        console.log('Error: ', error.message)
+        //console.log('Error: ', error.message)
         return []
     });
 }
@@ -251,7 +249,7 @@ async function listCredencialProperties(userId: string, credencialId: string) {
     firestore.collection(elderlyCollectionName)
         .doc(userId).collection(credencialsCollectionName)
             .doc(credencialId).get().then((doc) => {
-                console.log(doc.id, " => ", doc.data());
+                //console.log(doc.id, " => ", doc.data());
         })
         .catch((error) => {
             //alert('Erro ao obter a credencial , tente novamente!')
@@ -307,7 +305,7 @@ async function initFirestore(userId: string): Promise<boolean> {
         }
         return true
     }).catch(error => {
-        console.log('Error: ', error)
+        //console.log('Error: ', error)
         throw new Error("Erro ao iniciar a firestore, tente novamente!")
     });
 }

@@ -1,4 +1,4 @@
-import { SessionBuilder, SessionCipher, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript"
+//import { SessionBuilder, SessionCipher, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript"
 import { directorySubject, signalStore, usernameSubject } from "../identity/state"
 import { ChatSession } from "./types"
 import { sessionListSubject } from "./state"
@@ -6,6 +6,7 @@ import { sendSignalProtocolMessage } from "../messages/functions"
 import { stringToArrayBuffer } from "../signal/signal-store"
 import { ChatMessageType, ProcessedChatMessage } from "../messages/types"
 import { randomUUID } from 'expo-crypto'
+import { SessionBuilder, SessionCipher, SignalProtocolAddress } from "../../algorithms/signal"
 
 /**
  * Para começar uma conversa com um destinatário.
@@ -13,7 +14,7 @@ import { randomUUID } from 'expo-crypto'
  * @param recipient 
  */
 export async function startSession(recipient: string): Promise<void> {
-    console.log("--> Start session!")
+    //console.log("--> Start session!")
     const directory = directorySubject.value!
     const keyBundle = await directory.getPreKeyBundle(recipient)
     const recipientAddress = new SignalProtocolAddress(recipient, 1)

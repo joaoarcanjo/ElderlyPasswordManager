@@ -1,5 +1,5 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, getAuth, updatePassword } from "firebase/auth"
-import { save } from "../../keychain"
+import { saveKeychainValue } from "../../keychain"
 import { elderlyEmail, elderlyPwd } from "../../keychain/constants"
 import { FIREBASE_AUTH } from "../FirebaseConfig"
 import { signinErrorResult, signupErrorResult } from "../FirebaseErrors"
@@ -8,8 +8,8 @@ const auth = getAuth();
 export async function signInOperation(email: string, pwd: string): Promise<boolean> {
     try {
         await signInWithEmailAndPassword(FIREBASE_AUTH, email, pwd)
-        save(elderlyPwd, pwd)
-        save(elderlyEmail, email)
+        saveKeychainValue(elderlyPwd, pwd)
+        saveKeychainValue(elderlyEmail, email)
         return true
     } catch (error) {
         signinErrorResult(error)
@@ -20,8 +20,8 @@ export async function signInOperation(email: string, pwd: string): Promise<boole
 export async function signUpOperation(email: string, pwd: string): Promise<boolean> {
     try {
         await createUserWithEmailAndPassword(FIREBASE_AUTH, email, pwd)
-        save(elderlyPwd, pwd)
-        save(elderlyEmail, email)
+        saveKeychainValue(elderlyPwd, pwd)
+        saveKeychainValue(elderlyEmail, email)
         return true
     } catch (error) {
         signupErrorResult(error)

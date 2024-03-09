@@ -1,4 +1,5 @@
-import { MessageType, SessionCipher, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript"
+//import { MessageType, SessionCipher, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript"
+
 import { currentSessionSubject, sessionForRemoteUser, sessionListSubject } from "../session/state"
 import { SendAcknowledgeMessage, SendWebSocketMessage } from "../network/types"
 import { signalStore, usernameSubject } from "../identity/state"
@@ -7,13 +8,14 @@ import { signalWebsocket } from "../network/webSockets"
 import { ChatSession } from "../session/types"
 import { ChatMessageType, CaregiverDataBody, ProcessedChatMessage } from "./types"
 import { randomUUID } from 'expo-crypto'
-import { checkCaregiverByEmail, deleteCaregiver, saveCaregiver, updateCaregiver } from "../../database"
 import { findCaregiverRequest, removeCaregiverRequested, setCaregiverListUpdated } from "../../screens/list_caregivers/actions/state"
 import { FlashMessage, editCompletedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionRejectedFlash } from "../../components/UserMessages"
-import { getValueFor } from "../../keychain"
+import { getKeychainValueFor } from "../../keychain"
 import { elderlyId } from "../../keychain/constants"
 import { addCaregiverToArray } from "../../firebase/firestore/functionalities"
-import { startSession } from "../session/functions"
+import { checkCaregiverByEmail, deleteCaregiver, saveCaregiver, updateCaregiver } from "../../database/caregivers"
+import { MessageType, SessionCipher, SignalProtocolAddress } from "../../algorithms/signal"
+//import { SessionCipher, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -25,12 +27,10 @@ export async function processPreKeyMessage(address: string, message: MessageType
     const cipher = new SessionCipher(signalStore, new SignalProtocolAddress(address, 1))
     const plaintextBytes = await cipher.decryptPreKeyWhisperMessage(message.body!, 'binary')
     let plaintext = String.fromCharCode(...new Uint8Array(plaintextBytes))
-
     const session : ChatSession= sessionForRemoteUser(address) || {
         remoteUsername: address,
         messages: [],
     }
-
     const sessionList = [...sessionListSubject.value]
     sessionList.unshift(session)
     sessionListSubject.next(sessionList)
@@ -69,6 +69,17 @@ function sendAcknowledgement(address: string, id: string) {
  */
 export async function processRegularMessage(address: string, message: string, type: number): Promise<void> {
     console.log('-> processRegularMessage')
+
+    const userSession = { ...sessionForRemoteUser(address)! }
+    if(!userSession.remoteUsername) {
+        const session : ChatSession= sessionForRemoteUser(address) || {
+            remoteUsername: address,
+            messages: [],
+        }
+        const sessionList = [...sessionListSubject.value]
+        sessionList.unshift(session)
+        sessionListSubject.next(sessionList)
+    }
     
     const protocolAddress = new SignalProtocolAddress(address, 1)
     const cipher = new SessionCipher(signalStore, protocolAddress)
@@ -125,8 +136,6 @@ export function sendSignalProtocolMessage(to: string, from: string, message: Mes
 export async function addMessageToSession(address: string, cm: ProcessedChatMessage, type: number, itsMine?: boolean): Promise<void> {
     console.log('-> addMessageToSession')
     const userSession = { ...sessionForRemoteUser(address)! }
-
-    console.log("AHAHAHHA")
     //Se for uma mensagem de dados do cuidador e não for uma mensagem nossa (tipo 0)
     if(cm.type === ChatMessageType.PERSONAL_DATA && !itsMine) {
         await processPersonalData(cm)
@@ -144,7 +153,6 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
     }
     
     const sessionList = sessionListSubject.value.filter((session) => session.remoteUsername !== address)
-    //console.log('Filtered session list', { sessionList })
     sessionList.unshift(userSession)
     sessionListSubject.next(sessionList)
     if (currentSessionSubject.value?.remoteUsername === address) {
@@ -155,7 +163,7 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
 async function processPersonalData(cm: ProcessedChatMessage) {
     const data = JSON.parse(cm.body) as CaregiverDataBody
 
-    const id = await getValueFor(elderlyId)
+    const id = await getKeychainValueFor(elderlyId)
 
     if (await checkCaregiverByEmail(cm.from)) {  
         await updateCaregiver(data.email, data.name, data.phone)

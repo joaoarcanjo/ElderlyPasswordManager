@@ -8,7 +8,7 @@ interface SignError extends FirebaseAuthTypes.NativeFirebaseAuthError {
 function signinErrorResult(error: any) {
     
     const firebaseError = error as SignError;
-    console.log("-> Firebase signin error code: "+firebaseError.code)
+    //console.log("-> Firebase signin error code: "+firebaseError.code)
     
     switch (firebaseError.code) {
         case 'auth/user-not-found':
@@ -35,7 +35,7 @@ function signinErrorResult(error: any) {
 function signupErrorResult(error: any) {
 
     const firebaseError = error as SignError
-    console.log("-> Firebase signup error code: "+firebaseError.code)
+    //console.log("-> Firebase signup error code: "+firebaseError.code)
 
     switch (firebaseError.code) {
         case 'auth/email-already-in-use':
