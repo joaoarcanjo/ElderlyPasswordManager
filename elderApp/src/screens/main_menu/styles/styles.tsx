@@ -20,15 +20,6 @@ const stylesFirstHalf = StyleSheet.create({
         borderRadius: 20, // Define o raio dos cantos para arredondá-los
         borderWidth: 1, // Largura da linha na margem
     },
-    caregiversContainer: {
-        width: '75%',
-        borderBottomLeftRadius: 20, // Arredonda o canto inferior esquerdo
-        borderBottomRightRadius: 20, // Arredonda o canto inferior direito
-        borderTopWidth: 0,
-        borderWidth: 1, // Largura do contorno
-        borderColor: blackBorder, // Cor do contorno
-        backgroundColor: whiteBackgroud
-    },
     caregiversButton: {
         borderRadius: 20, // Define o raio dos cantos para arredondá-los
         borderWidth: 3, // Largura da linha na margem

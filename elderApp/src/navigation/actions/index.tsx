@@ -11,7 +11,7 @@ export default function Navbar() {
 
     const goBack = () => navigation.goBack()
 
-    const goToFirstPage = () => navigation.push('Home')
+    const goToFirstPage = () => navigation.push('MainMenu')
 
     return (
         <View style={[{flex: 0.12, backgroundColor: 'red', flexDirection: 'row'}, navigationStyle.pageInfoContainer]}>

@@ -98,8 +98,7 @@ export class SignalProtocolStore implements StorageType {
     //==== Registration Ids operations
     async getLocalRegistrationId(): Promise<number | undefined> {
         console.log('===> getLocalRegistrationIdCalled')
-        const rid = await this.get('registrationId', -1)
-        return rid as number
+        return Number(await this.get('registrationId', -1))
     }
     async storeLocalRegistrationId(registrationId: number): Promise<void> {
         console.log('===> storeLocalRegistrationIdCalled')
@@ -209,9 +208,7 @@ export class SignalProtocolStore implements StorageType {
         if (identifier === null || identifier === undefined) {
             throw new Error('tried to check identity key for undefined/null key')
         }
-        const key = identityKeyK(await this.getUserId(), identifier)
-        console.log(key)
-        const trusted = await this.get(key, '')
+        const trusted = await this.get(identityKeyK(await this.getUserId(), identifier), '')
         if (trusted === undefined || trusted === '') {
             return Promise.resolve(true)
         }

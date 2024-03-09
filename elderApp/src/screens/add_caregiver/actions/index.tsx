@@ -35,7 +35,7 @@ function CreateIdentity() {
   const [url, setUrl] = useState(`http://${ipAddress}:442`);
 
   const createID = async () => {
-    await createIdentity(username)
+    //await createIdentity(username)
   };
 
   return (

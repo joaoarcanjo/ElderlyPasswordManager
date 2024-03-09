@@ -21,7 +21,7 @@ function ElderlyInfoBox() {
     const { userName } = useSessionInfo()
 
     return (
-        <View style={[{ flex: 0.6, width: '85%', flexDirection: 'row', justifyContent: 'space-around' }, stylesFirstHalf.elderContainer]}>
+        <View style={[{ flex: 0.2, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginHorizontal: '5%', marginTop: '2%' }, stylesFirstHalf.elderContainer]}>
             <View style={{flex: 0.55}}>
                 <View style={{flex: 0.50, justifyContent: 'center'}}>
                     <Text numberOfLines={1} adjustsFontSizeToFit style={{fontSize: 25, fontWeight: 'bold', marginLeft: '10%'}}>Olá,</Text>
@@ -46,7 +46,7 @@ function CaregiversButtonBox() {
     }
 
     return (
-        <View style={[{flex: 0.4}, stylesFirstHalf.caregiversContainer]}>
+        <View style={[{flex: 0.4, marginTop: '0%'}]}>
             <TouchableOpacity style={[{flex: 1, justifyContent: 'center', alignItems: 'center'}, stylesFirstHalf.caregiversButton, stylesButtons.mainConfig]} onPress={() => {GeneratorsNavigation()}}>
                 <Text style={stylesFirstHalf.caregiversButtonText}>Cuidadores</Text>
             </TouchableOpacity>
@@ -54,18 +54,12 @@ function CaregiversButtonBox() {
     )
 }
 
-function UserInfo() {
-    
-    return (
-        <View style={{ flex: 0.35, justifyContent: 'center', alignItems: 'center'}}>
-            <ElderlyInfoBox/>
-            <CaregiversButtonBox/>
-        </View>
-    );
-}
-
 function Functionalities() {
     const navigation = useNavigation<StackNavigationProp<any>>();
+
+    const CaregiversNavigation = () => {
+        navigation.push('Caregivers')
+    }
 
     const CredencialsNavigation = async () => {
         // Your code to handle the click event
@@ -92,7 +86,12 @@ function Functionalities() {
     }
 
     return (
-        <View style={{flex: 0.65, marginTop: '10%', marginBottom: '10%', justifyContent: 'center', alignItems: 'center' }}>
+        <View style={{flex: 0.80, marginTop: '0%', marginBottom: '10%', justifyContent: 'center', alignItems: 'center'}}>
+             <View style={[{flex: 0.25, marginVertical: '2%', width: '90%'}]} >
+                <TouchableOpacity style={[{flex: 1, justifyContent: 'center', alignItems: 'center'}, stylesFirstHalf.caregiversButton, stylesButtons.mainConfig]} onPress={() => {CaregiversNavigation()}}>
+                    <Text style={[stylesFirstHalf.caregiversButtonText]}>Cuidadores</Text>
+                </TouchableOpacity>
+            </View>
            <View style={{flex: 0.5, flexDirection: 'row', justifyContent: 'space-around' }}>
                 <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareCredentials, stylesButtons.mainConfig]} onPress={() => CredencialsNavigation()}>
                     <Image source={require(credentialsImage)} style={[stylesOptions.squarePhoto]}/>
@@ -149,7 +148,7 @@ export default function MainMenu() {
 
     return (
         <View style={{ flex: 1, flexDirection: 'column', marginTop: '5%'}}>
-            <UserInfo/>
+            <ElderlyInfoBox/>
             <Functionalities/>
         </View>
     );
