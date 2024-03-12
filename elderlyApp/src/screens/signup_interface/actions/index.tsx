@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { View, TextInput, Text, TouchableOpacity } from "react-native"
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { styles, actions } from "../styles/styles";
 import { whiteBackgroud } from "../../../assets/styles/colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -19,8 +21,9 @@ const SignUpPage = () => {
     const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(true)
 
+    const navigation = useNavigation<StackNavigationProp<any>>()
     const toggleShowPassword = () => {setShowPassword(!showPassword)}
-    const { setUserEmail, setUserPhone, setUserName } = useSessionInfo()
+    const { setUserEmail, setUserPhone, setUserName, userPhone, userName, userEmail } = useSessionInfo()
 
     useEffect(() => console.debug("===> Signup_Page: Component presented.\n"), [])
 
@@ -30,7 +33,7 @@ const SignUpPage = () => {
             setLoading(false)
             if(loginResult) {
                 setUserPhone(phoneNumber)
-                setUserName(name)
+                setUserName(name) 
                 setUserEmail(email)
                 //navigation.push('Home')
             }
@@ -41,7 +44,7 @@ const SignUpPage = () => {
                 <View style={[{flex: 1}, styles.container]}>
                     <View style={{flex: 0.20, alignItems: 'center', justifyContent: 'center', marginTop: '10%'}}>
                         <Text style={{fontSize: 50}}>
-                            CaregiverAPP
+                            ElderAPP
                         </Text>
                     </View>
                     <View style={{flex: 0.4}}>
@@ -79,7 +82,7 @@ const SignUpPage = () => {
                             onChangeText={setPhoneNumber}
                             />
                         </View>
-                        { loading ? <Spinner width={300} height={300}/>
+                        { loading ? <Spinner/>
                         : 
                         <><Text numberOfLines={1} adjustsFontSizeToFit style={[{ marginTop: '3%', marginLeft: '5%', justifyContent: 'center', fontSize: 20 }]}>PASSWORD</Text><View style={[{ marginTop: '3%', marginHorizontal: '4%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }, { borderRadius: 15, borderWidth: 2, backgroundColor: whiteBackgroud }]}>
                             <TextInput

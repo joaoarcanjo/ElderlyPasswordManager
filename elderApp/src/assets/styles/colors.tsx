@@ -66,8 +66,11 @@ export const desvinculateButtonBorder = darkRedBorder
 export const addCaregiverButtonBackgroud = darkGreenBackgroud
 export const addCaregiverButtonBorder = darkGreenBorder
 
-export const permissionsButtonBackground = yellowBackground
-export const permissionsButtonBorder = yellowBorder
+export const permissionsYesButtonBackground = darkGreenBackgroud
+export const permissionsYesButtonBorder = darkGreenBorder
+
+export const permissionsNoButtonBackground = darkRedBackground
+export const permissionsNoButtonBorder = darkRedBorder
 
 //SETTINGS PAGE COLORS
 

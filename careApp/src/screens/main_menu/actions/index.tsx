@@ -71,7 +71,7 @@ function Functionalities() {
         <View style={{flex: 0.80, marginBottom: '10%', justifyContent: 'center', alignItems: 'center' }}>
             <View style={[{flex: 0.25, marginVertical: '2%', width: '90%'}]} >
                 <TouchableOpacity style={[{flex: 1, justifyContent: 'center', alignItems: 'center'}, stylesFirstHalf.caregiversButton, stylesButtons.mainConfig]} onPress={ElderlyNavigation}>
-                    <Text style={[stylesFirstHalf.caregiversButtonText]}>Idosos</Text>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesFirstHalf.caregiversButtonText]}>Idosos</Text>
                 </TouchableOpacity>
             </View>
            <View style={{flex: 0.5, flexDirection: 'row', justifyContent: 'space-around' }}>
@@ -111,16 +111,14 @@ export default function MainMenu() {
         //console.log("UserId: "+userId)
         //console.log("UserPhone: "+userPhone)
         //console.log("UserName: "+userName)
-    
-        if(userPhone == '' && userName == '') {
-          const userNameAux = await getKeychainValueFor(caregiverName(userId))
-          const userPhoneAux = await getKeychainValueFor(caregiverPhone(userId))
+        
+        if(userPhone == '' || userName == '') {
+            const userNameAux = await getKeychainValueFor(caregiverName(userId))
+            const userPhoneAux = await getKeychainValueFor(caregiverPhone(userId))
 
-            if(userNameAux != '' && userPhoneAux != '') {
-                setUserName(userNameAux)
-                setUserPhone(userPhoneAux)
-            }
-            
+            if(userNameAux != '') setUserName(userNameAux)
+            if(userPhoneAux != '') setUserPhone(userPhoneAux)
+             
         } else {
           await saveKeychainValue(caregiverName(userId), userName)
           await saveKeychainValue(caregiverPhone(userId), userPhone)

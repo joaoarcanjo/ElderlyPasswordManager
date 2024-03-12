@@ -46,9 +46,9 @@ function CaregiversButtonBox() {
     }
 
     return (
-        <View style={[{flex: 0.4, marginTop: '0%'}]}>
+        <View style={[{flex: 0.4}]}>
             <TouchableOpacity style={[{flex: 1, justifyContent: 'center', alignItems: 'center'}, stylesFirstHalf.caregiversButton, stylesButtons.mainConfig]} onPress={() => {GeneratorsNavigation()}}>
-                <Text style={stylesFirstHalf.caregiversButtonText}>Cuidadores</Text>
+                <Text numberOfLines={1} adjustsFontSizeToFit style={stylesFirstHalf.caregiversButtonText}>Cuidadores</Text>
             </TouchableOpacity>
         </View>
     )

@@ -33,8 +33,17 @@ export async function createIdentity(userId: string, username: string): Promise<
         await signalStore.setUserId(userId)
     }
 
-    const registrationId = 1//KeyHelper.generateRegistrationId()
-    signalStore.storeLocalRegistrationId(registrationId)
+    let registrationId = await signalStore.getLocalRegistrationId()
+    if(registrationId === -1) {
+        registrationId = KeyHelper.generateRegistrationId()
+        await signalStore.storeLocalRegistrationId(registrationId)
+        registrationId = await signalStore.getLocalRegistrationId()
+    }
+
+    if(registrationId === undefined) {
+        throw new Error("Error generating registrationId")
+    }
+
 
     //const identityKeyPair = await KeyHelper.generateIdentityKeyPair()
     let identityKeyPair = await signalStore.getIdentityKeyPair()
@@ -70,7 +79,7 @@ export async function createIdentity(userId: string, username: string): Promise<
         keyPair: preKeyPair
     }
     signalStore.storePreKey(`${baseKeyId}`, preKey.keyPair)
-    let signedPreKeyId = await signalStore.getBaseKeyId()
+    let signedPreKeyId = await signalStore.getSignedPreKeyId()
     if(signedPreKeyId === -1) {
         const baseKeyIdAux = Math.floor(10000 * Math.random())
         await signalStore.storeSignedPreKeyId(baseKeyIdAux)
@@ -81,12 +90,13 @@ export async function createIdentity(userId: string, username: string): Promise<
         throw new Error("Error generating signedPreKeyId")
     }
     
+    console.log("signedPreKeyId: ", signedPreKeyId)
     let signedPreKeyPair = await signalStore.loadSignedPreKey(signedPreKeyId)
     let signature = await signalStore.loadSignedSignature(signedPreKeyId)
     if(signedPreKeyPair === undefined || signature === undefined) {
         const preKeyPairAux = await KeyHelper.generateSignedPreKey(identityKeyPair, signedPreKeyId)
-        await signalStore.storeSignedPreKey(`${baseKeyId}`, preKeyPairAux.keyPair)
-        await signalStore.storeSignature(`${baseKeyId}`, preKeyPairAux.signature)
+        await signalStore.storeSignedPreKey(`${signedPreKeyId}`, preKeyPairAux.keyPair)
+        await signalStore.storeSignature(`${signedPreKeyId}`, preKeyPairAux.signature)
         signedPreKeyPair = await signalStore.loadSignedPreKey(signedPreKeyId)
         signature = await signalStore.loadSignedSignature(signedPreKeyId)
 

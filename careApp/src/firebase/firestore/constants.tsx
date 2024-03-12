@@ -5,6 +5,7 @@ export const keyParameter = 'key'
 export const keyCollectionName = 'Key'
 export const keyDocumentName = 'Value'
 export const caregiversCollectionName = 'Caregivers'
+export const caregiverCollectionName = 'Caregiver'
 export const caregiversDocumentName = 'Value'
 
 export const defaultCredencials = (data: string) => ({
@@ -14,3 +15,6 @@ export const defaultCredencials = (data: string) => ({
 export const updateDataCredencial = (data: string) => ({
     data: data,
 })
+
+export const defaultCaregiver = {
+}

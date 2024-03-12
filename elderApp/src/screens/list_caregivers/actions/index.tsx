@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, TouchableOpacity, Button, ScrollView } from 'react-native'
-import { permissionButton } from '../styles/styles'
-import { stylesButtons } from '../../../assets/styles/main_style'
+import { View } from 'react-native'
 import Navbar from '../../../navigation/actions'
 import MainBox from '../../../components/MainBox'
 import { useNavigation } from '@react-navigation/native'
@@ -59,7 +57,7 @@ function CaregiversList() {
 
 
   return (
-    <View style = {{ flex: 0.85, flexDirection: 'row', marginTop: '5%', justifyContent: 'space-around'}}>
+    <View style = {{ flex: 0.85, flexDirection: 'row', marginTop: '1%', justifyContent: 'space-around'}}>
     <View style = {[{ flex: 1, marginHorizontal: '4%', marginBottom: '3%', justifyContent: 'space-around'}]}>
         
         {caregivers.map((item) => <CaregiverItem key={item.caregiver.id} name={item.caregiver.name} phone={item.caregiver.phoneNumber} email={item.caregiver.email} setRefresh={refreshValue} caregiverId={item.caregiver.id} canWrite={false} ></CaregiverItem>)}

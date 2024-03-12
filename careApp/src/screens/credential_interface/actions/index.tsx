@@ -10,17 +10,19 @@ import { getScore } from '../../../algorithms/zxcvbn/algorithm'
 import { FlashMessage, copyValue, editCanceledFlash, editCompletedFlash, editValueFlash } from '../../../components/UserMessages'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
-import { deleteCredential, updateCredential } from '../../../firebase/firestore/functionalities'
+import { deleteCredential, getKey, updateCredential } from '../../../firebase/firestore/functionalities'
 import { YesOrNoModal, YesOrNoSpinnerModal } from '../../../components/Modal'
 import Algorithm from '../../password_generator/actions/algorithm'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
+import { deriveSecret } from '../../../algorithms/sss/sss'
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
  * @returns 
  */
-function AppInfo({elderlyId, id, platform, uri, un, pw, userShared}: Readonly<{elderlyId: string, id: string, platform: string, uri: string, un: string, pw: string, userShared: string}>) {
+function AppInfo({userId, id, platform, uri, un, pw, auxKey, isElderlyCredential}: Readonly<{userId: string, id: string, platform: string, uri: string, un: string, pw: string, auxKey: string, isElderlyCredential: boolean}>) {
 
+  console.log(auxKey)
   const [username, setUsername] = useState(un)
   const [currUri, setURI] = useState(uri)
   const [password, setPassword] = useState(pw)
@@ -53,14 +55,16 @@ function AppInfo({elderlyId, id, platform, uri, un, pw, userShared}: Readonly<{e
   async function saveCredentialUpdate() {
     if(credentialsModified) {
       setLoading(true)
-      updateCredential(elderlyId, id, userShared, JSON.stringify({platform: platform, uri: uriEditted, username: usernameEdited, password: passwordEdited}))
+      const encryptionKey = isElderlyCredential ? deriveSecret([await getKey(userId), auxKey]) : auxKey
+
+      updateCredential(userId, id, encryptionKey, JSON.stringify({platform: platform, uri: uriEditted, username: usernameEdited, password: passwordEdited}), isElderlyCredential)
       .then((updated) => {
         toggleEditFlag()
         if(updated) {
           setURI(uriEditted)
           setUsername(usernameEdited)
           setPassword(passwordEdited)
-          editCompletedFlash()
+          editCompletedFlash(FlashMessage.editCredentialCompleted)
         } else {
           setUriEditted(currUri)
           setUsernameEdited(username)
@@ -87,7 +91,7 @@ function AppInfo({elderlyId, id, platform, uri, un, pw, userShared}: Readonly<{e
    */
   function cancelUpdate() {
     toggleEditFlag()
-    editCanceledFlash()
+    editCanceledFlash(FlashMessage.editCredentialCanceled)
     setUsernameEdited(username)
     setPasswordEdited(password)
   }
@@ -204,7 +208,7 @@ function AppInfo({elderlyId, id, platform, uri, un, pw, userShared}: Readonly<{e
     </View>
     <Options/>
     <YesOrNoSpinnerModal question={'Guardar as alterações?'} yesFunction={saveCredentialUpdate} noFunction={dontSaveCredentialsUpdate} visibleFlag={modalVisible} loading={loading}/>
-    {editFlag && <DeleteCredential elderlyId={elderlyId} id={id} />}
+    {editFlag && <DeleteCredential userId={userId} id={id} isElderlyCredential={isElderlyCredential} />}
     </>
   )
 }
@@ -213,13 +217,13 @@ function AppInfo({elderlyId, id, platform, uri, un, pw, userShared}: Readonly<{e
  * Componente que representa o botão para apagar a credencial
  * @returns 
  */
-function DeleteCredential({elderlyId, id}: Readonly<{elderlyId: string, id: string}>) {
+function DeleteCredential({userId, id, isElderlyCredential}: Readonly<{userId: string, id: string, isElderlyCredential: boolean}>) {
   
   const navigation = useNavigation<StackNavigationProp<any>>()
   const [modalVisible, setModalVisible] = useState(false)
 
   const deleteCredentialAction = () => {
-    deleteCredential(elderlyId, id).then(() => navigation.goBack())
+    deleteCredential(userId, id, isElderlyCredential).then(() => navigation.goBack())
   }
 
   return (
@@ -240,14 +244,14 @@ export default function CredencialPage({ route }: Readonly<{route: any}>) {
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
           <MainBox text={route.params.platform}/>
           <AppInfo 
-            elderlyId={route.params.elderlyId}
-            id={route.params.id} 
-            un={route.params.username} 
-            pw={route.params.password} 
-            platform={route.params.platform} 
-            uri={route.params.uri} 
-            userShared={route.params.userShared}
-          />
+            userId={route.params.userId}
+            id={route.params.id}
+            un={route.params.username}
+            pw={route.params.password}
+            platform={route.params.platform}
+            uri={route.params.uri}
+            auxKey={route.params.key} 
+            isElderlyCredential={route.params.isElderlyCredential}          />
         </View>
       </KeyboardAvoidingWrapper>
       <Navbar/>

@@ -28,7 +28,7 @@ const stylesFirstHalf = StyleSheet.create({
         borderColor: elderlyButtonBorder
     },
     caregiversButtonText: {
-        fontSize: 25,
+        fontSize: 30,
         fontWeight: 'bold'
     }
 })

@@ -1,7 +1,6 @@
 import { decrypt, encrypt } from '../../algorithms/0thers/crypto';
-import { deriveSecret } from '../../algorithms/sss/sss';
 import { firebase } from '../FirebaseConfig';
-import { caregiversCollectionName, caregiversDocumentName, credencialsCollectionName, defaultCredencials, elderlyCollectionName, keyCollectionName, keyDocumentName, updateDataCredencial } from './constants';
+import { caregiverCollectionName, caregiversCollectionName, caregiversDocumentName, credencialsCollectionName, defaultCaregiver, defaultCredencials, elderlyCollectionName, keyCollectionName, keyDocumentName, updateDataCredencial } from './constants';
 
 const firestore = firebase.firestore()
 
@@ -29,13 +28,13 @@ async function getKey(elderlyId: string): Promise<string> {
  * @param newCredencialId 
  * @param data 
  */
-async function addCredencial(userId: string, shared: string, newCredencialId: string, data: string) {
-    const key = deriveSecret([await getKey(userId), shared])
-    const encrypted = encrypt(data, key)
+async function addCredencial(userId: string, encryptionKey: string, newCredencialId: string, data: string, isElderlyCredentials: boolean) {
+    const encrypted = encrypt(data, encryptionKey)
     const credential = defaultCredencials(encrypted)
-    console.log(credential)
-    await firestore.collection(elderlyCollectionName)
-        .doc(userId)
+    console.log(userId)
+
+    const collection = isElderlyCredentials ? firestore.collection(elderlyCollectionName) : firestore.collection(caregiverCollectionName)
+    await collection.doc(userId)
             .collection(credencialsCollectionName)
             .doc(newCredencialId)
             .set(credential)
@@ -55,23 +54,22 @@ interface Credential {
  * Função para listar as credenciais de determinado utilizador
  * @param userId 
  */
-async function listAllElderlyCredencials(userId: string, shared: string): Promise<Credential[]> {
+export async function listAllCredentials(userId: string, encryptionKey: string, isElderlyCredentials: boolean): Promise<Credential[]> {
 
-    const cloudKey = await getKey(userId)
-    const key = deriveSecret([cloudKey, shared])
+    let collection = isElderlyCredentials? firestore.collection(elderlyCollectionName) : firestore.collection(caregiverCollectionName)
 
-    return firestore.collection(elderlyCollectionName).doc(userId).collection(credencialsCollectionName).get().then((docs: any) => {
+    return collection.doc(userId).collection(credencialsCollectionName).get().then((docs: any) => {
         const values: Credential[] = []
         docs.forEach((doc: any) => { 
             if(doc.data()) {
-                const decrypted = decrypt(doc.data().data, key)
+                const decrypted = decrypt(doc.data().data, encryptionKey)
                 values.push({'id': doc.id, 'data': decrypted}) 
             }
         });
         return values
     }).catch((error: any) => {
         alert('Erro ao obter as credenciais, tente novamente!')
-        //console.log('Error: ', error)
+        console.log('Error: ', error)
         return []
     });
 }
@@ -80,10 +78,11 @@ async function listAllElderlyCredencials(userId: string, shared: string): Promis
  * Função para apagar uma credencial específica
  * @param credentialId 
  */
-async function deleteCredential(elderlyId: string, credentialId: string): Promise<boolean> {
+async function deleteCredential(userId: string, credentialId: string, isElderlyCredential: boolean): Promise<boolean> {
 
-    return firestore.collection(elderlyCollectionName)
-        .doc(elderlyId)
+    const collection = isElderlyCredential ? firestore.collection(elderlyCollectionName) : firestore.collection(caregiverCollectionName)
+
+    return collection.doc(userId)
             .collection(credencialsCollectionName)
             .doc(credentialId)
             .delete()
@@ -94,15 +93,12 @@ async function deleteCredential(elderlyId: string, credentialId: string): Promis
         }).then(() => { return true })
 }
 
-async function updateCredential(elderlyId: string, credencialId: string, shared: string, data: string): Promise<boolean> {
-    const cloudKey = await getKey(elderlyId)
-    const key = deriveSecret([cloudKey, shared])
-    const encrypted = encrypt(data, key) 
+async function updateCredential(userId: string, credencialId: string, encryptionKey: string, data: string, isElderlyCredential: boolean): Promise<boolean> {
+    const encrypted = encrypt(data, encryptionKey) 
     
+    const collection = isElderlyCredential ? firestore.collection(elderlyCollectionName) : firestore.collection(caregiverCollectionName)
     const updatedCredencial = updateDataCredencial(encrypted)
-    console.log(updatedCredencial)
-    return firestore.collection(elderlyCollectionName)
-        .doc(elderlyId)
+    return collection.doc(userId)
             .collection(credencialsCollectionName)
             .doc(credencialId)
             .update(updatedCredencial)
@@ -136,11 +132,41 @@ export async function getCaregiversArray(elderlyId: string, permission: string) 
         return []
     });
 }
-/*
-async function initFirestore(userId: string): Promise<boolean> {
-    return elderlyExists(userId).then((result) => {
+
+async function caregiverExists(caregiverId: string): Promise<boolean> {
+    
+    return firestore.collection(caregiverCollectionName).doc(caregiverId).get()
+    .then((doc) => doc.exists)
+    .catch((error) => {
+        //alert('Erro ao verificar se o cuidador existe, tente novamente!')
+        console.error('Error: ', error)
+        return false
+    })
+}
+
+/**
+ * Função para criar a coleção default para o idoso. Esta função apenas vai ser chamada uma vez,
+ * respetivamente na criação da conta.
+ * @returns 
+ */
+async function createCaregiver(caregiverId: string) {
+    try {
+        const caregiverCollectionRef = firebase.firestore().collection(caregiverCollectionName)
+
+        //Cria na coleção o elemento do idoso.
+        const novoDocumentoRef = caregiverCollectionRef.doc(caregiverId)
+        novoDocumentoRef.set(defaultCaregiver)
+
+    } catch (error) {
+        alert('Erro ao tentar criar a conta na firebase!')
+        //console.log('Error: ', error)
+    }
+}
+
+export async function initFirestore(userId: string): Promise<boolean> {
+    return caregiverExists(userId).then((result) => {
         if (!result) { //se não existir
-            createElderly(userId)
+            createCaregiver(userId)
             //console.log('Elderly created sucessfully!!')
         }
         return true
@@ -148,6 +174,6 @@ async function initFirestore(userId: string): Promise<boolean> {
         //console.log('Error initFirestore: ', error)
         return false
     });
-}*/
+}
 
-export { deleteCredential, getKey, addCredencial, updateCredential, listAllElderlyCredencials, /*firebaseTest*/ }
+export { deleteCredential, getKey, addCredencial, updateCredential }

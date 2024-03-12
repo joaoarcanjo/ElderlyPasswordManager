@@ -69,7 +69,7 @@ function InsideLayout() {
     if (im_testing) {
       cleanKeychain(userId)
     } else {
-    initInsideLayout()
+      initInsideLayout()
     }    
   }, [])
 

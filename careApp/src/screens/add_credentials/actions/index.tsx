@@ -4,7 +4,7 @@ import { stylesButtons } from "../../../assets/styles/main_style";
 import { passwordFirstHalf, stylesAddCredential, stylesInputsCredencials } from "../styles/styles";
 import { whiteBackgroud } from "../../../assets/styles/colors";
 import Navbar from "../../../navigation/actions";
-import { addCredencial } from "../../../firebase/firestore/functionalities";
+import { addCredencial, getKey } from "../../../firebase/firestore/functionalities";
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import Algorithm from "../../password_generator/actions/algorithm";
 import { getScore } from '../../../algorithms/zxcvbn/algorithm'
@@ -13,18 +13,15 @@ import MainBox from "../../../components/MainBox";
 import AvaliationEmoji from "../../../components/EmojiAvaliation";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useSessionInfo } from "../../../firebase/authentication/session";
 import { getNewId } from "../../../algorithms/0thers/crypto";
-import { getKeychainValueFor } from "../../../keychain";
-import { elderlySSSKey } from "../../../keychain/constants";
+import { deriveSecret } from "../../../algorithms/sss/sss";
 
 const placeholderPlatform = 'Insira a plataforma'
 const placeholderURI = 'Insira o URI da plataforma'
 const placeholderUsername = 'Insira o seu username'
 const placeholderPassword = "Insira a password"
 
-function CredentialsInput({ userId, userShared }: {userId: string, userShared: string}) {
-
+function CredentialsInput({ userId, isElderlyCredential, auxKey }: {userId: string, key: string, isElderlyCredential: boolean, auxKey: string}) {
     const [platform, setPlatform] = useState('')
     const [uri, setURI] = useState('')
     const [username, setUsername] = useState('')
@@ -36,7 +33,10 @@ function CredentialsInput({ userId, userShared }: {userId: string, userShared: s
   
     const handleSave = async () => {
         if(platform != '' && uri != '' && username != '' && password != '') {
-            await addCredencial(userId, userShared, getNewId(), JSON.stringify({platform: platform, uri: uri, username: username, password: password}))
+
+            const encryptionKey = isElderlyCredential ? deriveSecret([await getKey(userId), auxKey]) : auxKey
+
+            await addCredencial(userId, encryptionKey, getNewId(), JSON.stringify({platform: platform, uri: uri, username: username, password: password}), isElderlyCredential)
             navigation.goBack()
         }
     }
@@ -117,12 +117,13 @@ function CredentialsInput({ userId, userShared }: {userId: string, userShared: s
 }
 
 function AddCredencial({ route }: Readonly<{route: any}>) {
+    console.log(route.params.key)
     return (
         <>
         <KeyboardAvoidingWrapper>
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <MainBox text="Adicionar credencial"/>
-                <CredentialsInput userId={route.params.userId} userShared={route.params.userShared}/>
+                <CredentialsInput userId={route.params.userId} key={route.params.key} isElderlyCredential={route.params.isElderlyCredential} auxKey={route.params.key} />
             </View>
         </KeyboardAvoidingWrapper>
         <Navbar/>

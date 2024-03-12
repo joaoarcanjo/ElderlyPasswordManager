@@ -13,12 +13,15 @@ import { SessionProvider, useSessionInfo } from './src/firebase/authentication/s
 import * as Notifications from "expo-notifications";
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from './src/firebase/FirebaseConfig';
-import { initKeychain } from './src/keychain';
+import { getKeychainValueFor, initKeychain } from './src/keychain';
 import SignInPage from './src/screens/signin_interface/actions';
 import SignUpPage from './src/screens/signup_interface/actions';
 import { createIdentity } from './src/e2e/identity/functions';
 import CredencialPage from './src/screens/credential_interface/actions';
 import Settings from './src/screens/settings_interface/actions';
+import Credentials from './src/screens/list_credentials/actions';
+import { initFirestore } from './src/firebase/firestore/functionalities';
+import { caregiverName } from './src/keychain/constants';
 
 const Stack = createNativeStackNavigator()
 const InsideStack = createNativeStackNavigator()
@@ -26,17 +29,20 @@ const InsideStack = createNativeStackNavigator()
 function InsideLayout() {
   const { userId, userEmail } = useSessionInfo()
 
+  const initInsideLayout = async () => {
+    await initFirestore(userId).then(() => initDb())
+    await createIdentity(userEmail)
+  }
+
   useEffect(() => {
     console.debug("#-> InsideLayout: useEffect called.")
-
-    initDb()
-    createIdentity(userEmail)
-
+    initInsideLayout()
   }, [])
 
   return (
     <InsideStack.Navigator initialRouteName="MainMenu">
       <InsideStack.Screen name="MainMenu" component={MainMenu} options={{ title: "MainMenu", headerShown: false }} />
+      <InsideStack.Screen name="Credentials" component={Credentials} options={{ title: "Credencials", headerShown: false }} />
       <InsideStack.Screen name="ElderlyList" component={ElderlyListScreen} options={{ title: "listElderly", headerShown: false }} />
       <InsideStack.Screen name="ElderlyCredentials" component={ElderlyCredentials} options={{ title: "ElderlyCredencials", headerShown: false }} />
       <InsideStack.Screen name="AddCredential" component={AddCredencial} options={{ title: "AddCredential", headerShown: false }} />

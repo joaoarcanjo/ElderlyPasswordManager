@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native'
-import { addCaregiverButtonBackgroud, addCaregiverButtonBorder, desvinculateButtonBackgroud, desvinculateButtonBorder, greyBackgroud, greyBorder, permissionsButtonBackground, permissionsButtonBorder, whiteBackgroud } from '../../../assets/styles/colors'
+import { addCaregiverButtonBackgroud, addCaregiverButtonBorder, desvinculateButtonBackgroud, desvinculateButtonBorder, greyBackgroud, greyBorder, permissionsNoButtonBackground, permissionsNoButtonBorder, permissionsYesButtonBackground, permissionsYesButtonBorder, whiteBackgroud } from '../../../assets/styles/colors'
 
 /**
  * Estilos da view para adicionar uma nova credencial
@@ -55,20 +55,10 @@ const decouplingOption = StyleSheet.create({
       borderWidth: 3
     },
     buttonText: {
+        fontWeight: 'bold',
+        fontSize: 18, 
         color: '#f5f5f5'
     }
-})
-
-const permissionButton = StyleSheet.create({
-    permissionButton: {
-        borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        backgroundColor: permissionsButtonBackground,
-        borderColor: permissionsButtonBorder
-    },
-    permissionButtonText: {
-      fontSize: 25,
-      color: 'black'
-    },
 })
 
 const caregiver = StyleSheet.create({
@@ -82,16 +72,30 @@ const caregiver = StyleSheet.create({
 })
 
 const permission = StyleSheet.create({
-    container: {
-      borderRadius: 15, // Define o raio dos cantos para arredondá-los
-      borderWidth: 2, // Largura da linha na margem
-      backgroundColor: whiteBackgroud, // Cor de fundo
-      borderColor: greyBorder
+    questionText: {
+        fontSize: 20,
+        color: 'black'
     },
-    text: {
-      fontSize: 20,
-      color: 'black'
-    }
+    yesButton: {
+        borderRadius: 9, // Define o raio dos cantos para arredondá-los
+        backgroundColor: permissionsYesButtonBackground,
+        borderColor: permissionsYesButtonBorder
+    },
+    noButton: {
+        borderRadius: 9, // Define o raio dos cantos para arredondá-los
+        backgroundColor: permissionsNoButtonBackground,
+        borderColor: permissionsNoButtonBorder
+    },
+    yesButtonText: {
+      fontSize: 25,
+      fontWeight: 'bold',
+      color: 'white'
+    },
+    nButtonText: {
+      fontSize: 25,
+      fontWeight: 'bold',
+      color: 'white'
+    },
 })
 
-export { caregiver, permission, permissionButton, stylesAddCaregiver, caregiverStyle, caregiverContactInfo, decouplingOption }
+export { caregiver, permission, stylesAddCaregiver, caregiverStyle, caregiverContactInfo, decouplingOption }

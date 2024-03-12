@@ -1,48 +1,37 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
-import { elderlyName, stylesAddCredential, styleScroolView } from '../styles/styles'
+import {View, Text, TouchableOpacity, ScrollView, Linking} from 'react-native'
+import { stylesAddCredential, styleScroolView } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import Navbar from '../../../navigation/actions'
-import { getCaregiversArray, getKey, listAllCredentials } from '../../../firebase/firestore/functionalities'
+import { listAllCredentials } from '../../../firebase/firestore/functionalities'
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import MainBox from '../../../components/MainBox'
 import { Spinner } from '../../../components/LoadingComponents'
 import { useSessionInfo } from '../../../firebase/authentication/session'
-import { getKeychainValueFor } from '../../../keychain'
-import { elderlySSSKey } from '../../../keychain/constants'
-import { deriveSecret } from '../../../algorithms/sss/sss'
 
-function AddCredencial({ elderlyId, userShared }: {elderlyId: string, userShared: string}) {
+function AddCredencial() {
 
+  const { userId, localDBKey } = useSessionInfo()
   const navigation = useNavigation<StackNavigationProp<any>>()
-  const { userId } = useSessionInfo()
 
   const navigateToAddCredential = async () => {
-    const canCreate = await getCaregiversArray(elderlyId, 'writeCaregivers').then(result => {
-      return result.includes(userId)
-    })
-
-    if(canCreate) {
-      navigation.navigate('AddCredential', { userId: elderlyId, userShared: userShared, isElderlyCredential: false })
-    } else {
-      alert('Você não tem permissão para adicionar credenciais.')
-    }
+    navigation.navigate('AddCredential', { userId: userId, key: localDBKey, isElderlyCredential: false })
   }
-
+  
   return (
     <View style= { { flex: 0.10, marginTop: '5%', flexDirection: 'row'} }>
-        <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, stylesAddCredential.addCredentialButton, stylesButtons.mainConfig]} onPress={navigateToAddCredential}>
+      <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, stylesAddCredential.addCredentialButton, stylesButtons.mainConfig]} onPress={navigateToAddCredential}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCredential.addCredentialButtonText]}>ADICIONAR CREDENCIAIS</Text>
-        </TouchableOpacity>
+      </TouchableOpacity>
     </View>
   )
 }
 
-function ScrollItemExample({credential, userShared, elderlyId}: Readonly<{credential: Credential, userShared: string, elderlyId: string}>) {
+function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
 
   const navigation = useNavigation<StackNavigationProp<any>>();
-  //const { setUsernameCopied, setPasswordCopied, usernameCopied, passwordCopied } = useSessionInfo()
+  const { setUsernameCopied, setPasswordCopied, userId, localDBKey } = useSessionInfo()
   //const { expoPushToken } = usePushNotifications()
 
   const OpenCredentialPage = () => {
@@ -51,31 +40,28 @@ function ScrollItemExample({credential, userShared, elderlyId}: Readonly<{creden
       id: credential.id, 
       platform: credential.data.platform, 
       uri: credential.data.uri, 
-      username: credential.data.username, 
+      username: credential.data.username,
       password: credential.data.password, 
-      key: userShared,
-      userId: elderlyId
+      key: localDBKey,
+      userId: userId
     })
   }
 
   const NavigateToApp = async (uri: string, plataforma: string, username: string, password: string) => { 
-    console.log("Username: "+username)
-    //setUsernameCopied(username)
-    //setPasswordCopied(password)
-    //console.log("USERNAME: "+usernameCopied)
-    //console.log("PASSWORD: "+passwordCopied)
-
+    setUsernameCopied(username)
+    setPasswordCopied(password)
+    /*
     const message = {
-      //to: expoPushToken?.data,
+      to: expoPushToken?.data,
       sound: "default",
       title: "Credenciais " + plataforma,
       body: "Copie em seguida o que necessita:",
       data: {},
       categoryId: `credentials`
-    }
+    }*/
     
     //sendPushNotification(message)
-    //Linking.openURL('https://'+uri)
+    Linking.openURL('https://'+uri)
   }
 
   return (
@@ -85,10 +71,10 @@ function ScrollItemExample({credential, userShared, elderlyId}: Readonly<{creden
         <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 30, fontWeight: 'bold' }]}>{credential.data.platform}</Text>
       </View>
 
-      <View style={{flex: 0.65, marginHorizontal: '3%', marginBottom: '3%', flexDirection: 'row'}}> 
+      <View style={{flex: 0.65, marginHorizontal: '3%', marginBottom: '3%', flexDirection: 'row'}}>
         <View style={{flex: 1, marginHorizontal: '3%', flexDirection: 'row'}}>
-          <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.itemMoreInfoButton, stylesButtons.mainConfig]} onPress={() => {OpenCredentialPage()}}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Detalhes</Text>
+          <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.itemMoreInfoButton, stylesButtons.mainConfig]} onPress={OpenCredentialPage}>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Editar</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.navigateButton, stylesButtons.mainConfig]} onPress={() => {NavigateToApp(credential.data.uri, credential.data.platform, credential.data.username, credential.data.password)}}>
             <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Navegar</Text>
@@ -109,16 +95,16 @@ interface Credential {
   }
 }
 
-function ElderlyCredentialsList({ elderlyId, userShared }: {elderlyId: string, userShared: string}) {
+function CredentialsList() {
 
   const [credencials, setCredencials] = useState<Credential[]>([])
   const isFocused = useIsFocused()
+  const { userId, localDBKey } = useSessionInfo()
+
   const [isFething, setIsFething] = useState(true)
 
   const fetchCredencials = async () => {
-    const encryptionKey = deriveSecret([await getKey(elderlyId), userShared])
-
-    listAllCredentials(elderlyId, encryptionKey, true).then((credencials) => {
+    listAllCredentials(userId, localDBKey, false).then((credencials) => {
       let auxCredencials: Credential[] = [];
       credencials.forEach(value => {
         if(value.data.length != 0) {
@@ -131,33 +117,30 @@ function ElderlyCredentialsList({ elderlyId, userShared }: {elderlyId: string, u
 
   useEffect(() => {
     setIsFething(true)
-    fetchCredencials().then(() => setIsFething(false))
+    fetchCredencials()
+    .then(() => setIsFething(false))
   }, [isFocused])
 
   return (
-    <View style={{ flex: 0.60, flexDirection: 'row', justifyContent: 'space-around'}}>
+    <View style={{ flex: 0.70, flexDirection: 'row', justifyContent: 'space-around'}}>
       <View style={[{ flex: 1, flexDirection: 'row', marginTop:'5%', marginHorizontal: '4%', justifyContent: 'space-around'}, styleScroolView.credencialsContainer]}>
         {isFething ?
         <Spinner width={300} height={300}/> :
         <ScrollView style={[{margin: '3%'}]}>
-          {credencials.map((value, index) => <ScrollItemExample key={index} credential={value} userShared={userShared} elderlyId={elderlyId}/>)}
+          {credencials.map((value: Credential) => <ScrollItemExample key={value.id} credential={value}/>)}
         </ScrollView>}
       </View>
     </View>
   )
 }
 
-export default function ElderlyCredentials({ route }: Readonly<{route: any}>) {
-
+export default function Credentials() {
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
       <MainBox text={'Credenciais'}/>
-      <View style={[{flex: 0.1, justifyContent: 'center', alignItems: 'center'}, elderlyName.container]}>
-          <Text style={elderlyName.text}>{route.params.elderlyName}</Text>
-      </View>
-      <AddCredencial elderlyId={route.params.elderlyId} userShared={route.params.userShared}/>
-      <ElderlyCredentialsList elderlyId={route.params.elderlyId} userShared={route.params.userShared}/>
-      <Navbar/> 
+      <AddCredencial/>
+      <CredentialsList/>
+      <Navbar/>
     </View>
   )
 }
