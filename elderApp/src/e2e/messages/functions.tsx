@@ -149,7 +149,7 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
         sessionEndedFlash(cm.from)
         
     } else if(type !== 3 && !cm.firstMessage) {
-        userSession.messages.push(cm)
+        //userSession.messages.push(cm)
     }
     
     const sessionList = sessionListSubject.value.filter((session) => session.remoteUsername !== address)

@@ -1,4 +1,5 @@
 import { db } from ".";
+import { decrypt, encrypt } from "../algorithms/0thers/crypto";
 import { SessionSignal } from "./types";
 
   /**
@@ -7,8 +8,10 @@ import { SessionSignal } from "./types";
  * @param email 
  * @param phoneNumber 
  */
-  export const saveSignalSessions = async (userId: string, otherId: string, record: string) => {
+  export const saveSignalSessions = async (userId: string, otherId: string, record: string, localDBKey: string) => {
 
+    const encrypted = encrypt(record, localDBKey)
+    
     if(db != null) {
         return db.transaction(async tx => {
             tx.executeSql(
@@ -19,7 +22,7 @@ import { SessionSignal } from "./types";
                         // Row with given id and userId exists, perform UPDATE
                         tx.executeSql(
                             'UPDATE sessionsSignal SET record = ? WHERE id = ? AND userId = ?',
-                            [record, otherId, userId],
+                            [encrypted, otherId, userId],
                             () => {
                                 //console.log('- Sessão atualizada com sucesso.')
                                 return Promise.resolve();
@@ -33,7 +36,7 @@ import { SessionSignal } from "./types";
                         // No row with given id and userId exists, perform INSERT
                         tx.executeSql(
                             'INSERT INTO sessionsSignal (id, userId, record) VALUES (?,?,?)',
-                            [otherId, userId, record],
+                            [otherId, userId, encrypted],
                             () => {
                                 //console.log('- Sessão salva com sucesso.')
                                 return Promise.resolve();
@@ -61,7 +64,7 @@ import { SessionSignal } from "./types";
  * @param id 
  * @returns 
  */
-export const getSessionById = async (otherId: string, userId: string): Promise<SessionSignal | undefined> => {
+export const getSessionById = async (otherId: string, userId: string, localDBKey: string): Promise<SessionSignal | undefined> => {
     console.log("===> getSessionByIdCalled")
     return new Promise((resolve, reject) => {
         if(db != null) {
@@ -72,7 +75,7 @@ export const getSessionById = async (otherId: string, userId: string): Promise<S
                     (_, result) => {
                         if (result.rows.length > 0) {
                             resolve({
-                                record: result.rows.item(0).record
+                                record: decrypt(result.rows.item(0).record, localDBKey),
                             })
                         } else {
                             resolve(undefined)

@@ -1,7 +1,6 @@
 import * as SQLite from 'expo-sqlite'
 import * as Crypto from 'expo-crypto'
 import { Elderly, Password } from './types';
-import { decrypt, encrypt } from '../algorithms/0thers/crypto';
 
 export let db: SQLite.SQLiteDatabase | null = null;
 

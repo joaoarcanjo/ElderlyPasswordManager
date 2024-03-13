@@ -10,7 +10,7 @@ import {
 
 import { deleteAllSessions, deleteSessionById, getSessionById, saveSignalSessions } from "../../database/signalSessions"
 import { deleteKeychainValueFor, getKeychainValueFor, saveKeychainValue } from "../../keychain"
-import { baseKeyIdK, elderlyId, identityIdPrivKey, identityIdPubKey, identityKeyK, keySignedPriv25519, keySignedPub25519, keypreKeyPriv25519, keypreKeyPub25519, signedKeySignature25519, signedPreKeyId } from "../../keychain/constants"
+import { baseKeyIdK, elderlyId, identityIdPrivKey, identityIdPubKey, identityKeyK, keySignedPriv25519, keySignedPub25519, keypreKeyPriv25519, keypreKeyPub25519, localDBKey, signedKeySignature25519, signedPreKeyId } from "../../keychain/constants"
 
 // Type guards
 export function isKeyPairType(kp: any): kp is KeyPairType {
@@ -40,10 +40,12 @@ type StoreValue =  string | number | ArrayBuffer
 export class SignalProtocolStore implements StorageType {
     private _store: Record<string, StoreValue>
     private _userId: string
+    private _dbKey: string
 
     constructor() {
         this._store = {}
         this._userId = ''
+        this._dbKey = ''
     }
 
     //===============
@@ -92,6 +94,17 @@ export class SignalProtocolStore implements StorageType {
 
     async setUserId(userId: string): Promise<void> {
         this._userId = userId
+    }
+
+    async getDBKey(): Promise<string> {
+        if (this._dbKey === '') {
+            await this.setDBKey(await getKeychainValueFor(localDBKey(await this.getUserId()))) 
+        }
+        return this._dbKey
+    }
+
+    async setDBKey(dbKey: string): Promise<void> {
+        this._dbKey = dbKey
     }
 
     //================================
@@ -279,7 +292,7 @@ export class SignalProtocolStore implements StorageType {
     //==-> obter do sql.
     async loadSession(identifier: string): Promise<SessionRecordType | undefined> {
         console.log("===> LoadSessionCalled")
-        const rec = await getSessionById('session' + identifier, await this.getUserId())
+        const rec = await getSessionById('session' + identifier, await this.getUserId(), await this.getDBKey())
         if (typeof rec === 'object') {
             return rec.record as string
         } else if (typeof rec === 'undefined') {
@@ -289,7 +302,7 @@ export class SignalProtocolStore implements StorageType {
     }
     async storeSession(identifier: string, record: SessionRecordType): Promise<void> {
         console.log("===> StoreSessionCalled")
-        await saveSignalSessions(await this.getUserId(), 'session' + identifier, record)
+        await saveSignalSessions(await this.getUserId(), 'session' + identifier, record, await this.getDBKey())
     }
     async removeSession(identifier: string): Promise<void> {
         console.log("===> RemoveSessionCalled")
