@@ -19,7 +19,7 @@ export function initDb() {
 
     dbSQL.transaction(tx => {
         tx.executeSql(
-            'CREATE TABLE IF NOT EXISTS caregivers (id TEXT, name TEXT, email TEXT PRIMARY KEY, phoneNumber TEXT, UNIQUE(email, phoneNumber));'
+            'CREATE TABLE IF NOT EXISTS caregivers (id TEXT, name TEXT, email TEXT PRIMARY KEY, phoneNumber TEXT, accepted INTEGER DEFAULT 0, UNIQUE(email, phoneNumber));'
         )
     })
 

@@ -7,18 +7,19 @@ import { Caregiver } from "./types";
  * @param email 
  * @param phoneNumber 
  */
-  export const saveCaregiver = async (id: string, name: string, email: string, phoneNumber: string) => {
+  export const saveCaregiver = async (id: string, name: string, email: string, phoneNumber: string, accepted: number): Promise<boolean> => {
     if(dbSQL != null) {
         dbSQL.transaction(tx => {
             tx.executeSql(
-                'INSERT INTO caregivers (id, name, email, phoneNumber) VALUES (?,?,?,?)',
-                [id, name, email, phoneNumber],
+                'INSERT INTO caregivers (id, name, email, phoneNumber, accepted) VALUES (?,?,?,?,?)',
+                [id, name, email, phoneNumber, accepted],
                 (_, result) => {
                     return Promise.resolve(result.rowsAffected > 0)
                 }
             );
         });
     }
+    return Promise.resolve(false)
 }
 
 export const updateCaregiver = async (email: string, newName: string, newPhoneNumber: string) => {
@@ -26,8 +27,8 @@ export const updateCaregiver = async (email: string, newName: string, newPhoneNu
     if (dbSQL != null) {
         dbSQL.transaction(tx => {
             tx.executeSql(
-                'UPDATE caregivers SET name = ?, phoneNumber = ? WHERE email = ?',
-                [newName, newPhoneNumber, email],
+                'UPDATE caregivers SET name = ?, phoneNumber = ?, accepted = ? WHERE email = ?',
+                [newName, newPhoneNumber, 1, email],
                 (_, result) => {
                       // Verifique se houve alguma linha afetada para confirmar se a atualização foi bem-sucedida.
                     if (result.rowsAffected > 0) {
@@ -64,7 +65,26 @@ export const checkCaregiverByEmail = async (email: string): Promise<boolean> => 
         if (dbSQL != null) {
             dbSQL.transaction(tx => {
                 tx.executeSql(
-                    'SELECT COUNT(*) AS count FROM caregivers WHERE email = ?',
+                    'SELECT COUNT(*) AS count FROM caregivers WHERE email = ? AND accepted = 1',
+                    [email],
+                    (_, result) => {
+                        const count = result.rows.item(0).count;
+                        resolve(count > 0); 
+                    }
+                );
+            });
+        } else {
+            reject(new Error('Database not initialized.')); 
+        }
+    })
+}
+
+export const checkCaregiverByEmailNotAccepted = async (email: string): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+        if (dbSQL != null) {
+            dbSQL.transaction(tx => {
+                tx.executeSql(
+                    'SELECT COUNT(*) AS count FROM caregivers WHERE email = ? AND accepted = 0',
                     [email],
                     (_, result) => {
                         const count = result.rows.item(0).count;
@@ -80,7 +100,7 @@ export const checkCaregiverByEmail = async (email: string): Promise<boolean> => 
 
 export const getCaregivers = (): Promise<Caregiver[]> => {
     return new Promise(async (resolve, reject) => {
-        const sql = 'SELECT id, name, email, phoneNumber FROM caregivers LIMIT 2';
+        const sql = 'SELECT id, name, email, phoneNumber, accepted FROM caregivers LIMIT 2';
 
         const data: Caregiver[] = [];
         try {
@@ -94,7 +114,8 @@ export const getCaregivers = (): Promise<Caregiver[]> => {
                             id         : results.rows.item(i).id,
                             name       : results.rows.item(i).name,
                             email      : results.rows.item(i).email,
-                            phoneNumber: results.rows.item(i).phoneNumber
+                            phoneNumber: results.rows.item(i).phoneNumber,
+                            accepted   : results.rows.item(i).accepted
                         });
                     }
                     resolve(data)

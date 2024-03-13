@@ -29,6 +29,12 @@ export function initDb() {
             'CREATE TABLE IF NOT EXISTS elderly (id TEXT, name TEXT, email TEXT PRIMARY KEY, phoneNumber TEXT, accepted INTEGER DEFAULT 0, UNIQUE(email, phoneNumber));'
         )
     })
+
+    db.transaction(tx => {
+        tx.executeSql(
+            'CREATE TABLE IF NOT EXISTS sessionsSignal (id TEXT, userId TEXT, record TEXT, PRIMARY KEY (id, userId));'
+        )
+    })
 }
 
 export const saveElderly = async (id: string, name: string, email: string, phoneNumber: string) => {

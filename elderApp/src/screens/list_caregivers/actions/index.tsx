@@ -26,11 +26,13 @@ async function getCaregiversPermissions(userId: string): Promise<CaregiverPermis
   let caregiversPermissions: CaregiverPermission[] = []
 
   caregivers.forEach((caregiver) => {
-    caregiversPermissions.push({
-      canRead: readCaregivers.includes(caregiver.id),
-      canWrite: writeCaregivers.includes(caregiver.id),
-      caregiver
-    })
+    if(caregiver.accepted === 1) {
+      caregiversPermissions.push({
+        canRead: readCaregivers.includes(caregiver.id),
+        canWrite: writeCaregivers.includes(caregiver.id),
+        caregiver
+      })
+    }
   })
   return caregiversPermissions
 }
@@ -38,12 +40,7 @@ async function getCaregiversPermissions(userId: string): Promise<CaregiverPermis
 function CaregiversList() {
 
   const [caregivers, setCaregivers] = useState<CaregiverPermission[]>([])
-  const navigation = useNavigation<StackNavigationProp<any>>()
   const { userId } = useSessionInfo()
-  
-  const permissions = () => {
-    navigation.navigate('Permissions')
-  }
 
   const refreshValue = async () => {
     const caregiversPermissions = await getCaregiversPermissions(userId)

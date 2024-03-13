@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 
-var ip = require("ip");
+let ip = require("ip");
 
 // Create a WebSocket server instance
 const wss = new webSocket.Server({ port: 442 })
@@ -64,18 +64,17 @@ wss.on('connection', function connection(ws) {
                 const socket = clientSockets.get(to)
 
                 if(!socket) {
-                    console.log('Client not active!')
                     const list = clientMessagesWaiting.get(to)
-
                     if(!list) {
                         clientMessagesWaiting.set(to, [messageObj])
                     } else {
                         list.push(messageObj)
                     }
+                    console.log('=> Message added to waiting list for ', to)
 
                 } else {
-                    console.log("Client active!")
-                    clientSockets.get(to).send(JSON.stringify(messageObj))
+                    console.log('=> Message sent to ', to)
+                    socket.send(JSON.stringify(messageObj))
                 }
 
                 break;
@@ -84,7 +83,21 @@ wss.on('connection', function connection(ws) {
                 console.log(`Client ${messageObj.from} sent an acknowledgement!`)
                 const to = messageObj.address
 
-                clientSockets.get(to).send(JSON.stringify(messageObj))
+                const socket = clientSockets.get(to)
+
+                if(!socket) {
+                    const list = clientMessagesWaiting.get(to)
+                    if(!list) {
+                        clientMessagesWaiting.set(to, [messageObj])
+                    } else {
+                        list.push(messageObj)
+                    }
+                    console.log('=> Message added to waiting list for ', to)
+
+                } else {
+                    console.log('=> Message sent to ', to)
+                    socket.send(JSON.stringify(messageObj))
+                }
                 break;
             }
         }
@@ -97,7 +110,7 @@ wss.on('connection', function connection(ws) {
         
         clientSocketsInverse.delete(ws)
         clientSockets.delete(username)
-        clientBundles.delete(username)
+        //clientBundles.delete(username)
     })
 })
 

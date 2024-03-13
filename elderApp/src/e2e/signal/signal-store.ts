@@ -181,7 +181,6 @@ export class SignalProtocolStore implements StorageType {
         await this.put(identityIdPubKey(await this.getUserId()), ArrayBufferToHex(keyPair.pubKey))
         await this.put(identityIdPrivKey(await this.getUserId()), ArrayBufferToHex(keyPair.privKey))
     }
-
     async loadIdentityKey(identifier: string): Promise<ArrayBuffer | undefined> {
         console.log("===> loadIdentityKeyCalled")
         if (identifier === null || identifier === undefined) {

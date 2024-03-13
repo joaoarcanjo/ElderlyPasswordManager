@@ -8,12 +8,12 @@ import { signalWebsocket } from "../network/webSockets"
 import { ChatSession } from "../session/types"
 import { ChatMessageType, CaregiverDataBody, ProcessedChatMessage } from "./types"
 import { randomUUID } from 'expo-crypto'
-import { findCaregiverRequest, removeCaregiverRequested, setCaregiverListUpdated } from "../../screens/list_caregivers/actions/state"
+import { setCaregiverListUpdated } from "../../screens/list_caregivers/actions/state"
 import { FlashMessage, editCompletedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionRejectedFlash } from "../../components/UserMessages"
 import { getKeychainValueFor } from "../../keychain"
 import { elderlyId } from "../../keychain/constants"
 import { addCaregiverToArray } from "../../firebase/firestore/functionalities"
-import { checkCaregiverByEmail, deleteCaregiver, saveCaregiver, updateCaregiver } from "../../database/caregivers"
+import { checkCaregiverByEmail, checkCaregiverByEmailNotAccepted, deleteCaregiver, updateCaregiver } from "../../database/caregivers"
 import { MessageType, SessionCipher, SignalProtocolAddress } from "../../algorithms/signal"
 //import { SessionCipher, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript"
 
@@ -169,11 +169,10 @@ async function processPersonalData(cm: ProcessedChatMessage) {
         await updateCaregiver(data.email, data.name, data.phone)
         setCaregiverListUpdated()
         editCompletedFlash(FlashMessage.caregiverPersonalInfoUpdated)
-    } else if(findCaregiverRequest(cm.from)) {
-        await saveCaregiver(data.userId, data.name, data.email, data.phone)
+    } else if(await checkCaregiverByEmailNotAccepted(cm.from)) {
+        await updateCaregiver(data.email, data.name, data.phone)
         .then(() => addCaregiverToArray(id, data.userId, "readCaregivers"))
         .then(() => sessionAcceptedFlash(cm.from))
-        .then(() => removeCaregiverRequested(cm.from))
         .then(() => setCaregiverListUpdated())
     }
 }

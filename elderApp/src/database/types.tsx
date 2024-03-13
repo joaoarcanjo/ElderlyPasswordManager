@@ -9,6 +9,7 @@ export interface Caregiver {
     name: string,
     email: string,
     phoneNumber: string,
+    accepted: number
 }
 
 export interface SessionSignal {

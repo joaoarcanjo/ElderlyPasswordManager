@@ -6,8 +6,8 @@ import { ModalBox } from "../../../components/Modal"
 import { modal, options } from "../../credential_interface/styles/styles"
 import { startSessionWithCaregiver } from "./functions"
 import { useSessionInfo } from "../../../firebase/authentication/session"
-import { addCaregiverRequested } from "./state"
 import { sessionRequestSent } from "../../../components/UserMessages"
+import { saveCaregiver } from "../../../database/caregivers"
 
 function AddCaregiverModal({number, visibility, concludeAction}: Readonly<{number: number, visibility: boolean, concludeAction: Function}>) {
 
@@ -15,8 +15,8 @@ function AddCaregiverModal({number, visibility, concludeAction}: Readonly<{numbe
   const { userId, userEmail, userName, userPhone } = useSessionInfo()
 
   const addCaregiver = async (email: string) => {
-    addCaregiverRequested(email)
-    console.log("AHHHHHH")
+    const result = await saveCaregiver('0', '0', email, '0', 0)
+    if(!result) console.log("Not added.")
     startSessionWithCaregiver(number, email, userId, userName, userEmail, userPhone)
       .then(() => sessionRequestSent())
       .then(() => concludeAction())

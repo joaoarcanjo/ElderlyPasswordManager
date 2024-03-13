@@ -9,11 +9,13 @@ import { generateKey } from '../algorithms/0thers/crypto';
  * @param value 
  */
 export async function saveKeychainValue(key: string, value: string) {
-  let savedValue = ''
+  let auxKey = key
+  if(key.indexOf('@') > -1) {
+    auxKey = key.replace('@', '_')
+  }
   do {
-    await setItemAsync(key, value)
-    savedValue = (await getKeychainValueFor(key)).trim()
-  } while(savedValue !== value)
+    await setItemAsync(auxKey, value)
+  } while(value != '' && await getKeychainValueFor(auxKey) == '')
 }
 
 /**
@@ -22,7 +24,11 @@ export async function saveKeychainValue(key: string, value: string) {
  * @param key 
  */
 export async function getKeychainValueFor(key: string): Promise<string> {
-  return await getItemAsync(key).then((result) => result ?? '')
+  let auxKey = key
+  if(key.indexOf('@') > -1) {
+    auxKey = key.replace('@', '_')
+  }
+  return await getItemAsync(auxKey).then((result) => result ?? '')
 }
 
 /**

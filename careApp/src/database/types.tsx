@@ -1,10 +1,10 @@
-interface Password {
+export interface Password {
     id: string,
     password: string,
     timestamp: number
 }
 
-interface Elderly {
+export interface Elderly {
     userId: string,
     name: string,
     email: string,
@@ -12,4 +12,6 @@ interface Elderly {
     accepted: number
 }
 
-export { Password, Elderly }
+export interface SessionSignal {
+    record: string,
+}

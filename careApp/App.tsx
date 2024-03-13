@@ -31,7 +31,7 @@ function InsideLayout() {
 
   const initInsideLayout = async () => {
     await initFirestore(userId).then(() => initDb())
-    await createIdentity(userEmail)
+    await createIdentity(userId, userEmail)
   }
 
   useEffect(() => {
