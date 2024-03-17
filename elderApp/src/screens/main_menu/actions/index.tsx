@@ -1,12 +1,13 @@
 import {View, Text, Image, TouchableOpacity} from 'react-native'
 import { stylesOptions, stylesFirstHalf } from '../styles/styles'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import type { StackNavigationProp } from '@react-navigation/stack';
 import { stylesButtons } from '../../../assets/styles/main_style';
 import { useSessionInfo } from '../../../firebase/authentication/session';
 import { getKeychainValueFor, saveKeychainValue } from '../../../keychain';
 import { elderlyName, elderlyPhone } from '../../../keychain/constants';
+import { createIdentity } from '../../../e2e/identity/functions';
 
 const credentialsImage = '../images/credenciais.png'
 const generatorImage = '../images/gerador.png'
@@ -121,9 +122,14 @@ function Functionalities() {
  */
 export default function MainMenu() {
 
-    const { userId, setUserName, setUserPhone, userPhone, userName } = useSessionInfo()
+    const { userId, setUserName, setUserPhone, userPhone, userName, userEmail } = useSessionInfo()
     //const { expoPushToken } = usePushNotifications()
 
+    useEffect(() => {
+        savePhoneAndName()
+        identityCreation()
+    })
+    
     const savePhoneAndName = async () => {
         if(userPhone == '' && userName == '' && userId != '') {
             const userNameAux = await getKeychainValueFor(elderlyName(userId))
@@ -137,6 +143,10 @@ export default function MainMenu() {
             await saveKeychainValue(elderlyName(userId), userName)
             await saveKeychainValue(elderlyPhone(userId), userPhone)
         }
+    }
+    
+    const identityCreation = async () => {
+        await createIdentity(userId, userEmail)
     }
 
     savePhoneAndName()

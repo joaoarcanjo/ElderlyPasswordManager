@@ -17,14 +17,10 @@ function ElderlyList() {
   const { userId } = useSessionInfo()
 
   useEffect(() => {
-    elderlyListUpdated.subscribe(() => {
-        getAllElderly(userId).then(value => {
-          setElderlyList(value)
-        })
-    })
+    elderlyListUpdated.subscribe(() => { refreshValue() })
   }, [elderlyListUpdated])
 
-  const refreshValue = () => {
+  const refreshValue = () => { 
     getAllElderly(userId).then(value => setElderlyList(value))
   }
 

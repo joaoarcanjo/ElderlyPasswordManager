@@ -1,5 +1,5 @@
 import {View, Text, Image, TouchableOpacity} from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { stylesOptions, stylesFirstHalf } from '../styles/sytles'
@@ -7,6 +7,7 @@ import { stylesButtons } from '../../../assets/styles/main_style'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { getKeychainValueFor, saveKeychainValue } from '../../../keychain'
 import { caregiverName, caregiverPhone } from '../../../keychain/constants'
+import { createIdentity } from '../../../e2e/identity/functions'
 
 const credentialsImage = '../images/credenciais.png'
 const generatorImage = '../images/gerador.png'
@@ -100,8 +101,13 @@ function Functionalities() {
  */
 export default function MainMenu() {
 
-    const { userId, setUserName, setUserPhone, userPhone, userName } = useSessionInfo()
+    const { userId, setUserName, setUserPhone, userPhone, userName, userEmail } = useSessionInfo()
     //const { expoPushToken } = usePushNotifications()
+
+    useEffect(() => {
+        savePhoneAndName()
+        identityCreation()
+    })
 
     const savePhoneAndName = async () => {
         if(userPhone == '' && userName == '' && userId != '') {
@@ -116,8 +122,12 @@ export default function MainMenu() {
           await saveKeychainValue(caregiverPhone(userId), userPhone)
         }
     }
-
-    savePhoneAndName()
+    
+    const identityCreation = async () => {
+        if(userPhone == '' && userName == '' && userId != '') {
+            await createIdentity(userId, userEmail)
+        }
+    }
 
     return (
         <View style={{ flex: 1, flexDirection: 'column', marginTop: '5%'}}>

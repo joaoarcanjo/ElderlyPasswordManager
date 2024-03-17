@@ -12,6 +12,7 @@ import { Spinner } from "../../../components/LoadingComponents";
 import { useSessionInfo } from "../../../firebase/authentication/session";
 import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
 import { getKeychainValueFor } from "../../../keychain";
+import { createIdentity } from "../../../e2e/identity/functions";
 
 const SignInPage = () => {
 
@@ -57,10 +58,9 @@ const SignInPage = () => {
     const signIn = async () => {
         setLoading(true)
 
-        signInOperation(email, password).then((loginResult) => {
+        signInOperation(email, password).then(async (loginResult) => {
             setLoading(false)
             if(loginResult) {
-                setUserId('')
                 navigation.push('InsideLayout')
             } 
         })

@@ -15,6 +15,8 @@ import { updatePasswordOperation } from '../../../firebase/authentication/funcio
 import { getKeychainValueFor, saveKeychainValue } from '../../../keychain'
 import { caregiverId, caregiverName, caregiverPhone, caregiverPwd } from '../../../keychain/constants'
 import { sendElderlyNewInfo } from './functions'
+import { closeWebsocket } from '../../../e2e/network/webSockets'
+import { usernameSubject } from '../../../e2e/identity/state'
 
 const gitHubUrl = 'https://github.com/joaoarcanjo/ThesisApps'
 
@@ -232,6 +234,8 @@ function Logout() {
     setUserPhone('')
     saveKeychainValue(caregiverPwd, '')
     saveKeychainValue(caregiverId, '')
+    closeWebsocket()
+    usernameSubject.next('')
     FIREBASE_AUTH.signOut()
   }
 

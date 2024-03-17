@@ -144,6 +144,7 @@ export const deleteElderly = async (userId: string, elderlyEmail: string): Promi
  * @returns 
  */
 export const checkElderlyByEmailWaitingForResponse = async (userId: string, email: string): Promise<boolean> => {
+    console.log("===> checkElderlyByEmailWaitingForResponseCalled")
     return new Promise((resolve, reject) => {
         if (dbSQL != null) {
             dbSQL.transaction(tx => {
@@ -154,8 +155,9 @@ export const checkElderlyByEmailWaitingForResponse = async (userId: string, emai
                         const count = result.rows.item(0).count
                         return resolve(count > 0);
                     },
-                    (_, _error) => {
-                     return false
+                    (_, error) => {
+                        console.log(error)
+                        return false
                     }
                 )
             })
@@ -172,7 +174,6 @@ export const checkElderlyByEmailWaitingForResponse = async (userId: string, emai
  */
 export const getAllElderly = (userId: string): Promise<Elderly[]> => {
     return new Promise((resolve, reject) => {
-        const sql = '';
 
         const data: Elderly[] = [];
         try {
@@ -190,7 +191,7 @@ export const getAllElderly = (userId: string): Promise<Elderly[]> => {
                                 status: results.rows.item(i).status
                             });
                         }
-                        resolve(data)
+                        return resolve(data)
                     },
                     (_, _error) => {
                         return false
