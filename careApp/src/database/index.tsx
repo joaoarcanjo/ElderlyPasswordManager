@@ -7,12 +7,12 @@ export function initDb() {
     
     //Os cuidadores também vão guardar as suas passwords
     dbSQL.transaction(tx => {
-        /*tx.executeSql(
+        tx.executeSql(
             'DROP TABLE IF EXISTS passwords;'
         )
         tx.executeSql(
             'DROP TABLE IF EXISTS elderly;'
-        )*/
+        )
     })
 
     dbSQL.transaction(tx => {

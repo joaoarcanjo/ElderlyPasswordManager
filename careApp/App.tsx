@@ -55,9 +55,10 @@ function Inicialization() {
       if(userId) {
         setUser(user)
       }else if(userEmail && user.uid) {
+        console.log("UserLogin: " + user.uid)
         await initKeychain(user.uid, user.email)
         .then((DBKey) => setLocalDBKey(DBKey))
-        .then(() => {setUserId(user.uid); setUserEmail(userEmail); setUser(user)})
+        .then(() => { setUserId(user.uid); setUserEmail(userEmail); setUser(user)})
         .then(() => initFirestore(user.uid))
         .then(() => initDb())
         .then(()=> createIdentity(user.uid, userEmail))        
@@ -65,7 +66,7 @@ function Inicialization() {
 
       let { status } = await Notifications.requestPermissionsAsync()
       if (status !== 'granted') {
-        console.log('Permission to access location was denied')
+        //TODO: do an alert
       }
     })
   }, [user])

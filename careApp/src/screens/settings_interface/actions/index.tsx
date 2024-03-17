@@ -13,7 +13,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 import Algorithm from '../../password_generator/actions/algorithm'
 import { updatePasswordOperation } from '../../../firebase/authentication/funcionalities'
 import { getKeychainValueFor, saveKeychainValue } from '../../../keychain'
-import { caregiverName, caregiverPhone, caregiverPwd } from '../../../keychain/constants'
+import { caregiverId, caregiverName, caregiverPhone, caregiverPwd } from '../../../keychain/constants'
 import { sendElderlyNewInfo } from './functions'
 
 const gitHubUrl = 'https://github.com/joaoarcanjo/ThesisApps'
@@ -231,7 +231,7 @@ function Logout() {
     setUserName('')
     setUserPhone('')
     saveKeychainValue(caregiverPwd, '')
-
+    saveKeychainValue(caregiverId, '')
     FIREBASE_AUTH.signOut()
   }
 

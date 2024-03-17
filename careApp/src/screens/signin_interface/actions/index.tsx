@@ -3,7 +3,7 @@ import { View, TextInput, Text, TouchableOpacity, StyleSheet } from "react-nativ
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { signInOperation } from "../../../firebase/authentication/funcionalities";
-import { caregiverEmail, caregiverPwd } from "../../../keychain/constants";
+import { caregiverEmail, caregiverName, caregiverPhone, caregiverPwd } from "../../../keychain/constants";
 import { styles, actions } from "../styles/styles";
 import { whiteBackgroud } from "../../../assets/styles/colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -23,7 +23,7 @@ const SignInPage = () => {
 
     const navigation = useNavigation<StackNavigationProp<any>>()
     const toggleShowPassword = () => {setShowPassword(!showPassword);}
-    const { setUserEmail } = useSessionInfo()
+    const { setUserEmail, setUserId } = useSessionInfo()
 
     useEffect(() => {
         console.debug("===> SignIn_Page: Component presented.\n")
@@ -60,6 +60,7 @@ const SignInPage = () => {
         signInOperation(email, password).then((loginResult) => {
             setLoading(false)
             if(loginResult) {
+                setUserId('')
                 navigation.push('InsideLayout')
             } 
         })

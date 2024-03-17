@@ -104,15 +104,14 @@ export default function MainMenu() {
     //const { expoPushToken } = usePushNotifications()
 
     const savePhoneAndName = async () => {
-        
-        if(userPhone == '' || userName == '') {
-            const userNameAux = await getKeychainValueFor(caregiverName(userId))
-            const userPhoneAux = await getKeychainValueFor(caregiverPhone(userId))
-
-            if(userNameAux != '') setUserName(userNameAux)
-            if(userPhoneAux != '') setUserPhone(userPhoneAux)
-             
-        } else {
+        if(userPhone == '' && userName == '' && userId != '') {
+          const userNameAux = await getKeychainValueFor(caregiverName(userId))
+          const userPhoneAux = await getKeychainValueFor(caregiverPhone(userId))
+          if(userNameAux != '' && userPhoneAux != '') {
+            setUserName(userNameAux)
+            setUserPhone(userPhoneAux)
+          }
+        } else if (userId != '') {
           await saveKeychainValue(caregiverName(userId), userName)
           await saveKeychainValue(caregiverPhone(userId), userPhone)
         }
