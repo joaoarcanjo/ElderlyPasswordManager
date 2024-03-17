@@ -8,6 +8,8 @@ import { Spinner } from "../../../components/LoadingComponents";
 import { useSessionInfo } from "../../../firebase/authentication/session";
 import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
 import { signUpOperation } from "../../../firebase/authentication/funcionalities";
+import { useNavigation } from '@react-navigation/native'
+import { StackNavigationProp } from "@react-navigation/stack";
 
 const SignUpPage = () => {
 
@@ -21,6 +23,7 @@ const SignUpPage = () => {
 
     const toggleShowPassword = () => {setShowPassword(!showPassword)}
     const { setUserEmail, setUserPhone, setUserName, userPhone, userName, userEmail } = useSessionInfo()
+    const navigation = useNavigation<StackNavigationProp<any>>()
 
     const signUp = async () => {
         setLoading(true)

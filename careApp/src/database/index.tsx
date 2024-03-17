@@ -1,6 +1,7 @@
 import * as SQLite from 'expo-sqlite'
-import * as Crypto from 'expo-crypto'
-import { Elderly, Password } from './types';
+import { Elderly, ElderlyRequestStatus } from './types';
+import { ErrorInstance } from '../exceptions/error';
+import { Errors } from '../exceptions/types';
 
 export let db: SQLite.SQLiteDatabase | null = null;
 
@@ -19,13 +20,13 @@ export function initDb() {
 
     db.transaction(tx => {
         tx.executeSql(
-            'CREATE TABLE IF NOT EXISTS passwords (id TEXT PRIMARY KEY, password TEXT, timestamp INTEGER);'
+            'CREATE TABLE IF NOT EXISTS passwords (id TEXT PRIMARY KEY, userId TEXT, password TEXT, timestamp INTEGER);'
         )
     })
 
     db.transaction(tx => {
         tx.executeSql(
-            'CREATE TABLE IF NOT EXISTS elderly (id TEXT, name TEXT, email TEXT PRIMARY KEY, phoneNumber TEXT, accepted INTEGER DEFAULT 0, UNIQUE(email, phoneNumber));'
+            'CREATE TABLE IF NOT EXISTS elderly (elderlyId TEXT, userId TEXT, name TEXT, email TEXT , phoneNumber TEXT, status INTEGER DEFAULT 0,  PRIMARY KEY(userId, email, phoneNumber));'
         )
     })
 
@@ -36,31 +37,42 @@ export function initDb() {
     })
 }
 
-export const saveElderly = async (id: string, name: string, email: string, phoneNumber: string) => {
-    if(db != null) {
-        try {
-            db.transaction(tx => { 
+export const saveElderly = async (userId: string, id: string, name: string, email: string, phoneNumber: string, requestStatus: ElderlyRequestStatus): Promise<void> => {
+
+    if (requestStatus == ElderlyRequestStatus.WAITING && await checkElderlyByEmailNotAccepted(userId, email)) {
+        return Promise.reject(new ErrorInstance(Errors.ERROR_ELDERLY_ALREADY_ADDED))
+    } 
+
+    return new Promise((resolve, reject) => {
+        if(db != null) {
+            db.transaction(async tx => {
                 tx.executeSql(
-                    `INSERT INTO elderly (id, name, email, phoneNumber) VALUES (?, ?, ?, ?)
-                    `,
-                    [id, name, email, phoneNumber],
+                    'INSERT INTO elderly (elderlyId, userId, name, email, phoneNumber, status) VALUES (?,?,?,?,?,?)',
+                    [id, userId, name, email, phoneNumber, requestStatus],
                     (_, result) => {
-                        //console.log('Tuplo inserido com sucesso:', result);
+                        if (result.rowsAffected > 0) {
+                            return resolve()
+                        } else {
+                            return reject(new ErrorInstance(Errors.ERROR_SAVING_SESSION))
+                        }
+                    },
+                    (_, _error) => {
+                        return false
                     }
-                )
+                );
             });
-        }catch (error) {
-            console.log(error)
+        } else {
+            return reject(new ErrorInstance(Errors.ERROR_SAVING_SESSION))
         }
-    }
+    });
 }
 
-export const updateElderly = async (email: string, newName: string, newPhoneNumber: string) => {
+export const updateElderly = async (userId: string, elderlyId: string, email: string, newName: string, newPhoneNumber: string) => {
     if (db != null) {
         db.transaction(tx => {
             tx.executeSql(
-                'UPDATE elderly SET name = ?, phoneNumber = ? WHERE email = ?',
-                [newName, newPhoneNumber, email],
+                'UPDATE elderly SET elderlyId = ?, name = ?, phoneNumber = ?, status = ? WHERE email = ? AND userId = ?',
+                [elderlyId, newName, newPhoneNumber, ElderlyRequestStatus.ACCEPTED.valueOf(), email, userId],
                 (_, result) => {
                     // Verifique se houve alguma linha afetada para confirmar se a atualização foi bem-sucedida.
                     if (result.rowsAffected > 0) {
@@ -68,18 +80,22 @@ export const updateElderly = async (email: string, newName: string, newPhoneNumb
                     } else {
                         console.log('-> Nenhum idoso foi atualizado. Verifique o email fornecido.')
                     }
+                },
+                (_, _error) => {
+                    return false
                 }
             );
         });
     }
 }
 
+//todo: adicionar o userId na query
 export const acceptElderlyOnDatabase = async (email: string) => {
     if (db != null) {
         db.transaction(tx => {
             tx.executeSql(
-                'UPDATE elderly SET accepted = ? WHERE email = ?',
-                [1, email],
+                'UPDATE elderly SET status = ? WHERE email = ?',
+                [ElderlyRequestStatus.ACCEPTED.valueOf(), email],
                 (_, result) => {
                     // Verifique se houve alguma linha afetada para confirmar se a atualização foi bem-sucedida.
                     if (result.rowsAffected > 0) {
@@ -96,12 +112,12 @@ export const acceptElderlyOnDatabase = async (email: string) => {
 /*
 This function is used to delete the older password generated. 
 */
-export const deleteElderly = async (elderlyEmail: string): Promise<boolean> => {
+export const deleteElderly = async (userId: string, elderlyEmail: string): Promise<boolean> => {
     if(db != null) {
         db.transaction((tx) => {
             tx.executeSql(
-              'DELETE FROM elderly WHERE email = ?',
-              [elderlyEmail],
+              'DELETE FROM elderly WHERE email = ? AND userId = ?',
+              [elderlyEmail, userId],
               (_, result) => {
                 if (result.rowsAffected > 0) {
                     console.log("-> Idoso apagado da base de dados.")
@@ -116,22 +132,21 @@ export const deleteElderly = async (elderlyEmail: string): Promise<boolean> => {
                return false
               }
             );
-            return false
         });
     }
     return false
 }
 
-export const checkElderlyByEmail = async (email: string): Promise<boolean> => {
+export const checkElderlyByEmail = async (userId: string, email: string): Promise<boolean> => {
     return new Promise((resolve, reject) => {
         if (db != null) {
             db.transaction(tx => {
                 tx.executeSql(
-                    'SELECT COUNT(*) AS count FROM elderly WHERE email = ?',
-                    [email],
+                    'SELECT COUNT(*) AS count FROM elderly WHERE email = ? AND userId = ? AND status = ?;',
+                    [email, userId, ElderlyRequestStatus.ACCEPTED.valueOf()],
                     (_, result) => {
                         const count = result.rows.item(0).count;
-                        resolve(count > 0); 
+                        return resolve(count > 0); 
                     }
                 );
             });
@@ -141,10 +156,32 @@ export const checkElderlyByEmail = async (email: string): Promise<boolean> => {
     })
 }
 
-//TODO: Colocar a DBKey
-export const getAllElderly = (/*localDBKey: string*/): Promise<Elderly[]> => {
-    return new Promise(async (resolve, reject) => {
-        const sql = 'SELECT id, name, email, phoneNumber, accepted FROM elderly';
+export const checkElderlyByEmailNotAccepted = async (userId: string, email: string): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+        if (db != null) {
+            db.transaction(tx => {
+                tx.executeSql(
+                    'SELECT COUNT(*) AS count FROM elderly WHERE email = ? AND userId = ? AND status = ?;',
+                    [email, userId, ElderlyRequestStatus.WAITING.valueOf()],
+                    (_, result) => {
+                        const count = result.rows.item(0).count;
+                        return resolve(count > 0); 
+                    },
+                    (_, _error) => {
+                     return false
+                    }
+                );
+            });
+        } else {
+            reject(new Error('Database not initialized.')); 
+        }
+    })
+}
+
+export const getAllElderly = (userId: string): Promise<Elderly[]> => {
+    console.log(userId)
+    return new Promise((resolve, reject) => {
+        const sql = '';
 
         const data: Elderly[] = [];
         try {
@@ -152,14 +189,15 @@ export const getAllElderly = (/*localDBKey: string*/): Promise<Elderly[]> => {
                 throw (new Error("Database is not connected."))
             }
             db.transaction((tx) => {
-                tx.executeSql(sql, [], (tx, results) => {
+                tx.executeSql('SELECT elderlyId, name, email, phoneNumber, status FROM elderly WHERE userId = ?;', 
+                [userId], (_tx, results) => {
                     for (let i = 0; i < results.rows.length; i++) {                        
                         data.push({
-                            userId: results.rows.item(i).id,
+                            elderlyId: results.rows.item(i).elderlyId,
                             name: results.rows.item(i).name,//decrypt(results.rows.item(i).name, localDBKey),   
                             email: results.rows.item(i).email,//decrypt(results.rows.item(i).password, localDBKey), 
                             phoneNumber: results.rows.item(i).phoneNumber,//decrypt(results.rows.item(i).phoneNumber, localDBKey),   
-                            accepted: results.rows.item(i).accepted
+                            status: results.rows.item(i).status
                         });
                     }
                     resolve(data)

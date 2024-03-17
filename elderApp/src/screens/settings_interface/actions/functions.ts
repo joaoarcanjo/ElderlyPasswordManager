@@ -7,7 +7,7 @@ import { currentSessionSubject, sessionForRemoteUser } from "../../../e2e/sessio
 
 
 export async function sendCaregiversNewInfo(userId: string, username: string, userEmail: string, userPhone: string) {
-    const caregivers = await getCaregivers()   
+    const caregivers = await getCaregivers(userId)   
     caregivers.forEach(async (caregiver) => {
         if(!sessionForRemoteUser(caregiver.email)) {
             await startSession(caregiver.email)

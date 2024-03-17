@@ -5,8 +5,8 @@ import MainBox from '../../../components/MainBox'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import AddCaregiver from './addCaregiver'
-import CaregiverItem from './caregiverItem'
-import { Caregiver } from '../../../database/types'
+import {CaregiverItem} from './caregiverItem'
+import { Caregiver, CaregiverRequestStatus } from '../../../database/types'
 import { caregiverListUpdated } from './state'
 import { getCaregiversArray } from '../../../firebase/firestore/functionalities'
 import { useSessionInfo } from '../../../firebase/authentication/session'
@@ -19,17 +19,17 @@ interface CaregiverPermission {
 }
 
 async function getCaregiversPermissions(userId: string): Promise<CaregiverPermission[]> {
-  const caregivers = await getCaregivers()
+  console.log(' - getCaregiversPermissionsCalled')
+  const caregivers = await getCaregivers(userId)
   const readCaregivers = await getCaregiversArray(userId, 'readCaregivers')
   const writeCaregivers = await getCaregiversArray(userId, 'writeCaregivers')
 
   let caregiversPermissions: CaregiverPermission[] = []
-
   caregivers.forEach((caregiver) => {
-    if(caregiver.accepted === 1) {
+    if(caregiver.requestStatus === CaregiverRequestStatus.ACCEPTED || caregiver.requestStatus === CaregiverRequestStatus.RECEIVED) {
       caregiversPermissions.push({
-        canRead: readCaregivers.includes(caregiver.id),
-        canWrite: writeCaregivers.includes(caregiver.id),
+        canRead: readCaregivers.includes(caregiver.caregiverId),
+        canWrite: writeCaregivers.includes(caregiver.caregiverId),
         caregiver
       })
     }
@@ -43,6 +43,7 @@ function CaregiversList() {
   const { userId } = useSessionInfo()
 
   const refreshValue = async () => {
+    console.log('==> CaregiversList refreshed.')
     const caregiversPermissions = await getCaregiversPermissions(userId)
     setCaregivers(caregiversPermissions)
   }
@@ -56,15 +57,23 @@ function CaregiversList() {
   return (
     <View style = {{ flex: 0.85, flexDirection: 'row', marginTop: '1%', justifyContent: 'space-around'}}>
     <View style = {[{ flex: 1, marginHorizontal: '4%', marginBottom: '3%', justifyContent: 'space-around'}]}>
-        
-        {caregivers.map((item) => <CaregiverItem key={item.caregiver.id} name={item.caregiver.name} phone={item.caregiver.phoneNumber} email={item.caregiver.email} setRefresh={refreshValue} caregiverId={item.caregiver.id} canWrite={false} ></CaregiverItem>)}
+        {caregivers.map((item, index) => {
+          return (
+            <CaregiverItem 
+              number={index+1} 
+              caregiverId={item.caregiver.caregiverId} 
+              key={item.caregiver.caregiverId} 
+              name={item.caregiver.name} 
+              phone={item.caregiver.phoneNumber} 
+              email={item.caregiver.email} 
+              setRefresh={refreshValue} 
+              canWrite={false} 
+              status={item.caregiver.requestStatus}
+            />
+          )
+        })}
         {caregivers.length === 0 && <AddCaregiver number={1} setRefresh={refreshValue} />}
         {caregivers.length < 2 && <AddCaregiver number={2} setRefresh={refreshValue} />}
-        {/*
-        <TouchableOpacity style={[{flex: 0.1, marginHorizontal: '20%'}, permissionButton.permissionButton, stylesButtons.mainConfig]} onPress={permissions}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[permissionButton.permissionButtonText]}>Permissões</Text>
-        </TouchableOpacity>
-        */}
       </View>
     </View>
   )

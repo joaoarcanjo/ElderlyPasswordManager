@@ -28,20 +28,6 @@ export async function signUpOperation(email: string, pwd: string): Promise<boole
         return false
     } 
 }
-/*
-export async function updateEmailOperation(email: string): Promise<boolean> {
-    if(!auth.currentUser) {
-        alert('Nenhum utilizador com login realizado')
-        return false
-    }
-
-    return updateEmail(auth.currentUser, email).then(() => {
-        return true
-    }).catch(error => {
-        alert('Erro ao atualizar o email, tente novamente!')
-        return false
-    })
-}*/
 
 export async function updatePasswordOperation(userEmail: string, oldPwd: string, newPwd: string): Promise<boolean> {
     return signInOperation(userEmail, oldPwd).then(() => {
@@ -53,7 +39,6 @@ export async function updatePasswordOperation(userEmail: string, oldPwd: string,
         return updatePassword(auth.currentUser, newPwd).then(() => {
             return true
         }).catch(error => {
-            console.log(error)
             alert('Erro ao atualizar a password, tente novamente!')
             return false
         })

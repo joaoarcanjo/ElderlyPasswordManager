@@ -1,7 +1,7 @@
 import { View } from 'react-native';
 import MainMenu from './src/screens/main_menu/actions';
 import Credentials from './src/screens/list_credentials/actions';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Settings from './src/screens/settings_interface/actions';
 import FrequentQuestions from './src/screens/list_questions/actions';
@@ -12,7 +12,7 @@ import { initDb } from './src/database';
 import FlashMessage from 'react-native-flash-message';
 import Caregivers from './src/screens/list_caregivers/actions';
 import { changeKey, initFirestore } from './src/firebase/firestore/functionalities';
-import { cleanKeychain, initKeychain } from './src/keychain';
+import { initKeychain } from './src/keychain';
 import { AddCredencial } from './src/screens/add_credentials/actions';
 import { initSSS } from './src/algorithms/sss/sss';
 import CredencialPage from './src/screens/credential_interface/actions';
@@ -25,8 +25,8 @@ import { StatusBar } from 'expo-status-bar';
 import SplashScreen from './src/screens/splash_screen/actions';
 import * as SplashFunctions from 'expo-splash-screen';
 import { createIdentity } from './src/e2e/identity/functions';
-import ChatPageTest from './src/screens/add_caregiver/actions';
 import * as Notifications from "expo-notifications";
+import { StackNavigationProp } from '@react-navigation/stack';
 
 const Stack = createNativeStackNavigator()
 const InsideStack = createNativeStackNavigator()
@@ -44,33 +44,14 @@ const im_testing = false
 const time = 1000
 
 function InsideLayout() {
-  const { userEmail, userId, setShared } = useSessionInfo()
   const [appIsReady, setAppIsReady] = useState(false)
 
   const flashTimeoutPromise = () => { if (!appIsReady) { return new Promise(resolve => setTimeout(resolve, time)) } else return Promise.resolve() }
-
-  const initInsideLayout = async () => {
-    //try {
-      setShared(await initSSS(userId))
-      await initFirestore(userId).then(() => initDb())
-      await changeKey(userId)
-      await createIdentity(userId, userEmail)
-    /*} catch (error) {
-      alert(error)
-      navigation.push("LoginPage")
-    }*/
-    await flashTimeoutPromise()
-    setAppIsReady(true)
-  }
+  const navigation = useNavigation<StackNavigationProp<any>>()
 
   useEffect(() => {
-    console.log("#-> InsideLayout: useEffect called.")
-    console.log("userid", userId)
-    if (im_testing) {
-      cleanKeychain(userId)
-    } else {
-      initInsideLayout()
-    }    
+    flashTimeoutPromise().then(() => setAppIsReady(true))
+    .then(() => { navigation.push('MainMenu')})
   }, [])
 
   const onLayoutRootView = useCallback(async () => { if (!appIsReady) await SplashFunctions.hideAsync() }, [appIsReady]);
@@ -89,8 +70,6 @@ function InsideLayout() {
       <InsideStack.Screen name="CredentialPage" component={CredencialPage} options={{ title: "CredencialPage", headerShown: false }} />
       <InsideStack.Screen name="LoginPage" component={SignInPage} options={{title: "LoginPage", headerShown:false}}/>
       <InsideStack.Screen name="SignupPage" component={SignUpPage} options={{title: "SignupPage", headerShown:false}}/>
-
-      <InsideStack.Screen name="ChatTest" component={ChatPageTest} options={{ title: "ChatTest", headerShown: false }} />
     </InsideStack.Navigator>
   )
 }
@@ -99,25 +78,28 @@ function InsideLayout() {
 function Inicialization() {
 
   const [user, setUser] = useState<User | null>(null)
-  const { setUserId, setUserEmail, setLocalDBKey, userId } = useSessionInfo()
+  const { setUserId, setUserEmail, setLocalDBKey, setShared, userId } = useSessionInfo()
 
   useEffect(() => {
-    
     onAuthStateChanged(FIREBASE_AUTH, async (user) => {
-      //console.log("User: " + user)
-      //console.log("UserId: " + userId)
+      const userEmail = user?.email
       if(userId) {
         setUser(user)
-      }else if(user?.email) {
-        initKeychain(user.uid, user.email).then(DBKey => setLocalDBKey(DBKey))
-        setUserId(user.uid)
-        setUserEmail(user.email)
-        setUser(user)
+      }else if(userEmail && user.uid) {
+        await initKeychain(user.uid, userEmail)
+        .then((DBKey) => setLocalDBKey(DBKey))
+        .then(() => {setUserId(user.uid); setUserEmail(userEmail); setUser(user)})
+        .then(() => initSSS(user.uid))
+        .then((myShare) => setShared(myShare))
+        .then(() => initFirestore(user.uid))
+        .then(() => initDb())
+        .then(() => changeKey(user.uid))
+        .then(() => createIdentity(user.uid, userEmail))
       }
 
-      let { status } = await Notifications.requestPermissionsAsync();
+      let { status } = await Notifications.requestPermissionsAsync()
       if (status !== 'granted') {
-        console.log('Permission to access location was denied')
+        //TODO: do an alert
       }
     })
   }, [user])

@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native'
-import { addCaregiverButtonBackgroud, addCaregiverButtonBorder, desvinculateButtonBackgroud, desvinculateButtonBorder, greyBackgroud, greyBorder, permissionsNoButtonBackground, permissionsNoButtonBorder, permissionsYesButtonBackground, permissionsYesButtonBorder, whiteBackgroud } from '../../../assets/styles/colors'
+import { acceptButtonBackground, acceptButtonBorder, addCaregiverButtonBackgroud, addCaregiverButtonBorder, blueBorder, desvinculateButtonBackgroud, desvinculateButtonBorder, greyBackgroud, greyBorder, permissionsNoButtonBackground, permissionsNoButtonBorder, permissionsYesButtonBackground, permissionsYesButtonBorder, rejectButtonBackground, rejectButtonBorder, superlightBlueBackgroud, whiteBackgroud } from '../../../assets/styles/colors'
 
 /**
  * Estilos da view para adicionar uma nova credencial
@@ -25,6 +25,13 @@ const caregiverStyle = StyleSheet.create({
         backgroundColor: greyBackgroud, // Cor de fundo
         borderColor: greyBorder,
         marginVertical: 8, // Margem vertical entre os itens
+    },
+    newCaregiverContainer: {
+        borderRadius: 10, // Define o raio dos cantos para arredondá-los
+        borderWidth: 2, // Largura da linha na margem
+        backgroundColor: superlightBlueBackgroud, // Cor de fundo
+        borderColor: blueBorder,
+        marginBottom: 15,
     }
 })
 
@@ -98,4 +105,21 @@ const permission = StyleSheet.create({
     },
 })
 
-export { caregiver, permission, stylesAddCaregiver, caregiverStyle, caregiverContactInfo, decouplingOption }
+const newCaregiverContainer = StyleSheet.create({
+    acceptButton: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        backgroundColor: acceptButtonBackground,
+        borderColor: acceptButtonBorder
+    },
+    rejectButton: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        backgroundColor: rejectButtonBackground,
+        borderColor: rejectButtonBorder
+    },
+    buttonText: {
+      fontSize: 25,
+      color: 'black'
+    },
+})
+
+export { newCaregiverContainer, caregiver, permission, stylesAddCaregiver, caregiverStyle, caregiverContactInfo, decouplingOption }

@@ -1,4 +1,4 @@
-//import { KeyHelper, SignedPublicPreKeyType, PreKeyType, SignedPreKeyPairType } from "@privacyresearch/libsignal-protocol-typescript";
+import { KeyHelper, SignedPublicPreKeyType, PreKeyType, SignedPreKeyPairType, PreKeyPairType } from "@privacyresearch/libsignal-protocol-typescript";
 
 import { initializeSignalWebsocket } from "../network/functions";
 import { subscribeWebsocket } from "../network/webSockets";
@@ -6,7 +6,7 @@ import { SignalDirectory } from "../signal/signal-directory";
 import { directorySubject, usernameSubject, signalStore } from "./state";
 import { networkInfoSubject } from "../network/state";
 import { ipAddress } from "../../algorithms/assets/constants";
-import { KeyHelper, PreKeyPairType, PreKeyType, SignedPreKeyPairType, SignedPublicPreKeyType } from "../../algorithms/signal";
+//import { KeyHelper, PreKeyPairType, PreKeyType, SignedPreKeyPairType, SignedPublicPreKeyType } from "../../algorithms/signal";
 
 /**
  * Vai criar a identidade no servidor
@@ -21,7 +21,7 @@ export async function createIdentity(userId: string, username: string): Promise<
     
     //Inicia a ligação ao servidor 
     initializeSignalWebsocket(url)
-    //Subscreve o servidor
+    //Subscreve o servidor 
     subscribeWebsocket(username)
 
     const directory = new SignalDirectory(url)
@@ -90,7 +90,7 @@ export async function createIdentity(userId: string, username: string): Promise<
         throw new Error("Error generating signedPreKeyId")
     }
     
-    console.log("signedPreKeyId: ", signedPreKeyId)
+    //console.log("signedPreKeyId: ", signedPreKeyId)
     let signedPreKeyPair = await signalStore.loadSignedPreKey(signedPreKeyId)
     let signature = await signalStore.loadSignedSignature(signedPreKeyId)
     if(signedPreKeyPair === undefined || signature === undefined) {

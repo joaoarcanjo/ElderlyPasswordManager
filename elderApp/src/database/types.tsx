@@ -5,13 +5,19 @@ export interface Password {
 }
 
 export interface Caregiver {
-    id: string,
+    caregiverId: string,
     name: string,
     email: string,
     phoneNumber: string,
-    accepted: number
+    requestStatus: CaregiverRequestStatus
 }
 
 export interface SessionSignal {
     record: string,
+}
+
+export enum CaregiverRequestStatus {
+    ACCEPTED = 1,
+    RECEIVED = 2,
+    WAITING = 3
 }

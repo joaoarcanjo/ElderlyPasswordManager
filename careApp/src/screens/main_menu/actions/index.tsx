@@ -45,25 +45,21 @@ function Functionalities() {
 
     const CredencialsNavigation = async () => {
         // Your code to handle the click event
-        //console.log('Credentials button clicked!');
         navigation.push('Credentials')
     }
 
     const GeneratorsNavigation = () => {
         // Your code to handle the click event
-        //console.log('Generator button clicked!');
         navigation.push('Generator')
     }
 
     const FrequentQuestionsNavigation = () => {
         // Your code to handle the click event
-        //console.log('Questions button clicked!');
         navigation.push('FrequentQuestions')
     }
 
     const SettingsNavigation = () => {
         // Your code to handle the click event
-        //console.log('Questions button clicked!');
         navigation.push('Settings')
     }
 
@@ -108,9 +104,6 @@ export default function MainMenu() {
     //const { expoPushToken } = usePushNotifications()
 
     const savePhoneAndName = async () => {
-        //console.log("UserId: "+userId)
-        //console.log("UserPhone: "+userPhone)
-        //console.log("UserName: "+userName)
         
         if(userPhone == '' || userName == '') {
             const userNameAux = await getKeychainValueFor(caregiverName(userId))

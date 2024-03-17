@@ -10,27 +10,29 @@ import { getScore } from '../../../algorithms/zxcvbn/algorithm'
 import { FlashMessage, copyValue, editCanceledFlash, editCompletedFlash, editValueFlash } from '../../../components/UserMessages'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
-import { deleteCredential, getKey, updateCredential } from '../../../firebase/firestore/functionalities'
+import { deleteCredential, updateCredential, verifyIfCanManipulateCredentials } from '../../../firebase/firestore/functionalities'
 import { YesOrNoModal, YesOrNoSpinnerModal } from '../../../components/Modal'
 import Algorithm from '../../password_generator/actions/algorithm'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
 import { deriveSecret } from '../../../algorithms/sss/sss'
+import { useSessionInfo } from '../../../firebase/authentication/session'
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
  * @returns 
  */
-function AppInfo({userId, id, platform, uri, un, pw, auxKey, isElderlyCredential}: Readonly<{userId: string, id: string, platform: string, uri: string, un: string, pw: string, auxKey: string, isElderlyCredential: boolean}>) {
+function AppInfo({ownerId, id, platform, uri, un, pw, auxKey, isElderlyCredential}: Readonly<{ownerId: string, id: string, platform: string, uri: string, un: string, pw: string, auxKey: string, isElderlyCredential: boolean}>) {
 
-  console.log(auxKey)
   const [username, setUsername] = useState(un)
-  const [currUri, setURI] = useState(uri)
+  const [currUri, setCurrUri] = useState(uri)
   const [password, setPassword] = useState(pw)
   const [usernameEdited, setUsernameEdited] = useState(un)
   const [passwordEdited, setPasswordEdited] = useState(pw)
   const [uriEditted, setUriEditted] = useState(uri)
 
   const [avaliation, setAvaliation] = useState<number>(0)
+
+  const { userId } = useSessionInfo()
   
   const [showPassword, setShowPassword] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
@@ -42,7 +44,15 @@ function AppInfo({userId, id, platform, uri, un, pw, auxKey, isElderlyCredential
 
   const toggleShowPassword = () => {setShowPassword(!showPassword);}
 
-  const toggleEditFlag = () => {setEditFlag(!editFlag)}
+  const toggleEditFlag = async () => {
+    const canEdit = ( await verifyIfCanManipulateCredentials(userId, ownerId) && isElderlyCredential ) || !isElderlyCredential
+    if(canEdit) {
+      setEditFlag(!editFlag); 
+      editValueFlash();
+    } else {
+      alert('Você não tem permissão para editar credenciais.')
+    }
+  }
 
   const inputStyle = editFlag ? credentials.credentialInputContainer : credentials.credentialInputContainerV2
   const credentialsModified = (password != passwordEdited || username != usernameEdited || currUri != uriEditted)
@@ -55,13 +65,11 @@ function AppInfo({userId, id, platform, uri, un, pw, auxKey, isElderlyCredential
   async function saveCredentialUpdate() {
     if(credentialsModified) {
       setLoading(true)
-      const encryptionKey = isElderlyCredential ? deriveSecret([await getKey(userId), auxKey]) : auxKey
-
-      updateCredential(userId, id, encryptionKey, JSON.stringify({platform: platform, uri: uriEditted, username: usernameEdited, password: passwordEdited}), isElderlyCredential)
+      updateCredential(ownerId, id, auxKey, JSON.stringify({platform: platform, uri: uriEditted, username: usernameEdited, password: passwordEdited}), isElderlyCredential)
       .then((updated) => {
         toggleEditFlag()
         if(updated) {
-          setURI(uriEditted)
+          setCurrUri(uriEditted)
           setUsername(usernameEdited)
           setPassword(passwordEdited)
           editCompletedFlash(FlashMessage.editCredentialCompleted)
@@ -111,7 +119,7 @@ function AppInfo({userId, id, platform, uri, un, pw, auxKey, isElderlyCredential
       <View style= { { flex: 0.13, marginHorizontal: '10%', flexDirection: 'row'} }>
         {editFlag ?
           <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
-            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.editButton]} onPress={() => {toggleEditFlag(); editValueFlash();}}>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.editButton]} onPress={toggleEditFlag}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>Editar</Text>
             </TouchableOpacity>
           </View> :
@@ -146,7 +154,7 @@ function AppInfo({userId, id, platform, uri, un, pw, auxKey, isElderlyCredential
                   editable={!editFlag} 
                   value={editFlag ? currUri : uriEditted}
                   style={[{ flex: 1, fontSize: 22}, credentials.credentialInfoText]}
-                  onChangeText={text => editFlag ? setURI(text): setUriEditted(text)}
+                  onChangeText={text => editFlag ? setCurrUri(text): setUriEditted(text)}
                 />
               </View>
             </View>
@@ -208,7 +216,7 @@ function AppInfo({userId, id, platform, uri, un, pw, auxKey, isElderlyCredential
     </View>
     <Options/>
     <YesOrNoSpinnerModal question={'Guardar as alterações?'} yesFunction={saveCredentialUpdate} noFunction={dontSaveCredentialsUpdate} visibleFlag={modalVisible} loading={loading}/>
-    {editFlag && <DeleteCredential userId={userId} id={id} isElderlyCredential={isElderlyCredential} />}
+    {editFlag && <DeleteCredential ownerId={ownerId} id={id} isElderlyCredential={isElderlyCredential} />}
     </>
   )
 }
@@ -217,19 +225,29 @@ function AppInfo({userId, id, platform, uri, un, pw, auxKey, isElderlyCredential
  * Componente que representa o botão para apagar a credencial
  * @returns 
  */
-function DeleteCredential({userId, id, isElderlyCredential}: Readonly<{userId: string, id: string, isElderlyCredential: boolean}>) {
+function DeleteCredential({ownerId, id, isElderlyCredential}: Readonly<{ownerId: string, id: string, isElderlyCredential: boolean}>) {
   
   const navigation = useNavigation<StackNavigationProp<any>>()
   const [modalVisible, setModalVisible] = useState(false)
+  const { userId } = useSessionInfo()
 
-  const deleteCredentialAction = () => {
+  const setModalVisibleAux = async () => {
+    const canDelete = ( await verifyIfCanManipulateCredentials(userId, ownerId) && isElderlyCredential ) || !isElderlyCredential
+    if(canDelete) {
+      setModalVisible(true)
+    } else {
+      alert('Você não tem permissão para apagar credenciais.')
+    }
+  }
+
+  const deleteCredentialAction = async () => {
     deleteCredential(userId, id, isElderlyCredential).then(() => navigation.goBack())
   }
 
   return (
     <View style= { { flex: 0.10, flexDirection: 'row', justifyContent: 'space-around', marginBottom: '2%'} }>
       <YesOrNoModal question={'Apagar a credencial?'} yesFunction={() => deleteCredentialAction()} noFunction={() => setModalVisible(false)} visibleFlag={modalVisible}/>
-      <TouchableOpacity style={[{flex: 1, marginHorizontal: '20%', marginVertical: '3%'}, logout.logoutButton, stylesButtons.mainConfig]} onPress={() => setModalVisible(true)}>
+      <TouchableOpacity style={[{flex: 1, marginHorizontal: '20%', marginVertical: '3%'}, logout.logoutButton, stylesButtons.mainConfig]} onPress={setModalVisibleAux}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>Apagar credencial</Text>
       </TouchableOpacity>
     </View>
@@ -244,14 +262,14 @@ export default function CredencialPage({ route }: Readonly<{route: any}>) {
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
           <MainBox text={route.params.platform}/>
           <AppInfo 
-            userId={route.params.userId}
+            ownerId={route.params.userId}
             id={route.params.id}
             un={route.params.username}
             pw={route.params.password}
             platform={route.params.platform}
             uri={route.params.uri}
             auxKey={route.params.key} 
-            isElderlyCredential={route.params.isElderlyCredential}          />
+            isElderlyCredential={route.params.isElderlyCredential} />
         </View>
       </KeyboardAvoidingWrapper>
       <Navbar/>

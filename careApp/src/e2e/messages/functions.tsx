@@ -7,11 +7,12 @@ import { signalWebsocket } from "../network/webSockets"
 import { ChatSession } from "../session/types"
 import { ChatMessageType, ElderlyDataBody, ProcessedChatMessage } from "./types"
 import { randomUUID } from 'expo-crypto'
-import { checkElderlyByEmail, deleteElderly, saveElderly, updateElderly } from "../../database"
+import { checkElderlyByEmail, checkElderlyByEmailNotAccepted, deleteElderly, saveElderly, updateElderly } from "../../database"
 import { setElderlyListUpdated } from "../../screens/list_elderly/actions/state"
-import { saveKeychainValue } from "../../keychain"
-import { elderlySSSKey } from "../../keychain/constants"
-import { FlashMessage, editCompletedFlash, sessionEndedFlash, sessionPermissionsFlash, sessionRequestReceivedFlash } from "../../components/UserMessages"
+import { getKeychainValueFor, saveKeychainValue } from "../../keychain"
+import { caregiverId, elderlySSSKey } from "../../keychain/constants"
+import { FlashMessage, editCompletedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionPermissionsFlash, sessionRejectedFlash, sessionRequestReceivedFlash } from "../../components/UserMessages"
+import { ElderlyRequestStatus } from "../../database/types"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -121,26 +122,24 @@ export function sendSignalProtocolMessage(to: string, from: string, message: Mes
 }
 
 export async function addMessageToSession(address: string, cm: ProcessedChatMessage, type: number, itsMine?: boolean): Promise<void> {
-    console.log('-> addMessageToSession')
-    console.log("---> Message: "+cm)
+    console.log('===> addMessageToSessionCalled')
     const userSession = { ...sessionForRemoteUser(address)! }
-    console.log("User session: " +userSession.remoteUsername)
+    const currentUserId = await getKeychainValueFor(caregiverId)
 
     //Se for uma mensagem de dados do idoso e não for uma mensagem nossa (tipo 0)
     if(cm.type === ChatMessageType.PERSONAL_DATA && !itsMine) {
-        await processPersonalData(cm)
-        userSession.messages.push(cm)  
+        await processPersonalData(currentUserId, cm)
+        //userSession.messages.push(cm)  
     } else if (cm.type === ChatMessageType.REJECT_SESSION) {
         //vai apagar a sessão que foi criada com o possível cuidador
-        userSession.messages.push(cm) 
+        //userSession.messages.push(cm) 
+        await processRejectMessage(currentUserId, cm)
     } else if (cm.type === ChatMessageType.PERMISSION_DATA) {
         //Quando o idoso atualiza as permissoes. 
         setElderlyListUpdated()
         sessionPermissionsFlash(cm.from)
     } else if (cm.type === ChatMessageType.DECOUPLING_SESSION) {
-        await deleteElderly(cm.from)
-        setElderlyListUpdated()
-        sessionEndedFlash(cm.from)
+        processDecouplingMessage(currentUserId, cm)
     } else if (type !== 3 && !cm.firstMessage) {
         userSession.messages.push(cm)
     }
@@ -154,18 +153,35 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
     }
 }
 
-async function processPersonalData(cm: ProcessedChatMessage) {
+async function processPersonalData(currentUserId: string, cm: ProcessedChatMessage) {
     const data = JSON.parse(cm.body) as ElderlyDataBody
 
-    if (await checkElderlyByEmail(cm.from)) {  
-        await updateElderly(data.email, data.name, data.phone)
+    if (await checkElderlyByEmail(currentUserId, cm.from)) {
+        await updateElderly(currentUserId, data.userId, data.email, data.name, data.phone)
         setElderlyListUpdated()
-        editCompletedFlash(FlashMessage.elderlyPersonalInfoUpdated) 
-        
+        editCompletedFlash(FlashMessage.elderlyPersonalInfoUpdated)   
+    }  else if(await checkElderlyByEmailNotAccepted(currentUserId, cm.from)) {
+        await updateElderly(currentUserId, data.userId, data.email, data.name, data.phone)
+        .then(() => saveKeychainValue(elderlySSSKey(data.userId), data.key))
+        .then(() => sessionAcceptedFlash(cm.from))
+        .then(() => setElderlyListUpdated())
     } else {
         await saveKeychainValue(elderlySSSKey(data.userId), data.key)
-            .then(() => saveElderly(data.userId, data.name, data.email, data.phone))
-            .then(() => sessionRequestReceivedFlash(cm.from))
-            .then(() => setElderlyListUpdated())
+        .then(() => saveElderly(currentUserId, data.userId, data.name, data.email, data.phone, ElderlyRequestStatus.RECEIVED.valueOf()))
+        .then(() => sessionRequestReceivedFlash(cm.from))
+        .then(() => setElderlyListUpdated())
     }
+}
+
+async function processRejectMessage(currentUserId: string, cm: ProcessedChatMessage) {
+    console.log("===> processRejectMessageCalled")
+    await deleteElderly(currentUserId, cm.from)
+    sessionRejectedFlash(cm.from, false)
+}
+
+async function processDecouplingMessage(currentUserId: string, cm: ProcessedChatMessage) {
+    console.log("===> processDecouplingMessageCalled")
+    await deleteElderly(currentUserId, cm.from)
+    sessionEndedFlash(cm.from)
+    setElderlyListUpdated()
 }

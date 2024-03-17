@@ -1,8 +1,8 @@
 import React, { useState } from "react"
 import { TouchableOpacity, View, Text, Image, StyleSheet, Linking } from "react-native"
 import { stylesButtons } from "../../../assets/styles/main_style"
-import { caregiverContactInfo, caregiverStyle, decouplingOption, permission } from "../styles/styles"
-import { decouplingCaregiver } from "./functions"
+import { caregiverContactInfo, caregiverStyle, decouplingOption, newCaregiverContainer, permission } from "../styles/styles"
+import { acceptCaregiver, decouplingCaregiver, refuseCaregiver } from "./functions"
 import { YesOrNoModal } from "../../../components/Modal"
 import { addCaregiverToArray, removeCaregiverFromArray } from "../../../firebase/firestore/functionalities"
 import { encryptAndSendMessage } from "../../../e2e/messages/functions"
@@ -10,42 +10,83 @@ import { ChatMessageType } from "../../../e2e/messages/types"
 import { useSessionInfo } from "../../../firebase/authentication/session"
 import { currentSessionSubject, sessionForRemoteUser } from "../../../e2e/session/state"
 import { startSession } from "../../../e2e/session/functions"
+import { CaregiverRequestStatus } from "../../../database/types"
 
 const caregiverImage = '../../../assets/images/caregiver.png'
 const telephoneImage = '../../../assets/images/telephone.png'
 const emailImage = '../../../assets/images/email.png'
+const yesOption = 'Sim'
+const noOption = 'Não'
+
+const PermissionOptionButton = ({option, func}: {option: string, func: Function}) => {
+
+  const optionColor = option == noOption ? permission.noButton : permission.yesButton
+  return (
+    <TouchableOpacity style={[{flex: 0.3, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}, stylesButtons.mainConfig, optionColor]} onPress={() => func()}>
+      <Text adjustsFontSizeToFit style={[permission.nButtonText]}>{option}</Text>
+    </TouchableOpacity> 
+  )
+}
 
 function Requirement({name, value, func}:Readonly<{name: string, value: boolean, func: Function}>) {
   return (
     <View style={[{flex: 0.33, flexDirection: 'row', alignItems: 'center', marginHorizontal: '5%', marginTop: '4%', marginBottom: '2%'}]}>
-    <View style={{flex: 0.7, marginRight: '5%', justifyContent: 'center', alignItems: 'center'}}>
-      <Text numberOfLines={1} adjustsFontSizeToFit style={[permission.questionText]}>{name}</Text>
-    </View>
-    {value ?
-        <TouchableOpacity style={[{flex: 0.3, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}, stylesButtons.mainConfig, permission.yesButton]} onPress={() => func()}>
-          <Text adjustsFontSizeToFit style={[permission.yesButtonText]}>
-            Sim
-          </Text>
-        </TouchableOpacity>
-        :
-        <TouchableOpacity style={[{flex: 0.3, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}, stylesButtons.mainConfig, permission.noButton]} onPress={() => func()}>
-          <Text adjustsFontSizeToFit style={[permission.nButtonText]}>
-            Não
-          </Text>
-        </TouchableOpacity> 
-      }
+      <View style={{flex: 0.7, marginRight: '5%', justifyContent: 'center', alignItems: 'center'}}>
+        <Text numberOfLines={1} adjustsFontSizeToFit style={[permission.questionText]}>{name}</Text>
+      </View>
+      {value ? <PermissionOptionButton option={yesOption} func={func}/> : <PermissionOptionButton option={noOption} func={func}/>}
     </View>
   )
 }
 
-export default function CaregiverItem({name, phone, email, caregiverId, setRefresh, canWrite}: Readonly<{name: string, phone: string, email: string, caregiverId: string, setRefresh: Function, canWrite: boolean}>) {
+export function CaregiverItem({number, caregiverId, name, phone, email, setRefresh, status, canWrite}: Readonly<{number: number, caregiverId: string, name: string, phone: string, email: string, setRefresh: Function, status: number, canWrite: boolean}>) {
+  if(status == CaregiverRequestStatus.RECEIVED.valueOf()) {
+    return <CaregiverPending caregiverId={caregiverId} number={number} name={name} email={email} setRefresh={setRefresh}/>
+  } else if (status == CaregiverRequestStatus.ACCEPTED.valueOf()) {
+    return <Caregiver name={name} phone={phone} email={email} caregiverId={caregiverId} setRefresh={setRefresh} canWrite={canWrite}/>
+  } else {
+    //Nada por agora.
+  }
+}
+
+export function CaregiverPending({ caregiverId, number, name, email, setRefresh }: Readonly<{caregiverId: string, number: number, name: string, email: string, setRefresh: Function}>) {
+
+  const { userId, userEmail, userName, userPhone } = useSessionInfo()
+  
+  const accept = () => acceptCaregiver(caregiverId, number, userId, email, userName, userEmail, userPhone).then(() => setRefresh()) 
+  const refuse = () => refuseCaregiver(userId, email, name).then(() => setRefresh()) 
+
+  return (
+    <View style={{flex: 0.55, justifyContent: 'center', alignItems: 'center'}}>
+       <View style={[{ flexDirection: 'row', alignItems: 'center', marginVertical: '3%', backgroundColor: 'red' }, caregiverStyle.newCaregiverContainer]}>
+        <View style={{ flex: 1 }}>
+          <View style={{flexDirection: 'row', marginHorizontal: '3%'}}>
+            <Text numberOfLines={2} adjustsFontSizeToFit style={{ fontSize: 18 }}>{`O idoso ${name} com o email ${email} enviou-lhe um pedido!`}</Text>
+          </View>
+          <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }}/>
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, newCaregiverContainer.acceptButton, stylesButtons.mainConfig]} onPress={accept}>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginVertical: '5%' }, newCaregiverContainer.buttonText]}>Aceitar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, newCaregiverContainer.rejectButton, stylesButtons.mainConfig]} onPress={refuse}>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginVertical: '5%' }, newCaregiverContainer.buttonText]}>Recusar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </View>
+  )
+}
+
+
+export function Caregiver({name, phone, email, caregiverId, setRefresh, canWrite}: Readonly<{name: string, phone: string, email: string, caregiverId: string, setRefresh: Function, canWrite: boolean}>) {
 
   const [modalVisible, setModalVisible] = useState(false)
   const [writePermission, setWritePermission] = useState(canWrite)
   const { userId } = useSessionInfo()
 
   const deleteCaregiver = () => {
-    decouplingCaregiver(email,caregiverId, userId).then(() => setRefresh())
+    decouplingCaregiver(email, caregiverId, userId).then(() => setRefresh())
   }
 
   const writeFunction = async () => {

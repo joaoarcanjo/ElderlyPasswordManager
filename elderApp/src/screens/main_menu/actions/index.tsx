@@ -1,4 +1,4 @@
-import {View, Text, Image, TouchableOpacity, Button} from 'react-native'
+import {View, Text, Image, TouchableOpacity} from 'react-native'
 import { stylesOptions, stylesFirstHalf } from '../styles/styles'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
@@ -7,7 +7,6 @@ import { stylesButtons } from '../../../assets/styles/main_style';
 import { useSessionInfo } from '../../../firebase/authentication/session';
 import { getKeychainValueFor, saveKeychainValue } from '../../../keychain';
 import { elderlyName, elderlyPhone } from '../../../keychain/constants';
-import { usePushNotifications } from '../../../notifications/usePushNotifications';
 
 const credentialsImage = '../images/credenciais.png'
 const generatorImage = '../images/gerador.png'
@@ -126,10 +125,6 @@ export default function MainMenu() {
     //const { expoPushToken } = usePushNotifications()
 
     const savePhoneAndName = async () => {
-        //console.log("UserId: "+userId)
-        //console.log("UserPhone: "+userPhone)
-        //console.log("UserName: "+userName)
-    
         if(userPhone == '' && userName == '') {
           const userNameAux = await getKeychainValueFor(elderlyName(userId))
           const userPhoneAux = await getKeychainValueFor(elderlyPhone(userId))

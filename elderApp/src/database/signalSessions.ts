@@ -9,7 +9,6 @@ import { SessionSignal } from "./types";
  * @param phoneNumber 
  */
   export const saveSignalSessions = async (userId: string, otherId: string, record: string, localDBKey: string) => {
-
     const encrypted = encrypt(record, localDBKey)
 
     if(dbSQL != null) {
@@ -28,7 +27,6 @@ import { SessionSignal } from "./types";
                                 return Promise.resolve();
                             },
                             (_, error) => {
-                                console.log(error);
                                 return Promise.reject();
                             }
                         );
@@ -38,18 +36,16 @@ import { SessionSignal } from "./types";
                             'INSERT INTO sessionsSignal (id, userId, record) VALUES (?,?,?)',
                             [otherId, userId, encrypted],
                             () => {
-                                //console.log('- Sessão salva com sucesso.')
+                                console.log('- Sessão salva com sucesso.')
                                 return Promise.resolve();
                             },
                             (_, error) => {
-                                console.log(error);
                                 return Promise.reject();
                             }
                         );
                     }
                 },
                 (_, error) => {
-                    console.log(error);
                     return Promise.reject();
                 }
             );
@@ -82,7 +78,6 @@ export const getSessionById = async (otherId: string, userId: string, localDBKey
                         }
                     },
                     (_, error) => {
-                        console.log(error)
                         reject(error)
                     }
                 );

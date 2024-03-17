@@ -9,3 +9,9 @@ export function sessionForRemoteUser(username: string): ChatSession | undefined 
     const session = sessionListSubject.value.find((session) => session.remoteUsername === username)
     return session
 }
+
+//Remove a sessão que existe com determinado utilizador.
+export function removeSession(username: string) {
+    const sessionList = sessionListSubject.value.filter((session) => session.remoteUsername!== username)
+    sessionListSubject.next(sessionList)
+}

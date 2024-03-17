@@ -3,7 +3,7 @@ import { Image, AppState } from 'react-native';
 import { showMessage } from "react-native-flash-message";
 import * as Clipboard from 'expo-clipboard';
 import React from 'react';
-import { darkGreenBackgroud, lightBlueBackground, lightRedBackground, lightYellowBackground } from '../assets/styles/colors';
+import { darkGreenBackgroud, lightBlueBackground, lightRedBackground, lightYellowBackground, purpleBackground } from '../assets/styles/colors';
 import { triggerNotifications } from '../notifications/localNotifications';
 
 export const enum FlashMessage {
@@ -20,7 +20,10 @@ export const enum FlashMessage {
   editPersonalInfoCanceled = 'INFORMAÇÕES PESSOAIS ATUALIZADAS COM SUCESSO!',
   credentialUpdated = 'CREDENCIAL ATUALIZADA COM SUCESSO!',
   sessionRequest = 'PEDIDO DE SESSÃO ENVIADO!',
+  sessionRequestReceived = 'PEDIDO DE SESSÃO RECEBIDO!',
   sessionEnded = 'RELAÇÃO COM O CUIDADOR TERMINADA!',
+  sessionAccepted = 'A CONEXÃO FOI ESTABELECIDA!',
+  sessionRejected = 'A CONEXÃO NÃO FOI ESTABELECIDA!',
   caregiverPersonalInfoUpdated = 'O CUIDADOR ATUALIZOU OS SEUS DADOS PESSOAIS!',
 }
 
@@ -82,39 +85,58 @@ export function sessionRequestSent() {
   });
 } 
 
-export function sessionAcceptedFlash(from: string) {
+export function sessionRequestReceivedFlash(from: string) {
+  if(AppState.currentState === 'active') {
+    showMessage({
+      floating: true,
+      message: FlashMessage.sessionRequestReceived,
+      icon: props => <Image source={require("../assets/images/plus.png")} {...props} />,
+      backgroundColor: purpleBackground,
+      duration: 3000,
+      color: "black", // text color
+    });
+  } else {
+    triggerNotifications('Pedido de conexão recebido!! 🎉', `O idoso ${from} enviou um pedido de conexão.`, "")
+  }
+}
+
+export function sessionAcceptedFlash(from: string, byMe: boolean) {
   //console.log('sessionAcceptedFlash')
   if(AppState.currentState === 'active') {
     showMessage({
       floating: true,
-      message: FlashMessage.caregiverAccept,
+      message:  byMe ? FlashMessage.sessionAccepted : FlashMessage.caregiverAccept,
       icon: props => <Image source={require("../assets/images/check.png")} {...props} />,
       backgroundColor: darkGreenBackgroud,
       duration: 3000,
       color: "black", // text color
     });
+  } else if(byMe) {
+    triggerNotifications('Conexão aceite!! 🎉', `A sua conexão foi aceite.`, "")
   } else {
     triggerNotifications('Conexão aceite!! 🎉', `O cuidador ${from} aceitou a conexão.`, "")
   }
 }
 
-export function sessionRejectedFlash(from: string) {
+export function sessionRejectedFlash(from: string, byMe: boolean) {
   //console.log(AppState.currentState)
   if(AppState.currentState === 'active') {
     showMessage({
       floating: true,
-      message: FlashMessage.caregiverReject,
+      message:  byMe ? FlashMessage.sessionRejected : FlashMessage.caregiverReject,
       icon: props => <Image source={require("../assets/images/cross.png")} {...props} />,
       backgroundColor: lightRedBackground,
       duration: 3000,
       color: "black", // text color
     });
+  } else if(byMe) {
+    triggerNotifications('Conexão rejeitada!! 😓', `A sua conexão foi rejeitada.`, "")
   } else {
     triggerNotifications('Conexão rejeitada!! 😓', `O cuidador ${from} rejeitou a conexão.`, "")
   }
 }
 
-export function sessionEndedFlash(from: string) {
+export function sessionEndedFlash(from: string, byMe: boolean) {
   if(AppState.currentState === 'active') {
     showMessage({
       floating: true,

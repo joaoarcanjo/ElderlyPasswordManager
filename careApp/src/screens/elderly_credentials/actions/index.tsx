@@ -3,28 +3,25 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 import { elderlyName, stylesAddCredential, styleScroolView } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import Navbar from '../../../navigation/actions'
-import { getCaregiversArray, getKey, listAllCredentials } from '../../../firebase/firestore/functionalities'
+import { getKey, listAllCredentials, verifyIfCanManipulateCredentials } from '../../../firebase/firestore/functionalities'
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import MainBox from '../../../components/MainBox'
 import { Spinner } from '../../../components/LoadingComponents'
 import { useSessionInfo } from '../../../firebase/authentication/session'
-import { getKeychainValueFor } from '../../../keychain'
-import { elderlySSSKey } from '../../../keychain/constants'
 import { deriveSecret } from '../../../algorithms/sss/sss'
 
-function AddCredencial({ elderlyId, userShared }: {elderlyId: string, userShared: string}) {
+function AddCredencial({ elderlyId, userShared }: Readonly<{elderlyId: string, userShared: string}>) {
 
   const navigation = useNavigation<StackNavigationProp<any>>()
   const { userId } = useSessionInfo()
 
   const navigateToAddCredential = async () => {
-    const canCreate = await getCaregiversArray(elderlyId, 'writeCaregivers').then(result => {
-      return result.includes(userId)
-    })
+    const canCreate = await verifyIfCanManipulateCredentials(userId, elderlyId)
 
+    const encryptionKey = deriveSecret([await getKey(elderlyId), userShared])
     if(canCreate) {
-      navigation.navigate('AddCredential', { userId: elderlyId, userShared: userShared, isElderlyCredential: false })
+      navigation.navigate('AddCredential', { userId: elderlyId, key: encryptionKey, isElderlyCredential: true })
     } else {
       alert('Você não tem permissão para adicionar credenciais.')
     }
@@ -45,26 +42,25 @@ function ScrollItemExample({credential, userShared, elderlyId}: Readonly<{creden
   //const { setUsernameCopied, setPasswordCopied, usernameCopied, passwordCopied } = useSessionInfo()
   //const { expoPushToken } = usePushNotifications()
 
-  const OpenCredentialPage = () => {
+  const OpenCredentialPage = async () => {
+    const encryptionKey = deriveSecret([await getKey(elderlyId), userShared]) 
+    
     navigation.navigate('CredentialPage', 
     { 
+      userId: elderlyId,
       id: credential.id, 
-      platform: credential.data.platform, 
-      uri: credential.data.uri, 
       username: credential.data.username, 
       password: credential.data.password, 
-      key: userShared,
-      userId: elderlyId
+      platform: credential.data.platform, 
+      uri: credential.data.uri, 
+      key: encryptionKey,
+      isElderlyCredential: true
     })
   }
 
   const NavigateToApp = async (uri: string, plataforma: string, username: string, password: string) => { 
-    console.log("Username: "+username)
     //setUsernameCopied(username)
     //setPasswordCopied(password)
-    //console.log("USERNAME: "+usernameCopied)
-    //console.log("PASSWORD: "+passwordCopied)
-
     const message = {
       //to: expoPushToken?.data,
       sound: "default",
@@ -109,7 +105,7 @@ interface Credential {
   }
 }
 
-function ElderlyCredentialsList({ elderlyId, userShared }: {elderlyId: string, userShared: string}) {
+function ElderlyCredentialsList({ elderlyId, userShared }: Readonly<{elderlyId: string, userShared: string}>) {
 
   const [credencials, setCredencials] = useState<Credential[]>([])
   const isFocused = useIsFocused()

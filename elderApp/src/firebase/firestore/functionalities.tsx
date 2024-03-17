@@ -11,6 +11,7 @@ const firestore = firebase.firestore()
  * Função para alterar a chave que se encontra na cloud.
  */
 async function changeKey(userId: string) {
+    
     const firestoreKey = await getKeychainValueFor(firestoreSSSKey(userId))
     //console.log("Firestore Key: " + firestoreKey)
     firebase.firestore().collection(elderlyCollectionName)
@@ -65,6 +66,7 @@ async function createElderly(elderlyId: string) {
 }
 
 export async function addCaregiverToArray(elderlyId: string, caregiverId: string, permission: string): Promise<boolean> {
+    console.log("===> addCaregiverToArrayCalled")
     const caregiverDocRef = firebase.firestore()
         .collection(elderlyCollectionName).doc(elderlyId)
         .collection(caregiversCollectionName).doc(caregiversDocumentName)
@@ -89,7 +91,6 @@ export async function addCaregiverToArray(elderlyId: string, caregiverId: string
     })
     .catch(error => {
         alert('Erro ao tentar adicionar caregiver de leitura, tente novamente!')
-        //console.log(error)
         return false
     })
 }
@@ -155,12 +156,11 @@ export async function getCaregiversArray(elderlyId: string, permission: string) 
  * @returns 
  */
 async function elderlyExists(elderlyId: string): Promise<boolean> {
-    
+    console.log("===> elderlyExistsCalled")
     return firestore.collection(elderlyCollectionName).doc(elderlyId).get()
     .then((doc) => doc.exists)
     .catch((error) => {
-        //alert('Erro ao verificar se idoso existe, tente novamente!')
-        console.error('Error: ', error)
+        console.log('Error: ', error)
         return false
     })
 }
@@ -215,19 +215,14 @@ interface Credential {
  */
 async function listAllElderlyCredencials(userId: string, shared: string): Promise<Credential[]> {
 
-    //console.log("Shared: "+shared)
     const cloudKey = await getKey(userId)
-    //console.log("cloudKey: "+cloudKey)
     const key = deriveSecret([cloudKey, shared])
 
     return firestore.collection(elderlyCollectionName).doc(userId).collection(credencialsCollectionName).get().then((docs) => {
         const values: Credential[] = []
         docs.forEach((doc) => { 
             if(doc.data()) {
-                //console.log("Value: "+doc.data().data)
                 const decrypted = decrypt(doc.data().data, key)
-                //console.log("Key:", key)
-                //console.log("Decryption: ", decrypted, '\n')
                 values.push({id: doc.id, data: decrypted}) 
             }
         });
@@ -247,10 +242,9 @@ async function listAllElderlyCredencials(userId: string, shared: string): Promis
 async function listCredencialProperties(userId: string, credencialId: string) {
 
     firestore.collection(elderlyCollectionName)
-        .doc(userId).collection(credencialsCollectionName)
-            .doc(credencialId).get().then((doc) => {
-                //console.log(doc.id, " => ", doc.data());
-        })
+        .doc(userId)
+        .collection(credencialsCollectionName)
+        .doc(credencialId).get()
         .catch((error) => {
             //alert('Erro ao obter a credencial , tente novamente!')
             //console.log('Error: ', error)
@@ -291,12 +285,14 @@ async function updateCredential(userId: string, credencialId: string, shared: st
             .update(updatedCredencial)
         .catch((error) => {
             //alert('Erro ao tentar adicionar a nova credencial, tente novamente!')
-            //console.log('Error: ', error)
+            console.log('Error: ', error)
             return false
         }).then(() => { return true })
 }
 
 async function initFirestore(userId: string): Promise<boolean> {
+    console.log("===> initFirestoreCalled")
+    if(userId === '') return false
     //throw new Error("Erro ao iniciar a firestore, tente novamente!")
     return elderlyExists(userId).then((result) => {
         if (!result) { //se não existir
@@ -305,7 +301,7 @@ async function initFirestore(userId: string): Promise<boolean> {
         }
         return true
     }).catch(error => {
-        //console.log('Error: ', error)
+        console.log('Error: ', error)
         throw new Error("Erro ao iniciar a firestore, tente novamente!")
     });
 }

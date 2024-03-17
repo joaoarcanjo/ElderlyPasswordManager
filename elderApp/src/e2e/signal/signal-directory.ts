@@ -103,7 +103,7 @@ export function serializeKeyRegistrationBundle(username: string, dv: FullDirecto
             identityKey,
             signedPreKey,
             oneTimePreKeys,
-            registrationId: dv.registrationId!,
+            registrationId: dv.registrationId,
         }
     }
 }

@@ -294,7 +294,7 @@ export class SignalProtocolStore implements StorageType {
         console.log("===> LoadSessionCalled")
         const rec = await getSessionById('session' + identifier, await this.getUserId(), await this.getDBKey())
         if (typeof rec === 'object') {
-            return rec.record as string
+            return rec.record
         } else if (typeof rec === 'undefined') {
             return rec
         }

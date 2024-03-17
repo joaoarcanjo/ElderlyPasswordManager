@@ -84,6 +84,7 @@ export const getSessionById = async (otherId: string, userId: string, localDBKey
                     (_, error) => {
                         console.log(error)
                         reject(error)
+                        return false
                     }
                 );
             });

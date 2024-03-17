@@ -1,5 +1,4 @@
 import { HEX_ENCODING } from "./algorithm/constants";
-import * as Crypto from 'expo-crypto';
 import { saveKeychainValue, getKeychainValueFor } from './../../keychain/index'
 import { caregiver1SSSKey, caregiver2SSSKey, elderlySSSKey, firestoreSSSKey } from "../../keychain/constants";
 import { generateKey } from "../0thers/crypto";
@@ -40,6 +39,7 @@ function deriveSecret(shares: string[]): string {
  * @returns 
  */
 async function initSSS(userId: string): Promise<string> {
+    console.log("===> InitSSSCalled")
     let shared = await getKeychainValueFor(elderlySSSKey(userId))
     //console.log("InitSSS Shared:  " + shared + " userid: " + userId)
 

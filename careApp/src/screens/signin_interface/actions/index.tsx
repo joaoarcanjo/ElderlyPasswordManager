@@ -40,7 +40,6 @@ const SignInPage = () => {
                 if(loginResult) {
                     setLoadingPersistent(false)
                     setUserEmail(emailSaved)
-                    navigation.push('InsideLayout')
                 } else {
                     setEmail(emailSaved)
                     setPassword(pwdSaved)

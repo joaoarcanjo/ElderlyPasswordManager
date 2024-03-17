@@ -300,7 +300,7 @@ export class SignalProtocolStore implements StorageType {
         }
         throw new Error(`session record is not an ArrayBuffer`)
     }
-    async storeSession(identifier: string, record: SessionRecordType): Promise<void> {
+    async storeSession(identifier: string, record: SessionRecordType): Promise<void> { 
         console.log("===> StoreSessionCalled")
         await saveSignalSessions(await this.getUserId(), 'session' + identifier, record, await this.getDBKey())
     }

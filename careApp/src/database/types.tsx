@@ -5,13 +5,19 @@ export interface Password {
 }
 
 export interface Elderly {
-    userId: string,
+    elderlyId: string,
     name: string,
     email: string,
     phoneNumber: string,
-    accepted: number
+    status: number
 }
 
 export interface SessionSignal {
     record: string,
+}
+
+export enum ElderlyRequestStatus {
+    ACCEPTED = 1,
+    RECEIVED = 2,
+    WAITING = 3
 }

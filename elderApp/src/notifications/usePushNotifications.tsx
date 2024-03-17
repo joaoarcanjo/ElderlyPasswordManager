@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react'
 import * as Device from "expo-device"
 import * as Notifications from "expo-notifications"
 import Contants from "expo-constants"
-import * as Clipboard from 'expo-clipboard';
 
 
 import { Platform } from 'react-native'

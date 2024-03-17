@@ -9,18 +9,20 @@ import { getKeychainValueFor } from "../../../keychain";
 import { elderlySSSKey } from "../../../keychain/constants";
 import { YesOrNoModal } from "../../../components/Modal";
 import { useSessionInfo } from "../../../firebase/authentication/session";
+import { ElderlyRequestStatus } from "../../../database/types";
 
 const caregiverImage = '../../../assets/images/elderly.png'
 const telephoneImage = '../../../assets/images/telephone.png'
 const emailImage = '../../../assets/images/email.png'
 
-export function ElderlyItem({elderlyId, name, phone, email, setRefresh, accepted}: Readonly<{elderlyId: string, name: string, phone: string, email: string, setRefresh: Function, accepted: number}>) {
-  return (
-    accepted == 1 ? 
-      <Elderly name={name} phone={phone} email={email} elderlyId={elderlyId} setRefresh={setRefresh}/>
-    : 
-      <ElderlyPending name={name} email={email} setRefresh={setRefresh}/>
-  )
+export function ElderlyItem({elderlyId, name, phone, email, setRefresh, status}: Readonly<{elderlyId: string, name: string, phone: string, email: string, setRefresh: Function, status: number}>) {
+  if(status == ElderlyRequestStatus.RECEIVED.valueOf()) {
+    return <ElderlyPending name={name} email={email} setRefresh={setRefresh}/>
+  } else if (status == ElderlyRequestStatus.ACCEPTED.valueOf()) {
+    return <Elderly name={name} phone={phone} email={email} elderlyId={elderlyId} setRefresh={setRefresh}/>
+  } else {
+    //Nada por agora.
+  }
 }
 
 export function ElderlyPending({ name, email, setRefresh }: Readonly<{name: string, email: string, setRefresh: Function}>) {
@@ -28,7 +30,7 @@ export function ElderlyPending({ name, email, setRefresh }: Readonly<{name: stri
   const { userId, userEmail, userName, userPhone } = useSessionInfo()
   
   const accept = () => { acceptElderly(userId, email, userName, userEmail, userPhone).then(() => setRefresh()) }
-  const refuse = () => { refuseElderly(email).then(() => setRefresh()) } 
+  const refuse = () => { refuseElderly(userId, email).then(() => setRefresh()) } 
 
   return (
     <View style={[{flex: 1}, elderlyStyle.newElderlyContainer]}>
@@ -57,9 +59,10 @@ export function Elderly({ elderlyId, name, phone, email, setRefresh }: Readonly<
   const [showInfo, setShowInfo] = useState(true)
   const navigation = useNavigation<StackNavigationProp<any>>()
   const [modalVisible, setModalVisible] = useState(false)
+  const { userId } = useSessionInfo()
 
   const deleteElderly = () => {
-    decouplingElderly(email).then(() => setRefresh())
+    decouplingElderly(userId, email).then(() => setRefresh())
   }
 
   const changeInfoState = () => setShowInfo(!showInfo)

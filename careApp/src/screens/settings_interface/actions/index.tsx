@@ -185,6 +185,7 @@ function AccountInfo() {
    * @returns 
    */
   function Options() {
+
     return (
       <View style= { { flex: 0.25, marginHorizontal: '10%', marginTop: '3%', flexDirection: 'row'} }>
         {editFlag ?

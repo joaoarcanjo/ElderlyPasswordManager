@@ -7,7 +7,10 @@ import { modal, options } from "../../credential_interface/styles/styles"
 import { startSessionWithCaregiver } from "./functions"
 import { useSessionInfo } from "../../../firebase/authentication/session"
 import { sessionRequestSent } from "../../../components/UserMessages"
-import { saveCaregiver } from "../../../database/caregivers"
+import { deleteCaregiver, saveCaregiver } from "../../../database/caregivers"
+import { CaregiverRequestStatus } from "../../../database/types"
+import { ErrorInstance } from "../../../exceptions/error"
+import { Errors } from "../../../exceptions/types"
 
 function AddCaregiverModal({number, visibility, concludeAction}: Readonly<{number: number, visibility: boolean, concludeAction: Function}>) {
 
@@ -15,11 +18,16 @@ function AddCaregiverModal({number, visibility, concludeAction}: Readonly<{numbe
   const { userId, userEmail, userName, userPhone } = useSessionInfo()
 
   const addCaregiver = async (email: string) => {
-    const result = await saveCaregiver('0', '0', email, '0', 0)
-    if(!result) console.log("Not added.")
-    startSessionWithCaregiver(number, email, userId, userName, userEmail, userPhone)
-      .then(() => sessionRequestSent())
-      .then(() => concludeAction())
+    console.log("addCaregiverButtonPressed")
+    saveCaregiver(userId, '', '', email, '', CaregiverRequestStatus.WAITING)
+    .then(() =>  startSessionWithCaregiver(number, email, userId, userName, userEmail, userPhone))
+    .then(() => sessionRequestSent())
+    .then(() => concludeAction())
+    .catch((error) => {
+      const errorAux = error as ErrorInstance
+      if(errorAux.code === Errors.ERROR_CAREGIVER_ALREADY_ADDED.valueOf()) alert(errorAux.code)
+      else deleteCaregiver(userId, email).then(() => alert(errorAux.code))
+    })
   }
 
   return (

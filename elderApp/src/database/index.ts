@@ -4,22 +4,25 @@ export let dbSQL: SQLite.SQLiteDatabase | null = null;
 
 export function initDb() {
     dbSQL = SQLite.openDatabase('elderly.db')
-    /*
+    
     dbSQL.transaction(tx => {
-          tx.executeSql(
-            'DROP TABLE IF EXISTS sessionsSignal;'
+        /*tx.executeSql(
+            'DROP TABLE IF EXISTS caregivers;'
         )
-    })*/
+        tx.executeSql(
+            'DROP TABLE IF EXISTS sessionsSignal;'
+        )*/
+    })
 
     dbSQL.transaction(tx => {
         tx.executeSql(
-            'CREATE TABLE IF NOT EXISTS passwords (id TEXT PRIMARY KEY, password TEXT, timestamp INTEGER);'
+            'CREATE TABLE IF NOT EXISTS passwords (id TEXT PRIMARY KEY, userId TEXT, password TEXT, timestamp INTEGER);'
         )
     })
 
     dbSQL.transaction(tx => {
         tx.executeSql(
-            'CREATE TABLE IF NOT EXISTS caregivers (id TEXT, name TEXT, email TEXT PRIMARY KEY, phoneNumber TEXT, accepted INTEGER DEFAULT 0, UNIQUE(email, phoneNumber));'
+            'CREATE TABLE IF NOT EXISTS caregivers (caregiverId TEXT, userId TEXT, name TEXT, email TEXT PRIMARY KEY, phoneNumber TEXT, status INTEGER, UNIQUE(userId, email, phoneNumber));'
         )
     })
 

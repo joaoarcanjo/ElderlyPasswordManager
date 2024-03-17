@@ -39,7 +39,6 @@ export async function updatePasswordOperation(userEmail: string, oldPwd: string,
         return updatePassword(auth.currentUser, newPwd).then(() => {
             return true
         }).catch(error => {
-            console.log(error)
             alert('Erro ao atualizar a password, tente novamente!')
             return false
         })

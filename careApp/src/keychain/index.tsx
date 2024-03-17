@@ -57,14 +57,14 @@ export async function cleanKeychain(id: string) {
  */
 export async function initKeychain(userId: string, userEmail: string): Promise<string> {
 
-  if(await getKeychainValueFor(caregiverId) == '') {
-    await cleanKeychain(userId).then(() => {
-      saveKeychainValue(caregiverId, userId)
-      saveKeychainValue(caregiverEmail, userEmail)
+  if(await getKeychainValueFor(caregiverId) !== userId) {
+    await cleanKeychain(userId).then(async () => {
+      await saveKeychainValue(caregiverId, userId)
+      await saveKeychainValue(caregiverEmail, userEmail)
     })
   }
   if(await getKeychainValueFor(localDBKey(userId)) == '') {
-    saveKeychainValue(localDBKey(userId), generateKey()) 
+    await saveKeychainValue(localDBKey(userId), generateKey()) 
   }
   return await getKeychainValueFor(localDBKey(userId))
 }

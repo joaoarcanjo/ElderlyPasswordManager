@@ -3,7 +3,7 @@ import { Image, AppState } from 'react-native';
 import { showMessage } from "react-native-flash-message";
 import * as Clipboard from 'expo-clipboard';
 import React from 'react';
-import { darkGreenBackgroud, lightBlueBackground, lightGreenBackgroud, lightRedBackground, lightYellowBackground, purpleBackground, yellowBackground } from '../assets/styles/colors';
+import { darkGreenBackgroud, lightBlueBackground, lightRedBackground, lightYellowBackground, purpleBackground, yellowBackground } from '../assets/styles/colors';
 import { triggerNotifications } from '../notifications/localNotifications';
 
 export const enum FlashMessage {
@@ -16,12 +16,11 @@ export const enum FlashMessage {
   editModeCanceled = 'MODO EDIÇÃO DESATIVADO',
   editCredentialCompleted = 'CREDENCIAL ATUALIZADA COM SUCESSO!',
   editPersonalInfoCompleted = 'INFORMAÇÕES PESSOAIS ATUALIZADAS COM SUCESSO!',
-  editCredentialCanceled = 'CREDENCIAL ATUALIZADA COM SUCESSO!',
-  editPersonalInfoCanceled = 'INFORMAÇÕES PESSOAIS ATUALIZADAS COM SUCESSO!',
-  credentialUpdated = 'CREDENCIAL ATUALIZADA COM SUCESSO!',
   sessionRequest = 'PEDIDO DE SESSÃO ENVIADO!',
   sessionRequestReceived = 'PEDIDO DE SESSÃO RECEBIDO!',
   sessionEnded = 'RELAÇÃO COM O IDOSO TERMINADA!',
+  sessionAccepted = 'A CONEXÃO FOI ESTABELECIDA!',
+  sessionRejected = 'A CONEXÃO NÃO FOI ESTABELECIDA!',
   sessionPermissions = 'O IDOSO ATUALIZOU AS PERMISSÕES!',
   elderlyPersonalInfoUpdated = 'O IDOSO ATUALIZOU OS SEUS DADOS PESSOAIS!',
 }
@@ -86,7 +85,6 @@ export function sessionRequestSent() {
 
 export function sessionAcceptedFlash(from: string) {
   console.log('sessionAcceptedFlash')
-  console.log(AppState.currentState)
   if(AppState.currentState === 'active') {
     showMessage({
       floating: true,
@@ -101,11 +99,11 @@ export function sessionAcceptedFlash(from: string) {
   }
 }
 
-export function sessionRejectedFlash(from: string) {
+export function sessionRejectedFlash(from: string, byMe: boolean) {
   if(AppState.currentState === 'active') {
     showMessage({
       floating: true,
-      message: FlashMessage.elderlyReject,
+      message:  byMe ? FlashMessage.sessionRejected : FlashMessage.elderlyReject,
       icon: props => <Image source={require("../assets/images/cross.png")} {...props} />,
       backgroundColor: lightRedBackground,
       duration: 3000,

@@ -1,58 +1,181 @@
 import { dbSQL } from ".";
-import { Caregiver } from "./types";
+import { ErrorInstance } from "../exceptions/error";
+import { Errors } from "../exceptions/types";
+import { Caregiver, CaregiverRequestStatus } from "./types";
 
   /**
- * Função para guardar os dados de determinado cuidador.
- * @param id 
- * @param email 
- * @param phoneNumber 
- */
-  export const saveCaregiver = async (id: string, name: string, email: string, phoneNumber: string, accepted: number): Promise<boolean> => {
-    if(dbSQL != null) {
-        dbSQL.transaction(tx => {
-            tx.executeSql(
-                'INSERT INTO caregivers (id, name, email, phoneNumber, accepted) VALUES (?,?,?,?,?)',
-                [id, name, email, phoneNumber, accepted],
-                (_, result) => {
-                    return Promise.resolve(result.rowsAffected > 0)
-                }
-            );
-        });
+   * Função para armazenar a informação relativamente a determinado cuidador.
+   * @param userId 
+   * @param id 
+   * @param name 
+   * @param email 
+   * @param phoneNumber 
+   * @param requestStatus 
+   * @returns 
+   */
+  export const saveCaregiver = async (userId: string, caregiverId: string, name: string, email: string, phoneNumber: string, requestStatus: CaregiverRequestStatus): Promise<void> => {
+    console.log("===> saveCaregiverCalled")
+    const aux = await checkCaregiverByEmailNotAccepted(userId, email)
+    if (requestStatus == CaregiverRequestStatus.WAITING && aux) {
+        return Promise.reject(new ErrorInstance(Errors.ERROR_CAREGIVER_ALREADY_ADDED))
     }
-    return Promise.resolve(false)
+
+    return new Promise((resolve, reject) => {
+        if (dbSQL != null) {
+            dbSQL.transaction(async tx => {
+                tx.executeSql(
+                    'INSERT INTO caregivers (caregiverId, userId, name, email, phoneNumber, status) VALUES (?,?,?,?,?,?)',
+                    [caregiverId, userId, name, email, phoneNumber, requestStatus.valueOf()],
+                    (_, result) => {
+                        if (result.rowsAffected > 0) {
+                            console.log('- Cuidador armazenado com sucesso.')
+                            return resolve()
+                        } else {
+                            console.log('- Cuidador não armazenado.')
+                            return reject(new ErrorInstance(Errors.ERROR_SAVING_SESSION))
+                        }
+                    },
+                    (_, _error) => {
+                        return false
+                    }
+                );
+            });
+        } else {
+            return reject(new ErrorInstance(Errors.ERROR_SAVING_SESSION))
+        }
+    });
 }
 
-export const updateCaregiver = async (email: string, newName: string, newPhoneNumber: string) => {
-    //console.log("Email: "+email)
+
+export const updateCaregiver = async (caregiverId: string, userId: string, email: string, newName: string, newPhoneNumber: string) => {
+    
     if (dbSQL != null) {
-        dbSQL.transaction(tx => {
+        return dbSQL.transaction(tx => {
             tx.executeSql(
-                'UPDATE caregivers SET name = ?, phoneNumber = ?, accepted = ? WHERE email = ?',
-                [newName, newPhoneNumber, 1, email],
+                'UPDATE caregivers SET caregiverId = ?, name = ?, phoneNumber = ?, status = ? WHERE email = ? AND userId = ?',
+                [caregiverId, newName, newPhoneNumber, CaregiverRequestStatus.ACCEPTED.valueOf(), email, userId],
                 (_, result) => {
                       // Verifique se houve alguma linha afetada para confirmar se a atualização foi bem-sucedida.
                     if (result.rowsAffected > 0) {
-                        console.log('- Cuidador atualizado com sucesso.')
+                        console.log('--- Cuidador atualizado com sucesso.')
                     } else {
-                        console.log('- Nenhum cuidador foi atualizado. Verifique o email fornecido.')
+                        console.log('--- Nenhum cuidador foi atualizado. Verifique o email fornecido.')
                     }
+                },
+                (_, _error) => {
+                    return false
                 }
             );
         });
     }
 }
 
-export const deleteCaregiver = async (email: string) => {
+export const deleteCaregiver = async (userId: string, email: string) => {
+    console.log("===> deleteCaregiverCalled")
     if (dbSQL != null) {
         dbSQL.transaction(tx => {
             tx.executeSql(
-                'DELETE FROM caregivers WHERE email = ?',
-                [email],
+                'DELETE FROM caregivers WHERE email = ? AND userId = ?;',
+                [email, userId],
                 (_, result) => {
                     if (result.rowsAffected > 0) {
-                        console.log('- Cuidador apagado com sucesso.');
+                        console.log('--- Cuidador apagado com sucesso.');
                     } else {
-                        console.log('- Nenhum cuidador foi apagado. Verifique o email fornecido.');
+                        console.log('--- Nenhum cuidador foi apagado. Verifique o email fornecido.');
+                    }
+                },
+                (error) => {
+                 console.log('-> Error deleting caregiver from database', error)
+                 return false
+                }
+            );
+        });
+    }
+}
+
+export const checkCaregiverByEmail = async (userId: string, email: string): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+        if (dbSQL != null) {
+            dbSQL.transaction(tx => {
+                tx.executeSql(
+                    'SELECT COUNT(*) AS count FROM caregivers WHERE email = ? AND userId = ? AND status = ?',
+                    [email, userId, CaregiverRequestStatus.ACCEPTED.valueOf()],
+                    (_, result) => {
+                        const count = result.rows.item(0).count;
+                        resolve(count > 0); 
+                    },
+                    (_, _error) => {
+                     return false
+                    }
+                );
+            });
+        } else {
+            reject(new Error('Database not initialized.')); 
+        }
+    })
+}
+
+export const checkNumberOfCaregivers = async (userId: string): Promise<boolean> => {
+    console.log("===> checkNumberOfCaregiversCalled")
+    return new Promise((resolve, reject) => {
+        if (dbSQL != null) {
+            dbSQL.transaction(tx => {
+                tx.executeSql(
+                    'SELECT COUNT(*) AS count FROM caregivers WHERE userId = ? AND status = ?',
+                    [userId, CaregiverRequestStatus.ACCEPTED.valueOf()],
+                    (_, result) => {
+                        const count = result.rows.item(0).count;
+                        resolve(count > 0); 
+                    },
+                    (_, _error) => {
+                     return false
+                    }
+                );
+            });
+        } else {
+            reject(new Error('Database not initialized.')); 
+        }
+    })
+}
+
+
+export const checkCaregiverByEmailNotAccepted = async (userId: string, email: string): Promise<boolean> => {
+    console.log("==> checkCaregiverByEmailNotAccepted")
+    return new Promise((resolve, reject) => {
+        if (dbSQL != null) {
+            dbSQL.transaction(tx => {
+                tx.executeSql(
+                    'SELECT COUNT(*) AS count FROM caregivers WHERE email = ? AND userId = ? AND status = ?;',
+                    [email, userId, CaregiverRequestStatus.WAITING.valueOf()],
+                    (_, result) => {
+                        const count = result.rows.item(0).count;
+                        console.log("Count: "+count)
+                        return resolve(count > 0); 
+                    },
+                    (_, error) => {
+                        console.log("Error: "+error)
+                     return false
+                    }
+                );
+            });
+        } else {
+            reject(new Error('Database not initialized.')); 
+        }
+    })
+}
+
+export const acceptCaregiverOnDatabase = async (userId: string, email: string) => {
+    if (dbSQL != null) {
+        dbSQL.transaction(tx => {
+            tx.executeSql(
+                'UPDATE caregivers SET status = ? WHERE email = ? AND userId = ?',
+                [CaregiverRequestStatus.ACCEPTED.valueOf(), email, userId],
+                (_, result) => {
+                    // Verifique se houve alguma linha afetada para confirmar se a atualização foi bem-sucedida.
+                    if (result.rowsAffected > 0) {
+                        console.log('--- Cuidador aceite.')
+                    } else {
+                        console.log('--- Cuidador não aceite, erro.')
                     }
                 }
             );
@@ -60,70 +183,59 @@ export const deleteCaregiver = async (email: string) => {
     }
 }
 
-export const checkCaregiverByEmail = async (email: string): Promise<boolean> => {
+export const getCaregivers = (userId: string): Promise<Caregiver[]> => {
+    console.log("===> getCaregiversCalled")
     return new Promise((resolve, reject) => {
-        if (dbSQL != null) {
-            dbSQL.transaction(tx => {
-                tx.executeSql(
-                    'SELECT COUNT(*) AS count FROM caregivers WHERE email = ? AND accepted = 1',
-                    [email],
-                    (_, result) => {
-                        const count = result.rows.item(0).count;
-                        resolve(count > 0); 
-                    }
-                );
-            });
-        } else {
-            reject(new Error('Database not initialized.')); 
-        }
-    })
-}
-
-export const checkCaregiverByEmailNotAccepted = async (email: string): Promise<boolean> => {
-    return new Promise((resolve, reject) => {
-        if (dbSQL != null) {
-            dbSQL.transaction(tx => {
-                tx.executeSql(
-                    'SELECT COUNT(*) AS count FROM caregivers WHERE email = ? AND accepted = 0',
-                    [email],
-                    (_, result) => {
-                        const count = result.rows.item(0).count;
-                        resolve(count > 0); 
-                    }
-                );
-            });
-        } else {
-            reject(new Error('Database not initialized.')); 
-        }
-    })
-}
-
-export const getCaregivers = (): Promise<Caregiver[]> => {
-    return new Promise(async (resolve, reject) => {
-        const sql = 'SELECT id, name, email, phoneNumber, accepted FROM caregivers LIMIT 2';
-
         const data: Caregiver[] = [];
         try {
             if(dbSQL == null) {
                 throw (new Error("Database is not connected."))
             }
             dbSQL.transaction((tx) => {
-                tx.executeSql(sql, [], (tx, results) => {
-                    for (let i = 0; i < results.rows.length; i++) {                        
+                tx.executeSql('SELECT caregiverId, name, email, phoneNumber, status FROM caregivers WHERE userId = ?', 
+                [userId], (_tx, results) => {
+                    for (let i = 0; i < results.rows.length; i++) { 
                         data.push({
-                            id         : results.rows.item(i).id,
-                            name       : results.rows.item(i).name,
-                            email      : results.rows.item(i).email,
-                            phoneNumber: results.rows.item(i).phoneNumber,
-                            accepted   : results.rows.item(i).accepted
+                            caregiverId  : results.rows.item(i).caregiverId,
+                            name         : results.rows.item(i).name,
+                            email        : results.rows.item(i).email,
+                            phoneNumber  : results.rows.item(i).phoneNumber,
+                            requestStatus: results.rows.item(i).status
                         });
                     }
                     resolve(data)
+                    },
+                    (_, _error) => {
+                        console.log("Error: "+_error)
+                        return false
                     }
-                );
+                )
             });
         } catch (error) {
             reject(error)
+        }
+    })
+}
+
+export async function getCaregiverId(caregiverEmail: string, userId: string): Promise<string> {
+    console.log("===> getCaregiverIdCalled")
+    return new Promise((resolve, reject) => {
+        if (dbSQL != null) {
+            dbSQL.transaction(tx => {
+                tx.executeSql(
+                    'SELECT caregiverId FROM caregivers WHERE email = ? AND userId = ?;',
+                    [caregiverEmail, userId],
+                    (_, result) => {
+                        return resolve(result.rows.item(0).caregiverId);
+                    },
+                    (_, _error) => {
+                        console.log("Error: "+_error)
+                     return false
+                    }
+                );
+            });
+        } else {
+            reject(new Error('Database not initialized.')); 
         }
     })
 }

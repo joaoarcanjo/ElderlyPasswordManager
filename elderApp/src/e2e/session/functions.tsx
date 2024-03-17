@@ -1,4 +1,4 @@
-//import { SessionBuilder, SessionCipher, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript"
+import { SessionBuilder, SessionCipher, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript"
 import { directorySubject, signalStore, usernameSubject } from "../identity/state"
 import { ChatSession } from "./types"
 import { sessionListSubject } from "./state"
@@ -6,7 +6,7 @@ import { sendSignalProtocolMessage } from "../messages/functions"
 import { stringToArrayBuffer } from "../signal/signal-store"
 import { ChatMessageType, ProcessedChatMessage } from "../messages/types"
 import { randomUUID } from 'expo-crypto'
-import { SessionBuilder, SessionCipher, SignalProtocolAddress } from "../../algorithms/signal"
+//import { SessionBuilder, SessionCipher, SignalProtocolAddress } from "../../algorithms/signal"
 
 /**
  * Para começar uma conversa com um destinatário.
@@ -26,7 +26,6 @@ export async function startSession(recipient: string): Promise<void> {
     // identityKey differs from a previously seen identity for this address.
 
     const session = await sessionBuilder.processPreKey(keyBundle!)
-
     const cm: ProcessedChatMessage = {
         id: randomUUID(),
         address: recipient,

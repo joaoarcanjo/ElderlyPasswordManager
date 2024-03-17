@@ -11,8 +11,7 @@ async function getKey(elderlyId: string): Promise<string> {
     return firebase.firestore().collection(elderlyCollectionName)
         .doc(elderlyId).collection(keyCollectionName).doc(keyDocumentName).get().then((doc: any) => {
             if(doc.exists) {
-                const data = doc.data()
-                return data!.key
+                return doc.data().key
             } 
         })
         .catch((error: any) => {
@@ -31,7 +30,6 @@ async function getKey(elderlyId: string): Promise<string> {
 async function addCredencial(userId: string, encryptionKey: string, newCredencialId: string, data: string, isElderlyCredentials: boolean) {
     const encrypted = encrypt(data, encryptionKey)
     const credential = defaultCredencials(encrypted)
-    console.log(userId)
 
     const collection = isElderlyCredentials ? firestore.collection(elderlyCollectionName) : firestore.collection(caregiverCollectionName)
     await collection.doc(userId)
@@ -131,6 +129,12 @@ export async function getCaregiversArray(elderlyId: string, permission: string) 
         console.error('Error: ', error)
         return []
     });
+}
+
+export async function verifyIfCanManipulateCredentials(userId: string, elderlyId: string) {
+    return await getCaregiversArray(elderlyId, 'writeCaregivers').then(result => {
+        return result.includes(userId)
+    })
 }
 
 async function caregiverExists(caregiverId: string): Promise<boolean> {

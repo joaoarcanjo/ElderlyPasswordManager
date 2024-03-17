@@ -25,9 +25,7 @@ Function to save the new generated password.
 export const savePasswordGenerated = async (password: string, localDBKey: string) => {
     deletePasswordGenerated()
 
-      //console.log(localDBKey)
     const encrypted = encrypt(password, localDBKey)
-      //console.log(encrypted)
 
     if(dbSQL != null) {
         dbSQL.transaction(tx => {
