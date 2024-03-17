@@ -48,7 +48,7 @@ import { Caregiver, CaregiverRequestStatus } from "./types";
 
 
 export const updateCaregiver = async (caregiverId: string, userId: string, email: string, newName: string, newPhoneNumber: string) => {
-    
+    console.log("===> updateCaregiverCalled")
     if (dbSQL != null) {
         return dbSQL.transaction(tx => {
             tx.executeSql(

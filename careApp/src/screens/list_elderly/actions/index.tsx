@@ -6,10 +6,10 @@ import { ElderlyItem, Elderly as ElderlyItemMockup } from './elderlyItem'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { Elderly } from '../../../database/types'
-import { getAllElderly } from '../../../database'
 import { elderlyListUpdated } from './state'
 import AddElderly from './addItem'
 import { useSessionInfo } from '../../../firebase/authentication/session'
+import { getAllElderly } from '../../../database/elderlyFunctions'
 
 function ElderlyList() {
 

@@ -6,11 +6,11 @@ import { ModalBox } from "../../../components/Modal"
 import { modal, options } from "../../credential_interface/styles/styles"
 import { useSessionInfo } from "../../../firebase/authentication/session"
 import { sessionRequestSent } from "../../../components/UserMessages"
-import { deleteElderly, saveElderly } from "../../../database"
 import { startSessionWithElderly } from "./functions"
 import { ElderlyRequestStatus } from "../../../database/types"
 import { ErrorInstance } from "../../../exceptions/error"
 import { Errors } from "../../../exceptions/types"
+import { deleteElderly, saveElderly } from "../../../database/elderlyFunctions"
 
 export function AddElderlyModal({visibility, concludeAction}: Readonly<{visibility: boolean, concludeAction: Function}>) {
 

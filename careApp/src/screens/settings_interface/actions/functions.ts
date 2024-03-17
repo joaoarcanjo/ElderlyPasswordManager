@@ -1,4 +1,5 @@
-import { getAllElderly } from "../../../database";
+
+import { getAllElderly } from "../../../database/elderlyFunctions";
 import { encryptAndSendMessage } from "../../../e2e/messages/functions";
 import { ChatMessageType, CaregiverDataBody } from "../../../e2e/messages/types";
 import { startSession } from "../../../e2e/session/functions";
@@ -6,7 +7,7 @@ import { currentSessionSubject, sessionForRemoteUser } from "../../../e2e/sessio
 
 
 export async function sendElderlyNewInfo(userId: string, username: string, userEmail: string, userPhone: string) {
-    const elderlyList = await getAllElderly()   
+    const elderlyList = await getAllElderly(userId)   
     elderlyList.forEach(async (elderly) => {
         if(!sessionForRemoteUser(elderly.email)) {
             await startSession(elderly.email)

@@ -1,5 +1,5 @@
 import { sessionEstablishedFlash, sessionRejectedFlash } from "../../../components/ShowFlashMessage"
-import { acceptElderlyOnDatabase, deleteElderly } from "../../../database"
+import { acceptElderlyOnDatabase, deleteElderly } from "../../../database/elderlyFunctions"
 import { encryptAndSendMessage } from "../../../e2e/messages/functions"
 import { ChatMessageType, CaregiverDataBody } from "../../../e2e/messages/types"
 import { startSession } from "../../../e2e/session/functions"
@@ -52,7 +52,7 @@ export async function acceptElderly(userId: string, elderlyEmail: string, userNa
     }
     //await encryptAndSendMessage(to, 'acceptSession', true, ChatMessageType.ACCEPTED_SESSION)
     await encryptAndSendMessage(elderlyEmail, JSON.stringify(data), true, ChatMessageType.PERSONAL_DATA)
-    await acceptElderlyOnDatabase(elderlyEmail)
+    await acceptElderlyOnDatabase(userId, elderlyEmail)
     sessionEstablishedFlash(true)
 }
 

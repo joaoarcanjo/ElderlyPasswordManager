@@ -1,56 +1,58 @@
-import { db } from ".";
+import { dbSQL } from ".";
 import { decrypt, encrypt } from "../algorithms/0thers/crypto";
 import { SessionSignal } from "./types";
 
-  /**
- * Função para guardar os dados de uma sessão.
- * @param id 
- * @param email 
- * @param phoneNumber 
+/**
+ * Função para guardar os dados de uma sessão, entre os dois utilizadores
+ * @param userId 
+ * @param otherId 
+ * @param record 
+ * @param localDBKey 
+ * @returns 
  */
   export const saveSignalSessions = async (userId: string, otherId: string, record: string, localDBKey: string) => {
 
     const encrypted = encrypt(record, localDBKey)
     
-    if(db != null) {
-        return db.transaction(async tx => {
+    if(dbSQL != null) {
+        return dbSQL.transaction(async tx => {
             tx.executeSql(
-                'SELECT * FROM sessionsSignal WHERE id = ? AND userId = ?',
+                'SELECT * FROM sessionsSignal WHERE id = ? AND userId = ?;',
                 [otherId, userId],
                 (_, result) => {
                     if (result.rows.length > 0) {
                         // Row with given id and userId exists, perform UPDATE
                         tx.executeSql(
-                            'UPDATE sessionsSignal SET record = ? WHERE id = ? AND userId = ?',
+                            'UPDATE sessionsSignal SET record = ? WHERE id = ? AND userId = ?;',
                             [encrypted, otherId, userId],
                             () => {
                                 //console.log('- Sessão atualizada com sucesso.')
-                                return Promise.resolve();
+                                return Promise.resolve()
                             },
                             (_, error) => {
-                                console.log(error);
-                                return Promise.reject();
+                                console.log(error)
+                                return false
                             }
                         );
                     } else {
                         // No row with given id and userId exists, perform INSERT
                         tx.executeSql(
-                            'INSERT INTO sessionsSignal (id, userId, record) VALUES (?,?,?)',
+                            'INSERT INTO sessionsSignal (id, userId, record) VALUES (?,?,?);',
                             [otherId, userId, encrypted],
                             () => {
                                 //console.log('- Sessão salva com sucesso.')
                                 return Promise.resolve();
                             },
                             (_, error) => {
-                                console.log(error);
-                                return Promise.reject();
+                                console.log(error)
+                                return false
                             }
                         );
                     }
                 },
                 (_, error) => {
-                    console.log(error);
-                    return Promise.reject();
+                    console.log(error)
+                    return false
                 }
             );
         });
@@ -60,34 +62,35 @@ import { SessionSignal } from "./types";
 
 
 /**
- * Função para obter a sessão com determinado id.
- * @param id 
+ * Função para obter uma sessão com determinado utilizador
+ * @param otherId 
+ * @param userId 
+ * @param localDBKey 
  * @returns 
  */
 export const getSessionById = async (otherId: string, userId: string, localDBKey: string): Promise<SessionSignal | undefined> => {
     console.log("===> getSessionByIdCalled")
     return new Promise((resolve, reject) => {
-        if(db != null) {
-            db.transaction(async tx => {
+        if(dbSQL != null) {
+            dbSQL.transaction(async tx => {
                 tx.executeSql(
-                    'SELECT (record) FROM sessionsSignal WHERE id = ? AND userId = ?',
+                    'SELECT (record) FROM sessionsSignal WHERE id = ? AND userId = ?;',
                     [otherId, userId],
                     (_, result) => {
                         if (result.rows.length > 0) {
-                            resolve({
+                            return resolve({
                                 record: decrypt(result.rows.item(0).record, localDBKey),
                             })
                         } else {
-                            resolve(undefined)
+                            return resolve(undefined)
                         }
                     },
                     (_, error) => {
                         console.log(error)
-                        reject(error)
                         return false
                     }
-                );
-            });
+                )
+            })
         } else {
             reject(new Error("Database connection not established"));
         }
@@ -96,44 +99,49 @@ export const getSessionById = async (otherId: string, userId: string, localDBKey
 
 /**
  * Função para apagar a sessão com determinado id.
- * @param id 
+ * @param userId 
+ * @param otherId 
  * @returns 
  */
 export const deleteSessionById = async (userId: string, otherId: string) => {
-    if(db != null) {
-        db.transaction(async tx => {
+    if(dbSQL != null) {
+        dbSQL.transaction(async tx => {
             tx.executeSql(
                 'DELETE FROM sessionsSignal WHERE userId = ? AND id = ?;',
                 [userId, otherId],
                 (_, result) => {
-                    return Promise.resolve(result.rowsAffected > 0);
+                    return Promise.resolve(result.rowsAffected > 0)
                 },
                 (_, error) => {
-                    return Promise.reject(error);
+                    console.log(error)
+                    return false
                 }
-            );
-        });
+            )
+        })
     }
     return Promise.reject(false)
 }
 
 /**
  * Função para apagar todas as sessões
+ * @param userId 
+ * @returns 
  */
  export const deleteAllSessions = async (userId: string) => {
-    if(db != null) {
-        db.transaction(async tx => {
+    if(dbSQL != null) {
+        dbSQL.transaction(async tx => {
             tx.executeSql(
-                'DELETE FROM table_name WHERE userId = ?',
+                'DELETE FROM table_name WHERE userId = ?;',
                 [userId],
                 (_, result) => {
                     return Promise.resolve(result.rowsAffected > 0);
                 },
                 (_, error) => {
-                    return Promise.reject(error);
+                    console.log(error)
+                    return false
                 }
-            );
-        });
+            )
+        })
     }
     return Promise.reject(false)
 }

@@ -7,12 +7,13 @@ import { signalWebsocket } from "../network/webSockets"
 import { ChatSession } from "../session/types"
 import { ChatMessageType, ElderlyDataBody, ProcessedChatMessage } from "./types"
 import { randomUUID } from 'expo-crypto'
-import { checkElderlyByEmail, checkElderlyByEmailNotAccepted, deleteElderly, saveElderly, updateElderly } from "../../database"
+import { checkElderlyByEmail } from "../../database"
 import { setElderlyListUpdated } from "../../screens/list_elderly/actions/state"
 import { getKeychainValueFor, saveKeychainValue } from "../../keychain"
 import { caregiverId, elderlySSSKey } from "../../keychain/constants"
 import { FlashMessage, editCompletedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionPermissionsFlash, sessionRejectedFlash, sessionRequestReceivedFlash } from "../../components/UserMessages"
 import { ElderlyRequestStatus } from "../../database/types"
+import { checkElderlyByEmailWaitingForResponse, deleteElderly, saveElderly, updateElderly } from "../../database/elderlyFunctions"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -160,7 +161,7 @@ async function processPersonalData(currentUserId: string, cm: ProcessedChatMessa
         await updateElderly(currentUserId, data.userId, data.email, data.name, data.phone)
         setElderlyListUpdated()
         editCompletedFlash(FlashMessage.elderlyPersonalInfoUpdated)   
-    }  else if(await checkElderlyByEmailNotAccepted(currentUserId, cm.from)) {
+    }  else if(await checkElderlyByEmailWaitingForResponse(currentUserId, cm.from)) {
         await updateElderly(currentUserId, data.userId, data.email, data.name, data.phone)
         .then(() => saveKeychainValue(elderlySSSKey(data.userId), data.key))
         .then(() => sessionAcceptedFlash(cm.from))
