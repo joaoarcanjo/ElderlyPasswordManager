@@ -6,16 +6,17 @@ import { signalStore, usernameSubject } from "../identity/state"
 import { stringToArrayBuffer } from "../signal/signal-store"
 import { signalWebsocket } from "../network/webSockets"
 import { ChatSession } from "../session/types"
-import { ChatMessageType, CaregiverDataBody, ProcessedChatMessage } from "./types"
+import { ChatMessageType, CaregiverDataBody, ProcessedChatMessage, CredentialBody } from "./types"
 import { randomUUID } from 'expo-crypto'
 import { setCaregiverListUpdated } from "../../screens/list_caregivers/actions/state"
-import { FlashMessage, editCompletedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionRejectedFlash, sessionRequestReceivedFlash } from "../../components/UserMessages"
+import { FlashMessage, credentialCreatedByOtherFlash, credentialDeletedByOtherFlash, credentialUpdatedByOtherFlash, editCompletedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionRejectedFlash, sessionRequestReceivedFlash } from "../../components/UserMessages"
 import { getKeychainValueFor } from "../../keychain"
 import { elderlyId } from "../../keychain/constants"
 import { addCaregiverToArray, removeCaregiverFromArray } from "../../firebase/firestore/functionalities"
 import { checkCaregiverByEmail, checkCaregiverByEmailNotAccepted, deleteCaregiver, getCaregiverId, saveCaregiver, updateCaregiver } from "../../database/caregivers"
 //import { MessageType, SessionCipher, SignalProtocolAddress } from "../../algorithms/signal"
 import { CaregiverRequestStatus } from "../../database/types"
+import { setCredentialsListUpdated } from "../../screens/list_credentials/actions/state"
 //import { SessionCipher, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript"
 
 /**
@@ -142,6 +143,18 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
         await processPersonalData(currentUserId, cm)
     } else if (cm.type === ChatMessageType.REJECT_SESSION) {
         await processRejectMessage(currentUserId, cm)
+    } else if (cm.type === ChatMessageType.CREDENTIALS_UPDATED) {
+        const data = JSON.parse(cm.body) as CredentialBody
+        credentialUpdatedByOtherFlash(cm.from, data)
+        setCredentialsListUpdated()
+    } else if (cm.type === ChatMessageType.CREDENTIALS_CREATED) {
+        const data = JSON.parse(cm.body) as CredentialBody
+        credentialCreatedByOtherFlash(cm.from, data)
+        setCredentialsListUpdated()
+    } else if (cm.type === ChatMessageType.CREDENTIALS_DELETED) {
+        const data = JSON.parse(cm.body) as CredentialBody
+        credentialDeletedByOtherFlash(cm.from, data)
+        setCredentialsListUpdated()
     } else if (cm.type === ChatMessageType.DECOUPLING_SESSION) {
         await processDecouplingMessage(currentUserId, cm)
     }/* else if(type !== 3 && !cm.firstMessage) {

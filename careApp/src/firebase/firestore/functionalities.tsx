@@ -32,6 +32,7 @@ async function addCredencial(userId: string, encryptionKey: string, newCredencia
     const credential = defaultCredencials(encrypted)
 
     const collection = isElderlyCredentials ? firestore.collection(elderlyCollectionName) : firestore.collection(caregiverCollectionName)
+    console.log("AHHHHH")
     await collection.doc(userId)
             .collection(credencialsCollectionName)
             .doc(newCredencialId)

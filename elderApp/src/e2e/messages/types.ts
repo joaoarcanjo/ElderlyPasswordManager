@@ -10,11 +10,16 @@ export interface ProcessedChatMessage {
 
 export enum ChatMessageType {
     NORMAL_DATA, //mensagem normal (texto)
-    START_SESSION, //primeira mensagem enviada (quando se começa a sessão)
-    PERSONAL_DATA, //mensagem enviada com os dados (chave + others)
-    REJECT_SESSION, //mensagem enviada quando o outro membro aceita
+    PERSONAL_DATA, //mensagem enviada com os primeiros dados (chave + others)
     PERMISSION_DATA, //mensagem que indica que houve atualização de permissões
-    DECOUPLING_SESSION //mensagem enviada quando o outro membro desvincula
+
+    START_SESSION, //primeira mensagem enviada (quando se começa a sessão)
+    REJECT_SESSION, //mensagem enviada quando o outro membro aceita
+    DECOUPLING_SESSION, //mensagem enviada quando o outro membro desvincula
+
+    CREDENTIALS_UPDATED,
+    CREDENTIALS_DELETED,
+    CREDENTIALS_CREATED,
 }
 
 export interface ElderlyDataBody {
@@ -32,4 +37,9 @@ export interface CaregiverDataBody {
     email: string,
     phone: string,
     photo: string
+}
+
+export interface CredentialBody {
+    credentialId: string,
+    platform: string
 }

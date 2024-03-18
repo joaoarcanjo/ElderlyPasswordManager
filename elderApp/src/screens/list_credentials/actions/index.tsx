@@ -11,6 +11,7 @@ import { Spinner } from '../../../components/LoadingComponents'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { usePushNotifications } from '../../../notifications/usePushNotifications'
 import { sendPushNotification } from '../../../notifications/functionalities'
+import { credentialsListUpdated } from './state'
 
 function AddCredencial() {
 
@@ -103,7 +104,12 @@ function CredentialsList() {
 
   useEffect(() => {
     setIsFething(true)
-    listAllElderlyCredencials(userId, userShared).then((credencials) => {
+    refreshValue().then(() => setIsFething(false))
+  }, [isFocused])
+
+  const refreshValue = async () => {
+    console.log('==> CaregiversList refreshed.')
+    await listAllElderlyCredencials(userId, userShared).then((credencials) => {
       let auxCredencials: Credential[] = [];
       credencials.forEach(value => {
         if(value.data.length != 0) {
@@ -111,8 +117,12 @@ function CredentialsList() {
         }
       })
       setCredencials(auxCredencials)
-    }).then(() => setIsFething(false))
-  }, [isFocused])
+    })
+  }
+
+  useEffect(() => {
+    credentialsListUpdated.subscribe(() => {refreshValue()})
+  }, [credentialsListUpdated])
 
   return (
     <View style={{ flex: 0.70, flexDirection: 'row', justifyContent: 'space-around'}}>

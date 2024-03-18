@@ -15,6 +15,8 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useSessionInfo } from "../../../firebase/authentication/session";
 import { getNewId } from "../../../algorithms/0thers/crypto";
+import { sendCaregiversCredentialInfoAction } from "../../credential_interface/actions/functions";
+import { ChatMessageType } from "../../../e2e/messages/types";
 
 const placeholderPlatform = 'Insira a plataforma'
 const placeholderURI = 'Insira o URI da plataforma'
@@ -33,10 +35,11 @@ function CredentialsInput() {
     const navigation = useNavigation<StackNavigationProp<any>>()
     const { userId, userShared } = useSessionInfo()
   
-    const handleSave = () => {
+    const handleSave = async () => {
         if(platform != '' && uri != '' && username != '' && password != '') {
             const uuid = getNewId()
-            addCredencial(userId, userShared, uuid, JSON.stringify({platform: platform, uri: uri, username: username, password: password}))
+            await addCredencial(userId, userShared, uuid, JSON.stringify({platform: platform, uri: uri, username: username, password: password}))
+            await sendCaregiversCredentialInfoAction(userId, '', platform, ChatMessageType.CREDENTIALS_CREATED)
             navigation.goBack()
         }
     }

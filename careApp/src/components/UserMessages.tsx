@@ -3,8 +3,9 @@ import { Image, AppState } from 'react-native';
 import { showMessage } from "react-native-flash-message";
 import * as Clipboard from 'expo-clipboard';
 import React from 'react';
-import { darkGreenBackgroud, lightBlueBackground, lightRedBackground, lightYellowBackground, purpleBackground, yellowBackground } from '../assets/styles/colors';
+import { darkGreenBackgroud, lightBlueBackground, lightGreenBackgroud, lightRedBackground, lightYellowBackground, purpleBackground, superlightBlueBackgroud, yellowBackground } from '../assets/styles/colors';
 import { triggerNotifications } from '../notifications/localNotifications';
+import { CredentialBody } from '../e2e/messages/types';
 
 export const enum FlashMessage {
   uriCopied = 'URI COPIADO!!',
@@ -156,5 +157,56 @@ export function sessionPermissionsFlash(from: string) {
     });
   } else {
     triggerNotifications('Permissões atualizadas!!', `O idoso ${from} atualizou as permissões.`, "")
+  }
+}
+
+export function credentialUpdatedByOtherFlash(from: string, info: CredentialBody) {
+  if(AppState.currentState === 'active') {
+    showMessage({
+      floating: true,
+      message: `O idoso com o email ${from} atualizou uma credencial!`,
+      description: `A informação da credencial ${info.platform} foi atualizada.`,
+      icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
+      backgroundColor: superlightBlueBackgroud,
+      duration: 7000,
+      color: "black", // text color
+      position: 'top'
+    });
+  } else {
+    triggerNotifications('CREDENTIAL ATUALIZADA!!', `O idoso com o email ${from} alterou a credencial ${info.platform}.`, "")
+  }
+}
+
+export function credentialCreatedByOtherFlash(from: string, info: CredentialBody) {
+  if(AppState.currentState === 'active') {
+    showMessage({
+      floating: true,
+      message: `O idoso com o email ${from} criou uma credencial!`,
+      description: `A credencial ${info.platform} foi criada.`,
+      icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
+      backgroundColor: lightGreenBackgroud,
+      duration: 7000,
+      color: "black", // text color
+      position: 'top'
+    });
+  } else {
+    triggerNotifications('CREDENCIAL ATUALIZADA!!', `O cuidador com o email ${from} alterou a credencial ${info.platform}.`, "")
+  }
+}
+
+export function credentialDeletedByOtherFlash(from: string, info: CredentialBody) {
+  if(AppState.currentState === 'active') {
+    showMessage({
+      floating: true,
+      message: `O idoso com o email ${from} apagou uma credencial!`,
+      description: `A informação da credencial ${info.platform} foi apagada!`,
+      icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
+      backgroundColor: lightRedBackground,
+      duration: 7000,
+      color: "black", // text color
+      position: 'top'
+    });
+  } else {
+    triggerNotifications('CREDENCIAL APAGADA!!', `O idoso com o email ${from} apagou a credencial ${info.platform}.`, "")
   }
 }

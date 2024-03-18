@@ -5,7 +5,7 @@ import Navbar from '../../../navigation/actions'
 import { accountInfo, appInfo, logout } from '../styles/styles'
 import MainBox from '../../../components/MainBox'
 import { FIREBASE_AUTH } from '../../../firebase/FirebaseConfig'
-import { elderlyName, elderlyPhone, elderlyPwd } from '../../../keychain/constants'
+import { elderlyId, elderlyName, elderlyPhone, elderlyPwd } from '../../../keychain/constants'
 import { getKeychainValueFor, saveKeychainValue } from '../../../keychain'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { FlashMessage, editCanceledFlash, editCompletedFlash, editValueFlash } from '../../../components/UserMessages'
@@ -15,6 +15,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 import Algorithm from '../../password_generator/actions/algorithm'
 import { updatePasswordOperation } from '../../../firebase/authentication/funcionalities'
 import { sendCaregiversNewInfo } from './functions'
+import { closeWebsocket } from '../../../e2e/network/webSockets'
+import { usernameSubject } from '../../../e2e/identity/state'
 
 const gitHubUrl = 'https://github.com/joaoarcanjo/ThesisApps'
 
@@ -231,7 +233,9 @@ function Logout() {
     setUserName('')
     setUserPhone('')
     saveKeychainValue(elderlyPwd, '')
-
+    saveKeychainValue(elderlyId, '')
+    closeWebsocket()
+    usernameSubject.next('')
     FIREBASE_AUTH.signOut()
   }
 

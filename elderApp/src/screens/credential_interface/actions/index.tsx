@@ -15,6 +15,8 @@ import { YesOrNoModal, YesOrNoSpinnerModal } from '../../../components/Modal'
 import Algorithm from '../../password_generator/actions/algorithm'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
+import { ChatMessageType } from '../../../e2e/messages/types'
+import { sendCaregiversCredentialInfoAction } from './functions'
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
@@ -56,12 +58,13 @@ function AppInfo({id, platform, uri, un, pw}: Readonly<{id: string, platform: st
     if(credentialsModified) {
       setLoading(true)
       updateCredential(userId, id, userShared, JSON.stringify({platform: platform, uri: uriEditted, username: usernameEdited, password: passwordEdited}))
-      .then((updated) => {
+      .then(async (updated) => {
         toggleEditFlag()
         if(updated) {
           setURI(uriEditted)
           setUsername(usernameEdited)
           setPassword(passwordEdited)
+          await sendCaregiversCredentialInfoAction(userId, '', platform, ChatMessageType.CREDENTIALS_UPDATED)
           editCompletedFlash(FlashMessage.editCredentialCompleted)
         } else {
           setUriEditted(currUri)
@@ -207,7 +210,7 @@ function AppInfo({id, platform, uri, un, pw}: Readonly<{id: string, platform: st
     </View>
     <Options/>
     <YesOrNoSpinnerModal question={'Guardar as alterações?'} yesFunction={saveCredentialUpdate} noFunction={dontSaveCredentialsUpdate} visibleFlag={modalVisible} loading={loading}/>
-    {editFlag && <DeleteCredential id={id} />}
+    {editFlag && <DeleteCredential id={id} platform={platform} />}
     </>
   )
 }
@@ -216,14 +219,16 @@ function AppInfo({id, platform, uri, un, pw}: Readonly<{id: string, platform: st
  * Componente que representa o botão para apagar a credencial
  * @returns 
  */
-function DeleteCredential({id}: Readonly<{id: string}>) {
+function DeleteCredential({id, platform}: Readonly<{id: string, platform: string}>) {
   
   const navigation = useNavigation<StackNavigationProp<any>>()
   const [modalVisible, setModalVisible] = useState(false)
   const { userId } = useSessionInfo()
 
-  const deleteCredentialAction = () => {
-    deleteCredential(userId, id).then(() => navigation.goBack())
+  const deleteCredentialAction = async () => {
+    await deleteCredential(userId, id)
+    .then(async () => await sendCaregiversCredentialInfoAction(userId, '', platform, ChatMessageType.CREDENTIALS_DELETED))
+    .then(() => navigation.goBack())
   }
 
   return (

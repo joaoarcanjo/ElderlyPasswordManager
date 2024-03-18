@@ -10,6 +10,7 @@ import MainBox from '../../../components/MainBox'
 import { Spinner } from '../../../components/LoadingComponents'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { deriveSecret } from '../../../algorithms/sss/sss'
+import { credentialsListUpdated } from './state'
 
 function AddCredencial({ elderlyId, userShared }: Readonly<{elderlyId: string, userShared: string}>) {
 
@@ -124,6 +125,10 @@ function ElderlyCredentialsList({ elderlyId, userShared }: Readonly<{elderlyId: 
       setCredencials(auxCredencials)
     })
   }
+
+  useEffect(() => {
+    credentialsListUpdated.subscribe(() => {fetchCredencials()})
+  }, [credentialsListUpdated])
 
   useEffect(() => {
     setIsFething(true)

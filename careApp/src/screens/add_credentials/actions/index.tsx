@@ -14,13 +14,16 @@ import AvaliationEmoji from "../../../components/EmojiAvaliation";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { getNewId } from "../../../algorithms/0thers/crypto";
+import { sendElderlyCredentialInfoAction } from "../../credential_interface/actions/functions";
+import { useSessionInfo } from "../../../firebase/authentication/session";
+import { ChatMessageType } from "../../../e2e/messages/types";
 
 const placeholderPlatform = 'Insira a plataforma'
 const placeholderURI = 'Insira o URI da plataforma'
 const placeholderUsername = 'Insira o seu username'
 const placeholderPassword = "Insira a password"
 
-function CredentialsInput({ userId, auxKey, isElderlyCredential }: Readonly<{userId: string, auxKey: string, isElderlyCredential: boolean }>) {
+function CredentialsInput({ ownerId, auxKey, isElderlyCredential }: Readonly<{ownerId: string, auxKey: string, isElderlyCredential: boolean }>) {
     const [platform, setPlatform] = useState('')
     const [uri, setURI] = useState('')
     const [username, setUsername] = useState('')
@@ -29,13 +32,13 @@ function CredentialsInput({ userId, auxKey, isElderlyCredential }: Readonly<{use
 
     const [showPassword, setShowPassword] = useState(false)
     const navigation = useNavigation<StackNavigationProp<any>>()
+
+    const { userId } = useSessionInfo()
   
     const handleSave = async () => {
         if(platform != '' && uri != '' && username != '' && password != '') {
-
-            //const encryptionKey = isElderlyCredential ? deriveSecret([await getKey(userId), auxKey]) : auxKey
-
-            await addCredencial(userId, auxKey, getNewId(), JSON.stringify({platform: platform, uri: uri, username: username, password: password}), isElderlyCredential)
+            await addCredencial(ownerId, auxKey, getNewId(), JSON.stringify({platform: platform, uri: uri, username: username, password: password}), isElderlyCredential)
+            if(ownerId != userId) await sendElderlyCredentialInfoAction(userId, ownerId, '', platform, ChatMessageType.CREDENTIALS_CREATED)
             navigation.goBack()
         }
     }
@@ -121,7 +124,7 @@ function AddCredencial({ route }: Readonly<{route: any}>) {
         <KeyboardAvoidingWrapper>
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <MainBox text="Adicionar credencial"/>
-                <CredentialsInput auxKey={route.params.key} userId={route.params.userId} isElderlyCredential={route.params.isElderlyCredential}  />
+                <CredentialsInput auxKey={route.params.key} ownerId={route.params.userId} isElderlyCredential={route.params.isElderlyCredential}  />
             </View>
         </KeyboardAvoidingWrapper>
         <Navbar/>

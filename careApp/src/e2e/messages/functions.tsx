@@ -5,15 +5,16 @@ import { signalStore, usernameSubject } from "../identity/state"
 import { stringToArrayBuffer } from "../signal/signal-store"
 import { signalWebsocket } from "../network/webSockets"
 import { ChatSession } from "../session/types"
-import { ChatMessageType, ElderlyDataBody, ProcessedChatMessage } from "./types"
+import { ChatMessageType, CredentialBody, ElderlyDataBody, ProcessedChatMessage } from "./types"
 import { randomUUID } from 'expo-crypto'
 import { checkElderlyByEmail } from "../../database"
 import { setElderlyListUpdated } from "../../screens/list_elderly/actions/state"
 import { getKeychainValueFor, saveKeychainValue } from "../../keychain"
 import { caregiverId, elderlySSSKey } from "../../keychain/constants"
-import { FlashMessage, editCompletedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionPermissionsFlash, sessionRejectedFlash, sessionRequestReceivedFlash } from "../../components/UserMessages"
+import { FlashMessage, credentialCreatedByOtherFlash, credentialDeletedByOtherFlash, credentialUpdatedByOtherFlash, editCompletedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionPermissionsFlash, sessionRejectedFlash, sessionRequestReceivedFlash } from "../../components/UserMessages"
 import { ElderlyRequestStatus } from "../../database/types"
 import { checkElderlyByEmailWaitingForResponse, deleteElderly, saveElderly, updateElderly } from "../../database/elderlyFunctions"
+import { setCredentialsListUpdated } from "../../screens/elderly_credentials/actions/state"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -133,8 +134,19 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
         //userSession.messages.push(cm)  
     } else if (cm.type === ChatMessageType.REJECT_SESSION) {
         //vai apagar a sessão que foi criada com o possível cuidador
-        //userSession.messages.push(cm) 
         await processRejectMessage(currentUserId, cm)
+    } else if (cm.type === ChatMessageType.CREDENTIALS_UPDATED) {
+        const data = JSON.parse(cm.body) as CredentialBody
+        credentialUpdatedByOtherFlash(cm.from, data)
+        setCredentialsListUpdated()
+    } else if (cm.type === ChatMessageType.CREDENTIALS_CREATED) {
+        const data = JSON.parse(cm.body) as CredentialBody
+        credentialCreatedByOtherFlash(cm.from, data)
+        setCredentialsListUpdated()
+    } else if (cm.type === ChatMessageType.CREDENTIALS_DELETED) {
+        const data = JSON.parse(cm.body) as CredentialBody
+        credentialDeletedByOtherFlash(cm.from, data)
+        setCredentialsListUpdated()
     } else if (cm.type === ChatMessageType.PERMISSION_DATA) {
         //Quando o idoso atualiza as permissoes. 
         setElderlyListUpdated()

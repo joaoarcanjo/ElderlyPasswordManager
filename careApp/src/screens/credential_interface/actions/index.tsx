@@ -14,8 +14,9 @@ import { deleteCredential, updateCredential, verifyIfCanManipulateCredentials } 
 import { YesOrNoModal, YesOrNoSpinnerModal } from '../../../components/Modal'
 import Algorithm from '../../password_generator/actions/algorithm'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
-import { deriveSecret } from '../../../algorithms/sss/sss'
 import { useSessionInfo } from '../../../firebase/authentication/session'
+import { sendElderlyCredentialInfoAction } from './functions'
+import { ChatMessageType } from '../../../e2e/messages/types'
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
@@ -47,8 +48,8 @@ function AppInfo({ownerId, id, platform, uri, un, pw, auxKey, isElderlyCredentia
   const toggleEditFlag = async () => {
     const canEdit = ( await verifyIfCanManipulateCredentials(userId, ownerId) && isElderlyCredential ) || !isElderlyCredential
     if(canEdit) {
-      setEditFlag(!editFlag); 
-      editValueFlash();
+      editValueFlash()
+      setEditFlag(!editFlag)
     } else {
       alert('Você não tem permissão para editar credenciais.')
     }
@@ -63,16 +64,17 @@ function AppInfo({ownerId, id, platform, uri, un, pw, auxKey, isElderlyCredentia
    * os estados de edição e normais.
    */
   async function saveCredentialUpdate() {
-    if(credentialsModified) {
+    if(credentialsModified) { 
       setLoading(true)
       updateCredential(ownerId, id, auxKey, JSON.stringify({platform: platform, uri: uriEditted, username: usernameEdited, password: passwordEdited}), isElderlyCredential)
-      .then((updated) => {
-        toggleEditFlag()
+      .then(async (updated) => {
+        setEditFlag(!editFlag)
         if(updated) {
+          editCompletedFlash(FlashMessage.editCredentialCompleted)
+          await sendElderlyCredentialInfoAction(userId, ownerId, id, platform, ChatMessageType.CREDENTIALS_UPDATED)
           setCurrUri(uriEditted)
           setUsername(usernameEdited)
           setPassword(passwordEdited)
-          editCompletedFlash(FlashMessage.editCredentialCompleted)
         } else {
           setUriEditted(currUri)
           setUsernameEdited(username)
@@ -216,7 +218,7 @@ function AppInfo({ownerId, id, platform, uri, un, pw, auxKey, isElderlyCredentia
     </View>
     <Options/>
     <YesOrNoSpinnerModal question={'Guardar as alterações?'} yesFunction={saveCredentialUpdate} noFunction={dontSaveCredentialsUpdate} visibleFlag={modalVisible} loading={loading}/>
-    {editFlag && <DeleteCredential ownerId={ownerId} id={id} isElderlyCredential={isElderlyCredential} />}
+    {editFlag && <DeleteCredential ownerId={ownerId} id={id} platform={platform} isElderlyCredential={isElderlyCredential} />}
     </>
   )
 }
@@ -225,7 +227,7 @@ function AppInfo({ownerId, id, platform, uri, un, pw, auxKey, isElderlyCredentia
  * Componente que representa o botão para apagar a credencial
  * @returns 
  */
-function DeleteCredential({ownerId, id, isElderlyCredential}: Readonly<{ownerId: string, id: string, isElderlyCredential: boolean}>) {
+function DeleteCredential({ownerId, id, platform, isElderlyCredential}: Readonly<{ownerId: string, id: string, platform: string, isElderlyCredential: boolean}>) {
   
   const navigation = useNavigation<StackNavigationProp<any>>()
   const [modalVisible, setModalVisible] = useState(false)
@@ -241,7 +243,11 @@ function DeleteCredential({ownerId, id, isElderlyCredential}: Readonly<{ownerId:
   }
 
   const deleteCredentialAction = async () => {
-    deleteCredential(userId, id, isElderlyCredential).then(() => navigation.goBack())
+    await deleteCredential(ownerId, id, isElderlyCredential)
+    .then(async () => {
+      if(ownerId != userId) await sendElderlyCredentialInfoAction(userId, ownerId, '', platform, ChatMessageType.CREDENTIALS_DELETED)
+    })
+    .then(() => navigation.goBack())
   }
 
   return (
