@@ -8,7 +8,7 @@ const firestore = firebase.firestore()
  * Função para obter a chave que se encontra na cloud.
  */
 async function getKey(elderlyId: string): Promise<string> {
-    return firebase.firestore().collection(elderlyCollectionName)
+    return firestore.collection(elderlyCollectionName)
         .doc(elderlyId).collection(keyCollectionName).doc(keyDocumentName).get().then((doc: any) => {
             if(doc.exists) {
                 return doc.data().key
@@ -32,7 +32,6 @@ async function addCredencial(userId: string, encryptionKey: string, newCredencia
     const credential = defaultCredencials(encrypted)
 
     const collection = isElderlyCredentials ? firestore.collection(elderlyCollectionName) : firestore.collection(caregiverCollectionName)
-    console.log("AHHHHH")
     await collection.doc(userId)
             .collection(credencialsCollectionName)
             .doc(newCredencialId)
@@ -67,7 +66,7 @@ export async function listAllCredentials(userId: string, encryptionKey: string, 
         });
         return values
     }).catch((error: any) => {
-        alert('Erro ao obter as credenciais, tente novamente!')
+        //alert('Erro ao obter as credenciais, tente novamente!')
         console.log('Error: ', error)
         return []
     });
@@ -109,7 +108,7 @@ async function updateCredential(userId: string, credencialId: string, encryption
 }
 
 export async function getCaregiversArray(elderlyId: string, permission: string) {
-    const privateCaregiverDocRef = firebase.firestore()
+    const privateCaregiverDocRef = firestore
         .collection(elderlyCollectionName).doc(elderlyId)
         .collection(caregiversCollectionName).doc(caregiversDocumentName)
 
@@ -156,7 +155,7 @@ async function caregiverExists(caregiverId: string): Promise<boolean> {
  */
 async function createCaregiver(caregiverId: string) {
     try {
-        const caregiverCollectionRef = firebase.firestore().collection(caregiverCollectionName)
+        const caregiverCollectionRef = firestore.collection(caregiverCollectionName)
 
         //Cria na coleção o elemento do idoso.
         const novoDocumentoRef = caregiverCollectionRef.doc(caregiverId)

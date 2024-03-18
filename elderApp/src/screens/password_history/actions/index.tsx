@@ -4,13 +4,17 @@ import { stylesButtons } from '../../../assets/styles/main_style'
 import { styleScroolView } from '../styles/styles'
 import formatTimestamp from '../../../algorithms/0thers/time';
 import Navbar from '../../../navigation/actions';
-import { getGeneratedPasswords } from '../../../database'
+import { getGeneratedPasswords } from '../../../database/passwords'
 import { Password } from '../../../database/types'
-import { FlashMessage, copyValue } from '../../../components/UserMessages'
+import { FlashMessage, copyPasswordDescription, copyValue } from '../../../components/UserMessages'
 import MainBox from '../../../components/MainBox';
 import { useSessionInfo } from '../../../firebase/authentication/session';
 
 export default function PasswordHistory() {
+
+  const copyPassword = (password: string) => {
+    copyValue(password, FlashMessage.passwordCopied, copyPasswordDescription)
+  }
   
   function PasswordGeneratedItem({thisPassword, time}: Readonly<{thisPassword: string, time: number}>) {
     return (
@@ -19,7 +23,7 @@ export default function PasswordHistory() {
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{fontSize: 30, margin: '3%', fontWeight: 'bold' }, styleScroolView.itemPassword]}>{thisPassword}</Text>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%', textAlign: 'right' }, styleScroolView.itemDate]}>{formatTimestamp(time)}</Text>
         </View>
-        <TouchableOpacity style={[{flex: 0.3, margin: '2%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(thisPassword, FlashMessage.passwordCopied) }>
+        <TouchableOpacity style={[{flex: 0.3, margin: '2%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyPassword(thisPassword) }>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar</Text>
         </TouchableOpacity>
       </View>

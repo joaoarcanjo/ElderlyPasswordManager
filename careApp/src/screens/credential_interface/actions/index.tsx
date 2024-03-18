@@ -7,7 +7,7 @@ import MainBox from '../../../components/MainBox'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import AvaliationEmoji from '../../../components/EmojiAvaliation'
 import { getScore } from '../../../algorithms/zxcvbn/algorithm'
-import { FlashMessage, copyValue, editCanceledFlash, editCompletedFlash, editValueFlash } from '../../../components/UserMessages'
+import { FlashMessage, copyPasswordDescription, copyUsernameDescription, copyValue, editCanceledFlash, editCompletedFlash, editValueFlash } from '../../../components/UserMessages'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
 import { deleteCredential, updateCredential, verifyIfCanManipulateCredentials } from '../../../firebase/firestore/functionalities'
@@ -101,7 +101,7 @@ function AppInfo({ownerId, id, platform, uri, un, pw, auxKey, isElderlyCredentia
    */
   function cancelUpdate() {
     toggleEditFlag()
-    editCanceledFlash(FlashMessage.editCredentialCanceled)
+    editCanceledFlash(FlashMessage.editModeCanceled)
     setUsernameEdited(username)
     setPasswordEdited(password)
   }
@@ -165,7 +165,7 @@ function AppInfo({ownerId, id, platform, uri, un, pw, auxKey, isElderlyCredentia
             <View style={{flex: 0.6, flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '4%'}}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>UTILIZADOR</Text>
               {editFlag && 
-              <TouchableOpacity style={[{flex: 0.4, marginTop:'3%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(username, FlashMessage.usernameCopied)}>
+              <TouchableOpacity style={[{flex: 0.4, marginTop:'3%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(username, FlashMessage.usernameCopied, copyUsernameDescription)}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar</Text>
               </TouchableOpacity>}
             </View>
@@ -184,7 +184,7 @@ function AppInfo({ownerId, id, platform, uri, un, pw, auxKey, isElderlyCredentia
             <View style={{flex: 0.6, flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '4%'}}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>PASSWORD</Text>
               {editFlag && 
-              <TouchableOpacity style={[{flex: 0.4, marginTop:'3%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(password, FlashMessage.passwordCopied)}>
+              <TouchableOpacity style={[{flex: 0.4, marginTop:'3%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(password, FlashMessage.passwordCopied, copyPasswordDescription)}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar</Text>
               </TouchableOpacity>}
             </View>

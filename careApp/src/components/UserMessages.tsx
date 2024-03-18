@@ -3,7 +3,7 @@ import { Image, AppState } from 'react-native';
 import { showMessage } from "react-native-flash-message";
 import * as Clipboard from 'expo-clipboard';
 import React from 'react';
-import { darkGreenBackgroud, lightBlueBackground, lightGreenBackgroud, lightRedBackground, lightYellowBackground, purpleBackground, superlightBlueBackgroud, yellowBackground } from '../assets/styles/colors';
+import { darkGreenBackgroud, lightBlueBackground, lightGreenBackgroud, lightRedBackground, lightYellowBackground, purpleBackground, superlightBlueBackgroud, superlightGreenBackground, yellowBackground } from '../assets/styles/colors';
 import { triggerNotifications } from '../notifications/localNotifications';
 import { CredentialBody } from '../e2e/messages/types';
 
@@ -26,14 +26,20 @@ export const enum FlashMessage {
   elderlyPersonalInfoUpdated = 'O IDOSO ATUALIZOU OS SEUS DADOS PESSOAIS!',
 }
 
-export function copyValue(value: string, message: FlashMessage) {
+//DESCRIPTIONS:
+export const copyPasswordDescription = `A password foi guardada no clipboard.`
+export const copyUsernameDescription = `O username foi guardado no clipboard.`
+export const copyURIDescription = `O URI foi guardado no clipboard.`
+
+export function copyValue(value: string, message: FlashMessage, description: string = "") {
     Clipboard.setStringAsync(value)
     showMessage({
       floating: true,
       message: message,
+      description: description,
       icon: props => <Image source={require("../assets/images/copy.png")} {...props} />,
-      backgroundColor: darkGreenBackgroud,
-      duration: 3000,
+      backgroundColor: superlightGreenBackground,
+      duration: 6000,
       color: "black", // text color
     });
 }
@@ -44,7 +50,7 @@ export function editValueFlash() {
     message: FlashMessage.editModeActive,
     icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
     backgroundColor: lightBlueBackground,
-    duration: 3000,
+    duration: 6000,
     color: "black", // text color
   });
 } 
@@ -55,7 +61,7 @@ export function editCanceledFlash(flashMessage: FlashMessage) {
     message: flashMessage,
     icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
     backgroundColor: lightYellowBackground,
-    duration: 3000,
+    duration: 6000,
     color: "black", // text color
   });
 } 
@@ -67,7 +73,7 @@ export function editCompletedFlash(flashMessage: FlashMessage) {
     message: flashMessage,
     icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
     backgroundColor: darkGreenBackgroud,
-    duration: 3000,
+    duration: 6000,
     color: "black", // text color
   });
 } 
@@ -79,7 +85,7 @@ export function sessionRequestSent() {
     message: FlashMessage.sessionRequest,
     icon: props => <Image source={require("../assets/images/check.png")} {...props} />,
     backgroundColor: lightBlueBackground,
-    duration: 3000,
+    duration: 6000,
     color: "black", // text color
   });
 } 
@@ -92,7 +98,7 @@ export function sessionAcceptedFlash(from: string) {
       message: FlashMessage.elderlyAccept,
       icon: props => <Image source={require("../assets/images/check.png")} {...props} />,
       backgroundColor: darkGreenBackgroud,
-      duration: 3000,
+      duration: 6000,
       color: "black", // text color
     });
   } else {
@@ -122,7 +128,7 @@ export function sessionRequestReceivedFlash(from: string) {
       message: FlashMessage.sessionRequestReceived,
       icon: props => <Image source={require("../assets/images/plus.png")} {...props} />,
       backgroundColor: purpleBackground,
-      duration: 3000,
+      duration: 6000,
       color: "black", // text color
     });
   } else {
@@ -137,7 +143,7 @@ export function sessionEndedFlash(from: string) {
       message: FlashMessage.sessionEnded,
       icon: props => <Image source={require("../assets/images/minus.png")} {...props} />,
       backgroundColor: lightRedBackground,
-      duration: 3000,
+      duration: 6000,
       color: "black", // text color
     });
   } else {
@@ -152,7 +158,7 @@ export function sessionPermissionsFlash(from: string) {
       message: FlashMessage.sessionPermissions,
       icon: props => <Image source={require("../assets/images/minus.png")} {...props} />,
       backgroundColor: yellowBackground,
-      duration: 3000,
+      duration: 6000,
       color: "black", // text color
     });
   } else {

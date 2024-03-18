@@ -14,7 +14,7 @@ async function changeKey(userId: string) {
     
     const firestoreKey = await getKeychainValueFor(firestoreSSSKey(userId))
     //console.log("Firestore Key: " + firestoreKey)
-    firebase.firestore().collection(elderlyCollectionName)
+    firestore.collection(elderlyCollectionName)
         .doc(userId).collection(keyCollectionName).doc(keyDocumentName).set({key: firestoreKey})
         .catch((error) => {
             //console.log('Error: ', error)
@@ -26,7 +26,7 @@ async function changeKey(userId: string) {
  * Função para obter a chave que se encontra na cloud.
  */
 async function getKey(userId: string): Promise<string> {
-    return firebase.firestore().collection(elderlyCollectionName)
+    return firestore.collection(elderlyCollectionName)
         .doc(userId).collection(keyCollectionName).doc(keyDocumentName).get().then((doc) => {
             if(doc.exists) {
                 const data = doc.data()
@@ -67,7 +67,7 @@ async function createElderly(elderlyId: string) {
 
 export async function addCaregiverToArray(elderlyId: string, caregiverId: string, permission: string): Promise<boolean> {
     console.log("===> addCaregiverToArrayCalled")
-    const caregiverDocRef = firebase.firestore()
+    const caregiverDocRef = firestore
         .collection(elderlyCollectionName).doc(elderlyId)
         .collection(caregiversCollectionName).doc(caregiversDocumentName)
 
@@ -97,7 +97,7 @@ export async function addCaregiverToArray(elderlyId: string, caregiverId: string
 
 export async function removeCaregiverFromArray(elderlyId: string, caregiverId: string, permission: string): Promise<boolean> {
 
-    const privateCaregiverDocRef = firebase.firestore()
+    const privateCaregiverDocRef = firestore
         .collection(elderlyCollectionName).doc(elderlyId)
         .collection(caregiversCollectionName).doc(caregiversDocumentName)
 
@@ -126,7 +126,7 @@ export async function removeCaregiverFromArray(elderlyId: string, caregiverId: s
 }
 
 export async function getCaregiversArray(elderlyId: string, permission: string) {
-    const privateCaregiverDocRef = firebase.firestore()
+    const privateCaregiverDocRef = firestore
         .collection(elderlyCollectionName).doc(elderlyId)
         .collection(caregiversCollectionName).doc(caregiversDocumentName)
 
@@ -222,14 +222,16 @@ async function listAllElderlyCredencials(userId: string, shared: string): Promis
         const values: Credential[] = []
         docs.forEach((doc) => { 
             if(doc.data()) {
+                console.log(key)
+                console.log(doc.data().data)
                 const decrypted = decrypt(doc.data().data, key)
                 values.push({id: doc.id, data: decrypted}) 
             }
         });
         return values
     }).catch((error) => {
-        alert('Erro ao obter as credenciais, tente novamente!')
-        //console.log('Error: ', error.message)
+        //alert('Erro ao obter as credenciais, tente novamente!')
+        console.log('Error: ', error.message)
         return []
     });
 }

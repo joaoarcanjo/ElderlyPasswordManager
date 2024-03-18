@@ -3,9 +3,9 @@ import {View, Text, TouchableOpacity, Image } from 'react-native'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import { historyStyle, passwordFirstHalf, passwordSecondHalf } from '../styles/styles'
 import Navbar from '../../../navigation/actions'
-import { savePasswordGenerated } from '../../../database'
+import { savePasswordGenerated } from '../../../database/'
 import Algorithm from './algorithm'
-import { FlashMessage, copyValue } from '../../../components/UserMessages'
+import { FlashMessage, copyPasswordDescription, copyValue } from '../../../components/UserMessages'
 import MainBox from '../../../components/MainBox'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 
@@ -97,7 +97,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
   */
   function saveOnClickBoard() {
     saveNewPassword()
-    copyValue(password, FlashMessage.passwordCopied)
+    copyValue(password, FlashMessage.passwordCopied, copyPasswordDescription)
   }
 
   //Components: ---

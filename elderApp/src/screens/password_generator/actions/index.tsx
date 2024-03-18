@@ -5,7 +5,7 @@ import { historyStyle, passwordFirstHalf, passwordSecondHalf } from '../styles/s
 import Navbar from '../../../navigation/actions'
 import { savePasswordGenerated } from '../../../database/passwords'
 import Algorithm from './algorithm'
-import { FlashMessage, copyValue } from '../../../components/UserMessages'
+import { FlashMessage, copyPasswordDescription, copyValue } from '../../../components/UserMessages'
 import MainBox from '../../../components/MainBox'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 
@@ -97,7 +97,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
   */
   function saveOnClickBoard() {
     saveNewPassword()
-    copyValue(password, FlashMessage.passwordCopied)
+    copyValue(password, FlashMessage.passwordCopied, copyPasswordDescription)
   }
 
   //Components: ---
