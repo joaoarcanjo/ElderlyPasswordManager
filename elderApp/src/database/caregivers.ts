@@ -149,12 +149,11 @@ export const checkCaregiverByEmailNotAccepted = async (userId: string, email: st
                     [email, userId, CaregiverRequestStatus.WAITING.valueOf()],
                     (_, result) => {
                         const count = result.rows.item(0).count;
-                        console.log("Count: "+count)
                         return resolve(count > 0); 
                     },
                     (_, error) => {
                         console.log("Error: "+error)
-                     return false
+                        return false
                     }
                 );
             });

@@ -1,3 +1,4 @@
+import FormatTimestamp from "../../../algorithms/0thers/time"
 import { getCaregivers } from "../../../database/caregivers"
 import { encryptAndSendMessage } from "../../../e2e/messages/functions"
 import { ChatMessageType, CredentialBody } from "../../../e2e/messages/types"
@@ -19,4 +20,8 @@ export async function sendCaregiversCredentialInfoAction(userId: string, credent
         }
         await encryptAndSendMessage(caregiver.email, JSON.stringify(data), false, type) 
     })
+}
+
+export function buildEditMessage(userEmail: string) {
+    return `Editado por: ${userEmail}, ${FormatTimestamp(Date.now())}`
 }

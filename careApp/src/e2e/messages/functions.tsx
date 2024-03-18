@@ -132,26 +132,26 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
     if(cm.type === ChatMessageType.PERSONAL_DATA && !itsMine) {
         await processPersonalData(currentUserId, cm)
         //userSession.messages.push(cm)  
-    } else if (cm.type === ChatMessageType.REJECT_SESSION) {
+    } else if (cm.type === ChatMessageType.REJECT_SESSION && !itsMine) {
         //vai apagar a sessão que foi criada com o possível cuidador
         await processRejectMessage(currentUserId, cm)
-    } else if (cm.type === ChatMessageType.CREDENTIALS_UPDATED) {
+    } else if (cm.type === ChatMessageType.CREDENTIALS_UPDATED && !itsMine) {
         const data = JSON.parse(cm.body) as CredentialBody
         credentialUpdatedByOtherFlash(cm.from, data)
         setCredentialsListUpdated()
-    } else if (cm.type === ChatMessageType.CREDENTIALS_CREATED) {
+    } else if (cm.type === ChatMessageType.CREDENTIALS_CREATED && !itsMine) {
         const data = JSON.parse(cm.body) as CredentialBody
         credentialCreatedByOtherFlash(cm.from, data)
         setCredentialsListUpdated()
-    } else if (cm.type === ChatMessageType.CREDENTIALS_DELETED) {
+    } else if (cm.type === ChatMessageType.CREDENTIALS_DELETED && !itsMine) {
         const data = JSON.parse(cm.body) as CredentialBody
         credentialDeletedByOtherFlash(cm.from, data)
         setCredentialsListUpdated()
-    } else if (cm.type === ChatMessageType.PERMISSION_DATA) {
+    } else if (cm.type === ChatMessageType.PERMISSION_DATA && !itsMine) {
         //Quando o idoso atualiza as permissoes. 
         setElderlyListUpdated()
         sessionPermissionsFlash(cm.from)
-    } else if (cm.type === ChatMessageType.DECOUPLING_SESSION) {
+    } else if (cm.type === ChatMessageType.DECOUPLING_SESSION && !itsMine) {
         processDecouplingMessage(currentUserId, cm)
     } else if (type !== 3 && !cm.firstMessage) {
         userSession.messages.push(cm)

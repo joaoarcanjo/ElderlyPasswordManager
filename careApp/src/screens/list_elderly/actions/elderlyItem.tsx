@@ -37,7 +37,7 @@ export function ElderlyPending({ name, email, setRefresh }: Readonly<{name: stri
       <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: '3%' }}>
         <View style={{ flex: 1 }}>
           <View style={{flexDirection: 'row', marginHorizontal: '3%'}}>
-            <Text numberOfLines={2} adjustsFontSizeToFit style={{ fontSize: 18 }}>{`O idoso ${name} com o email ${email} enviou-lhe um pedido!`}</Text>
+            <Text numberOfLines={3} adjustsFontSizeToFit style={{ fontSize: 15 }}>{`O idoso ${name} com o email ${email} enviou-lhe um pedido!`}</Text>
           </View>
           <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }}/>
           <View style={{flexDirection: 'row'}}>

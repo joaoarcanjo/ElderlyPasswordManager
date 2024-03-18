@@ -216,20 +216,22 @@ export const getAllElderly = (userId: string): Promise<Elderly[]> => {
  */
 export const getElderly = (userId: string, elderlyId: string): Promise<Elderly> => {
     return new Promise((resolve, reject) => {
-
         try {
             if (dbSQL != null) {
                 dbSQL.transaction((tx) => {
                     tx.executeSql('SELECT elderlyId, name, email, phoneNumber, status FROM elderly WHERE userId = ? AND elderlyId = ?;', 
                     [userId, elderlyId], 
                     (_tx, results) => {
-                        return resolve({
-                            elderlyId: results.rows.item(0).elderlyId,
-                            name: results.rows.item(0).name,
-                            email: results.rows.item(0).email,
-                            phoneNumber: results.rows.item(0).phoneNumber,
-                            status: results.rows.item(0).status
-                        })
+                        if(results.rows.length > 0) {
+                            const elderly = results.rows.item(0)
+                            return resolve({
+                                elderlyId: elderly.elderlyId,
+                                name: elderly.name,
+                                email: elderly.email,
+                                phoneNumber: elderly.phoneNumber,
+                                status: elderly.status
+                            })
+                        }
                     },
                     (_, _error) => {
                         return false

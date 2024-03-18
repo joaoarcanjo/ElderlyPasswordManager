@@ -16,13 +16,13 @@ import Algorithm from '../../password_generator/actions/algorithm'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
 import { ChatMessageType } from '../../../e2e/messages/types'
-import { sendCaregiversCredentialInfoAction } from './functions'
+import { buildEditMessage, sendCaregiversCredentialInfoAction } from './functions'
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
  * @returns 
  */
-function AppInfo({id, platform, uri, un, pw}: Readonly<{id: string, platform: string, uri: string, un: string, pw: string}>) {
+function AppInfo({id, platform, uri, un, pw, editedBy }: Readonly<{id: string, platform: string, uri: string, un: string, pw: string, editedBy: string}>) {
 
   const [username, setUsername] = useState(un)
   const [currUri, setURI] = useState(uri)
@@ -37,7 +37,7 @@ function AppInfo({id, platform, uri, un, pw}: Readonly<{id: string, platform: st
   const [modalVisible, setModalVisible] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const { userId, userShared } = useSessionInfo()
+  const { userId, userShared, userEmail } = useSessionInfo()
   const [editFlag, setEditFlag] = useState(true)
 
   useEffect(() => setAvaliation(getScore(passwordEdited)), [passwordEdited])
@@ -57,7 +57,16 @@ function AppInfo({id, platform, uri, un, pw}: Readonly<{id: string, platform: st
   function saveCredentialUpdate() {
     if(credentialsModified) {
       setLoading(true)
-      updateCredential(userId, id, userShared, JSON.stringify({platform: platform, uri: uriEditted, username: usernameEdited, password: passwordEdited}))
+
+      const data = JSON.stringify({
+        platform: platform, 
+        uri: uriEditted, 
+        username: usernameEdited, 
+        password: passwordEdited, 
+        editedBy: buildEditMessage(userEmail)
+      })
+
+      updateCredential(userId, id, userShared, data)
       .then(async (updated) => {
         toggleEditFlag()
         if(updated) {
@@ -92,13 +101,13 @@ function AppInfo({id, platform, uri, un, pw}: Readonly<{id: string, platform: st
    */
   function cancelUpdate() {
     toggleEditFlag()
-    editCanceledFlash(FlashMessage.editCredentialCanceled)
+    editCanceledFlash(FlashMessage.editModeCanceled)
     setUsernameEdited(username)
     setPasswordEdited(password)
   }
 
   const regeneratePassword = () => {
-    const newPassword = Algorithm({length: 15, strict: true, symbols: true, uppercase: true, lowercase: true, numbers: true})
+    const newPassword = Algorithm({length: 15, strict: true, symbols: false, uppercase: true, lowercase: true, numbers: true})
     setPasswordEdited(newPassword)
   }
 
@@ -204,7 +213,7 @@ function AppInfo({id, platform, uri, un, pw}: Readonly<{id: string, platform: st
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Regenerar</Text>
             </TouchableOpacity>
           </View>}
-          <Text style={[{marginLeft: '6%', marginBottom: '2%',fontSize: 13}, {opacity: editFlag ? 100 : 0}]}>Editado por: Elisabeth, 19/11/2021</Text> 
+          <Text style={[{marginLeft: '6%', marginBottom: '2%',fontSize: 13}, {opacity: editFlag ? 100 : 0}]}>{editedBy}</Text> 
       
       </View>
     </View>
@@ -248,7 +257,14 @@ export default function CredencialPage({ route }: Readonly<{route: any}>) {
       <KeyboardAvoidingWrapper>
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
           <MainBox text={route.params.platform}/>
-          <AppInfo id={route.params.id} un={route.params.username} pw={route.params.password} platform={route.params.platform} uri={route.params.uri}/>
+          <AppInfo 
+            id={route.params.id}
+            un={route.params.username}
+            pw={route.params.password}
+            platform={route.params.platform}
+            uri={route.params.uri} 
+            editedBy={route.params.editedBy}
+          />
         </View>
       </KeyboardAvoidingWrapper>
       <Navbar/>

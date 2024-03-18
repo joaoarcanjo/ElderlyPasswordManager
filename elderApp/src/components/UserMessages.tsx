@@ -17,7 +17,6 @@ export const enum FlashMessage {
   editModeCanceled = 'MODO EDIÇÃO DESATIVADO',
   editCredentialCompleted = 'CREDENCIAL ATUALIZADA COM SUCESSO!',
   editPersonalInfoCompleted = 'INFORMAÇÕES PESSOAIS ATUALIZADAS COM SUCESSO!',
-  editCredentialCanceled = 'CREDENCIAL ATUALIZADA COM SUCESSO!',
   editPersonalInfoCanceled = 'INFORMAÇÕES PESSOAIS ATUALIZADAS COM SUCESSO!',
   credentialUpdated = 'CREDENCIAL ATUALIZADA COM SUCESSO!',
   sessionRequest = 'PEDIDO DE SESSÃO ENVIADO!',

@@ -42,8 +42,9 @@ function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
       uri: credential.data.uri, 
       username: credential.data.username,
       password: credential.data.password, 
-      auxKey: localDBKey,
+      key: localDBKey,
       userId: userId,
+      editedBy: '',
       isElderlyCredential: false
     })
   }

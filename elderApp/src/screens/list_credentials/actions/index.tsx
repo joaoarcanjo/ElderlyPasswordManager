@@ -33,7 +33,15 @@ function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
   const { expoPushToken } = usePushNotifications()
 
   const OpenCredentialPage = () => {
-    navigation.navigate('CredentialPage', { id: credential.id, platform: credential.data.platform, uri: credential.data.uri, username: credential.data.username, password: credential.data.password })
+    navigation.navigate('CredentialPage', 
+    { 
+      id: credential.id, 
+      platform: credential.data.platform, 
+      uri: credential.data.uri, 
+      editedBy: credential.data.editedBy,
+      username: credential.data.username, 
+      password: credential.data.password 
+    })
   }
 
   const NavigateToApp = async (uri: string, plataforma: string, username: string, password: string) => { 
@@ -73,7 +81,7 @@ function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
         */}   
         <View style={{flex: 1, marginHorizontal: '3%', flexDirection: 'row'}}>
           <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.itemMoreInfoButton, stylesButtons.mainConfig]} onPress={() => {OpenCredentialPage()}}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Editar</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Detalhes</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.navigateButton, stylesButtons.mainConfig]} onPress={() => {NavigateToApp(credential.data.uri, credential.data.platform, credential.data.username, credential.data.password)}}>
             <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Navegar</Text>
@@ -90,7 +98,8 @@ interface Credential {
     platform: string,
     uri: string,
     username: string,
-    password: string
+    password: string,
+    editedBy: string
   }
 }
 

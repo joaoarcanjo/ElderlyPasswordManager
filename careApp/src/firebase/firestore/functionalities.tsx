@@ -92,6 +92,8 @@ async function deleteCredential(userId: string, credentialId: string, isElderlyC
 }
 
 async function updateCredential(userId: string, credencialId: string, encryptionKey: string, data: string, isElderlyCredential: boolean): Promise<boolean> {
+    console.log("data", data) 
+    console.log("encryptionKey", encryptionKey)
     const encrypted = encrypt(data, encryptionKey) 
     
     const collection = isElderlyCredential ? firestore.collection(elderlyCollectionName) : firestore.collection(caregiverCollectionName)

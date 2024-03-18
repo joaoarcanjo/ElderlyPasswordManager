@@ -15,14 +15,15 @@ import { YesOrNoModal, YesOrNoSpinnerModal } from '../../../components/Modal'
 import Algorithm from '../../password_generator/actions/algorithm'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
 import { useSessionInfo } from '../../../firebase/authentication/session'
-import { sendElderlyCredentialInfoAction } from './functions'
+import { buildEditMessage, sendElderlyCredentialInfoAction } from './functions'
 import { ChatMessageType } from '../../../e2e/messages/types'
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
  * @returns 
  */
-function AppInfo({ownerId, id, platform, uri, un, pw, auxKey, isElderlyCredential}: Readonly<{ownerId: string, id: string, platform: string, uri: string, un: string, pw: string, auxKey: string, isElderlyCredential: boolean}>) {
+function AppInfo({ownerId, id, platform, uri, un, pw, editedBy, auxKey, isElderlyCredential}
+  : Readonly<{ownerId: string, id: string, platform: string, uri: string, un: string, pw: string, editedBy: string, auxKey: string, isElderlyCredential: boolean}>) {
 
   const [username, setUsername] = useState(un)
   const [currUri, setCurrUri] = useState(uri)
@@ -33,7 +34,7 @@ function AppInfo({ownerId, id, platform, uri, un, pw, auxKey, isElderlyCredentia
 
   const [avaliation, setAvaliation] = useState<number>(0)
 
-  const { userId } = useSessionInfo()
+  const { userId, userEmail } = useSessionInfo()
   
   const [showPassword, setShowPassword] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
@@ -66,12 +67,22 @@ function AppInfo({ownerId, id, platform, uri, un, pw, auxKey, isElderlyCredentia
   async function saveCredentialUpdate() {
     if(credentialsModified) { 
       setLoading(true)
-      updateCredential(ownerId, id, auxKey, JSON.stringify({platform: platform, uri: uriEditted, username: usernameEdited, password: passwordEdited}), isElderlyCredential)
+
+      const data = JSON.stringify({
+        platform: platform, 
+        uri: uriEditted, 
+        username: usernameEdited, 
+        password: passwordEdited, 
+        editedBy: buildEditMessage(userEmail)
+      })
+      updateCredential(ownerId, id, auxKey, data, isElderlyCredential)
       .then(async (updated) => {
         setEditFlag(!editFlag)
         if(updated) {
-          editCompletedFlash(FlashMessage.editCredentialCompleted)
-          await sendElderlyCredentialInfoAction(userId, ownerId, id, platform, ChatMessageType.CREDENTIALS_UPDATED)
+          editCompletedFlash(FlashMessage.editCredentialCompleted)      
+          if(ownerId != userId) {
+            await sendElderlyCredentialInfoAction(userId, ownerId, id, platform, ChatMessageType.CREDENTIALS_UPDATED)
+          }
           setCurrUri(uriEditted)
           setUsername(usernameEdited)
           setPassword(passwordEdited)
@@ -100,14 +111,14 @@ function AppInfo({ownerId, id, platform, uri, un, pw, auxKey, isElderlyCredentia
    * os valores dos estados de edição com os valores default.
    */
   function cancelUpdate() {
-    toggleEditFlag()
+    setEditFlag(!editFlag)
     editCanceledFlash(FlashMessage.editModeCanceled)
     setUsernameEdited(username)
     setPasswordEdited(password)
   }
 
   const regeneratePassword = () => {
-    const newPassword = Algorithm({length: 15, strict: true, symbols: true, uppercase: true, lowercase: true, numbers: true})
+    const newPassword = Algorithm({length: 15, strict: true, symbols: false, uppercase: true, lowercase: true, numbers: true})
     setPasswordEdited(newPassword)
   }
 
@@ -213,7 +224,7 @@ function AppInfo({ownerId, id, platform, uri, un, pw, auxKey, isElderlyCredentia
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Regenerar</Text>
             </TouchableOpacity>
           </View>}
-          <Text style={[{marginLeft: '6%', marginBottom: '2%',fontSize: 13}, {opacity: editFlag ? 100 : 0}]}>Editado por: Elisabeth, 19/11/2021</Text> 
+          <Text style={[{marginLeft: '6%', marginBottom: '2%',fontSize: 13}, {opacity: editFlag ? 100 : 0}]}>{editedBy}</Text> 
       </View>
     </View>
     <Options/>
@@ -245,7 +256,9 @@ function DeleteCredential({ownerId, id, platform, isElderlyCredential}: Readonly
   const deleteCredentialAction = async () => {
     await deleteCredential(ownerId, id, isElderlyCredential)
     .then(async () => {
-      if(ownerId != userId) await sendElderlyCredentialInfoAction(userId, ownerId, '', platform, ChatMessageType.CREDENTIALS_DELETED)
+      if(ownerId != userId) {
+        await sendElderlyCredentialInfoAction(userId, ownerId, '', platform, ChatMessageType.CREDENTIALS_DELETED)
+      }
     })
     .then(() => navigation.goBack())
   }
@@ -274,6 +287,7 @@ export default function CredencialPage({ route }: Readonly<{route: any}>) {
             pw={route.params.password}
             platform={route.params.platform}
             uri={route.params.uri}
+            editedBy={route.params.editedBy}
             auxKey={route.params.key} 
             isElderlyCredential={route.params.isElderlyCredential} />
         </View>
