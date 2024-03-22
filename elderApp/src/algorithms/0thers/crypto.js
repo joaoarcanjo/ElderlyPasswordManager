@@ -2,6 +2,8 @@ import { secretbox, randomBytes, setPRNG } from "tweetnacl";
 import { decode as decodeUTF8, encode as encodeUTF8 } from '@stablelib/utf8';
 import { decode as decodeBase64, encode as encodeBase64} from '@stablelib/base64';
 import { getRandomBytes, randomUUID } from 'expo-crypto';
+import { Errors } from "../../exceptions/types";
+import { ErrorInstance } from "../../exceptions/error";
 
 setPRNG((x, n) => {
   const randomBytes = getRandomBytes(n)
@@ -53,7 +55,7 @@ const decrypt = (messageWithNonce, key) => {
   const decrypted = secretbox.open(message, nonce, keyUint8Array)
 
   if (!decrypted) {
-    throw new Error("Could not decrypt message")
+    throw new ErrorInstance(Errors.ERROR_INVALID_MESSAGE_OR_KEY)
   }
 
   const base64DecryptedMessage = decodeUTF8(decrypted)

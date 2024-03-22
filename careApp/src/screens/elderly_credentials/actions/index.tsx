@@ -54,7 +54,7 @@ function ScrollItemExample({credential, userShared, elderlyId}: Readonly<{creden
       password: credential.data.password, 
       platform: credential.data.platform, 
       uri: credential.data.uri, 
-      editedBy: credential.data.editedBy,
+      edited: credential.data.edited,
       key: encryptionKey,
       isElderlyCredential: true
     })
@@ -100,11 +100,15 @@ function ScrollItemExample({credential, userShared, elderlyId}: Readonly<{creden
 interface Credential {
   id: string,
   data: {
-    platform: string,
-    uri: string,
-    username: string,
-    password: string,
-    editedBy: string
+      id: string,
+      platform: string,
+      uri: string,
+      username: string,
+      password: string,
+      edited: {
+          updatedBy: string,
+          updatedAt: number
+      }
   }
 }
 

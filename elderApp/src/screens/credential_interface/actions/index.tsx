@@ -22,7 +22,7 @@ import { buildEditMessage, sendCaregiversCredentialInfoAction } from './function
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
  * @returns 
  */
-function AppInfo({id, platform, uri, un, pw, editedBy }: Readonly<{id: string, platform: string, uri: string, un: string, pw: string, editedBy: string}>) {
+function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, platform: string, uri: string, un: string, pw: string, edited: any}>) {
 
   const [username, setUsername] = useState(un)
   const [currUri, setURI] = useState(uri)
@@ -63,7 +63,10 @@ function AppInfo({id, platform, uri, un, pw, editedBy }: Readonly<{id: string, p
         uri: uriEditted, 
         username: usernameEdited, 
         password: passwordEdited, 
-        editedBy: buildEditMessage(userEmail)
+        edited: {
+          updatedBy: userEmail,
+          updatedAt: Date.now()
+        }
       })
 
       updateCredential(userId, id, userShared, data)
@@ -213,7 +216,7 @@ function AppInfo({id, platform, uri, un, pw, editedBy }: Readonly<{id: string, p
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Regenerar</Text>
             </TouchableOpacity>
           </View>}
-          <Text style={[{marginLeft: '6%', marginBottom: '2%',fontSize: 13}, {opacity: editFlag ? 100 : 0}]}>{editedBy}</Text> 
+          <Text numberOfLines={2} adjustsFontSizeToFit style={[{marginLeft: '6%', marginBottom: '2%',fontSize: 13}, {opacity: editFlag ? 100 : 0}]}>{buildEditMessage(edited.updatedBy, edited.updatedAt)}</Text> 
       
       </View>
     </View>
@@ -251,7 +254,6 @@ function DeleteCredential({id, platform}: Readonly<{id: string, platform: string
 }
 
 export default function CredencialPage({ route }: Readonly<{route: any}>) {
-
   return (
     <>
       <KeyboardAvoidingWrapper>
@@ -263,7 +265,7 @@ export default function CredencialPage({ route }: Readonly<{route: any}>) {
             pw={route.params.password}
             platform={route.params.platform}
             uri={route.params.uri} 
-            editedBy={route.params.editedBy}
+            edited={route.params.edited}
           />
         </View>
       </KeyboardAvoidingWrapper>

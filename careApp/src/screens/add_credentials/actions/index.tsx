@@ -33,11 +33,23 @@ function CredentialsInput({ ownerId, auxKey, isElderlyCredential }: Readonly<{ow
     const [showPassword, setShowPassword] = useState(false)
     const navigation = useNavigation<StackNavigationProp<any>>()
 
-    const { userId } = useSessionInfo()
+    const { userId, userEmail } = useSessionInfo()
   
     const handleSave = async () => {
         if(platform != '' && uri != '' && username != '' && password != '') {
-            await addCredencial(ownerId, auxKey, getNewId(), JSON.stringify({platform: platform, uri: uri, username: username, password: password}), isElderlyCredential)
+            const uuid = getNewId()
+            const jsonValue = JSON.stringify({
+                id: uuid,
+                platform: platform, 
+                uri: uri, 
+                username: username, 
+                password: password,
+                edited: {
+                    updatedBy: userEmail,
+                    updatedAt: Date.now()
+                }
+            })
+            await addCredencial(ownerId, auxKey, uuid, jsonValue, isElderlyCredential)
             if(ownerId != userId) await sendElderlyCredentialInfoAction(userId, ownerId, '', platform, ChatMessageType.CREDENTIALS_CREATED)
             navigation.goBack()
         }

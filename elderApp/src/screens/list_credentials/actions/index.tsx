@@ -3,7 +3,6 @@ import {View, Text, TouchableOpacity, Image, ScrollView, Linking} from 'react-na
 import { stylesAddCredential, styleScroolView } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import Navbar from '../../../navigation/actions'
-import { listAllElderlyCredencials } from '../../../firebase/firestore/functionalities'
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import MainBox from '../../../components/MainBox'
@@ -12,6 +11,7 @@ import { useSessionInfo } from '../../../firebase/authentication/session'
 import { usePushNotifications } from '../../../notifications/usePushNotifications'
 import { sendPushNotification } from '../../../notifications/functionalities'
 import { credentialsListUpdated } from './state'
+import { getAllCredentialsAndValidate } from './functions'
 
 function AddCredencial() {
 
@@ -38,7 +38,7 @@ function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
       id: credential.id, 
       platform: credential.data.platform, 
       uri: credential.data.uri, 
-      editedBy: credential.data.editedBy,
+      edited: credential.data.edited,
       username: credential.data.username, 
       password: credential.data.password 
     })
@@ -95,43 +95,38 @@ function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
 interface Credential {
   id: string,
   data: {
-    platform: string,
-    uri: string,
-    username: string,
-    password: string,
-    editedBy: string
+      id: string,
+      platform: string,
+      uri: string,
+      username: string,
+      password: string,
+      edited: {
+          updatedBy: string,
+          updatedAt: number
+      }
   }
 }
 
 function CredentialsList() {
 
-  const [credencials, setCredencials] = useState<Credential[]>([])
+  const [credencials, setCredencials] = useState<(Credential | undefined)[]>([])
   const isFocused = useIsFocused()
-  const { userId, userShared } = useSessionInfo()
+  const { userId, userShared, localDBKey } = useSessionInfo()
 
   const [isFething, setIsFething] = useState(true)
 
   useEffect(() => {
     setIsFething(true)
-    refreshValue().then(() => setIsFething(false))
-  }, [isFocused])
+    credentialsListUpdated.subscribe(() => {refreshValue()})
+  }, [credentialsListUpdated, isFocused])
 
   const refreshValue = async () => {
     console.log('==> CaregiversList refreshed.')
-    await listAllElderlyCredencials(userId, userShared).then((credencials) => {
-      let auxCredencials: Credential[] = [];
-      credencials.forEach(value => {
-        if(value.data.length != 0) {
-          auxCredencials.push({id: value.id, data: JSON.parse(value.data)})
-        }
-      })
-      setCredencials(auxCredencials)
-    })
+    setIsFething(true)
+    const credentials = await getAllCredentialsAndValidate(userId, userShared, localDBKey)
+    setCredencials(credentials)
+    setIsFething(false)
   }
-
-  useEffect(() => {
-    credentialsListUpdated.subscribe(() => {refreshValue()})
-  }, [credentialsListUpdated])
 
   return (
     <View style={{ flex: 0.70, flexDirection: 'row', justifyContent: 'space-around'}}>
@@ -139,7 +134,11 @@ function CredentialsList() {
         {isFething ?
         <Spinner/> :
         <ScrollView style={[{margin: '3%'}]}>
-          {credencials.map((value: Credential) => <ScrollItemExample key={value.id} credential={value}/>)}
+          {credencials.map((value: Credential | undefined) => {
+            if(value != undefined) {
+              return <ScrollItemExample key={value.id} credential={value}/>
+            }
+          })}
         </ScrollView>}
       </View>
     </View>

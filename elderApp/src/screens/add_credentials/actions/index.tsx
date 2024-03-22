@@ -4,7 +4,7 @@ import { stylesButtons } from "../../../assets/styles/main_style";
 import { passwordFirstHalf, stylesAddCredential, stylesInputsCredencials } from "../styles/styles";
 import { whiteBackgroud } from "../../../assets/styles/colors";
 import Navbar from "../../../navigation/actions";
-import { addCredencial } from "../../../firebase/firestore/functionalities";
+import { addCredencialToFirestore } from "../../../firebase/firestore/functionalities";
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import Algorithm from "../../password_generator/actions/algorithm";
 import { getScore } from '../../../algorithms/zxcvbn/algorithm'
@@ -33,12 +33,24 @@ function CredentialsInput() {
 
     const [showPassword, setShowPassword] = useState(false)
     const navigation = useNavigation<StackNavigationProp<any>>()
-    const { userId, userShared } = useSessionInfo()
+    const { userId, userEmail, userShared } = useSessionInfo()
   
     const handleSave = async () => {
         if(platform != '' && uri != '' && username != '' && password != '') {
             const uuid = getNewId()
-            await addCredencial(userId, userShared, uuid, JSON.stringify({platform: platform, uri: uri, username: username, password: password}))
+            const jsonValue = JSON.stringify({
+                id: uuid,
+                platform: platform, 
+                uri: uri, 
+                username: username, 
+                password: password,
+                edited: {
+                    updatedBy: userEmail,
+                    updatedAt: Date.now()
+                }
+            })
+
+            await addCredencialToFirestore(userId, userShared, uuid, jsonValue)
             await sendCaregiversCredentialInfoAction(userId, '', platform, ChatMessageType.CREDENTIALS_CREATED)
             navigation.goBack()
         }

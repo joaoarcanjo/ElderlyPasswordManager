@@ -44,7 +44,7 @@ function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
       password: credential.data.password, 
       key: localDBKey,
       userId: userId,
-      editedBy: '',
+      edited: credential.data.edited,
       isElderlyCredential: false
     })
   }
@@ -90,10 +90,15 @@ function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
 interface Credential {
   id: string,
   data: {
-    platform: string,
-    uri: string,
-    username: string,
-    password: string
+      id: string,
+      platform: string,
+      uri: string,
+      username: string,
+      password: string,
+      edited: {
+          updatedBy: string,
+          updatedAt: number
+      }
   }
 }
 

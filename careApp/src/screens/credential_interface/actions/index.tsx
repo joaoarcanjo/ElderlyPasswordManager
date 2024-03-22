@@ -22,8 +22,8 @@ import { ChatMessageType } from '../../../e2e/messages/types'
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
  * @returns 
  */
-function AppInfo({ownerId, id, platform, uri, un, pw, editedBy, auxKey, isElderlyCredential}
-  : Readonly<{ownerId: string, id: string, platform: string, uri: string, un: string, pw: string, editedBy: string, auxKey: string, isElderlyCredential: boolean}>) {
+function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyCredential}
+  : Readonly<{ownerId: string, id: string, platform: string, uri: string, un: string, pw: string, edited: any, auxKey: string, isElderlyCredential: boolean}>) {
 
   const [username, setUsername] = useState(un)
   const [currUri, setCurrUri] = useState(uri)
@@ -73,7 +73,10 @@ function AppInfo({ownerId, id, platform, uri, un, pw, editedBy, auxKey, isElderl
         uri: uriEditted, 
         username: usernameEdited, 
         password: passwordEdited, 
-        editedBy: buildEditMessage(userEmail)
+        edited: {
+          updatedBy: userEmail,
+          updatedAt: Date.now()
+        }
       })
       updateCredential(ownerId, id, auxKey, data, isElderlyCredential)
       .then(async (updated) => {
@@ -224,7 +227,7 @@ function AppInfo({ownerId, id, platform, uri, un, pw, editedBy, auxKey, isElderl
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Regenerar</Text>
             </TouchableOpacity>
           </View>}
-          <Text style={[{marginLeft: '6%', marginBottom: '2%',fontSize: 13}, {opacity: editFlag ? 100 : 0}]}>{editedBy}</Text> 
+          <Text numberOfLines={2} adjustsFontSizeToFit style={[{marginLeft: '6%', marginBottom: '2%',fontSize: 13}, {opacity: editFlag ? 100 : 0}]}>{buildEditMessage(edited.updatedBy, edited.updatedAt)}</Text> 
       </View>
     </View>
     <Options/>
@@ -287,7 +290,7 @@ export default function CredencialPage({ route }: Readonly<{route: any}>) {
             pw={route.params.password}
             platform={route.params.platform}
             uri={route.params.uri}
-            editedBy={route.params.editedBy}
+            edited={route.params.edited}
             auxKey={route.params.key} 
             isElderlyCredential={route.params.isElderlyCredential} />
         </View>

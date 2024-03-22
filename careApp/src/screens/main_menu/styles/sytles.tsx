@@ -9,7 +9,6 @@ import {
   questionsButtonBorder,
   settingsButtonBorder,
   whiteBackgroud,
-  blackBorder,
   elderlyButtonBackgroud,
   elderlyButtonBorder
 } from '../../../assets/styles/colors';

@@ -171,7 +171,7 @@ async function elderlyExists(elderlyId: string): Promise<boolean> {
  * @param newCredencialId 
  * @param data 
  */
-async function addCredencial(userId: string, shared: string, newCredencialId: string, data: string) {
+export async function addCredencialToFirestore(userId: string, shared: string, newCredencialId: string, data: string) {
     const key = deriveSecret([await getKey(userId), shared])
     const encrypted = encrypt(data, key)
 
@@ -213,19 +213,13 @@ interface Credential {
  * Função para listar as credenciais de determinado utilizador
  * @param userId 
  */
-async function listAllElderlyCredencials(userId: string, shared: string): Promise<Credential[]> {
-
-    const cloudKey = await getKey(userId)
-    const key = deriveSecret([cloudKey, shared])
-
+async function listAllElderlyCredencials(userId: string): Promise<Credential[]> {
+    
     return firestore.collection(elderlyCollectionName).doc(userId).collection(credencialsCollectionName).get().then((docs) => {
         const values: Credential[] = []
         docs.forEach((doc) => { 
             if(doc.data()) {
-                console.log(key)
-                console.log(doc.data().data)
-                const decrypted = decrypt(doc.data().data, key)
-                values.push({id: doc.id, data: decrypted}) 
+                values.push({id: doc.id, data: doc.data().data}) 
             }
         });
         return values
@@ -308,4 +302,4 @@ async function initFirestore(userId: string): Promise<boolean> {
     });
 }
 
-export { deleteCredential, initFirestore, changeKey, getKey, listAllElderly, createElderly, addCredencial, updateCredential, listAllElderlyCredencials, /*firebaseTest*/ }
+export { deleteCredential, initFirestore, changeKey, getKey, listAllElderly, createElderly, updateCredential, listAllElderlyCredencials, /*firebaseTest*/ }

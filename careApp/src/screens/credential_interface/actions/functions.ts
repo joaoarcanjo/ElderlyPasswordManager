@@ -22,6 +22,6 @@ export async function sendElderlyCredentialInfoAction(userId: string, elderlyId:
     await encryptAndSendMessage(elderly.email, JSON.stringify(data), false, type) 
 }
 
-export function buildEditMessage(userEmail: string) {
-    return `Editado por: ${userEmail}, ${FormatTimestamp(Date.now())}`
+export function buildEditMessage(userEmail: string, timestamp: number) {
+    return `Última alteração: ${userEmail}, ${FormatTimestamp(timestamp)}`
 }

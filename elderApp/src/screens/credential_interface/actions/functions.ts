@@ -22,6 +22,6 @@ export async function sendCaregiversCredentialInfoAction(userId: string, credent
     })
 }
 
-export function buildEditMessage(userEmail: string) {
-    return `Editado por: ${userEmail}, ${FormatTimestamp(Date.now())}`
+export function buildEditMessage(userEmail: string, timestamp: number) {
+    return `Última alteração: ${userEmail}, ${FormatTimestamp(timestamp)}`
 }
