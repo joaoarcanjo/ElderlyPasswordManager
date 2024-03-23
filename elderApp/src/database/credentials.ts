@@ -82,7 +82,7 @@ export async function getCredential(userId: string, credentialId: string): Promi
  * @param credentialId - O ID da credencial.
  * @returns Uma Promise que é resolvida quando a credencial é deletada com sucesso, ou rejeitada com um erro se a deleção falhar.
  */
-export async function deleteCredential(userId: string, credentialId: string): Promise<void> {
+export async function deleteCredentialFromLocalDB(userId: string, credentialId: string): Promise<void> {
     console.log("===> deleteCredential called");
     return new Promise((resolve, reject) => {
         if (dbSQL != null) {
@@ -91,6 +91,7 @@ export async function deleteCredential(userId: string, credentialId: string): Pr
                     'DELETE FROM credentials WHERE userId = ? AND credentialId = ?;',
                     [userId, credentialId],
                     (_, result) => {
+                        console.log("Affected: "+ result.rowsAffected)
                         resolve()
                     },
                     (_, error) => {
@@ -116,7 +117,7 @@ export async function deleteCredential(userId: string, credentialId: string): Pr
  * @param updatedAt - O timestamp da atualização da credencial.
  * @returns Uma Promise que é resolvida quando a credencial é atualizada com sucesso, ou rejeitada com um erro se a atualização falhar.
  */
-export async function updateCredential(userId: string, credentialId: string, newRecord: string): Promise<void> {
+export async function updateCredentialFromLocalDB(userId: string, credentialId: string, newRecord: string): Promise<void> {
     console.log("===> updateCredentialCalled")
     return new Promise((resolve, reject) => {
         if (dbSQL != null) {

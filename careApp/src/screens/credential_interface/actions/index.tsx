@@ -69,6 +69,7 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
       setLoading(true)
 
       const data = JSON.stringify({
+        id: id,
         platform: platform, 
         uri: uriEditted, 
         username: usernameEdited, 
@@ -232,7 +233,7 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
     </View>
     <Options/>
     <YesOrNoSpinnerModal question={'Guardar as alterações?'} yesFunction={saveCredentialUpdate} noFunction={dontSaveCredentialsUpdate} visibleFlag={modalVisible} loading={loading}/>
-    {editFlag && <DeleteCredential ownerId={ownerId} id={id} platform={platform} isElderlyCredential={isElderlyCredential} />}
+    {editFlag && <DeleteCredential ownerId={ownerId} id={id} platform={platform} isElderlyCredential={isElderlyCredential} auxKey={auxKey} />}
     </>
   )
 }
@@ -241,11 +242,11 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
  * Componente que representa o botão para apagar a credencial
  * @returns 
  */
-function DeleteCredential({ownerId, id, platform, isElderlyCredential}: Readonly<{ownerId: string, id: string, platform: string, isElderlyCredential: boolean}>) {
+function DeleteCredential({ownerId, id, platform, auxKey, isElderlyCredential}: Readonly<{ownerId: string, id: string, platform: string, auxKey: string, isElderlyCredential: boolean}>) {
   
   const navigation = useNavigation<StackNavigationProp<any>>()
   const [modalVisible, setModalVisible] = useState(false)
-  const { userId } = useSessionInfo()
+  const { userId, userEmail } = useSessionInfo()
 
   const setModalVisibleAux = async () => {
     const canDelete = ( await verifyIfCanManipulateCredentials(userId, ownerId) && isElderlyCredential ) || !isElderlyCredential
@@ -257,13 +258,26 @@ function DeleteCredential({ownerId, id, platform, isElderlyCredential}: Readonly
   }
 
   const deleteCredentialAction = async () => {
-    await deleteCredential(ownerId, id, isElderlyCredential)
-    .then(async () => {
-      if(ownerId != userId) {
-        await sendElderlyCredentialInfoAction(userId, ownerId, '', platform, ChatMessageType.CREDENTIALS_DELETED)
-      }
-    })
-    .then(() => navigation.goBack())
+
+    if(ownerId != userId) {
+      const data = JSON.stringify({
+        id: id,
+        platform: platform, 
+        uri: '', 
+        username: '', 
+        password: '', 
+        edited: {
+          updatedBy: userEmail,
+          updatedAt: Date.now()
+        }
+      })
+      await updateCredential(ownerId, id, auxKey, data, isElderlyCredential)
+        .then(() => sendElderlyCredentialInfoAction(userId, ownerId, '', platform, ChatMessageType.CREDENTIALS_DELETED))
+        .then(() => navigation.goBack())
+    } else {
+      await deleteCredential(ownerId, id)
+      .then(() => navigation.goBack())
+    }
   }
 
   return (

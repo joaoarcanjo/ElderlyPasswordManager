@@ -43,6 +43,7 @@ function ScrollItemExample({credential, userShared, elderlyId}: Readonly<{creden
   //const { setUsernameCopied, setPasswordCopied, usernameCopied, passwordCopied } = useSessionInfo()
   //const { expoPushToken } = usePushNotifications()
 
+  console.log("Credential: ", credential.data.platform)
   const OpenCredentialPage = async () => {
     const encryptionKey = deriveSecret([await getKey(elderlyId), userShared]) 
     

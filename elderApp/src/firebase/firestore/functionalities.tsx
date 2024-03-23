@@ -251,7 +251,7 @@ async function listCredencialProperties(userId: string, credencialId: string) {
  * Função para apagar uma credencial específica
  * @param credentialId 
  */
-async function deleteCredential(userId: string, credentialId: string): Promise<boolean> {
+async function deleteCredentialFromFiretore(userId: string, credentialId: string): Promise<boolean> {
 
     return firestore.collection(elderlyCollectionName)
         .doc(userId)
@@ -265,8 +265,8 @@ async function deleteCredential(userId: string, credentialId: string): Promise<b
         }).then(() => { return true })
 }
 
-async function updateCredential(userId: string, credencialId: string, shared: string, data: string): Promise<boolean> {
-
+async function updateCredentialFromFiretore(userId: string, credencialId: string, shared: string, data: string): Promise<boolean> {
+    console.log(data)
     const cloudKey = await getKey(userId)
     const key = deriveSecret([cloudKey, shared])
 
@@ -283,7 +283,7 @@ async function updateCredential(userId: string, credencialId: string, shared: st
             //alert('Erro ao tentar adicionar a nova credencial, tente novamente!')
             console.log('Error: ', error)
             return false
-        }).then(() => { return true })
+        }).then(() => { return true })/**/
 }
 
 async function initFirestore(userId: string): Promise<boolean> {
@@ -302,4 +302,4 @@ async function initFirestore(userId: string): Promise<boolean> {
     });
 }
 
-export { deleteCredential, initFirestore, changeKey, getKey, listAllElderly, createElderly, updateCredential, listAllElderlyCredencials, /*firebaseTest*/ }
+export { deleteCredentialFromFiretore, initFirestore, changeKey, getKey, listAllElderly, createElderly, updateCredentialFromFiretore, listAllElderlyCredencials, /*firebaseTest*/ }

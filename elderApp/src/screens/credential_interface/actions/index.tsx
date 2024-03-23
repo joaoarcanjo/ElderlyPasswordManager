@@ -10,13 +10,15 @@ import { getScore } from '../../../algorithms/zxcvbn/algorithm'
 import { FlashMessage, copyURIDescription, copyUsernameDescription, copyValue, editCanceledFlash, editCompletedFlash, editValueFlash } from '../../../components/UserMessages'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
-import { deleteCredential, updateCredential } from '../../../firebase/firestore/functionalities'
+import { deleteCredentialFromFiretore, updateCredentialFromFiretore } from '../../../firebase/firestore/functionalities'
 import { YesOrNoModal, YesOrNoSpinnerModal } from '../../../components/Modal'
 import Algorithm from '../../password_generator/actions/algorithm'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
 import { ChatMessageType } from '../../../e2e/messages/types'
 import { buildEditMessage, sendCaregiversCredentialInfoAction } from './functions'
+import { deleteCredentialFromLocalDB, updateCredentialFromLocalDB } from '../../../database/credentials'
+import { encrypt } from '../../../algorithms/0thers/crypto'
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
@@ -37,7 +39,7 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
   const [modalVisible, setModalVisible] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const { userId, userShared, userEmail } = useSessionInfo()
+  const { userId, userShared, userEmail, localDBKey } = useSessionInfo()
   const [editFlag, setEditFlag] = useState(true)
 
   useEffect(() => setAvaliation(getScore(passwordEdited)), [passwordEdited])
@@ -59,6 +61,7 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
       setLoading(true)
 
       const data = JSON.stringify({
+        id: id,
         platform: platform, 
         uri: uriEditted, 
         username: usernameEdited, 
@@ -69,10 +72,11 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
         }
       })
 
-      updateCredential(userId, id, userShared, data)
+      updateCredentialFromFiretore(userId, id, userShared, data)
       .then(async (updated) => {
         toggleEditFlag()
         if(updated) {
+          await updateCredentialFromLocalDB(userId, id, encrypt(data, localDBKey))
           setURI(uriEditted)
           setUsername(usernameEdited)
           setPassword(passwordEdited)
@@ -238,7 +242,8 @@ function DeleteCredential({id, platform}: Readonly<{id: string, platform: string
   const { userId } = useSessionInfo()
 
   const deleteCredentialAction = async () => {
-    await deleteCredential(userId, id)
+    await deleteCredentialFromFiretore(userId, id)
+    .then(() => deleteCredentialFromLocalDB(userId, id))
     .then(async () => await sendCaregiversCredentialInfoAction(userId, '', platform, ChatMessageType.CREDENTIALS_DELETED))
     .then(() => navigation.goBack())
   }

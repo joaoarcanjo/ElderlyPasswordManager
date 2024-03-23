@@ -76,11 +76,9 @@ export async function listAllCredentials(userId: string, encryptionKey: string, 
  * Função para apagar uma credencial específica
  * @param credentialId 
  */
-async function deleteCredential(userId: string, credentialId: string, isElderlyCredential: boolean): Promise<boolean> {
+async function deleteCredential(userId: string, credentialId: string): Promise<boolean> {
 
-    const collection = isElderlyCredential ? firestore.collection(elderlyCollectionName) : firestore.collection(caregiverCollectionName)
-
-    return collection.doc(userId)
+    return firestore.collection(caregiverCollectionName).doc(userId)
             .collection(credencialsCollectionName)
             .doc(credentialId)
             .delete()
@@ -92,8 +90,7 @@ async function deleteCredential(userId: string, credentialId: string, isElderlyC
 }
 
 async function updateCredential(userId: string, credencialId: string, encryptionKey: string, data: string, isElderlyCredential: boolean): Promise<boolean> {
-    console.log("data", data) 
-    console.log("encryptionKey", encryptionKey)
+    console.log('Data: ', data)
     const encrypted = encrypt(data, encryptionKey) 
     
     const collection = isElderlyCredential ? firestore.collection(elderlyCollectionName) : firestore.collection(caregiverCollectionName)
