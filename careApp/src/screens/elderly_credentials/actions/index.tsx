@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 import { elderlyName, stylesAddCredential, styleScroolView } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import Navbar from '../../../navigation/actions'
-import { getKey, listAllCredentials, verifyIfCanManipulateCredentials } from '../../../firebase/firestore/functionalities'
+import { getKey, listAllCredentialsFromFirestore, verifyIfCanManipulateCredentials } from '../../../firebase/firestore/functionalities'
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import MainBox from '../../../components/MainBox'
@@ -122,7 +122,7 @@ function ElderlyCredentialsList({ elderlyId, userShared }: Readonly<{elderlyId: 
   const fetchCredencials = async () => {
     const encryptionKey = deriveSecret([await getKey(elderlyId), userShared])
 
-    listAllCredentials(elderlyId, encryptionKey, true).then((credencials) => {
+    listAllCredentialsFromFirestore(elderlyId, encryptionKey, true).then((credencials) => {
       let auxCredencials: Credential[] = [];
       credencials.forEach(value => {
         if(value.data.length != 0) {

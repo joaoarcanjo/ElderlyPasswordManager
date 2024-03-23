@@ -14,9 +14,10 @@ import AvaliationEmoji from "../../../components/EmojiAvaliation";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useSessionInfo } from "../../../firebase/authentication/session";
-import { getNewId } from "../../../algorithms/0thers/crypto";
+import { encrypt, getNewId } from "../../../algorithms/0thers/crypto";
 import { sendCaregiversCredentialInfoAction } from "../../credential_interface/actions/functions";
 import { ChatMessageType } from "../../../e2e/messages/types";
+import { insertCredentialToLocalDB } from "../../../database/credentials";
 
 const placeholderPlatform = 'Insira a plataforma'
 const placeholderURI = 'Insira o URI da plataforma'
@@ -33,7 +34,7 @@ function CredentialsInput() {
 
     const [showPassword, setShowPassword] = useState(false)
     const navigation = useNavigation<StackNavigationProp<any>>()
-    const { userId, userEmail, userShared } = useSessionInfo()
+    const { userId, userEmail, userShared, localDBKey } = useSessionInfo()
   
     const handleSave = async () => {
         if(platform != '' && uri != '' && username != '' && password != '') {
@@ -51,6 +52,7 @@ function CredentialsInput() {
             })
 
             await addCredencialToFirestore(userId, userShared, uuid, jsonValue)
+            await insertCredentialToLocalDB(userId, uuid, encrypt(jsonValue, localDBKey))
             await sendCaregiversCredentialInfoAction(userId, '', platform, ChatMessageType.CREDENTIALS_CREATED)
             navigation.goBack()
         }

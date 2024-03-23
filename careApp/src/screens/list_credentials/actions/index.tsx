@@ -3,12 +3,13 @@ import {View, Text, TouchableOpacity, ScrollView, Linking} from 'react-native'
 import { stylesAddCredential, styleScroolView } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import Navbar from '../../../navigation/actions'
-import { listAllCredentials } from '../../../firebase/firestore/functionalities'
+import { listAllCredentialsFromFirestore } from '../../../firebase/firestore/functionalities'
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import MainBox from '../../../components/MainBox'
 import { Spinner } from '../../../components/LoadingComponents'
 import { useSessionInfo } from '../../../firebase/authentication/session'
+import { getAllCredentialsAndValidate } from './functions'
 
 function AddCredencial() {
 
@@ -103,21 +104,16 @@ interface Credential {
 
 function CredentialsList() {
 
-  const [credencials, setCredencials] = useState<Credential[]>([])
+  const [credencials, setCredencials] = useState<(Credential | undefined)[]>([])
   const isFocused = useIsFocused()
   const { userId, localDBKey } = useSessionInfo()
 
   const [isFething, setIsFething] = useState(true)
 
   const fetchCredencials = async () => {
-    listAllCredentials(userId, localDBKey, false).then((credencials) => {
-      let auxCredencials: Credential[] = [];
-      credencials.forEach(value => {
-        if(value.data.length != 0) {
-          auxCredencials.push({id: value.id, data: JSON.parse(value.data)})
-        }
-      })
-      setCredencials(auxCredencials)
+    getAllCredentialsAndValidate(userId, localDBKey)
+    .then((credentials) => {
+      setCredencials(credentials)
     })
   }
 
@@ -133,7 +129,11 @@ function CredentialsList() {
         {isFething ?
         <Spinner width={300} height={300}/> :
         <ScrollView style={[{margin: '3%'}]}>
-          {credencials.map((value: Credential) => <ScrollItemExample key={value.id} credential={value}/>)}
+          {credencials.map((value: Credential | undefined) => {
+            if(value != undefined) {
+              return <ScrollItemExample key={value.id} credential={value}/>
+            }
+          })}
         </ScrollView>}
       </View>
     </View>

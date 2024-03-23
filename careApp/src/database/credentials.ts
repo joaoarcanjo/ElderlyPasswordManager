@@ -95,7 +95,7 @@ export async function deleteCredentialFromLocalDB(userId: string, credentialId: 
                         resolve()
                     },
                     (_, error) => {
-                        console.log("Error: " + error)
+                        console.log("Error: " + error.message)
                         reject(Errors.ERROR_DELETING_CREDENTIAL)
                         return false
                     }

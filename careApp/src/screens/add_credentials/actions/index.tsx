@@ -4,7 +4,7 @@ import { stylesButtons } from "../../../assets/styles/main_style";
 import { passwordFirstHalf, stylesAddCredential, stylesInputsCredencials } from "../styles/styles";
 import { whiteBackgroud } from "../../../assets/styles/colors";
 import Navbar from "../../../navigation/actions";
-import { addCredencial } from "../../../firebase/firestore/functionalities";
+import { addCredencialToFirestore } from "../../../firebase/firestore/functionalities";
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import Algorithm from "../../password_generator/actions/algorithm";
 import { getScore } from '../../../algorithms/zxcvbn/algorithm'
@@ -13,10 +13,11 @@ import MainBox from "../../../components/MainBox";
 import AvaliationEmoji from "../../../components/EmojiAvaliation";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { getNewId } from "../../../algorithms/0thers/crypto";
+import { encrypt, getNewId } from "../../../algorithms/0thers/crypto";
 import { sendElderlyCredentialInfoAction } from "../../credential_interface/actions/functions";
 import { useSessionInfo } from "../../../firebase/authentication/session";
 import { ChatMessageType } from "../../../e2e/messages/types";
+import { insertCredentialToLocalDB } from "../../../database/credentials";
 
 const placeholderPlatform = 'Insira a plataforma'
 const placeholderURI = 'Insira o URI da plataforma'
@@ -33,7 +34,7 @@ function CredentialsInput({ ownerId, auxKey, isElderlyCredential }: Readonly<{ow
     const [showPassword, setShowPassword] = useState(false)
     const navigation = useNavigation<StackNavigationProp<any>>()
 
-    const { userId, userEmail } = useSessionInfo()
+    const { userId, userEmail, localDBKey } = useSessionInfo()
   
     const handleSave = async () => {
         if(platform != '' && uri != '' && username != '' && password != '') {
@@ -49,7 +50,9 @@ function CredentialsInput({ ownerId, auxKey, isElderlyCredential }: Readonly<{ow
                     updatedAt: Date.now()
                 }
             })
-            await addCredencial(ownerId, auxKey, uuid, jsonValue, isElderlyCredential)
+            await addCredencialToFirestore(ownerId, auxKey, uuid, jsonValue, isElderlyCredential)
+            await insertCredentialToLocalDB(userId, uuid, encrypt(jsonValue, localDBKey))
+            
             if(ownerId != userId) await sendElderlyCredentialInfoAction(userId, ownerId, '', platform, ChatMessageType.CREDENTIALS_CREATED)
             navigation.goBack()
         }

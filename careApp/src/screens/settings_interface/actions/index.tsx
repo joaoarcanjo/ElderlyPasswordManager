@@ -122,7 +122,7 @@ function AccountInfo() {
    */
   function cancelUpdate() {
     toggleEditFlag()
-    editCanceledFlash(FlashMessage.editPersonalInfoCanceled)
+    editCanceledFlash(FlashMessage.editModeCanceled)
     setUsernameEdited(username)
     setUserpasswordEdited(userpassword)
     setUserphoneEdited(userphone)
@@ -192,7 +192,7 @@ function AccountInfo() {
       <View style= { { flex: 0.25, marginHorizontal: '10%', marginTop: '3%', flexDirection: 'row'} }>
         {editFlag ?
           <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
-            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.editButton]} onPress={() => {toggleEditFlag(); }}>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.editButton]} onPress={() => {toggleEditFlag(); editValueFlash(); }}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>Editar</Text>
             </TouchableOpacity>
           </View> :

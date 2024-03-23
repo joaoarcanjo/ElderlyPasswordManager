@@ -247,3 +247,22 @@ export const getElderly = (userId: string, elderlyId: string): Promise<Elderly> 
         }
     })
 }
+
+export const checkElderlyByEmail = async (userId: string, email: string): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+        if (dbSQL != null) {
+            dbSQL.transaction(tx => {
+                tx.executeSql(
+                    'SELECT COUNT(*) AS count FROM elderly WHERE email = ? AND userId = ? AND status = ?;',
+                    [email, userId, ElderlyRequestStatus.ACCEPTED.valueOf()],
+                    (_, result) => {
+                        const count = result.rows.item(0).count;
+                        return resolve(count > 0); 
+                    }
+                );
+            });
+        } else {
+            reject(new Error('Database not initialized.')); 
+        }
+    })
+}

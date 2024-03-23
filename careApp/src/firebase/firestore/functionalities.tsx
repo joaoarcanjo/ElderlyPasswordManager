@@ -27,7 +27,7 @@ async function getKey(elderlyId: string): Promise<string> {
  * @param newCredencialId 
  * @param data 
  */
-async function addCredencial(userId: string, encryptionKey: string, newCredencialId: string, data: string, isElderlyCredentials: boolean) {
+async function addCredencialToFirestore(userId: string, encryptionKey: string, newCredencialId: string, data: string, isElderlyCredentials: boolean) {
     const encrypted = encrypt(data, encryptionKey)
     const credential = defaultCredencials(encrypted)
 
@@ -52,7 +52,7 @@ interface Credential {
  * Função para listar as credenciais de determinado utilizador
  * @param userId 
  */
-export async function listAllCredentials(userId: string, encryptionKey: string, isElderlyCredentials: boolean): Promise<Credential[]> {
+export async function listAllCredentialsFromFirestore(userId: string, encryptionKey: string, isElderlyCredentials: boolean): Promise<Credential[]> {
 
     let collection = isElderlyCredentials? firestore.collection(elderlyCollectionName) : firestore.collection(caregiverCollectionName)
 
@@ -89,7 +89,7 @@ async function deleteCredential(userId: string, credentialId: string): Promise<b
         }).then(() => { return true })
 }
 
-async function updateCredential(userId: string, credencialId: string, encryptionKey: string, data: string, isElderlyCredential: boolean): Promise<boolean> {
+async function updateCredentialFromFirestore(userId: string, credencialId: string, encryptionKey: string, data: string, isElderlyCredential: boolean): Promise<boolean> {
     console.log('Data: ', data)
     const encrypted = encrypt(data, encryptionKey) 
     
@@ -179,4 +179,4 @@ export async function initFirestore(userId: string): Promise<boolean> {
     });
 }
 
-export { deleteCredential, getKey, addCredencial, updateCredential }
+export { deleteCredential, getKey, addCredencialToFirestore, updateCredentialFromFirestore }

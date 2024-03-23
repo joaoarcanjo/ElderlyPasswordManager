@@ -10,13 +10,15 @@ import { getScore } from '../../../algorithms/zxcvbn/algorithm'
 import { FlashMessage, copyPasswordDescription, copyUsernameDescription, copyValue, editCanceledFlash, editCompletedFlash, editValueFlash } from '../../../components/UserMessages'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
-import { deleteCredential, updateCredential, verifyIfCanManipulateCredentials } from '../../../firebase/firestore/functionalities'
+import { deleteCredential, updateCredentialFromFirestore, verifyIfCanManipulateCredentials } from '../../../firebase/firestore/functionalities'
 import { YesOrNoModal, YesOrNoSpinnerModal } from '../../../components/Modal'
 import Algorithm from '../../password_generator/actions/algorithm'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { buildEditMessage, sendElderlyCredentialInfoAction } from './functions'
 import { ChatMessageType } from '../../../e2e/messages/types'
+import { updateCredentialFromLocalDB } from '../../../database/credentials'
+import { encrypt } from '../../../algorithms/0thers/crypto'
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
@@ -34,7 +36,7 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
 
   const [avaliation, setAvaliation] = useState<number>(0)
 
-  const { userId, userEmail } = useSessionInfo()
+  const { userId, userEmail, localDBKey } = useSessionInfo()
   
   const [showPassword, setShowPassword] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
@@ -79,13 +81,15 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
           updatedAt: Date.now()
         }
       })
-      updateCredential(ownerId, id, auxKey, data, isElderlyCredential)
+      updateCredentialFromFirestore(ownerId, id, auxKey, data, isElderlyCredential)
       .then(async (updated) => {
         setEditFlag(!editFlag)
         if(updated) {
           editCompletedFlash(FlashMessage.editCredentialCompleted)      
           if(ownerId != userId) {
             await sendElderlyCredentialInfoAction(userId, ownerId, id, platform, ChatMessageType.CREDENTIALS_UPDATED)
+          } else {
+            await updateCredentialFromLocalDB(userId, id, encrypt(data, localDBKey))
           }
           setCurrUri(uriEditted)
           setUsername(usernameEdited)
@@ -271,7 +275,7 @@ function DeleteCredential({ownerId, id, platform, auxKey, isElderlyCredential}: 
           updatedAt: Date.now()
         }
       })
-      await updateCredential(ownerId, id, auxKey, data, isElderlyCredential)
+      await updateCredentialFromFirestore(ownerId, id, auxKey, data, isElderlyCredential)
         .then(() => sendElderlyCredentialInfoAction(userId, ownerId, '', platform, ChatMessageType.CREDENTIALS_DELETED))
         .then(() => navigation.goBack())
     } else {

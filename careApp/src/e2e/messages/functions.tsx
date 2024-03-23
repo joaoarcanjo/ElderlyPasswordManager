@@ -7,13 +7,12 @@ import { signalWebsocket } from "../network/webSockets"
 import { ChatSession } from "../session/types"
 import { ChatMessageType, CredentialBody, ElderlyDataBody, ProcessedChatMessage } from "./types"
 import { randomUUID } from 'expo-crypto'
-import { checkElderlyByEmail } from "../../database"
 import { setElderlyListUpdated } from "../../screens/list_elderly/actions/state"
 import { getKeychainValueFor, saveKeychainValue } from "../../keychain"
 import { caregiverId, elderlySSSKey } from "../../keychain/constants"
 import { FlashMessage, credentialCreatedByOtherFlash, credentialDeletedByOtherFlash, credentialUpdatedByOtherFlash, editCompletedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionPermissionsFlash, sessionRejectedFlash, sessionRequestReceivedFlash } from "../../components/UserMessages"
 import { ElderlyRequestStatus } from "../../database/types"
-import { checkElderlyByEmailWaitingForResponse, deleteElderly, saveElderly, updateElderly } from "../../database/elderlyFunctions"
+import { checkElderlyByEmail, checkElderlyByEmailWaitingForResponse, deleteElderly, saveElderly, updateElderly } from "../../database/elderlyFunctions"
 import { setCredentialsListUpdated } from "../../screens/elderly_credentials/actions/state"
 
 /**

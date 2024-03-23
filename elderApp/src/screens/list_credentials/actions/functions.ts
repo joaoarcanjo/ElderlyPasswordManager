@@ -1,6 +1,6 @@
 import { decrypt, encrypt } from "../../../algorithms/0thers/crypto";
 import { deriveSecret } from "../../../algorithms/sss/sss";
-import { deleteCredentialFromLocalDB, getAllLocalCredentials, getCredential, insertCredential, updateCredentialFromLocalDB } from "../../../database/credentials";
+import { deleteCredentialFromLocalDB, getAllLocalCredentials, getCredential, insertCredentialToLocalDB, updateCredentialFromLocalDB } from "../../../database/credentials";
 import { ErrorInstance } from "../../../exceptions/error";
 import { Errors } from "../../../exceptions/types";
 import { addCredencialToFirestore, deleteCredentialFromFiretore, getKey, listAllElderlyCredencials, updateCredentialFromFiretore } from "../../../firebase/firestore/functionalities";
@@ -23,7 +23,7 @@ interface CredentialData {
 }
 
 export const getAllCredentialsAndValidate = async (userId: string, userShared: string, localDbKey: string): Promise<(Credential | undefined)[]> => {
-    console.log("GetAllCredentialsBigFunctionCalled")
+    console.log("getAllCredentialsAndValidateCalled")
     const cloudKey = await getKey(userId)
     const key = deriveSecret([cloudKey, userShared])
 
@@ -38,14 +38,9 @@ export const getAllCredentialsAndValidate = async (userId: string, userShared: s
                     throw new ErrorInstance(Errors.ERROR_CREDENTIAL_INVALID_ID)
                 }
                 if (credentialInfo === '') {
-                    insertCredential(userId, value.id, encrypt(JSON.stringify(credentialCloud), localDbKey))
+                    await insertCredentialToLocalDB(userId, value.id, encrypt(JSON.stringify(credentialCloud), localDbKey))
                 } else {
-                    if (credentialInfo === '') {
-                        insertCredential(userId, value.id, encrypt(JSON.stringify(credentialCloud), localDbKey))
-                    } else {
-                        await deleteCredentialIfNeeded(userId, value.id, credentialCloud, localDbKey)
-                        await updateCredentialIfNeeded(userId, value.id, credentialCloud, localDbKey)
-                    }
+                    await deleteCredentialIfNeeded(userId, value.id, credentialCloud, localDbKey)
                     await updateCredentialIfNeeded(userId, value.id, credentialCloud, localDbKey)
                 }
                 return { id: value.id, data: credentialCloud }
@@ -99,7 +94,7 @@ const addMissingCredentialsToReturn = (credentialsLocal: any[], toReturn: (Crede
         if (!toReturn.find(credential => credential?.id === value.credentialId)) {
             const credentialLocal = JSON.parse(decrypt(value.record, localDbKey))
             toReturn.push({ id: value.credentialId, data: credentialLocal })
-            addCredencialToFirestore(userId, userShared, value.credentialId, JSON.stringify(credentialLocal)) // Add missing arguments
+            addCredencialToFirestore(userId, userShared, value.credentialId, JSON.stringify(credentialLocal))
         }
     })
 }

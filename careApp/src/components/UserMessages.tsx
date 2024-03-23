@@ -49,7 +49,7 @@ export function editValueFlash() {
     floating: true,
     message: FlashMessage.editModeActive,
     icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
-    backgroundColor: lightBlueBackground,
+    backgroundColor: superlightBlueBackgroud,
     duration: 6000,
     color: "black", // text color
   });

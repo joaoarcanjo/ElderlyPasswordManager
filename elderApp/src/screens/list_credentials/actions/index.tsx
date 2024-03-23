@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {View, Text, TouchableOpacity, Image, ScrollView, Linking} from 'react-native'
+import {View, Text, TouchableOpacity, ScrollView, Linking} from 'react-native'
 import { stylesAddCredential, styleScroolView } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import Navbar from '../../../navigation/actions'
@@ -123,9 +123,11 @@ function CredentialsList() {
   const refreshValue = async () => {
     console.log('==> CaregiversList refreshed.')
     setIsFething(true)
-    const credentials = await getAllCredentialsAndValidate(userId, userShared, localDBKey)
-    setCredencials(credentials)
-    setIsFething(false)
+    getAllCredentialsAndValidate(userId, userShared, localDBKey)
+    .then((credentials) => {   
+      setCredencials(credentials)
+      setIsFething(false)
+    })
   }
 
   return (

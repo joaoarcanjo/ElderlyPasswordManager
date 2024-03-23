@@ -122,7 +122,7 @@ function AccountInfo() {
    */
   function cancelUpdate() {
     toggleEditFlag()
-    editCanceledFlash(FlashMessage.editPersonalInfoCanceled)
+    editCanceledFlash(FlashMessage.editModeCanceled)
     setUsernameEdited(username)
     setUserpasswordEdited(userpassword)
     setUserphoneEdited(userphone)
