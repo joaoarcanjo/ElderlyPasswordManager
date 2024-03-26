@@ -67,7 +67,7 @@ export async function listAllCredentialsFromFirestore(userId: string, encryption
         return values
     }).catch((error: any) => {
         //alert('Erro ao obter as credenciais, tente novamente!')
-        console.log('Error: ', error)
+        console.log('Error: ', error.message)
         return []
     });
 }

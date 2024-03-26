@@ -39,7 +39,7 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
   const [modalVisible, setModalVisible] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const { userId, userShared, userEmail, localDBKey } = useSessionInfo()
+  const { userId, userFireKey, userEmail, localDBKey } = useSessionInfo()
   const [editFlag, setEditFlag] = useState(true)
 
   useEffect(() => setAvaliation(getScore(passwordEdited)), [passwordEdited])
@@ -72,7 +72,7 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
         }
       })
 
-      updateCredentialFromFiretore(userId, id, userShared, data)
+      updateCredentialFromFiretore(userId, id, userFireKey, data)
       .then(async (updated) => {
         toggleEditFlag()
         if(updated) {

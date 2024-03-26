@@ -34,7 +34,7 @@ function CredentialsInput() {
 
     const [showPassword, setShowPassword] = useState(false)
     const navigation = useNavigation<StackNavigationProp<any>>()
-    const { userId, userEmail, userShared, localDBKey } = useSessionInfo()
+    const { userId, userEmail, userFireKey, localDBKey } = useSessionInfo()
   
     const handleSave = async () => {
         if(platform != '' && uri != '' && username != '' && password != '') {
@@ -50,8 +50,7 @@ function CredentialsInput() {
                     updatedAt: Date.now()
                 }
             })
-
-            await addCredencialToFirestore(userId, userShared, uuid, jsonValue)
+            await addCredencialToFirestore(userId, userFireKey, uuid, jsonValue)
             await insertCredentialToLocalDB(userId, uuid, encrypt(jsonValue, localDBKey))
             await sendCaregiversCredentialInfoAction(userId, '', platform, ChatMessageType.CREDENTIALS_CREATED)
             navigation.goBack()

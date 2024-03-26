@@ -111,7 +111,7 @@ function CredentialsList() {
 
   const [credencials, setCredencials] = useState<(Credential | undefined)[]>([])
   const isFocused = useIsFocused()
-  const { userId, userShared, localDBKey } = useSessionInfo()
+  const { userId, userFireKey, localDBKey } = useSessionInfo()
 
   const [isFething, setIsFething] = useState(true)
 
@@ -121,9 +121,9 @@ function CredentialsList() {
   }, [credentialsListUpdated, isFocused])
 
   const refreshValue = async () => {
-    console.log('==> CaregiversList refreshed.')
+    console.log('===> CaregiversList refreshed.')
     setIsFething(true)
-    getAllCredentialsAndValidate(userId, userShared, localDBKey)
+    getAllCredentialsAndValidate(userId, userFireKey, localDBKey)
     .then((credentials) => {   
       setCredencials(credentials)
       setIsFething(false)

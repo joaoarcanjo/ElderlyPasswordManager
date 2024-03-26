@@ -1,4 +1,4 @@
-import { decrypt, encrypt } from '../../algorithms/0thers/crypto';
+import { encrypt } from '../../algorithms/0thers/crypto';
 import { deriveSecret } from '../../algorithms/sss/sss';
 import { getKeychainValueFor } from '../../keychain';
 import { firestoreSSSKey } from '../../keychain/constants';
@@ -10,11 +10,11 @@ const firestore = firebase.firestore()
 /**
  * Função para alterar a chave que se encontra na cloud.
  */
-async function changeKey(userId: string) {
+async function changeFirestoreKey(userId: string) {
     
     const firestoreKey = await getKeychainValueFor(firestoreSSSKey(userId))
     //console.log("Firestore Key: " + firestoreKey)
-    firestore.collection(elderlyCollectionName)
+    await firestore.collection(elderlyCollectionName)
         .doc(userId).collection(keyCollectionName).doc(keyDocumentName).set({key: firestoreKey})
         .catch((error) => {
             //console.log('Error: ', error)
@@ -159,8 +159,8 @@ async function elderlyExists(elderlyId: string): Promise<boolean> {
     console.log("===> elderlyExistsCalled")
     return firestore.collection(elderlyCollectionName).doc(elderlyId).get()
     .then((doc) => doc.exists)
-    .catch((error) => {
-        console.log('Error: ', error)
+    .catch((error) => {                        
+        console.log("Error: "+ error.message)
         return false
     })
 }
@@ -171,10 +171,9 @@ async function elderlyExists(elderlyId: string): Promise<boolean> {
  * @param newCredencialId 
  * @param data 
  */
-export async function addCredencialToFirestore(userId: string, shared: string, newCredencialId: string, data: string) {
-    const key = deriveSecret([await getKey(userId), shared])
-    const encrypted = encrypt(data, key)
+export async function addCredencialToFirestore(userId: string, userKey: string, newCredencialId: string, data: string) {
 
+    const encrypted = encrypt(data, userKey)
     const credential = defaultCredencials(encrypted)
 
     firestore.collection(elderlyCollectionName)
@@ -214,7 +213,6 @@ interface Credential {
  * @param userId 
  */
 async function listAllElderlyCredencials(userId: string): Promise<Credential[]> {
-    
     return firestore.collection(elderlyCollectionName).doc(userId).collection(credencialsCollectionName).get().then((docs) => {
         const values: Credential[] = []
         docs.forEach((doc) => { 
@@ -265,15 +263,12 @@ async function deleteCredentialFromFiretore(userId: string, credentialId: string
         }).then(() => { return true })
 }
 
-async function updateCredentialFromFiretore(userId: string, credencialId: string, shared: string, data: string): Promise<boolean> {
-    console.log(data)
-    const cloudKey = await getKey(userId)
-    const key = deriveSecret([cloudKey, shared])
+async function updateCredentialFromFiretore(userId: string, credencialId: string, userKey: string, data: string): Promise<boolean> {
+    console.log("===> updateCredentialFromFiretoreCalled")
 
-    const encrypted = encrypt(data, key)
-    
+    const encrypted = encrypt(data, userKey)
     const updatedCredencial = updateDataCredencial(encrypted)
-
+    
     return firestore.collection(elderlyCollectionName)
         .doc(userId)
             .collection(credencialsCollectionName)
@@ -281,9 +276,9 @@ async function updateCredentialFromFiretore(userId: string, credencialId: string
             .update(updatedCredencial)
         .catch((error) => {
             //alert('Erro ao tentar adicionar a nova credencial, tente novamente!')
-            console.log('Error: ', error)
+            console.log("Error: "+ error.message)
             return false
-        }).then(() => { return true })/**/
+        }).then(() => { return true })
 }
 
 async function initFirestore(userId: string): Promise<boolean> {
@@ -297,9 +292,9 @@ async function initFirestore(userId: string): Promise<boolean> {
         }
         return true
     }).catch(error => {
-        console.log('Error: ', error)
+        console.log('Error: ', error.message)                        
         throw new Error("Erro ao iniciar a firestore, tente novamente!")
     });
 }
 
-export { deleteCredentialFromFiretore, initFirestore, changeKey, getKey, listAllElderly, createElderly, updateCredentialFromFiretore, listAllElderlyCredencials, /*firebaseTest*/ }
+export { deleteCredentialFromFiretore, initFirestore, changeFirestoreKey, getKey, listAllElderly, createElderly, updateCredentialFromFiretore, listAllElderlyCredencials, /*firebaseTest*/ }

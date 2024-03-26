@@ -13,9 +13,10 @@ import { FlashMessage, credentialCreatedByOtherFlash, credentialDeletedByOtherFl
 import { getKeychainValueFor } from "../../keychain"
 import { elderlyId } from "../../keychain/constants"
 import { addCaregiverToArray, removeCaregiverFromArray } from "../../firebase/firestore/functionalities"
-import { checkCaregiverByEmail, checkCaregiverByEmailNotAccepted, deleteCaregiver, getCaregiverId, saveCaregiver, updateCaregiver } from "../../database/caregivers"
+import { changeCaregiverStatusOnDatabase, checkCaregiverByEmail, checkCaregiverByEmailNotAccepted, deleteCaregiver, getCaregiverId, saveCaregiver, updateCaregiver } from "../../database/caregivers"
 //import { MessageType, SessionCipher, SignalProtocolAddress } from "../../algorithms/signal"
 import { CaregiverRequestStatus } from "../../database/types"
+import { executeKeyExchange } from "../../algorithms/sss/sssOperations"
 import { setCredentialsListUpdated } from "../../screens/list_credentials/actions/state"
 //import { SessionCipher, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript"
 
@@ -143,19 +144,19 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
         await processPersonalData(currentUserId, cm)
     } else if (cm.type === ChatMessageType.REJECT_SESSION) {
         await processRejectMessage(currentUserId, cm)
-    } else if (cm.type === ChatMessageType.CREDENTIALS_UPDATED) {
+    } else if (cm.type === ChatMessageType.CREDENTIALS_UPDATED && !itsMine) {
         const data = JSON.parse(cm.body) as CredentialBody
         credentialUpdatedByOtherFlash(cm.from, data)
-        setCredentialsListUpdated()
-    } else if (cm.type === ChatMessageType.CREDENTIALS_CREATED) {
+        setCredentialsListUpdated() 
+    } else if (cm.type === ChatMessageType.CREDENTIALS_CREATED && !itsMine) {
         const data = JSON.parse(cm.body) as CredentialBody
         credentialCreatedByOtherFlash(cm.from, data)
         setCredentialsListUpdated()
-    } else if (cm.type === ChatMessageType.CREDENTIALS_DELETED) {
+    } else if (cm.type === ChatMessageType.CREDENTIALS_DELETED && !itsMine) {
         const data = JSON.parse(cm.body) as CredentialBody
         credentialDeletedByOtherFlash(cm.from, data)
         setCredentialsListUpdated()
-    } else if (cm.type === ChatMessageType.DECOUPLING_SESSION) {
+    } else if (cm.type === ChatMessageType.DECOUPLING_SESSION && !itsMine) {
         await processDecouplingMessage(currentUserId, cm)
     }/* else if(type !== 3 && !cm.firstMessage) {
     }*/
@@ -199,9 +200,11 @@ async function processRejectMessage(currentUserId: string, cm: ProcessedChatMess
 async function processDecouplingMessage(currentUserId: string, cm: ProcessedChatMessage) {
     console.log("===> processDecouplingMessageCalled")
     const caregiverId = await getCaregiverId(cm.from, currentUserId)
-    await deleteCaregiver(currentUserId, cm.from)
-    .then(() => removeCaregiverFromArray(currentUserId, caregiverId, 'readCaregivers'))
+    //await deleteCaregiver(currentUserId, cm.from)
+    removeCaregiverFromArray(currentUserId, caregiverId, 'readCaregivers')
     .then(() => removeCaregiverFromArray(currentUserId, caregiverId, 'writeCaregivers'))
-    setCaregiverListUpdated()
+    .then(() => changeCaregiverStatusOnDatabase(currentUserId, cm.from, CaregiverRequestStatus.DECOUPLING))
+    .then(() => setCaregiverListUpdated())
+    //TODO: depois ao dar reset na lista de caregivers, ao se verificar que um deles está decoupling, apagamos o mesmo e damos reset das chaves.
     sessionEndedFlash(cm.from, false)
 }

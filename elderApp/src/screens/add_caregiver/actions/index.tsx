@@ -9,7 +9,7 @@ import { startSession } from '../../../e2e/session/functions';
 import { createIdentity } from '../../../e2e/identity/functions';
 import * as Crypto from 'expo-crypto'
 import { encryptAndSendMessage } from '../../../e2e/messages/functions';
-import { ipAddress } from '../../../algorithms/assets/constants';
+import { ipAddress } from '../../../assets/constants';
 
 function ChatPageTest() {
     const username = useObservable(usernameSubject, '')

@@ -27,7 +27,7 @@ export async function insertCredentialToLocalDB(userId: string, credentialId: st
                         resolve()
                     },
                     (_, error) => {
-                        console.log("Error: " + error)
+                        console.log("Error: " + error.message)
                         reject(new ErrorInstance(Errors.ERROR_CREATING_CREDENTIAL))
                         return false
                     }
@@ -62,7 +62,7 @@ export async function getCredential(userId: string, credentialId: string): Promi
                         }
                     },
                     (_, error) => {
-                        console.log("Error: " + error)
+                        console.log("Error: " + error.message)
                         reject(Errors.ERROR_RETRIEVING_CREDENTIAL)
                         return false
                     }
@@ -168,7 +168,7 @@ export async function getAllLocalCredentials(userId: string): Promise<Credential
                         resolve(credentials);
                     },
                     (_, error) => {
-                        console.log("Error: " + error)
+                        console.log("Error: " + error.message)
                         reject(Errors.ERROR_RETRIEVING_CREDENTIALS)
                         return false
                     }

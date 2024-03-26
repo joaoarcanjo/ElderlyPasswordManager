@@ -10,7 +10,8 @@ import { Caregiver, CaregiverRequestStatus } from '../../../database/types'
 import { caregiverListUpdated } from './state'
 import { getCaregiversArray } from '../../../firebase/firestore/functionalities'
 import { useSessionInfo } from '../../../firebase/authentication/session'
-import { getCaregivers } from '../../../database/caregivers'
+import { deleteCaregiver, getCaregivers } from '../../../database/caregivers'
+import { executeKeyExchange } from '../../../algorithms/sss/sssOperations'
 
 interface CaregiverPermission {
   canRead: boolean,
@@ -18,20 +19,28 @@ interface CaregiverPermission {
   caregiver: Caregiver
 }
 
-async function getCaregiversPermissions(userId: string): Promise<CaregiverPermission[]> {
+async function getCaregiversPermissions(userId: string, setUserFireKey: Function): Promise<CaregiverPermission[]> {
   console.log(' - getCaregiversPermissionsCalled')
   const caregivers = await getCaregivers(userId)
   const readCaregivers = await getCaregiversArray(userId, 'readCaregivers')
   const writeCaregivers = await getCaregiversArray(userId, 'writeCaregivers')
 
   let caregiversPermissions: CaregiverPermission[] = []
-  caregivers.forEach((caregiver) => {
+  caregivers.forEach(async (caregiver) => {
     if(caregiver.requestStatus === CaregiverRequestStatus.ACCEPTED || caregiver.requestStatus === CaregiverRequestStatus.RECEIVED) {
       caregiversPermissions.push({
         canRead: readCaregivers.includes(caregiver.caregiverId),
         canWrite: writeCaregivers.includes(caregiver.caregiverId),
         caregiver
       })
+    } else if (caregiver.requestStatus === CaregiverRequestStatus.DECOUPLING) {
+      await deleteCaregiver(userId, caregiver.email)
+      try {
+        const share = await executeKeyExchange(userId)
+        setUserFireKey(share)
+      } catch (error) {
+        console.log('Error deleting caregiver')
+      }
     }
   })
   return caregiversPermissions
@@ -40,19 +49,18 @@ async function getCaregiversPermissions(userId: string): Promise<CaregiverPermis
 function CaregiversList() {
 
   const [caregivers, setCaregivers] = useState<CaregiverPermission[]>([])
-  const { userId } = useSessionInfo()
+  const { userId, setUserFireKey } = useSessionInfo()
 
   const refreshValue = async () => {
-    console.log('==> CaregiversList refreshed.')
-    const caregiversPermissions = await getCaregiversPermissions(userId)
+    console.log('===> CaregiversList refreshed.')
+    const caregiversPermissions = await getCaregiversPermissions(userId, setUserFireKey)
     setCaregivers(caregiversPermissions)
   }
 
   useEffect(() => {
-    caregiverListUpdated.subscribe(() => {refreshValue()})
+    caregiverListUpdated.subscribe(refreshValue)
       //return () => subscription.unsubscribe()
   }, [caregiverListUpdated])
-
 
   return (
     <View style = {{ flex: 0.85, flexDirection: 'row', marginTop: '1%', justifyContent: 'space-around'}}>

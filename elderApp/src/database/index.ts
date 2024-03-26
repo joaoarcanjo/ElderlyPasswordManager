@@ -6,7 +6,7 @@ export function initDb() {
     dbSQL = SQLite.openDatabase('elderly.db')
     
     dbSQL.transaction(tx => {
-        tx.executeSql(
+        /*tx.executeSql(
             'DROP TABLE IF EXISTS caregivers;'
         )
         tx.executeSql(
@@ -14,7 +14,7 @@ export function initDb() {
         )
         tx.executeSql(
             'DROP TABLE IF EXISTS credentials;'
-        )
+        )*/
     })
 
     dbSQL.transaction(tx => {
@@ -39,6 +39,14 @@ export function initDb() {
                 credentialId TEXT NOT NULL, 
                 record TEXT NOT NULL, 
                 PRIMARY KEY (userId, credentialId)
+            );`
+        )
+        
+        tx.executeSql(
+            `CREATE TABLE IF NOT EXISTS sssTimeout (
+                userId TEXT NOT NULL,
+                timestamp INTEGER NOT NULL,
+                PRIMARY KEY (userId)
             );`
         )
     })

@@ -1,7 +1,7 @@
 import { SignedPublicPreKeyType, DeviceType, PreKeyType } from '@privacyresearch/libsignal-protocol-typescript'
 
 import * as base64 from 'base64-js'
-import { ipAddress } from '../../algorithms/assets/constants'
+import { ipAddress } from '../../assets/constants'
 
 export interface PublicDirectoryEntry {
     identityKey: ArrayBuffer

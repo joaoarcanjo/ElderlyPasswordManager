@@ -110,18 +110,18 @@ export class SignalProtocolStore implements StorageType {
     //================================
     //==== Registration Ids operations
     async getLocalRegistrationId(): Promise<number | undefined> {
-        console.log('===> getLocalRegistrationIdCalled')
+        //console.log('===> getLocalRegistrationIdCalled')
         return Number(await this.get('registrationId', -1))
     }
     async storeLocalRegistrationId(registrationId: number): Promise<void> {
-        console.log('===> storeLocalRegistrationIdCalled')
+        //console.log('===> storeLocalRegistrationIdCalled')
         return this.put('registrationId', registrationId)
     }
     
     //============================
     //==== SignedPreKey operations 
     async loadSignedPreKey(keyId: number | string): Promise<KeyPairType | undefined> {
-        console.log("===> loadSignedPreKeyCalled")
+        //console.log("===> loadSignedPreKeyCalled")
         let kPub = await this.get(keySignedPub25519(await this.getUserId(), keyId), '')
         let kPriv = await this.get(keySignedPriv25519(await this.getUserId(), keyId), '')
         
@@ -140,30 +140,30 @@ export class SignalProtocolStore implements StorageType {
         throw new Error(`stored key has wrong type`)
     }
     async loadSignedSignature(keyId: number | string): Promise<ArrayBuffer | undefined> {
-        console.log("===> loadSignedSignatureCalled")
+        //console.log("===> loadSignedSignatureCalled")
         let signature = await this.get(signedKeySignature25519(await this.getUserId(), keyId), '')
         if(typeof signature !== 'string' || signature === '') return undefined
         return hexToArrayBuffer(signature)
     }
     async storeSignedPreKey(keyId: number | string, keyPair: KeyPairType): Promise<void> {
-        console.log('===> storeSignedPreKeyCalled')
+        //console.log('===> storeSignedPreKeyCalled')
         await this.put(keySignedPub25519(await this.getUserId(), keyId), ArrayBufferToHex(keyPair.pubKey))
         await this.put(keySignedPriv25519(await this.getUserId(), keyId), ArrayBufferToHex(keyPair.privKey))
     }
     async storeSignature(keyId: number | string, signature: ArrayBuffer) {
-        console.log('===> storeSignatureCalled')
+        //console.log('===> storeSignatureCalled')
         await this.put(signedKeySignature25519(await this.getUserId(), keyId), ArrayBufferToHex(signature))
     }
     async getSignedPreKeyId(): Promise<number> {
-        console.log('===> getSignedPreKeyIdCalled')
+        //console.log('===> getSignedPreKeyIdCalled')
         return Number(await this.get(signedPreKeyId(await this.getUserId()), -1))
     }
     async storeSignedPreKeyId(registrationId: number): Promise<void> {
-        console.log('===> storeLocalRegistrationIdCalled')
+        //console.log('===> storeLocalRegistrationIdCalled')
         await this.put(signedPreKeyId(await this.getUserId()), registrationId)
     }
     async removeSignedPreKey(keyId: number | string): Promise<void> {
-        console.log('===> removeSignedPreKeyCalled')
+        //console.log('===> removeSignedPreKeyCalled')
         await this.remove(signedPreKeyId(await this.getUserId()))
         await this.remove(signedKeySignature25519(await this.getUserId(), keyId))
         await this.remove(keySignedPub25519(await this.getUserId(), keyId))
@@ -173,7 +173,7 @@ export class SignalProtocolStore implements StorageType {
     //=================================
     //==== Identity Key pair operations
     async getIdentityKeyPair(): Promise<KeyPairType | undefined> {
-        console.log("===> getIdentityKeyPairCalled")
+        //console.log("===> getIdentityKeyPairCalled")
         const kPub = await this.get(identityIdPubKey(await this.getUserId()), '')
         const kPriv = await this.get(identityIdPrivKey(await this.getUserId()), '')
 
@@ -190,12 +190,12 @@ export class SignalProtocolStore implements StorageType {
         throw new Error('Item stored as identity key of unknown type.')
     }
     async storeIdentityKeyPair(keyPair: KeyPairType): Promise<void> {
-        console.log("===> storeIdentityKeyPairCalled")
+        //console.log("===> storeIdentityKeyPairCalled")
         await this.put(identityIdPubKey(await this.getUserId()), ArrayBufferToHex(keyPair.pubKey))
         await this.put(identityIdPrivKey(await this.getUserId()), ArrayBufferToHex(keyPair.privKey))
     }
     async loadIdentityKey(identifier: string): Promise<ArrayBuffer | undefined> {
-        console.log("===> loadIdentityKeyCalled")
+        //console.log("===> loadIdentityKeyCalled")
         if (identifier === null || identifier === undefined) {
             throw new Error('Tried to get identity key for undefined/null key')
         }
@@ -216,7 +216,7 @@ export class SignalProtocolStore implements StorageType {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _direction: Direction
     ): Promise<boolean> {
-        console.log("===> isTrustedIdentityCalled")
+        //console.log("===> isTrustedIdentityCalled")
         if (identifier === null || identifier === undefined) {
             throw new Error('tried to check identity key for undefined/null key')
         }
@@ -227,7 +227,7 @@ export class SignalProtocolStore implements StorageType {
         return Promise.resolve(ArrayBufferToHex(identityKey) === trusted)
     }
     async saveIdentity(identifier: string, identityKey: ArrayBuffer): Promise<boolean> {
-        console.log("===> SaveIdentityCalled")
+        //console.log("===> SaveIdentityCalled")
         if (identifier === null || identifier === undefined)
             throw new Error('Tried to put identity key for undefined/null key')
 
@@ -251,7 +251,7 @@ export class SignalProtocolStore implements StorageType {
     //======================
     //==== PreKey operations
     async loadPreKey(keyId: string | number): Promise<KeyPairType | undefined> {
-        console.log("===> loadPreKeyCalled")
+        //console.log("===> loadPreKeyCalled")
         let pub = await this.get(keypreKeyPub25519(await this.getUserId(), keyId), '')
         let priv = await this.get(keypreKeyPriv25519(await this.getUserId(), keyId), '')
 
@@ -279,11 +279,11 @@ export class SignalProtocolStore implements StorageType {
         await this.remove(baseKeyIdK(await this.getUserId()))
     }
     async getBaseKeyId(): Promise<number> {
-        console.log('===> getBaseKeyId')
+        //console.log('===> getBaseKeyId')
         return Number(await this.get(baseKeyIdK(await this.getUserId()), -1))
     }
     async storeBaseKeyId(baseKeyId: number): Promise<void> {
-        console.log('===> storeBaseKeyId')
+        //console.log('===> storeBaseKeyId')
         return this.put(baseKeyIdK(await this.getUserId()), baseKeyId)
     }
 
@@ -291,7 +291,7 @@ export class SignalProtocolStore implements StorageType {
     //==== Session operations 
     //==-> obter do sql.
     async loadSession(identifier: string): Promise<SessionRecordType | undefined> {
-        console.log("===> LoadSessionCalled")
+        //console.log("===> LoadSessionCalled")
         const rec = await getSessionById('session' + identifier, await this.getUserId(), await this.getDBKey())
         if (typeof rec === 'object') {
             return rec.record
@@ -301,15 +301,15 @@ export class SignalProtocolStore implements StorageType {
         throw new Error(`session record is not an ArrayBuffer`)
     }
     async storeSession(identifier: string, record: SessionRecordType): Promise<void> {
-        console.log("===> StoreSessionCalled")
+        //console.log("===> StoreSessionCalled")
         await saveSignalSessions(await this.getUserId(), 'session' + identifier, record, await this.getDBKey())
     }
     async removeSession(identifier: string): Promise<void> {
-        console.log("===> RemoveSessionCalled")
+        //console.log("===> RemoveSessionCalled")
         await deleteSessionById(await this.getUserId(),'session' + identifier)
     }
     async removeAllSessions(identifier: string): Promise<void> {
-        console.log("===> RemoveAllSessionsCalled")
+        //console.log("===> RemoveAllSessionsCalled")
         await deleteAllSessions(await this.getUserId())
     }
 }

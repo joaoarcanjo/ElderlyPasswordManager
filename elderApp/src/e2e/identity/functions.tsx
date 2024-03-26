@@ -5,7 +5,7 @@ import { subscribeWebsocket } from "../network/webSockets";
 import { SignalDirectory } from "../signal/signal-directory";
 import { directorySubject, usernameSubject, signalStore } from "./state";
 import { networkInfoSubject } from "../network/state";
-import { ipAddress } from "../../algorithms/assets/constants";
+import { ipAddress } from "../../assets/constants";
 //import { KeyHelper, PreKeyPairType, PreKeyType, SignedPreKeyPairType, SignedPublicPreKeyType } from "../../algorithms/signal";
 
 /**

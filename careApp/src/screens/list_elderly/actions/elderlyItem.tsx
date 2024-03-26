@@ -5,8 +5,6 @@ import { stylesButtons } from "../../../assets/styles/main_style";
 import { acceptElderly, decouplingElderly, refuseElderly } from "./functions";
 import { StackNavigationProp } from "@react-navigation/stack/lib/typescript/src/types";
 import { useNavigation } from "@react-navigation/native";
-import { getKeychainValueFor } from "../../../keychain";
-import { elderlySSSKey } from "../../../keychain/constants";
 import { YesOrNoModal } from "../../../components/Modal";
 import { useSessionInfo } from "../../../firebase/authentication/session";
 import { ElderlyRequestStatus } from "../../../database/types";
@@ -68,8 +66,7 @@ export function Elderly({ elderlyId, name, phone, email, setRefresh }: Readonly<
   const changeInfoState = () => setShowInfo(!showInfo)
 
   const navigateToElderlyCredentials = async () => {
-    const userShared = await getKeychainValueFor(elderlySSSKey(elderlyId))
-    navigation.navigate('ElderlyCredentials', { elderlyEmail: email, elderlyName: name, elderlyId: elderlyId, userShared: userShared })
+    navigation.navigate('ElderlyCredentials', { elderlyEmail: email, elderlyName: name, elderlyId: elderlyId })
   }
 
   return (

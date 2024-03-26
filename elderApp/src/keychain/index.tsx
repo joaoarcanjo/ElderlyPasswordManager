@@ -1,5 +1,5 @@
 import {setItemAsync, getItemAsync, deleteItemAsync} from 'expo-secure-store';
-import { caregiver1SSSKey, elderlyEmail, elderlyId, elderlySSSKey, firestoreSSSKey, localDBKey, caregiver2SSSKey } from './constants';
+import { caregiver1SSSKey, elderlyEmail, elderlyId, elderlyFireKey, firestoreSSSKey, localDBKey, caregiver2SSSKey } from './constants';
 import { generateKey } from '../algorithms/0thers/crypto';
 /**
  * Função para armazenar o valor key-value.
@@ -44,7 +44,7 @@ export async function deleteKeychainValueFor(key: string): Promise<void> {
 export async function cleanKeychain(id: string) {
 
   await deleteItemAsync(firestoreSSSKey(id))
-  .then(() => deleteItemAsync(elderlySSSKey(id)))
+  .then(() => deleteItemAsync(elderlyFireKey(id)))
   .then(() => deleteItemAsync(caregiver1SSSKey(id)))
   .then(() => deleteItemAsync(caregiver2SSSKey(id)))
   .then(() => deleteItemAsync(elderlyId))

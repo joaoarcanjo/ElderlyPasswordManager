@@ -22,17 +22,15 @@ interface CredentialData {
     }
 }
 
-export const getAllCredentialsAndValidate = async (userId: string, userShared: string, localDbKey: string): Promise<(Credential | undefined)[]> => {
-    console.log("getAllCredentialsAndValidateCalled")
-    const cloudKey = await getKey(userId)
-    const key = deriveSecret([cloudKey, userShared])
-
+export const getAllCredentialsAndValidate = async (userId: string, userKey: string, localDbKey: string): Promise<(Credential | undefined)[]> => {
+    console.log("===> getAllCredentialsAndValidateCalled")
+    
     const credentialsCloud = await listAllElderlyCredencials(userId)
     const toReturn = await Promise.all(credentialsCloud.map(async value => {
         const credentialInfo = await getCredential(userId, value.id)
         try {
             if (value.data.length != 0) {
-                const credentialCloud = JSON.parse(decrypt(value.data, key)) as CredentialData
+                const credentialCloud = JSON.parse(decrypt(value.data, userKey)) as CredentialData
 
                 if (credentialCloud.id !== value.id) {
                     throw new ErrorInstance(Errors.ERROR_CREDENTIAL_INVALID_ID)
@@ -53,7 +51,7 @@ export const getAllCredentialsAndValidate = async (userId: string, userShared: s
 
             const credencialLocal = JSON.parse(decrypt(credentialInfo, localDbKey))
             if (credencialLocal) {
-                updateCredentialFromFiretore(userId, value.id, userShared, JSON.stringify(credencialLocal))
+                updateCredentialFromFiretore(userId, value.id, userKey, JSON.stringify(credencialLocal))
             }
             return { id: value.id, data: credencialLocal }
             }
@@ -61,7 +59,7 @@ export const getAllCredentialsAndValidate = async (userId: string, userShared: s
     }))
 
     const credentialsLocal = await getAllLocalCredentials(userId)
-    addMissingCredentialsToReturn(credentialsLocal, toReturn, localDbKey, userId, userShared);
+    addMissingCredentialsToReturn(credentialsLocal, toReturn, localDbKey, userId, userKey)
     return toReturn
 }
 
@@ -88,13 +86,14 @@ const updateCredentialIfNeeded = async (userId: string, credentialId: string, cr
     }
 };
 
-const addMissingCredentialsToReturn = (credentialsLocal: any[], toReturn: (Credential | undefined)[], localDbKey: string, userId: string, userShared: string) => {
+const addMissingCredentialsToReturn = (credentialsLocal: any[], toReturn: (Credential | undefined)[], localDbKey: string, userId: string, userKey: string) => {
+    console.log("===> addMissingCredentialsToReturnCalled")
     
-    credentialsLocal.forEach(value => {
+    credentialsLocal.forEach(async value => {
         if (!toReturn.find(credential => credential?.id === value.credentialId)) {
             const credentialLocal = JSON.parse(decrypt(value.record, localDbKey))
             toReturn.push({ id: value.credentialId, data: credentialLocal })
-            addCredencialToFirestore(userId, userShared, value.credentialId, JSON.stringify(credentialLocal))
+            await addCredencialToFirestore(userId, userKey, value.credentialId, JSON.stringify(credentialLocal))
         }
     })
 }

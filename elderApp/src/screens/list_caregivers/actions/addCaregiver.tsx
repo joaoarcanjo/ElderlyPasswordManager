@@ -23,10 +23,10 @@ function AddCaregiverModal({number, visibility, concludeAction}: Readonly<{numbe
     .then(() =>  startSessionWithCaregiver(number, email, userId, userName, userEmail, userPhone))
     .then(() => sessionRequestSent())
     .then(() => concludeAction())
-    .catch((error) => {
+    .catch(async (error) => {
       const errorAux = error as ErrorInstance
       if(errorAux.code === Errors.ERROR_CAREGIVER_ALREADY_ADDED.valueOf()) alert(errorAux.code)
-      else deleteCaregiver(userId, email).then(() => alert(errorAux.code))
+      else await deleteCaregiver(userId, email).then(() => alert(errorAux.code))
     })
   }
 

@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { initDb } from './src/database';
 import FlashMessage from 'react-native-flash-message';
 import Caregivers from './src/screens/list_caregivers/actions';
-import { changeKey, initFirestore } from './src/firebase/firestore/functionalities';
+import { changeFirestoreKey, initFirestore } from './src/firebase/firestore/functionalities';
 import { initKeychain } from './src/keychain';
 import { AddCredencial } from './src/screens/add_credentials/actions';
 import { initSSS } from './src/algorithms/sss/sss';
@@ -27,6 +27,7 @@ import * as SplashFunctions from 'expo-splash-screen';
 import { createIdentity } from './src/e2e/identity/functions';
 import * as Notifications from "expo-notifications";
 import { StackNavigationProp } from '@react-navigation/stack';
+import { executeKeyChangeIfTimeout } from './src/algorithms/sss/sssOperations';
 
 const Stack = createNativeStackNavigator()
 const InsideStack = createNativeStackNavigator()
@@ -48,10 +49,19 @@ function InsideLayout() {
 
   const flashTimeoutPromise = () => { if (!appIsReady) { return new Promise(resolve => setTimeout(resolve, time)) } else return Promise.resolve() }
   const navigation = useNavigation<StackNavigationProp<any>>()
+  const { userId, userFireKey, setUserFireKey } = useSessionInfo()
+
+  const keyVerification = async () => {
+    if (!userId || !userFireKey || userId === '' || userFireKey === '') return
+    const shared = await executeKeyChangeIfTimeout(userId)
+    if(shared != '') setUserFireKey(shared)
+ }
 
   useEffect(() => {
-    flashTimeoutPromise().then(() => setAppIsReady(true))
-    .then(() => { navigation.push('MainMenu')})
+    flashTimeoutPromise()
+      .then(() => setAppIsReady(true))
+      .then(() => keyVerification())
+      .then(() => { navigation.push('MainMenu')})
   }, [])
 
   const onLayoutRootView = useCallback(async () => { if (!appIsReady) await SplashFunctions.hideAsync() }, [appIsReady]);
@@ -78,7 +88,7 @@ function InsideLayout() {
 function Inicialization() {
 
   const [user, setUser] = useState<User | null>(null)
-  const { setUserId, setUserEmail, setLocalDBKey, setShared, userId } = useSessionInfo()
+  const { setUserId, setUserEmail, setLocalDBKey, setUserFireKey, userId } = useSessionInfo()
 
   useEffect(() => {
     onAuthStateChanged(FIREBASE_AUTH, async (user) => {
@@ -90,11 +100,12 @@ function Inicialization() {
         .then((DBKey) => setLocalDBKey(DBKey))
         .then(() => {setUserId(user.uid); setUserEmail(userEmail); setUser(user)})
         .then(() => initSSS(user.uid))
-        .then((myShare) => setShared(myShare))
+        .then((myShare) => setUserFireKey(myShare))
         .then(() => initFirestore(user.uid))
         .then(() => initDb())
-        .then(() => changeKey(user.uid))
+        .then(() => changeFirestoreKey(user.uid))
         .then(() => createIdentity(user.uid, userEmail))
+        .then(() => console.log("User: ", user.uid))
       }
 
       let { status } = await Notifications.requestPermissionsAsync()
@@ -102,7 +113,7 @@ function Inicialization() {
         //TODO: do an alert
       }
     })
-  }, [user])
+  }, [user]) //TODO: 
 
   return (
       <NavigationContainer>

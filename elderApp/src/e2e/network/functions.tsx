@@ -13,7 +13,7 @@ import { processRegularMessage, processPreKeyMessage } from "../messages/functio
  * @returns 
  */
 export function initializeSignalWebsocket(uri: string): Subscription {
-    console.log('->initializingSignalWebsocket', { uri })
+    //console.log('->initializingSignalWebsocket', { uri })
 
     const socket = webSocket<WebSocketMessage>(uri)
     setSignalWebsocket(socket)
@@ -31,8 +31,8 @@ export function initializeSignalWebsocket(uri: string): Subscription {
                 console.error('Message on wss is not recognized', { msg })
             }
         },
-        error: (err) => {
-            console.error(err)
+        error: (error) => {
+            console.log('Error: ', error.message)                        
         },
         complete: () => {
             console.log(`- signal websocket complete`)

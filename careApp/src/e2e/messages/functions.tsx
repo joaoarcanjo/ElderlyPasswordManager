@@ -131,6 +131,10 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
     if(cm.type === ChatMessageType.PERSONAL_DATA && !itsMine) {
         await processPersonalData(currentUserId, cm)
         //userSession.messages.push(cm)  
+    } else if(cm.type === ChatMessageType.KEY_UPDATE && !itsMine) {
+        const data = JSON.parse(cm.body) as ElderlyDataBody
+        saveKeychainValue(elderlySSSKey(data.userId), data.key)
+        //userSession.messages.push(cm)  
     } else if (cm.type === ChatMessageType.REJECT_SESSION && !itsMine) {
         //vai apagar a sessão que foi criada com o possível cuidador
         await processRejectMessage(currentUserId, cm)

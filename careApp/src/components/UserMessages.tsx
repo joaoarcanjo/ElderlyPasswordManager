@@ -67,7 +67,6 @@ export function editCanceledFlash(flashMessage: FlashMessage) {
 } 
 
 export function editCompletedFlash(flashMessage: FlashMessage) {
-  console.log('editCompletedFlash')
   showMessage({
     floating: true,
     message: flashMessage,

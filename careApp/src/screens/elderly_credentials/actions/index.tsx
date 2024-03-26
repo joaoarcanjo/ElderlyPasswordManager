@@ -11,8 +11,10 @@ import { Spinner } from '../../../components/LoadingComponents'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { deriveSecret } from '../../../algorithms/sss/sss'
 import { credentialsListUpdated } from './state'
+import { getKeychainValueFor } from '../../../keychain'
+import { elderlySSSKey } from '../../../keychain/constants'
 
-function AddCredencial({ elderlyId, userShared }: Readonly<{elderlyId: string, userShared: string}>) {
+function AddCredencial({ elderlyId }: Readonly<{elderlyId: string}>) {
 
   const navigation = useNavigation<StackNavigationProp<any>>()
   const { userId } = useSessionInfo()
@@ -20,7 +22,8 @@ function AddCredencial({ elderlyId, userShared }: Readonly<{elderlyId: string, u
   const navigateToAddCredential = async () => {
     const canCreate = await verifyIfCanManipulateCredentials(userId, elderlyId)
 
-    const encryptionKey = deriveSecret([await getKey(elderlyId), userShared])
+    const encryptionKey = deriveSecret([await getKey(elderlyId), await getKeychainValueFor(elderlySSSKey(elderlyId))]) 
+
     if(canCreate) {
       navigation.navigate('AddCredential', { userId: elderlyId, key: encryptionKey, isElderlyCredential: true })
     } else {
@@ -37,7 +40,7 @@ function AddCredencial({ elderlyId, userShared }: Readonly<{elderlyId: string, u
   )
 }
 
-function ScrollItemExample({credential, userShared, elderlyId}: Readonly<{credential: Credential, userShared: string, elderlyId: string}>) {
+function ScrollItemExample({credential, elderlyId}: Readonly<{credential: Credential, elderlyId: string}>) {
 
   const navigation = useNavigation<StackNavigationProp<any>>();
   //const { setUsernameCopied, setPasswordCopied, usernameCopied, passwordCopied } = useSessionInfo()
@@ -45,7 +48,7 @@ function ScrollItemExample({credential, userShared, elderlyId}: Readonly<{creden
 
   console.log("Credential: ", credential.data.platform)
   const OpenCredentialPage = async () => {
-    const encryptionKey = deriveSecret([await getKey(elderlyId), userShared]) 
+    const encryptionKey = deriveSecret([await getKey(elderlyId), await getKeychainValueFor(elderlySSSKey(elderlyId))]) 
     
     navigation.navigate('CredentialPage', 
     { 
@@ -113,14 +116,16 @@ interface Credential {
   }
 }
 
-function ElderlyCredentialsList({ elderlyId, userShared }: Readonly<{elderlyId: string, userShared: string}>) {
+function ElderlyCredentialsList({ elderlyId }: Readonly<{elderlyId: string}>) {
 
   const [credencials, setCredencials] = useState<Credential[]>([])
   const isFocused = useIsFocused()
   const [isFething, setIsFething] = useState(true)
 
   const fetchCredencials = async () => {
-    const encryptionKey = deriveSecret([await getKey(elderlyId), userShared])
+    const cloudKey = await getKey(elderlyId)
+    const sssKey = await getKeychainValueFor(elderlySSSKey(elderlyId))
+    const encryptionKey = deriveSecret([cloudKey, sssKey])
 
     listAllCredentialsFromFirestore(elderlyId, encryptionKey, true).then((credencials) => {
       let auxCredencials: Credential[] = [];
@@ -148,7 +153,7 @@ function ElderlyCredentialsList({ elderlyId, userShared }: Readonly<{elderlyId: 
         {isFething ?
         <Spinner width={300} height={300}/> :
         <ScrollView style={[{margin: '3%'}]}>
-          {credencials.map((value, index) => <ScrollItemExample key={index} credential={value} userShared={userShared} elderlyId={elderlyId}/>)}
+          {credencials.map((value, index) => <ScrollItemExample key={index} credential={value} elderlyId={elderlyId}/>)}
         </ScrollView>}
       </View>
     </View>
@@ -163,8 +168,8 @@ export default function ElderlyCredentials({ route }: Readonly<{route: any}>) {
       <View style={[{flex: 0.1, justifyContent: 'center', alignItems: 'center'}, elderlyName.container]}>
           <Text style={elderlyName.text}>{route.params.elderlyName}</Text>
       </View>
-      <AddCredencial elderlyId={route.params.elderlyId} userShared={route.params.userShared}/>
-      <ElderlyCredentialsList elderlyId={route.params.elderlyId} userShared={route.params.userShared}/>
+      <AddCredencial elderlyId={route.params.elderlyId}/>
+      <ElderlyCredentialsList elderlyId={route.params.elderlyId}/>
       <Navbar/> 
     </View>
   )

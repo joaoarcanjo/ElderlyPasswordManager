@@ -20,6 +20,8 @@ export enum ChatMessageType {
     CREDENTIALS_UPDATED,
     CREDENTIALS_DELETED,
     CREDENTIALS_CREATED,
+
+    KEY_UPDATE
 }
 
 export interface ElderlyDataBody {

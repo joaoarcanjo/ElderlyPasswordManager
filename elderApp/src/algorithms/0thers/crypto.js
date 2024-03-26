@@ -27,7 +27,6 @@ const encrypt = (message, key) => {
   const nonce = newNonce()
   const messageUint8 = encodeUTF8(message)
   const box = secretbox(messageUint8, nonce, keyUint8Array)
-
   const fullMessage = new Uint8Array(nonce.length + box.length)
   fullMessage.set(nonce)
   fullMessage.set(box, nonce.length)

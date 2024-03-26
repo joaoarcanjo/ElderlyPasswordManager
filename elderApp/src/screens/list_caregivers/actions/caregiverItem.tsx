@@ -83,10 +83,15 @@ export function Caregiver({name, phone, email, caregiverId, setRefresh, canWrite
 
   const [modalVisible, setModalVisible] = useState(false)
   const [writePermission, setWritePermission] = useState(canWrite)
-  const { userId } = useSessionInfo()
+  const { userId, setUserFireKey } = useSessionInfo()
 
   const deleteCaregiver = () => {
-    decouplingCaregiver(email, caregiverId, userId).then(() => setRefresh())
+    decouplingCaregiver(email, caregiverId, userId)
+    .then((userFireKey) => {
+      setUserFireKey(userFireKey)
+    })
+    .then(() => setModalVisible(false))
+    .then(() => setRefresh())
   }
 
   const writeFunction = async () => {

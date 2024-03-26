@@ -1,5 +1,7 @@
+import { executeKeyExchange } from "../../../algorithms/sss/sssOperations"
 import { sessionAcceptedFlash, sessionRejectedFlash } from "../../../components/UserMessages"
-import { acceptCaregiverOnDatabase, deleteCaregiver } from "../../../database/caregivers"
+import { changeCaregiverStatusOnDatabase, deleteCaregiver } from "../../../database/caregivers"
+import { CaregiverRequestStatus } from "../../../database/types"
 import { encryptAndSendMessage } from "../../../e2e/messages/functions"
 import { ChatMessageType, ElderlyDataBody } from "../../../e2e/messages/types"
 import { startSession } from "../../../e2e/session/functions"
@@ -56,7 +58,7 @@ export async function acceptCaregiver(caregiverId: string, number: number, userI
     //await encryptAndSendMessage(to, 'acceptSession', true, ChatMessageType.ACCEPTED_SESSION)
     await encryptAndSendMessage(caregiverEmail, JSON.stringify(data), true, ChatMessageType.PERSONAL_DATA)
     await addCaregiverToArray(userId, caregiverId, "readCaregivers")
-    await acceptCaregiverOnDatabase(userId, caregiverEmail)
+    await changeCaregiverStatusOnDatabase(userId, caregiverEmail, CaregiverRequestStatus.ACCEPTED.valueOf())
     sessionAcceptedFlash(caregiverEmail, true)
 }
 
@@ -75,13 +77,11 @@ export async function refuseCaregiver(userId: string, to: string, elderlyName: s
 
 
 export async function decouplingCaregiver(caregiverEmail: string, caregiverId: string, userId: string) {
-    await deleteCaregiver(userId, caregiverEmail)
+    return await deleteCaregiver(userId, caregiverEmail)
     .then(() => removeCaregiverFromArray(userId, caregiverId, 'writeCaregivers')) 
     .then(() => removeCaregiverFromArray(userId, caregiverId, 'readCaregivers'))
     .then(() => sendCaregiversDecoupling(caregiverEmail))
-
-    //TODO: Atualizar na firebase a chave de encriptação.
-    //TODO: Enviar para o outro cuidador (caso exista), a sua nova chave.
+    .then(() => {return executeKeyExchange(userId)})
 }
 
 async function sendCaregiversDecoupling(caregiverEmail: string) {

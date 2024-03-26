@@ -6,8 +6,6 @@ import { startSession } from "../../../e2e/session/functions"
 import { currentSessionSubject, sessionForRemoteUser } from "../../../e2e/session/state"
 
 export async function sendElderlyCredentialInfoAction(userId: string, elderlyId: string, credentialId: string, platform: string, type: ChatMessageType) {
-    console.log("UserId:", userId)
-    console.log("ElderlyId:", elderlyId)
     const elderly = await getElderly(userId, elderlyId)   
     if(!sessionForRemoteUser(elderly.email)) {
         await startSession(elderly.email)

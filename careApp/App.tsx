@@ -15,11 +15,11 @@ import { FIREBASE_AUTH } from './src/firebase/FirebaseConfig';
 import { initKeychain } from './src/keychain';
 import SignInPage from './src/screens/signin_interface/actions';
 import SignUpPage from './src/screens/signup_interface/actions';
-import { createIdentity } from './src/e2e/identity/functions';
 import CredencialPage from './src/screens/credential_interface/actions';
 import Settings from './src/screens/settings_interface/actions';
 import Credentials from './src/screens/list_credentials/actions';
 import { initFirestore } from './src/firebase/firestore/functionalities';
+import { createIdentity } from './src/e2e/identity/functions';
 
 const Stack = createNativeStackNavigator()
 const InsideStack = createNativeStackNavigator()
@@ -59,6 +59,7 @@ function Inicialization() {
         .then((DBKey) => setLocalDBKey(DBKey))
         .then(() => { setUserId(user.uid); setUserEmail(userEmail); setUser(user)})
         .then(() => initFirestore(user.uid))
+        .then(() => createIdentity(user.uid, userEmail))
         .then(() => initDb()) 
       }
 
