@@ -30,6 +30,7 @@ export const enum FlashMessage {
 export const copyPasswordDescription = `A password foi guardada no clipboard.`
 export const copyUsernameDescription = `O username foi guardado no clipboard.`
 export const copyURIDescription = `O URI foi guardado no clipboard.`
+export const cantAcceptConnection = `Conexão automaticamente rejeitada.`
 
 export function copyValue(value: string, message: FlashMessage, description: string = "") {
     Clipboard.setStringAsync(value)
@@ -117,6 +118,23 @@ export function sessionRejectedFlash(from: string, byMe: boolean) {
     });
   } else {
     triggerNotifications('Conexão rejeitada!! 😓', `O idoso ${from} rejeitou a conexão.`, "")
+  }
+}
+
+export function sessionRejectedMaxReachedFlash(from: string) {
+  //console.log(AppState.currentState)
+  if(AppState.currentState === 'active') {
+    showMessage({
+      floating: true,
+      message: cantAcceptConnection,
+      description: `O idoso ${from} não pode aceitar mais conexões, sendo assim rejeitada.`,
+      icon: props => <Image source={require("../assets/images/cross.png")} {...props} />,
+      backgroundColor: lightRedBackground,
+      duration: 10000,
+      color: "black", // text color
+    });
+  } else {
+    triggerNotifications('Conexão rejeitada!! 😓', `O idoso ${from} não pode aceitar mais conexões.`, "")
   }
 }
 

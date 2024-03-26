@@ -6,6 +6,7 @@ import { startSession } from "../../../e2e/session/functions"
 import { currentSessionSubject, sessionForRemoteUser } from "../../../e2e/session/state"
 
 export async function sendCaregiversCredentialInfoAction(userId: string, credentialId: string, platform: string, type: ChatMessageType) {
+    console.log("===> sendCaregiversCredentialInfoActionCalled")
     const caregivers = await getCaregivers(userId)   
     caregivers.forEach(async (caregiver) => {
         if(!sessionForRemoteUser(caregiver.email)) {

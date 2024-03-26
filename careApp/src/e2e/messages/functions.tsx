@@ -10,7 +10,7 @@ import { randomUUID } from 'expo-crypto'
 import { setElderlyListUpdated } from "../../screens/list_elderly/actions/state"
 import { getKeychainValueFor, saveKeychainValue } from "../../keychain"
 import { caregiverId, elderlySSSKey } from "../../keychain/constants"
-import { FlashMessage, credentialCreatedByOtherFlash, credentialDeletedByOtherFlash, credentialUpdatedByOtherFlash, editCompletedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionPermissionsFlash, sessionRejectedFlash, sessionRequestReceivedFlash } from "../../components/UserMessages"
+import { FlashMessage, credentialCreatedByOtherFlash, credentialDeletedByOtherFlash, credentialUpdatedByOtherFlash, editCompletedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionPermissionsFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionRequestReceivedFlash } from "../../components/UserMessages"
 import { ElderlyRequestStatus } from "../../database/types"
 import { checkElderlyByEmail, checkElderlyByEmailWaitingForResponse, deleteElderly, saveElderly, updateElderly } from "../../database/elderlyFunctions"
 import { setCredentialsListUpdated } from "../../screens/elderly_credentials/actions/state"
@@ -138,6 +138,9 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
     } else if (cm.type === ChatMessageType.REJECT_SESSION && !itsMine) {
         //vai apagar a sessão que foi criada com o possível cuidador
         await processRejectMessage(currentUserId, cm)
+    } else if (cm.type === ChatMessageType.MAX_REACHED_SESSION && !itsMine) {
+        //vai apagar a sessão que foi criada com o possível cuidador
+        await processMaxReachedMessage(currentUserId, cm)
     } else if (cm.type === ChatMessageType.CREDENTIALS_UPDATED && !itsMine) {
         const data = JSON.parse(cm.body) as CredentialBody
         credentialUpdatedByOtherFlash(cm.from, data)
@@ -193,6 +196,12 @@ async function processRejectMessage(currentUserId: string, cm: ProcessedChatMess
     console.log("===> processRejectMessageCalled")
     await deleteElderly(currentUserId, cm.from)
     sessionRejectedFlash(cm.from, false)
+}
+
+async function processMaxReachedMessage(currentUserId: string, cm: ProcessedChatMessage) {
+    console.log("===> processMaxReachedMessageCalled")
+    await deleteElderly(currentUserId, cm.from)
+    sessionRejectedMaxReachedFlash(cm.from)
 }
 
 async function processDecouplingMessage(currentUserId: string, cm: ProcessedChatMessage) {

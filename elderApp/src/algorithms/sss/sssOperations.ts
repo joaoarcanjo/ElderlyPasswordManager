@@ -54,7 +54,6 @@ export async function executeKeyExchange(userId: string): Promise<string> {
     const credentialsCloud = await listAllElderlyCredencials(userId)
     const newKey = await changeKey(userId)
     
-    console.log("Old key: ", oldkey)
     credentialsCloud.forEach(async (credential) => {
         if(credential === undefined) return
         let credentialCloud = JSON.parse(decrypt(credential.data, oldkey)) 

@@ -16,6 +16,7 @@ export enum ChatMessageType {
     START_SESSION, //primeira mensagem enviada (quando se começa a sessão)
     REJECT_SESSION, //mensagem enviada quando o outro membro aceita
     DECOUPLING_SESSION, //mensagem enviada quando o outro membro desvincula
+    MAX_REACHED_SESSION, //mensagem enviada quando o outro membro atinge o limite de sessões
 
     CREDENTIALS_UPDATED,
     CREDENTIALS_DELETED,

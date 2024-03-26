@@ -20,7 +20,7 @@ interface CaregiverPermission {
 }
 
 async function getCaregiversPermissions(userId: string, setUserFireKey: Function): Promise<CaregiverPermission[]> {
-  console.log(' - getCaregiversPermissionsCalled')
+  console.log('===> getCaregiversPermissionsCalled')
   const caregivers = await getCaregivers(userId)
   const readCaregivers = await getCaregiversArray(userId, 'readCaregivers')
   const writeCaregivers = await getCaregiversArray(userId, 'writeCaregivers')

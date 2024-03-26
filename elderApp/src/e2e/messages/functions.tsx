@@ -1,6 +1,6 @@
 import { MessageType, SessionCipher, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript"
 
-import { currentSessionSubject, sessionForRemoteUser, sessionListSubject } from "../session/state"
+import { currentSessionSubject, removeSession, sessionForRemoteUser, sessionListSubject } from "../session/state"
 import { SendAcknowledgeMessage, SendWebSocketMessage } from "../network/types"
 import { signalStore, usernameSubject } from "../identity/state"
 import { stringToArrayBuffer } from "../signal/signal-store"
@@ -9,14 +9,13 @@ import { ChatSession } from "../session/types"
 import { ChatMessageType, CaregiverDataBody, ProcessedChatMessage, CredentialBody } from "./types"
 import { randomUUID } from 'expo-crypto'
 import { setCaregiverListUpdated } from "../../screens/list_caregivers/actions/state"
-import { FlashMessage, credentialCreatedByOtherFlash, credentialDeletedByOtherFlash, credentialUpdatedByOtherFlash, editCompletedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionRejectedFlash, sessionRequestReceivedFlash } from "../../components/UserMessages"
+import { FlashMessage, credentialCreatedByOtherFlash, credentialDeletedByOtherFlash, credentialUpdatedByOtherFlash, editCompletedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionRejectedFlash, sessionRejectMaxReachedFlash, sessionRequestReceivedFlash } from "../../components/UserMessages"
 import { getKeychainValueFor } from "../../keychain"
 import { elderlyId } from "../../keychain/constants"
 import { addCaregiverToArray, removeCaregiverFromArray } from "../../firebase/firestore/functionalities"
-import { changeCaregiverStatusOnDatabase, checkCaregiverByEmail, checkCaregiverByEmailNotAccepted, deleteCaregiver, getCaregiverId, saveCaregiver, updateCaregiver } from "../../database/caregivers"
+import { changeCaregiverStatusOnDatabase, checkCaregiverByEmail, checkCaregiverByEmailNotAccepted, deleteCaregiver, getCaregiverId, isMaxCaregiversReached, saveCaregiver, updateCaregiver } from "../../database/caregivers"
 //import { MessageType, SessionCipher, SignalProtocolAddress } from "../../algorithms/signal"
 import { CaregiverRequestStatus } from "../../database/types"
-import { executeKeyExchange } from "../../algorithms/sss/sssOperations"
 import { setCredentialsListUpdated } from "../../screens/list_credentials/actions/state"
 //import { SessionCipher, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript"
 
@@ -182,10 +181,21 @@ async function processPersonalData(currentUserId: string, cm: ProcessedChatMessa
         .then(() => sessionAcceptedFlash(cm.from, false))
         .then(() => setCaregiverListUpdated())
     } else {
-        await saveCaregiver(currentUserId, data.userId, data.name, data.email, data.phone, CaregiverRequestStatus.RECEIVED.valueOf())
+      const isMaxReached = await isMaxCaregiversReached(currentUserId)
+      if(isMaxReached) {
+        await refuseCaregiverMaxReached(cm)
+      } else {
+        await saveCaregiver(currentUserId, data.userId, data.name, data.email, data.phone, CaregiverRequestStatus.RECEIVED)
         .then(() => sessionRequestReceivedFlash(cm.from))
         .then(() => setCaregiverListUpdated())
+      }
     }
+}
+
+async function refuseCaregiverMaxReached(cm: ProcessedChatMessage) {
+    await encryptAndSendMessage(cm.from, 'rejectSession', true, ChatMessageType.MAX_REACHED_SESSION)
+    .then(() => removeSession(cm.from))
+    .then(() => sessionRejectMaxReachedFlash(cm.from))    
 }
 
 async function processRejectMessage(currentUserId: string, cm: ProcessedChatMessage) {
@@ -205,6 +215,5 @@ async function processDecouplingMessage(currentUserId: string, cm: ProcessedChat
     .then(() => removeCaregiverFromArray(currentUserId, caregiverId, 'writeCaregivers'))
     .then(() => changeCaregiverStatusOnDatabase(currentUserId, cm.from, CaregiverRequestStatus.DECOUPLING))
     .then(() => setCaregiverListUpdated())
-    //TODO: depois ao dar reset na lista de caregivers, ao se verificar que um deles está decoupling, apagamos o mesmo e damos reset das chaves.
     sessionEndedFlash(cm.from, false)
 }

@@ -112,8 +112,8 @@ export const checkCaregiverByEmail = async (userId: string, email: string): Prom
                     (_, _error) => {
                      return false
                     }
-                );
-            });
+                )
+            })
         } else {
             reject(new Error('Database not initialized.')); 
         }
@@ -135,8 +135,8 @@ export const checkNumberOfCaregivers = async (userId: string): Promise<boolean> 
                     (_, _error) => {
                      return false
                     }
-                );
-            });
+                )
+            })
         } else {
             reject(new Error('Database not initialized.')); 
         }
@@ -182,8 +182,8 @@ export const changeCaregiverStatusOnDatabase = async (userId: string, email: str
                         console.log('--- Cuidador não aceite, erro.')
                     }
                 }
-            );
-        });
+            )
+        })
     }
 }
 
@@ -214,7 +214,7 @@ export const getCaregivers = (userId: string): Promise<Caregiver[]> => {
                         return false
                     }
                 )
-            });
+            })
         } catch (error) {
             reject(error)
         }
@@ -236,10 +236,33 @@ export async function getCaregiverId(caregiverEmail: string, userId: string): Pr
                         console.log("Error: "+ error.message)
                      return false
                     }
-                );
-            });
+                )
+            })
         } else {
             reject(new Error('Database not initialized.')); 
+        }
+    })
+}
+
+export const isMaxCaregiversReached = async (userId: string): Promise<boolean> => {
+    console.log("===> isMaxCaregiversReachedCalled")
+    return new Promise((resolve, reject) => {
+        if (dbSQL != null) {
+            dbSQL.transaction(tx => {
+                tx.executeSql(
+                    'SELECT COUNT(*) AS count FROM caregivers WHERE userId = ? AND status = ?;',
+                    [userId, CaregiverRequestStatus.ACCEPTED.valueOf()],
+                    (_, result) => {
+                        const count = result.rows.item(0).count
+                        resolve(count >= 2)
+                    },
+                    (_, _error) => {
+                        return false
+                    }
+                )
+            })
+        } else {
+            reject(new Error('Database not initialized.'))
         }
     })
 }

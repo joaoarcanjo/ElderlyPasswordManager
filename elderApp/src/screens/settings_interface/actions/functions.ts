@@ -5,6 +5,7 @@ import { startSession } from "../../../e2e/session/functions";
 import { currentSessionSubject, sessionForRemoteUser } from "../../../e2e/session/state";
 
 export async function sendCaregiversNewInfo(userId: string, username: string, userEmail: string, userPhone: string) {
+    console.log("===> sendCaregiversNewInfoCalled")
     const caregivers = await getCaregivers(userId)   
     caregivers.forEach(async (caregiver) => {
         if(!sessionForRemoteUser(caregiver.email)) {

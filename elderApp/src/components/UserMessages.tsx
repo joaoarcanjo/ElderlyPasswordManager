@@ -30,6 +30,7 @@ export const enum FlashMessage {
 export const copyPasswordDescription = `A password foi guardada no clipboard.`
 export const copyUsernameDescription = `O username foi guardado no clipboard.`
 export const copyURIDescription = `O URI foi guardado no clipboard.`
+export const cantAcceptConnection = `Não pode aceitar mais conexões.`
 
 export function copyValue(value: string, message: FlashMessage, description: string = "") {
     Clipboard.setStringAsync(value)
@@ -139,6 +140,23 @@ export function sessionRejectedFlash(from: string, byMe: boolean) {
     triggerNotifications('Conexão rejeitada!! 😓', `A sua conexão foi rejeitada.`, "")
   } else {
     triggerNotifications('Conexão rejeitada!! 😓', `O cuidador ${from} rejeitou a conexão.`, "")
+  }
+}
+
+export function sessionRejectMaxReachedFlash(from: string) {
+  //console.log(AppState.currentState)
+  if(AppState.currentState === 'active') {
+    showMessage({
+      floating: true,
+      message: cantAcceptConnection,
+      description: `O número máximo de conexões foi atingido, conexão com o cuidador ${from} rejeitada.`,
+      icon: props => <Image source={require("../assets/images/cross.png")} {...props} />,
+      backgroundColor: lightRedBackground,
+      duration: 10000,
+      color: "black", // text color
+    });
+  } else {
+    triggerNotifications('Conexão rejeitada!! 😓', `O cuidador ${from} foi rejeitado, número máximo atingido.`, "")
   }
 }
 
