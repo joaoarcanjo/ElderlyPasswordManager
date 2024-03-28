@@ -8,6 +8,7 @@ import { useSessionInfo } from '../../../firebase/authentication/session';
 import { getKeychainValueFor, saveKeychainValue } from '../../../keychain';
 import { elderlyName, elderlyPhone } from '../../../keychain/constants';
 import { createIdentity } from '../../../e2e/identity/functions';
+import { getAllCredentialsAndValidate } from '../../list_credentials/actions/functions';
 
 const credentialsImage = '../images/credenciais.png'
 const generatorImage = '../images/gerador.png'
@@ -122,9 +123,22 @@ function Functionalities() {
  */
 export default function MainMenu() {
 
-    const { userId, setUserName, setUserPhone, userPhone, userName, userEmail } = useSessionInfo()
+    const { userId, setUserName, setUserPhone, userPhone, userName, userEmail, localDBKey, userFireKey } = useSessionInfo()
     //const { expoPushToken } = usePushNotifications()
 
+    const executeCredentialValidation = (userId: string, userFireKey: string, localDBKey: string) => {
+        if(userId == '' || userFireKey == '' || localDBKey == '') return
+        
+        useEffect(() => {
+            const interval = setInterval(async () => {
+                await getAllCredentialsAndValidate(userId, userFireKey, localDBKey)
+            }, 10 * 1000 * 60) //12 em 12 segundos
+    
+            return () => clearInterval(interval)
+        }, [])
+    }
+    
+    executeCredentialValidation(userId, userFireKey, localDBKey)
     useEffect(() => {
         savePhoneAndName()
         identityCreation()

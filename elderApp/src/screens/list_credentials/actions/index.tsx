@@ -11,7 +11,7 @@ import { useSessionInfo } from '../../../firebase/authentication/session'
 import { usePushNotifications } from '../../../notifications/usePushNotifications'
 import { sendPushNotification } from '../../../notifications/functionalities'
 import { credentialsListUpdated } from './state'
-import { getAllCredentialsAndValidate } from './functions'
+import { getAllCredentialsAndValidate, getAllLocalCredentialsFormatted } from './functions'
 
 function AddCredencial() {
 
@@ -123,7 +123,9 @@ function CredentialsList() {
   const refreshValue = async () => {
     console.log('===> CaregiversList refreshed.')
     setIsFething(true)
+
     getAllCredentialsAndValidate(userId, userFireKey, localDBKey)
+    getAllLocalCredentialsFormatted(userId, localDBKey)
     .then((credentials) => {   
       setCredencials(credentials)
       setIsFething(false)

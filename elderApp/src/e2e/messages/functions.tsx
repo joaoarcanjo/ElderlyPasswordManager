@@ -9,15 +9,15 @@ import { ChatSession } from "../session/types"
 import { ChatMessageType, CaregiverDataBody, ProcessedChatMessage, CredentialBody } from "./types"
 import { randomUUID } from 'expo-crypto'
 import { setCaregiverListUpdated } from "../../screens/list_caregivers/actions/state"
-import { FlashMessage, credentialCreatedByOtherFlash, credentialDeletedByOtherFlash, credentialUpdatedByOtherFlash, editCompletedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionRejectedFlash, sessionRejectMaxReachedFlash, sessionRequestReceivedFlash } from "../../components/UserMessages"
+import { FlashMessage, credentialCreatedByOtherFlash, credentialDeletedByOtherFlash, credentialUpdatedByOtherFlash, editCompletedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionRejectedFlash, sessionRejectMaxReachedFlash, sessionRequestReceivedFlash, sessionRejectedMaxReachedFlash } from "../../components/UserMessages"
 import { getKeychainValueFor } from "../../keychain"
-import { elderlyId } from "../../keychain/constants"
+import { elderlyFireKey, elderlyId, localDBKey } from "../../keychain/constants"
 import { addCaregiverToArray, removeCaregiverFromArray } from "../../firebase/firestore/functionalities"
 import { changeCaregiverStatusOnDatabase, checkCaregiverByEmail, checkCaregiverByEmailNotAccepted, deleteCaregiver, getCaregiverId, isMaxCaregiversReached, saveCaregiver, updateCaregiver } from "../../database/caregivers"
 //import { MessageType, SessionCipher, SignalProtocolAddress } from "../../algorithms/signal"
 import { CaregiverRequestStatus } from "../../database/types"
 import { setCredentialsListUpdated } from "../../screens/list_credentials/actions/state"
-//import { SessionCipher, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript"
+import { getAllCredentialsAndValidate } from "../../screens/list_credentials/actions/functions"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -136,24 +136,33 @@ export function sendSignalProtocolMessage(to: string, from: string, message: Mes
 
 export async function addMessageToSession(address: string, cm: ProcessedChatMessage, type: number, itsMine?: boolean): Promise<void> {
     const userSession = { ...sessionForRemoteUser(address)! }
+
     const currentUserId = await getKeychainValueFor(elderlyId)
+    const localKey = await getKeychainValueFor(localDBKey(currentUserId))
+    const fireKey = await getKeychainValueFor(elderlyFireKey(currentUserId))
 
     //Se for uma mensagem de dados do cuidador e não for uma mensagem nossa (tipo 0)
     if(cm.type === ChatMessageType.PERSONAL_DATA && !itsMine) {
         await processPersonalData(currentUserId, cm)
     } else if (cm.type === ChatMessageType.REJECT_SESSION) {
         await processRejectMessage(currentUserId, cm)
+    } else if (cm.type === ChatMessageType.MAX_REACHED_SESSION && !itsMine) {
+        //vai apagar a sessão que foi criada com o possível cuidador
+        await processMaxReachedMessage(currentUserId, cm)
     } else if (cm.type === ChatMessageType.CREDENTIALS_UPDATED && !itsMine) {
         const data = JSON.parse(cm.body) as CredentialBody
         credentialUpdatedByOtherFlash(cm.from, data)
+        await getAllCredentialsAndValidate(currentUserId, fireKey, localKey)
         setCredentialsListUpdated() 
     } else if (cm.type === ChatMessageType.CREDENTIALS_CREATED && !itsMine) {
         const data = JSON.parse(cm.body) as CredentialBody
         credentialCreatedByOtherFlash(cm.from, data)
+        await getAllCredentialsAndValidate(currentUserId, fireKey, localKey)
         setCredentialsListUpdated()
     } else if (cm.type === ChatMessageType.CREDENTIALS_DELETED && !itsMine) {
         const data = JSON.parse(cm.body) as CredentialBody
         credentialDeletedByOtherFlash(cm.from, data)
+        await getAllCredentialsAndValidate(currentUserId, fireKey, localKey)
         setCredentialsListUpdated()
     } else if (cm.type === ChatMessageType.DECOUPLING_SESSION && !itsMine) {
         await processDecouplingMessage(currentUserId, cm)
@@ -216,4 +225,10 @@ async function processDecouplingMessage(currentUserId: string, cm: ProcessedChat
     .then(() => changeCaregiverStatusOnDatabase(currentUserId, cm.from, CaregiverRequestStatus.DECOUPLING))
     .then(() => setCaregiverListUpdated())
     sessionEndedFlash(cm.from, false)
+}
+
+async function processMaxReachedMessage(currentUserId: string, cm: ProcessedChatMessage) {
+    console.log("===> processMaxReachedMessageCalled")
+    await deleteCaregiver(currentUserId, cm.from)
+    sessionRejectedMaxReachedFlash(cm.from)
 }

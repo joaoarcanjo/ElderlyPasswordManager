@@ -21,8 +21,9 @@ function AddCredencial({ elderlyId }: Readonly<{elderlyId: string}>) {
 
   const navigateToAddCredential = async () => {
     const canCreate = await verifyIfCanManipulateCredentials(userId, elderlyId)
-
-    const encryptionKey = deriveSecret([await getKey(elderlyId), await getKeychainValueFor(elderlySSSKey(elderlyId))]) 
+    const cloudKey = await getKey(elderlyId)
+    const sssKey = await getKeychainValueFor(elderlySSSKey(elderlyId))
+    const encryptionKey = deriveSecret([cloudKey, sssKey]) 
 
     if(canCreate) {
       navigation.navigate('AddCredential', { userId: elderlyId, key: encryptionKey, isElderlyCredential: true })
@@ -46,10 +47,12 @@ function ScrollItemExample({credential, elderlyId}: Readonly<{credential: Creden
   //const { setUsernameCopied, setPasswordCopied, usernameCopied, passwordCopied } = useSessionInfo()
   //const { expoPushToken } = usePushNotifications()
 
-  console.log("Credential: ", credential.data.platform)
   const OpenCredentialPage = async () => {
-    const encryptionKey = deriveSecret([await getKey(elderlyId), await getKeychainValueFor(elderlySSSKey(elderlyId))]) 
     
+    const cloudKey = await getKey(elderlyId)
+    const sssKey = await getKeychainValueFor(elderlySSSKey(elderlyId))
+    const encryptionKey = deriveSecret([cloudKey, sssKey]) 
+    console.log("Encryption Key: ", encryptionKey)
     navigation.navigate('CredentialPage', 
     { 
       userId: elderlyId,
@@ -126,7 +129,7 @@ function ElderlyCredentialsList({ elderlyId }: Readonly<{elderlyId: string}>) {
     const cloudKey = await getKey(elderlyId)
     const sssKey = await getKeychainValueFor(elderlySSSKey(elderlyId))
     const encryptionKey = deriveSecret([cloudKey, sssKey])
-
+    console.log("Encryption Key: ", encryptionKey)
     listAllCredentialsFromFirestore(elderlyId, encryptionKey, true).then((credencials) => {
       let auxCredencials: Credential[] = [];
       credencials.forEach(value => {

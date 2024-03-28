@@ -46,7 +46,7 @@ export async function insertCredentialToLocalDB(userId: string, credentialId: st
  * @returns Uma Promise que é resolvida com os dados da credencial se for encontrada, ou rejeitada com um erro se a busca falhar.
  */
 export async function getCredential(userId: string, credentialId: string): Promise<any> {
-    console.log("===> getCredentialCalled")
+    //console.log("===> getCredentialCalled")
     return new Promise((resolve, reject) => {
         if (dbSQL != null) {
             dbSQL.transaction(tx => {

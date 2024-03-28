@@ -8,6 +8,7 @@ const firestore = firebase.firestore()
  * Função para obter a chave que se encontra na cloud.
  */
 async function getKey(elderlyId: string): Promise<string> {
+    console.log("===> getFirebaseKeyCalled")
     return firestore.collection(elderlyCollectionName)
         .doc(elderlyId).collection(keyCollectionName).doc(keyDocumentName).get().then((doc: any) => {
             if(doc.exists) {

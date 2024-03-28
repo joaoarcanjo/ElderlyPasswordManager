@@ -172,7 +172,7 @@ async function elderlyExists(elderlyId: string): Promise<boolean> {
  * @param data 
  */
 export async function addCredencialToFirestore(userId: string, userKey: string, newCredencialId: string, data: string) {
-
+    console.log("===> addCredencialToFirestoreCalled")
     const encrypted = encrypt(data, userKey)
     const credential = defaultCredencials(encrypted)
 

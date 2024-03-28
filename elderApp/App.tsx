@@ -28,6 +28,7 @@ import { createIdentity } from './src/e2e/identity/functions';
 import * as Notifications from "expo-notifications";
 import { StackNavigationProp } from '@react-navigation/stack';
 import { executeKeyChangeIfTimeout } from './src/algorithms/sss/sssOperations';
+import { getAllCredentialsAndValidate } from './src/screens/list_credentials/actions/functions';
 
 const Stack = createNativeStackNavigator()
 const InsideStack = createNativeStackNavigator()
@@ -49,13 +50,13 @@ function InsideLayout() {
 
   const flashTimeoutPromise = () => { if (!appIsReady) { return new Promise(resolve => setTimeout(resolve, time)) } else return Promise.resolve() }
   const navigation = useNavigation<StackNavigationProp<any>>()
-  const { userId, userFireKey, setUserFireKey } = useSessionInfo()
+  const { userId, userFireKey, localDBKey, setUserFireKey } = useSessionInfo()
 
   const keyVerification = async () => {
     if (!userId || !userFireKey || userId === '' || userFireKey === '') return
     const shared = await executeKeyChangeIfTimeout(userId)
     if(shared != '') setUserFireKey(shared)
- }
+  }
 
   useEffect(() => {
     flashTimeoutPromise()
@@ -83,7 +84,6 @@ function InsideLayout() {
     </InsideStack.Navigator>
   )
 }
-
 
 function Inicialization() {
 
@@ -113,7 +113,7 @@ function Inicialization() {
         //TODO: do an alert
       }
     })
-  }, [user]) //TODO: 
+  }, [user])
 
   return (
       <NavigationContainer>

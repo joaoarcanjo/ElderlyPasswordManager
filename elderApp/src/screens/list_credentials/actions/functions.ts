@@ -1,6 +1,6 @@
 import { decrypt, encrypt } from "../../../algorithms/0thers/crypto";
 import { deriveSecret } from "../../../algorithms/sss/sss";
-import { deleteCredentialFromLocalDB, getAllLocalCredentials, getCredential, insertCredentialToLocalDB, updateCredentialFromLocalDB } from "../../../database/credentials";
+import { CredentialLocalRecord, deleteCredentialFromLocalDB, getAllLocalCredentials, getCredential, insertCredentialToLocalDB, updateCredentialFromLocalDB } from "../../../database/credentials";
 import { ErrorInstance } from "../../../exceptions/error";
 import { Errors } from "../../../exceptions/types";
 import { addCredencialToFirestore, deleteCredentialFromFiretore, getKey, listAllElderlyCredencials, updateCredentialFromFiretore } from "../../../firebase/firestore/functionalities";
@@ -24,12 +24,12 @@ interface CredentialData {
 
 export const getAllCredentialsAndValidate = async (userId: string, userKey: string, localDbKey: string): Promise<(Credential | undefined)[]> => {
     console.log("===> getAllCredentialsAndValidateCalled")
-    
     const credentialsCloud = await listAllElderlyCredencials(userId)
     const toReturn = await Promise.all(credentialsCloud.map(async value => {
         const credentialInfo = await getCredential(userId, value.id)
         try {
             if (value.data.length != 0) {
+                console.log("UserKey: ", userKey)
                 const credentialCloud = JSON.parse(decrypt(value.data, userKey)) as CredentialData
 
                 if (credentialCloud.id !== value.id) {
@@ -51,15 +51,14 @@ export const getAllCredentialsAndValidate = async (userId: string, userKey: stri
 
             const credencialLocal = JSON.parse(decrypt(credentialInfo, localDbKey))
             if (credencialLocal) {
-                updateCredentialFromFiretore(userId, value.id, userKey, JSON.stringify(credencialLocal))
+                await updateCredentialFromFiretore(userId, value.id, userKey, JSON.stringify(credencialLocal))
             }
             return { id: value.id, data: credencialLocal }
             }
         }
     }))
 
-    const credentialsLocal = await getAllLocalCredentials(userId)
-    addMissingCredentialsToReturn(credentialsLocal, toReturn, localDbKey, userId, userKey)
+    await addMissingCredentialsToReturn(toReturn, localDbKey, userId, userKey)
     return toReturn
 }
 
@@ -86,14 +85,25 @@ const updateCredentialIfNeeded = async (userId: string, credentialId: string, cr
     }
 };
 
-const addMissingCredentialsToReturn = (credentialsLocal: any[], toReturn: (Credential | undefined)[], localDbKey: string, userId: string, userKey: string) => {
+const addMissingCredentialsToReturn = async (toReturn: (Credential | undefined)[], localDbKey: string, userId: string, userKey: string) => {
     console.log("===> addMissingCredentialsToReturnCalled")
     
-    credentialsLocal.forEach(async value => {
-        if (!toReturn.find(credential => credential?.id === value.credentialId)) {
-            const credentialLocal = JSON.parse(decrypt(value.record, localDbKey))
-            toReturn.push({ id: value.credentialId, data: credentialLocal })
-            await addCredencialToFirestore(userId, userKey, value.credentialId, JSON.stringify(credentialLocal))
+    const credenciaisLocal = await getAllLocalCredentialsFormatted(userId, localDbKey)
+    credenciaisLocal.forEach(async value => {
+        if(!value) return
+        if (!toReturn.find(credential => credential?.id === value.id)) {
+            toReturn.push(value)
+            await addCredencialToFirestore(userId, userKey, value.id, JSON.stringify(value.data))
         }
+    })
+}
+
+export const getAllLocalCredentialsFormatted = async (userId: string, localDBKey: string): Promise<(Credential | undefined)[]> => {
+    console.log("===> getAllLocalCredentialsFormattedCalled")
+
+    const credentialsLocal = await getAllLocalCredentials(userId) 
+    return credentialsLocal.map(value => {
+        const credential = JSON.parse(decrypt(value.record, localDBKey)) as CredentialData
+        return { id: credential.id, data: credential }
     })
 }

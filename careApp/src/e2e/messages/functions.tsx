@@ -1,5 +1,5 @@
 import { MessageType, SessionCipher, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript"
-import { currentSessionSubject, sessionForRemoteUser, sessionListSubject } from "../session/state"
+import { currentSessionSubject, removeSession, sessionForRemoteUser, sessionListSubject } from "../session/state"
 import { SendAcknowledgeMessage, SendWebSocketMessage } from "../network/types"
 import { signalStore, usernameSubject } from "../identity/state"
 import { stringToArrayBuffer } from "../signal/signal-store"
@@ -10,9 +10,9 @@ import { randomUUID } from 'expo-crypto'
 import { setElderlyListUpdated } from "../../screens/list_elderly/actions/state"
 import { getKeychainValueFor, saveKeychainValue } from "../../keychain"
 import { caregiverId, elderlySSSKey } from "../../keychain/constants"
-import { FlashMessage, credentialCreatedByOtherFlash, credentialDeletedByOtherFlash, credentialUpdatedByOtherFlash, editCompletedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionPermissionsFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionRequestReceivedFlash } from "../../components/UserMessages"
+import { FlashMessage, credentialCreatedByOtherFlash, credentialDeletedByOtherFlash, credentialUpdatedByOtherFlash, editCompletedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionPermissionsFlash, sessionRejectMaxReachedFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionRequestReceivedFlash } from "../../components/UserMessages"
 import { ElderlyRequestStatus } from "../../database/types"
-import { checkElderlyByEmail, checkElderlyByEmailWaitingForResponse, deleteElderly, saveElderly, updateElderly } from "../../database/elderlyFunctions"
+import { checkElderlyByEmail, checkElderlyByEmailWaitingForResponse, deleteElderly, isMaxElderlyReached, saveElderly, updateElderly } from "../../database/elderlyFunctions"
 import { setCredentialsListUpdated } from "../../screens/elderly_credentials/actions/state"
 
 /**
@@ -185,11 +185,22 @@ async function processPersonalData(currentUserId: string, cm: ProcessedChatMessa
         .then(() => sessionAcceptedFlash(cm.from))
         .then(() => setElderlyListUpdated())
     } else {
-        await saveKeychainValue(elderlySSSKey(data.userId), data.key)
-        .then(() => saveElderly(currentUserId, data.userId, data.name, data.email, data.phone, ElderlyRequestStatus.RECEIVED.valueOf()))
-        .then(() => sessionRequestReceivedFlash(cm.from))
-        .then(() => setElderlyListUpdated())
+        const isMaxReached = await isMaxElderlyReached(currentUserId)
+        if(isMaxReached) {
+            await refuseCaregiverMaxReached(cm)
+        } else {
+            await saveKeychainValue(elderlySSSKey(data.userId), data.key)
+            .then(() => saveElderly(currentUserId, data.userId, data.name, data.email, data.phone, ElderlyRequestStatus.RECEIVED.valueOf()))
+            .then(() => sessionRequestReceivedFlash(cm.from))
+            .then(() => setElderlyListUpdated())
+        }
     }
+}
+
+async function refuseCaregiverMaxReached(cm: ProcessedChatMessage) {
+    await encryptAndSendMessage(cm.from, 'rejectSession', true, ChatMessageType.MAX_REACHED_SESSION)
+    .then(() => removeSession(cm.from))
+    .then(() => sessionRejectMaxReachedFlash(cm.from))    
 }
 
 async function processRejectMessage(currentUserId: string, cm: ProcessedChatMessage) {

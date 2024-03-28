@@ -266,3 +266,26 @@ export const checkElderlyByEmail = async (userId: string, email: string): Promis
         }
     })
 }
+
+export const isMaxElderlyReached = async (userId: string): Promise<boolean> => {
+    console.log("===> isMaxCaregiversReachedCalled")
+    return new Promise((resolve, reject) => {
+        if (dbSQL != null) {
+            dbSQL.transaction(tx => {
+                tx.executeSql(
+                    'SELECT COUNT(*) AS count FROM elderly WHERE userId = ? AND status = ?;',
+                    [userId, ElderlyRequestStatus.ACCEPTED.valueOf()],
+                    (_, result) => {
+                        const count = result.rows.item(0).count
+                        resolve(count >= 4)
+                    },
+                    (_, _error) => {
+                        return false
+                    }
+                )
+            })
+        } else {
+            reject(new Error('Database not initialized.'))
+        }
+    })
+}

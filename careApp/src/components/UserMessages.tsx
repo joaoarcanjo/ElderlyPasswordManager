@@ -106,6 +106,23 @@ export function sessionAcceptedFlash(from: string) {
   }
 }
 
+export function sessionRejectMaxReachedFlash(from: string) {
+  //console.log(AppState.currentState)
+  if(AppState.currentState === 'active') {
+    showMessage({
+      floating: true,
+      message: cantAcceptConnection,
+      description: `O número máximo de conexões foi atingido, conexão com o idoso ${from} rejeitada.`,
+      icon: props => <Image source={require("../assets/images/cross.png")} {...props} />,
+      backgroundColor: lightRedBackground,
+      duration: 10000,
+      color: "black", // text color
+    });
+  } else {
+    triggerNotifications('Conexão rejeitada!! 😓', `A conexão com o idoso ${from} foi rejeitada, número máximo atingido.`, "")
+  }
+}
+
 export function sessionRejectedFlash(from: string, byMe: boolean) {
   if(AppState.currentState === 'active') {
     showMessage({
