@@ -1,12 +1,13 @@
 import { sessionEstablishedFlash, sessionRejectedFlash } from "../../../components/ShowFlashMessage"
-import { acceptElderlyOnDatabase, deleteElderly } from "../../../database/elderlyFunctions"
+import { sessionRejectMaxReachedFlash } from "../../../components/UserMessages"
+import { acceptElderlyOnDatabase, deleteElderly, getElderlyWaitingForResponse, isMaxElderlyReached } from "../../../database/elderlyFunctions"
 import { encryptAndSendMessage } from "../../../e2e/messages/functions"
 import { ChatMessageType, CaregiverDataBody } from "../../../e2e/messages/types"
 import { startSession } from "../../../e2e/session/functions"
 import { currentSessionSubject, removeSession, sessionForRemoteUser } from "../../../e2e/session/state"
 import { ErrorInstance } from "../../../exceptions/error"
 import { Errors } from "../../../exceptions/types"
-import { elderlyListUpdated, setElderlyListUpdated } from "./state"
+import { setElderlyListUpdated } from "./state"
 
 //
 // ESTAS FUNÇÕES SÃO UTILIZADAS TENDO EM CONTA A DECISÃO DO CUIDADOR QUANDO RECEBE A NOTIFICAÇÃO.
@@ -54,6 +55,8 @@ export async function acceptElderly(userId: string, elderlyEmail: string, userNa
     await encryptAndSendMessage(elderlyEmail, JSON.stringify(data), true, ChatMessageType.PERSONAL_DATA)
     await acceptElderlyOnDatabase(userId, elderlyEmail)
     sessionEstablishedFlash(true)
+    await refuseIfMaxReached(userId)
+    
 }
 
 /**
@@ -87,4 +90,19 @@ async function sendElderlyDecoupling(elderlyEmail: string) {
         currentSessionSubject.next(session ?? null)
     }
     await encryptAndSendMessage(elderlyEmail, '', false, ChatMessageType.DECOUPLING_SESSION) 
+}
+
+export async function refuseIfMaxReached(userId: string) {
+    const isMaxReached = await isMaxElderlyReached(userId)
+    if(isMaxReached) {
+        const waitingElderlyEmails = await getElderlyWaitingForResponse(userId)
+        console.log(waitingElderlyEmails)
+        waitingElderlyEmails.forEach(async email => {
+            await encryptAndSendMessage(email, 'rejectSession', true, ChatMessageType.MAX_REACHED_SESSION)
+            .then(() => removeSession(email))
+            .then(() => deleteElderly(userId, email))
+            .then(() => setElderlyListUpdated())
+            //.then(() => sessionRejectMaxReachedFlash(email)) NOTE: coloca-se sobre a outra verde de aceitação
+        })
+    }
 }

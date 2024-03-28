@@ -8,6 +8,8 @@ import { useNavigation } from "@react-navigation/native";
 import { YesOrNoModal } from "../../../components/Modal";
 import { useSessionInfo } from "../../../firebase/authentication/session";
 import { ElderlyRequestStatus } from "../../../database/types";
+import { getKeychainValueFor } from "../../../keychain";
+import { elderlySSSKey } from "../../../keychain/constants";
 
 const caregiverImage = '../../../assets/images/elderly.png'
 const telephoneImage = '../../../assets/images/telephone.png'
@@ -66,6 +68,13 @@ export function Elderly({ elderlyId, name, phone, email, setRefresh }: Readonly<
   const changeInfoState = () => setShowInfo(!showInfo)
 
   const navigateToElderlyCredentials = async () => {
+    const sssKey = await getKeychainValueFor(elderlySSSKey(elderlyId))
+
+    if(sssKey == '') {
+      alert('O Idoso foi informado que você aceitou a conexão, por favor aguarde.')
+      return
+    }
+
     navigation.navigate('ElderlyCredentials', { elderlyEmail: email, elderlyName: name, elderlyId: elderlyId })
   }
 

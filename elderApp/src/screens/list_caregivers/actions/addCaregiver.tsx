@@ -12,7 +12,7 @@ import { CaregiverRequestStatus } from "../../../database/types"
 import { ErrorInstance } from "../../../exceptions/error"
 import { Errors } from "../../../exceptions/types"
 
-function AddCaregiverModal({number, visibility, concludeAction}: Readonly<{number: number, visibility: boolean, concludeAction: Function}>) {
+function AddCaregiverModal({visibility, concludeAction}: Readonly<{visibility: boolean, concludeAction: Function}>) {
 
   const [caregiverEmail, setCaregiverEmail] = useState('')
   const { userId, userEmail, userName, userPhone } = useSessionInfo()
@@ -20,7 +20,7 @@ function AddCaregiverModal({number, visibility, concludeAction}: Readonly<{numbe
   const addCaregiver = async (email: string) => {
     console.log("addCaregiverButtonPressed")
     saveCaregiver(userId, '', '', email, '', CaregiverRequestStatus.WAITING)
-    .then(() =>  startSessionWithCaregiver(number, email, userId, userName, userEmail, userPhone))
+    .then(() =>  startSessionWithCaregiver(email, userId, userName, userEmail, userPhone))
     .then(() => sessionRequestSent())
     .then(() => concludeAction())
     .catch(async (error) => {
@@ -70,7 +70,7 @@ export default function AddCaregiver({number, setRefresh}: Readonly<{number: num
   return (
     <View style={[{flex: 0.5, margin: '3%', justifyContent: 'center', alignItems: 'center'}]}>
       <View style= { { flex: 0.35, flexDirection: 'row', justifyContent: 'space-around'} }>
-        <AddCaregiverModal number={number} concludeAction={concludeAction} visibility={modalVisible}/>
+        <AddCaregiverModal concludeAction={concludeAction} visibility={modalVisible}/>
         <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, stylesAddCaregiver.button, stylesButtons.mainConfig]} onPress={() => {setModalVisible(true)}}>
             <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCaregiver.buttonText]}>{buttonName}</Text>
         </TouchableOpacity>

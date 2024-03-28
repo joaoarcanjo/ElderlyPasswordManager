@@ -168,6 +168,42 @@ export const checkElderlyByEmailWaitingForResponse = async (userId: string, emai
 }
 
 /**
+ * Obtém os idosos que estão à espera de resposta para um determinado utilizador.
+ * 
+ * @param userId O ID do utilizador.
+ * @returns Uma Promise que resolve num array de strings email.
+ */
+export const getElderlyWaitingForResponse = async (userId: string): Promise<string[]> => {
+    return new Promise((resolve, reject) => {
+        try {
+            if (dbSQL != null) {
+                dbSQL.transaction((tx) => {
+                    tx.executeSql('SELECT email FROM elderly WHERE userId = ? AND status = ?;', 
+                    [userId, ElderlyRequestStatus.RECEIVED.valueOf()], 
+                    (_tx, results) => {
+                        console.log(results)
+                        const data: string[] = [];
+                        for (let i = 0; i < results.rows.length; i++) {
+                            data.push(results.rows.item(i).email)
+                        }
+                        return resolve(data)
+                    },
+                    (_, _error) => {
+                        return false;
+                    }
+                    )
+                })
+            } else {
+                alert("Problema ao tentar obter os idosos, tente novamente.")
+            }            
+        } catch (error) {
+            console.log("-> Erro a obter os idosos.")
+            reject(error)
+        }
+    })
+}
+
+/**
  * Função para obter todos os idosos de determinado cuidador
  * @param userId 
  * @returns 

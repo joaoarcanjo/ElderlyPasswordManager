@@ -1,6 +1,6 @@
 import { executeKeyExchange } from "../../../algorithms/sss/sssOperations"
 import { sessionAcceptedFlash, sessionRejectedFlash } from "../../../components/UserMessages"
-import { changeCaregiverStatusOnDatabase, deleteCaregiver } from "../../../database/caregivers"
+import { changeCaregiverStatusOnDatabase, deleteCaregiver, getCaregiverWaitingForResponse, isMaxCaregiversReached } from "../../../database/caregivers"
 import { CaregiverRequestStatus } from "../../../database/types"
 import { encryptAndSendMessage } from "../../../e2e/messages/functions"
 import { ChatMessageType, ElderlyDataBody } from "../../../e2e/messages/types"
@@ -13,17 +13,15 @@ import { getKeychainValueFor } from "../../../keychain"
 import { caregiver1SSSKey, caregiver2SSSKey } from "../../../keychain/constants"
 import { setCaregiverListUpdated } from "./state"
 
-export async function startSessionWithCaregiver(number: number, caregiverEmail: string, userId: string, userName: string, userEmail: string, userPhone: string) {
+export async function startSessionWithCaregiver(caregiverEmail: string, userId: string, userName: string, userEmail: string, userPhone: string) {
     try {
         await startSession(caregiverEmail)
         const session = sessionForRemoteUser(caregiverEmail)
         currentSessionSubject.next(session ?? null)
     
-        const valueKey = number == 1 ? await getKeychainValueFor(caregiver1SSSKey(userId)) :  await getKeychainValueFor(caregiver2SSSKey(userId))
-    
         const data: ElderlyDataBody = {
             userId: userId,
-            key: valueKey,
+            key: '',
             name: userName,
             email: userEmail,
             phone: userPhone,
@@ -60,6 +58,7 @@ export async function acceptCaregiver(caregiverId: string, number: number, userI
     await addCaregiverToArray(userId, caregiverId, "readCaregivers")
     await changeCaregiverStatusOnDatabase(userId, caregiverEmail, CaregiverRequestStatus.ACCEPTED.valueOf())
     sessionAcceptedFlash(caregiverEmail, true)
+    await refuseIfMaxReached(userId)
 }
 
 /**
@@ -92,4 +91,19 @@ async function sendCaregiversDecoupling(caregiverEmail: string) {
         currentSessionSubject.next(session ?? null)
     }
     await encryptAndSendMessage(caregiverEmail, '', false, ChatMessageType.DECOUPLING_SESSION) 
+}
+
+export async function refuseIfMaxReached(userId: string) {
+    const isMaxReached = await isMaxCaregiversReached(userId)
+    if(isMaxReached) {
+        const waitingElderlyEmails = await getCaregiverWaitingForResponse(userId)
+        console.log(waitingElderlyEmails)
+        waitingElderlyEmails.forEach(async email => {
+            await encryptAndSendMessage(email, 'rejectSession', true, ChatMessageType.MAX_REACHED_SESSION)
+            .then(() => removeSession(email))
+            .then(() => deleteCaregiver(userId, email))
+            .then(() => setCaregiverListUpdated())
+            //.then(() => sessionRejectMaxReachedFlash(email)) NOTE: coloca-se sobre a outra verde de aceitação
+        })
+    }
 }

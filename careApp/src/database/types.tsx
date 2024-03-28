@@ -17,7 +17,7 @@ export interface SessionSignal {
 }
 
 export enum ElderlyRequestStatus {
-    ACCEPTED = 1,
-    RECEIVED = 2,
-    WAITING = 3
+    ACCEPTED = 1, //Relação aceite
+    RECEIVED = 2, //Pedido recebido
+    WAITING = 3 //À espera de resposta
 }

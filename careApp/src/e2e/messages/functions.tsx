@@ -10,7 +10,7 @@ import { randomUUID } from 'expo-crypto'
 import { setElderlyListUpdated } from "../../screens/list_elderly/actions/state"
 import { getKeychainValueFor, saveKeychainValue } from "../../keychain"
 import { caregiverId, elderlySSSKey } from "../../keychain/constants"
-import { FlashMessage, credentialCreatedByOtherFlash, credentialDeletedByOtherFlash, credentialUpdatedByOtherFlash, editCompletedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionPermissionsFlash, sessionRejectMaxReachedFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionRequestReceivedFlash } from "../../components/UserMessages"
+import { FlashMessage, credentialCreatedByOtherFlash, credentialDeletedByOtherFlash, credentialUpdatedByOtherFlash, editCompletedFlash, elderlySentFirstKey, sessionAcceptedFlash, sessionEndedFlash, sessionPermissionsFlash, sessionRejectMaxReachedFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionRequestReceivedFlash } from "../../components/UserMessages"
 import { ElderlyRequestStatus } from "../../database/types"
 import { checkElderlyByEmail, checkElderlyByEmailWaitingForResponse, deleteElderly, isMaxElderlyReached, saveElderly, updateElderly } from "../../database/elderlyFunctions"
 import { setCredentialsListUpdated } from "../../screens/elderly_credentials/actions/state"
@@ -132,8 +132,7 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
         await processPersonalData(currentUserId, cm)
         //userSession.messages.push(cm)  
     } else if(cm.type === ChatMessageType.KEY_UPDATE && !itsMine) {
-        const data = JSON.parse(cm.body) as ElderlyDataBody
-        saveKeychainValue(elderlySSSKey(data.userId), data.key)
+        updateKeyMessage(cm)
         //userSession.messages.push(cm)  
     } else if (cm.type === ChatMessageType.REJECT_SESSION && !itsMine) {
         //vai apagar a sessão que foi criada com o possível cuidador
@@ -197,7 +196,16 @@ async function processPersonalData(currentUserId: string, cm: ProcessedChatMessa
     }
 }
 
-async function refuseCaregiverMaxReached(cm: ProcessedChatMessage) {
+async function updateKeyMessage(cm: ProcessedChatMessage) {
+    const data = JSON.parse(cm.body) as ElderlyDataBody
+    const currentKey = await getKeychainValueFor(elderlySSSKey(data.userId))
+    if (currentKey == '') {
+        elderlySentFirstKey(cm.from)
+    }
+    saveKeychainValue(elderlySSSKey(data.userId), data.key)
+}
+
+export async function refuseCaregiverMaxReached(cm: ProcessedChatMessage) {
     await encryptAndSendMessage(cm.from, 'rejectSession', true, ChatMessageType.MAX_REACHED_SESSION)
     .then(() => removeSession(cm.from))
     .then(() => sessionRejectMaxReachedFlash(cm.from))    

@@ -29,7 +29,6 @@ export const getAllCredentialsAndValidate = async (userId: string, userKey: stri
         const credentialInfo = await getCredential(userId, value.id)
         try {
             if (value.data.length != 0) {
-                console.log("UserKey: ", userKey)
                 const credentialCloud = JSON.parse(decrypt(value.data, userKey)) as CredentialData
 
                 if (credentialCloud.id !== value.id) {

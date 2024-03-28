@@ -129,7 +129,7 @@ function ElderlyCredentialsList({ elderlyId }: Readonly<{elderlyId: string}>) {
     const cloudKey = await getKey(elderlyId)
     const sssKey = await getKeychainValueFor(elderlySSSKey(elderlyId))
     const encryptionKey = deriveSecret([cloudKey, sssKey])
-    console.log("Encryption Key: ", encryptionKey)
+    
     listAllCredentialsFromFirestore(elderlyId, encryptionKey, true).then((credencials) => {
       let auxCredencials: Credential[] = [];
       credencials.forEach(value => {

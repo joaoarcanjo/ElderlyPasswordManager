@@ -11,9 +11,7 @@ const firestore = firebase.firestore()
  * Função para alterar a chave que se encontra na cloud.
  */
 async function changeFirestoreKey(userId: string) {
-    
     const firestoreKey = await getKeychainValueFor(firestoreSSSKey(userId))
-    //console.log("Firestore Key: " + firestoreKey)
     await firestore.collection(elderlyCollectionName)
         .doc(userId).collection(keyCollectionName).doc(keyDocumentName).set({key: firestoreKey})
         .catch((error) => {
@@ -264,7 +262,7 @@ async function deleteCredentialFromFiretore(userId: string, credentialId: string
 }
 
 async function updateCredentialFromFiretore(userId: string, credencialId: string, userKey: string, data: string): Promise<boolean> {
-    console.log("===> updateCredentialFromFiretoreCalled")
+    //console.log("===> updateCredentialFromFiretoreCalled")
 
     const encrypted = encrypt(data, userKey)
     const updatedCredencial = updateDataCredencial(encrypted)

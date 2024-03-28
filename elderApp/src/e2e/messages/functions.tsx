@@ -6,14 +6,14 @@ import { signalStore, usernameSubject } from "../identity/state"
 import { stringToArrayBuffer } from "../signal/signal-store"
 import { signalWebsocket } from "../network/webSockets"
 import { ChatSession } from "../session/types"
-import { ChatMessageType, CaregiverDataBody, ProcessedChatMessage, CredentialBody } from "./types"
+import { ChatMessageType, CaregiverDataBody, ProcessedChatMessage, CredentialBody, ElderlyDataBody } from "./types"
 import { randomUUID } from 'expo-crypto'
 import { setCaregiverListUpdated } from "../../screens/list_caregivers/actions/state"
 import { FlashMessage, credentialCreatedByOtherFlash, credentialDeletedByOtherFlash, credentialUpdatedByOtherFlash, editCompletedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionRejectedFlash, sessionRejectMaxReachedFlash, sessionRequestReceivedFlash, sessionRejectedMaxReachedFlash } from "../../components/UserMessages"
 import { getKeychainValueFor } from "../../keychain"
-import { elderlyFireKey, elderlyId, localDBKey } from "../../keychain/constants"
+import { caregiver1SSSKey, caregiver2SSSKey, elderlyFireKey, elderlyId, localDBKey } from "../../keychain/constants"
 import { addCaregiverToArray, removeCaregiverFromArray } from "../../firebase/firestore/functionalities"
-import { changeCaregiverStatusOnDatabase, checkCaregiverByEmail, checkCaregiverByEmailNotAccepted, deleteCaregiver, getCaregiverId, isMaxCaregiversReached, saveCaregiver, updateCaregiver } from "../../database/caregivers"
+import { changeCaregiverStatusOnDatabase, checkCaregiverByEmail, checkCaregiverByEmailNotAccepted, checkNumberOfCaregivers, deleteCaregiver, getCaregiverId, isMaxCaregiversReached, saveCaregiver, updateCaregiver } from "../../database/caregivers"
 //import { MessageType, SessionCipher, SignalProtocolAddress } from "../../algorithms/signal"
 import { CaregiverRequestStatus } from "../../database/types"
 import { setCredentialsListUpdated } from "../../screens/list_credentials/actions/state"
@@ -189,6 +189,7 @@ async function processPersonalData(currentUserId: string, cm: ProcessedChatMessa
         .then(() => addCaregiverToArray(currentUserId, data.userId, "readCaregivers"))
         .then(() => sessionAcceptedFlash(cm.from, false))
         .then(() => setCaregiverListUpdated())
+        .then(() => sendCaregiverKey(currentUserId, cm.from))
     } else {
       const isMaxReached = await isMaxCaregiversReached(currentUserId)
       if(isMaxReached) {
@@ -231,4 +232,21 @@ async function processMaxReachedMessage(currentUserId: string, cm: ProcessedChat
     console.log("===> processMaxReachedMessageCalled")
     await deleteCaregiver(currentUserId, cm.from)
     sessionRejectedMaxReachedFlash(cm.from)
+}
+
+async function sendCaregiverKey(currentUserId: string, to: string) {
+    console.log("===> sendCaregiverKeyCalled")
+    const numberOfCaregivers = await checkNumberOfCaregivers(currentUserId)
+    const caregiver1Key = await getKeychainValueFor(caregiver1SSSKey(currentUserId))
+    const caregiver2Key = await getKeychainValueFor(caregiver2SSSKey(currentUserId)) 
+    const valueKey = numberOfCaregivers == 0 ? caregiver1Key : caregiver2Key
+    const data: ElderlyDataBody = {
+        userId: currentUserId,
+        key: valueKey,
+        name: '',
+        email: '',
+        phone: '',
+        photo: ''
+    }
+    await encryptAndSendMessage(to, JSON.stringify(data), false, ChatMessageType.KEY_UPDATE)
 }

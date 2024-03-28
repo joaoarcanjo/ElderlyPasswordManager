@@ -19,6 +19,7 @@ export const enum FlashMessage {
   editPersonalInfoCompleted = 'INFORMAÇÕES PESSOAIS ATUALIZADAS COM SUCESSO!',
   sessionRequest = 'PEDIDO DE SESSÃO ENVIADO!',
   sessionRequestReceived = 'PEDIDO DE SESSÃO RECEBIDO!',
+  credentialsAccessGived = 'ACESSO ÀS CREDENCIAIS ATRIBUIDO!',
   sessionEnded = 'RELAÇÃO COM O IDOSO TERMINADA!',
   sessionAccepted = 'A CONEXÃO FOI ESTABELECIDA!',
   sessionRejected = 'A CONEXÃO NÃO FOI ESTABELECIDA!',
@@ -169,6 +170,23 @@ export function sessionRequestReceivedFlash(from: string) {
     triggerNotifications('Pedido de conexão recebido!! 🎉', `O idoso ${from} enviou um pedido de conexão.`, "")
   }
 }
+
+export function elderlySentFirstKey(from: string) {
+  if(AppState.currentState === 'active') {
+    showMessage({
+      floating: true,
+      message: FlashMessage.credentialsAccessGived,
+      description: `O idoso ${from} deu acesso às credenciais, pode aceder às mesmas!`,
+      icon: props => <Image source={require("../assets/images/plus.png")} {...props} />,
+      backgroundColor: purpleBackground,
+      duration: 6000,
+      color: "black", // text color
+    });
+  } else {
+    triggerNotifications('Pedido de conexão recebido!! 🎉', `O idoso ${from} enviou um pedido de conexão.`, "")
+  }
+}
+
 
 export function sessionEndedFlash(from: string) {
   if(AppState.currentState === 'active') {

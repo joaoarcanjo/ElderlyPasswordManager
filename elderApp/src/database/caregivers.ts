@@ -120,7 +120,7 @@ export const checkCaregiverByEmail = async (userId: string, email: string): Prom
     })
 }
 
-export const checkNumberOfCaregivers = async (userId: string): Promise<boolean> => {
+export const checkNumberOfCaregivers = async (userId: string): Promise<number> => {
     console.log("===> checkNumberOfCaregiversCalled")
     return new Promise((resolve, reject) => {
         if (dbSQL != null) {
@@ -129,8 +129,7 @@ export const checkNumberOfCaregivers = async (userId: string): Promise<boolean> 
                     'SELECT COUNT(*) AS count FROM caregivers WHERE userId = ? AND status = ?',
                     [userId, CaregiverRequestStatus.ACCEPTED.valueOf()],
                     (_, result) => {
-                        const count = result.rows.item(0).count;
-                        resolve(count > 0); 
+                        resolve(result.rows.item(0).count); 
                     },
                     (_, _error) => {
                      return false
@@ -164,6 +163,42 @@ export const checkCaregiverByEmailNotAccepted = async (userId: string, email: st
             });
         } else {
             reject(new Error('Database not initialized.')); 
+        }
+    })
+}
+
+/**
+ * Obtém os cuidadores que estão à espera de resposta para um determinado utilizador.
+ * 
+ * @param userId O ID do utilizador.
+ * @returns Uma Promise que resolve num array de strings email.
+ */
+export const getCaregiverWaitingForResponse = async (userId: string): Promise<string[]> => {
+    return new Promise((resolve, reject) => {
+        try {
+            if (dbSQL != null) {
+                dbSQL.transaction((tx) => {
+                    tx.executeSql('SELECT email FROM caregivers WHERE userId = ? AND status = ?;', 
+                    [userId, CaregiverRequestStatus.RECEIVED.valueOf()], 
+                    (_tx, results) => {
+                        console.log(results)
+                        const data: string[] = [];
+                        for (let i = 0; i < results.rows.length; i++) {
+                            data.push(results.rows.item(i).email)
+                        }
+                        return resolve(data)
+                    },
+                    (_, _error) => {
+                        return false;
+                    }
+                    )
+                })
+            } else {
+                alert("Problema ao tentar obter os idosos, tente novamente.")
+            }            
+        } catch (error) {
+            console.log("-> Erro a obter os idosos.")
+            reject(error)
         }
     })
 }
@@ -254,7 +289,7 @@ export const isMaxCaregiversReached = async (userId: string): Promise<boolean> =
                     [userId, CaregiverRequestStatus.ACCEPTED.valueOf()],
                     (_, result) => {
                         const count = result.rows.item(0).count
-                        resolve(count >= 2)
+                        resolve(count >= 1)
                     },
                     (_, _error) => {
                         return false

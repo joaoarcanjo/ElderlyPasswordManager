@@ -31,7 +31,6 @@ function ElderlyList() {
         <ScrollView style={[{flex: 0.85, margin: '3%'}]}>
           {/*<NewElderlyList setRefresh={refreshValue}/> */}
           {elderlyList.map((elderly, index) => 
-          
             <ElderlyItem 
               key={index}
               elderlyId={elderly.elderlyId}
