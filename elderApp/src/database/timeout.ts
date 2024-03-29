@@ -12,7 +12,7 @@ export async function insertTimeoutToLocalDB(userId: string, timestamp: number, 
                     'INSERT INTO timeout (userId, timestamp, type) VALUES (?, ?, ?);',
                     [userId, timestamp, type],
                     (_, result) => {
-                        console.log(result.rowsAffected + " timeout inserted")
+                        //console.log(result.rowsAffected + " timeout inserted")
                         resolve()
                     },
                     (_, error) => {

@@ -181,7 +181,6 @@ export const getCaregiverWaitingForResponse = async (userId: string): Promise<st
                     tx.executeSql('SELECT email FROM caregivers WHERE userId = ? AND status = ?;', 
                     [userId, CaregiverRequestStatus.RECEIVED.valueOf()], 
                     (_tx, results) => {
-                        console.log(results)
                         const data: string[] = [];
                         for (let i = 0; i < results.rows.length; i++) {
                             data.push(results.rows.item(i).email)

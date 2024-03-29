@@ -17,6 +17,7 @@ import { updatePasswordOperation } from '../../../firebase/authentication/funcio
 import { sendCaregiversNewInfo } from './functions'
 import { closeWebsocket } from '../../../e2e/network/webSockets'
 import { usernameSubject } from '../../../e2e/identity/state'
+import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
 
 const gitHubUrl = 'https://github.com/joaoarcanjo/ThesisApps'
 
@@ -51,7 +52,7 @@ function AccountInfo() {
    }
 
   const regeneratePassword = () => {
-    const newPassword = Algorithm({length: 15, strict: true, symbols: true, uppercase: true, lowercase: true, numbers: true})
+    const newPassword = Algorithm({length: 15, strict: true, symbols: false, uppercase: true, lowercase: true, numbers: true})
     setUserpasswordEdited(newPassword)
   }
 
@@ -129,17 +130,17 @@ function AccountInfo() {
   }
   
   return (
-    <View style={{ flex: 0.55, flexDirection: 'row', marginTop: '5%', justifyContent: 'space-around'}}>
-      <View style={[{ flex: 1, marginTop:'2%', marginHorizontal: '4%'}, accountInfo.accountInfoContainer]}>
+    <View style={[{flex: 1, width: '100%'}]}>
+        <View style={[{ marginTop:'4%', marginHorizontal: '2%'}, accountInfo.accountInfoContainer]}>
         <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.10, marginTop: '3%', marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: 20}]}>Informação da conta:</Text>
-        <View style={[{flex: 0.17, marginTop:'1%', justifyContent: 'center',  alignItems: 'center', flexDirection: 'row'}]}>
+        <View style={[{flex: 0.17, marginVertical:'1%', marginHorizontal: '2%', justifyContent: 'center',  alignItems: 'center', flexDirection: 'row'}]}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[accountInfo.emailInfoText]}>{userEmail}</Text>
         </View>
         <View style={[{ flex: 0.20, marginTop:'2%', flexDirection: 'row', justifyContent: 'center',  alignItems: 'center', marginHorizontal: '4%'}, inputStyle]}>
           <TextInput 
             editable={!editFlag} 
             value={editFlag ? username : usernameEdited}
-            style={[{flex: 0.8, marginLeft: '7%'}, accountInfo.accountInfoText]}
+            style={[{flex: 0.8, marginLeft: '7%', marginVertical: '3%'}, accountInfo.accountInfoText]}
             onChangeText={text => editFlag ? setUsername(text): setUsernameEdited(text)}
           />
           <Image source={require('../../../assets/images/user.png')} style={[{flex: 0.2, height: '80%', marginRight: '5%', resizeMode: 'contain'}]}/>
@@ -148,7 +149,7 @@ function AccountInfo() {
           <TextInput 
             editable={!editFlag} 
             value={editFlag ? userphone : userphoneEdited}
-            style={[{flex: 0.8, marginLeft: '7%'}, accountInfo.accountInfoText]}
+            style={[{flex: 0.8, marginLeft: '7%', marginVertical: '3%'}, accountInfo.accountInfoText]}
             onChangeText={text => editFlag ? setUserphone(text): setUserphoneEdited(text)}
           />
           <Image source={require('../../../assets/images/telephone.png')} style={[{flex: 0.2, height: '80%', marginRight: '5%', resizeMode: 'contain'}]}/>
@@ -158,7 +159,7 @@ function AccountInfo() {
             editable={!editFlag} 
             secureTextEntry={!(!showPassword || !editFlag)}
             value={editFlag ? userpassword : userpasswordEdited}
-            style={[{flex: 0.8, marginLeft: '7%'}, accountInfo.accountInfoText]}
+            style={[{flex: 0.8, marginLeft: '7%', marginVertical: '3%'}, accountInfo.accountInfoText]}
             onChangeText={text => editFlag ? setUserpassword(text): setUserpasswordEdited(text)}
           />
           <Image source={require('../../../assets/images/lock.png')} style={[{flex: 0.2, height: '80%', marginRight: '5%', resizeMode: 'contain'}]}/>
@@ -171,12 +172,12 @@ function AccountInfo() {
           </View>
           :
           <View style={{ flex: 0.2, flexDirection: 'row', justifyContent: 'flex-end', marginTop: '1%' }}>
-            <TouchableOpacity style={[{flex: 0.35, marginRight: '5%'}, stylesButtons.mainConfig, stylesButtons.regenerateButton]} onPress={() => {regeneratePassword()} }>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '5%' }]}>Regenerar</Text>
+            <TouchableOpacity style={[{flex: 0.50, marginRight: '5%', marginTop: '1%'}, stylesButtons.mainConfig, stylesButtons.regenerateButton]} onPress={() => {regeneratePassword()} }>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Gerar nova password</Text>
             </TouchableOpacity>
-          </View>}
+          </View>}       
+          <Options />
         <YesOrNoSpinnerModal question={'Guardar as alterações?'} yesFunction={saveCredentialUpdate} noFunction={dontSaveCredentialsUpdate} visibleFlag={modalVisible} loading={loading}/>
-        <Options />
       </View>
     </View> 
   )
@@ -215,9 +216,9 @@ const onGitHub = () => Linking.canOpenURL(gitHubUrl).then(() => {
 
 function AppInfo() {
   return (
-    <View style={{ flex: 0.10, flexDirection: 'row', marginVertical:'5%', justifyContent: 'space-around'}}>
+    <View style={{ flex: 0.10, flexDirection: 'row', marginVertical:'5%', justifyContent: 'center', alignItems: 'center'}}>
       <TouchableOpacity style={[{ flex: 1, flexDirection: 'row', marginHorizontal: '4%'}, appInfo.appInfoButton, stylesButtons.mainConfig]} onPress={() => onGitHub()}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 1, marginLeft: '15%'}, appInfo.appInfoText]}>Mais sobre a aplicação</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 1, margin: '5%', textAlign: 'center'}, appInfo.appInfoText]}>Mais sobre a aplicação</Text>
         </TouchableOpacity>
     </View>
   )
@@ -228,7 +229,6 @@ function Logout() {
   const { setUserId, setUserName, setUserPhone } = useSessionInfo()
 
   const signOut = () => {
-    //saveKeychainValue(elderlyEmail, '')
     setUserId('')
     setUserName('')
     setUserPhone('')
@@ -250,12 +250,17 @@ function Logout() {
 
 export default function Settings() {
   return (
-    <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-      <MainBox text={'Definições'}/>
-      <AccountInfo/>
-      <AppInfo/>
-      <Logout/>
-      <Navbar/>
-    </View>
+
+     <>
+      <KeyboardAvoidingWrapper>
+        <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
+          <MainBox text={'Definições'}/>
+          <AccountInfo/>
+          <AppInfo/>
+          <Logout/>
+        </View>
+      </KeyboardAvoidingWrapper>
+     <Navbar/>
+     </>
   )
 }

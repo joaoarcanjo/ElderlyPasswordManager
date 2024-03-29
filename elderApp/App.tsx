@@ -1,7 +1,7 @@
 import { View } from 'react-native';
 import MainMenu from './src/screens/main_menu/actions';
 import Credentials from './src/screens/list_credentials/actions';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Settings from './src/screens/settings_interface/actions';
 import FrequentQuestions from './src/screens/list_questions/actions';
