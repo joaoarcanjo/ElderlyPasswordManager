@@ -97,7 +97,6 @@ export async function refuseIfMaxReached(userId: string) {
     const isMaxReached = await isMaxCaregiversReached(userId)
     if(isMaxReached) {
         const waitingElderlyEmails = await getCaregiverWaitingForResponse(userId)
-        console.log(waitingElderlyEmails)
         waitingElderlyEmails.forEach(async email => {
             await encryptAndSendMessage(email, 'rejectSession', true, ChatMessageType.MAX_REACHED_SESSION)
             .then(() => removeSession(email))

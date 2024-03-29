@@ -1,5 +1,6 @@
 import { getCaregivers } from "../../database/caregivers"
-import { getTimeoutFromLocalDB, insertTimeoutToLocalDB } from "../../database/ssstimer"
+import { getTimeoutFromLocalDB, insertTimeoutToLocalDB, updateTimeoutToLocalDB } from "../../database/timeout"
+import { TimeoutType } from "../../database/types"
 import { encryptAndSendMessage } from "../../e2e/messages/functions"
 import { ElderlyDataBody, ChatMessageType } from "../../e2e/messages/types"
 import { startSession } from "../../e2e/session/functions"
@@ -37,9 +38,9 @@ export async function changeKey(userId: string): Promise<string> {
 
 export async function executeKeyChangeIfTimeout(userId: string): Promise<string> {
     console.log("===> executeKeyChangeIfTimeoutCalled")
-    const timer = await getTimeoutFromLocalDB(userId)
+    const timer = await getTimeoutFromLocalDB(userId, TimeoutType.SSS)
     if(timer == null) {
-        await insertTimeoutToLocalDB(userId, new Date().getTime())
+        await insertTimeoutToLocalDB(userId, new Date().getTime(), TimeoutType.SSS)
         return ''
     }
 
@@ -47,6 +48,7 @@ export async function executeKeyChangeIfTimeout(userId: string): Promise<string>
     const currentDate = new Date().getTime()
     
     if (currentDate - timer > thirtyDaysInMillis) {
+        await updateTimeoutToLocalDB(userId, currentDate, TimeoutType.SSS)
         return await executeKeyExchange(userId)
     }
     return ''

@@ -43,10 +43,11 @@ export function initDb() {
         )
         
         tx.executeSql(
-            `CREATE TABLE IF NOT EXISTS sssTimeout (
+            `CREATE TABLE IF NOT EXISTS timeout (
                 userId TEXT NOT NULL,
                 timestamp INTEGER NOT NULL,
-                PRIMARY KEY (userId)
+                type INTEGER NOT NULL,
+                PRIMARY KEY (userId, type)
             );`
         )
     })

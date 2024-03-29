@@ -1,6 +1,6 @@
 import { StatusBar, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainMenu from './src/screens/main_menu/actions';
 import ElderlyListScreen from './src/screens/list_elderly/actions';
@@ -20,16 +20,26 @@ import Settings from './src/screens/settings_interface/actions';
 import Credentials from './src/screens/list_credentials/actions';
 import { initFirestore } from './src/firebase/firestore/functionalities';
 import { createIdentity } from './src/e2e/identity/functions';
+import { flashTimeoutPromise } from './src/screens/splash_screen/actions/functions';
+import SplashScreen from './src/screens/splash_screen/actions';
+import * as SplashFunctions from 'expo-splash-screen';
 
 const Stack = createNativeStackNavigator()
 const InsideStack = createNativeStackNavigator()
 
 function InsideLayout() {
 
+  const { userId } = useSessionInfo()
+  const [appIsReady, setAppIsReady] = useState(true)
+
   useEffect(() => {
-    console.debug("#-> InsideLayout: useEffect called.")
+      flashTimeoutPromise(userId, setAppIsReady)
+      .then(() => setAppIsReady(true))
   }, [])
 
+  const onLayoutRootView = useCallback(async () => { if (!appIsReady) await SplashFunctions.hideAsync() }, [appIsReady]);
+
+  if (!appIsReady) return <SplashScreen test={onLayoutRootView} />
   return (
     <InsideStack.Navigator initialRouteName="MainMenu">
       <InsideStack.Screen name="MainMenu" component={MainMenu} options={{ title: "MainMenu", headerShown: false }} />
@@ -48,19 +58,21 @@ function Inicialization() {
 
   const [user, setUser] = useState<User | null>(null)
   const { setUserId, setUserEmail, setLocalDBKey, userId } = useSessionInfo()
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     onAuthStateChanged(FIREBASE_AUTH, async (user) => {
       const userEmail = user?.email
       if(userId) {
         setUser(user)
-      }else if(userEmail && user.uid) {
+      }else if(userEmail && user.uid && !loading) {
         await initKeychain(user.uid, user.email)
         .then((DBKey) => setLocalDBKey(DBKey))
         .then(() => { setUserId(user.uid); setUserEmail(userEmail); setUser(user)})
         .then(() => initFirestore(user.uid))
         .then(() => createIdentity(user.uid, userEmail))
         .then(() => initDb()) 
+        .then(() => setLoading(true))
       }
 
       let { status } = await Notifications.requestPermissionsAsync()
@@ -74,7 +86,7 @@ function Inicialization() {
       <NavigationContainer>
         <View style={{flex: 0.06}}/>
         <Stack.Navigator initialRouteName="LoginPage">
-          {user != null && userId != null ?
+          {user != null && userId != null && userId != '' ?
           <Stack.Screen name="InsideLayout" component={InsideLayout} options={{title: "InsideLayout", headerShown:false}}/>:
           <>
             <Stack.Screen name="LoginPage" component={SignInPage} options={{title: "LoginPage", headerShown:false}}/>

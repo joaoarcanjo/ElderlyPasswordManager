@@ -16,4 +16,8 @@ export enum Errors {
     ERROR_INVALID_MESSAGE_OR_KEY = "Mensagem ou chave inválida.",
     ERROR_CREDENTIAL_INVALID_ID = "O id presente em data não corresponde ao id da credencial.",
     ERROR_CREDENTIAL_ON_CLOUD_OUTDATED = "Os dados da credencial na cloud estão desatualizados.",
+    
+    ERROR_CREATING_TIMEOUT = "Não foi possível criar o timeout.",
+    ERROR_UPDATING_TIMEOUT = "Não foi possível atualizar o timeout.",
+    ERROR_GETTING_TIMEOUT = "Não foi possível obter o timeout.",
 }

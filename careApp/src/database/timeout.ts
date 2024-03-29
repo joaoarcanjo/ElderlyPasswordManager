@@ -1,15 +1,16 @@
 import { dbSQL } from "."
 import { ErrorInstance } from "../exceptions/error";
 import { Errors } from "../exceptions/types";
+import { TimeoutType } from "./types";
 
-export async function insertTimeoutToLocalDB(userId: string, timestamp: number): Promise<void> {
+export async function insertTimeoutToLocalDB(userId: string, timestamp: number, type: TimeoutType): Promise<void> {
     console.log("===> insertTimeoutCalled")
     return new Promise((resolve, reject) => {
         if (dbSQL != null) {
             dbSQL.transaction(tx => {
                 tx.executeSql(
-                    'INSERT INTO sssTimeout (userId, timestamp) VALUES (?, ?);',
-                    [userId, timestamp],
+                    'INSERT INTO timeout (userId, timestamp, type) VALUES (?, ?, ?);',
+                    [userId, timestamp, type],
                     (_, result) => {
                         console.log(result.rowsAffected + " timeout inserted")
                         resolve()
@@ -27,14 +28,14 @@ export async function insertTimeoutToLocalDB(userId: string, timestamp: number):
     })
 }
 
-export async function updateTimeoutToLocalDB(userId: string, timestamp: number): Promise<void> {
+export async function updateTimeoutToLocalDB(userId: string, timestamp: number, type: TimeoutType): Promise<void> {
     console.log("===> updateTimeoutCalled")
     return new Promise((resolve, reject) => {
         if (dbSQL != null) {
             dbSQL.transaction(tx => {
                 tx.executeSql(
-                    'UPDATE sssTimeout SET timestamp = ? WHERE userId = ?;',
-                    [timestamp, userId],
+                    'UPDATE timeout SET timestamp = ? WHERE userId = ? AND type = ?;',
+                    [timestamp, userId, type],
                     (_, result) => {
                         console.log(result.rowsAffected + " timeout updated")
                         resolve()
@@ -52,18 +53,17 @@ export async function updateTimeoutToLocalDB(userId: string, timestamp: number):
     })
 }
 
-export async function getTimeoutFromLocalDB(userId: string): Promise<number | null> {
+export async function getTimeoutFromLocalDB(userId: string, type: TimeoutType): Promise<number | null> {
     console.log("===> getTimeoutCalled")
     return new Promise((resolve, reject) => {
         if (dbSQL != null) {
             dbSQL.transaction(tx => {
                 tx.executeSql(
-                    'SELECT timestamp FROM sssTimeout WHERE userId = ?;',
-                    [userId],
+                    'SELECT timestamp FROM timeout WHERE userId = ? AND type = ?;',
+                    [userId, type],
                     (_, result) => {
                         if (result.rows.length > 0) {
                             const timestamp = result.rows.item(0).timestamp
-                            console.log("Timeout retrieved: " + timestamp)
                             resolve(timestamp)
                         } else {
                             console.log("Timeout not found")

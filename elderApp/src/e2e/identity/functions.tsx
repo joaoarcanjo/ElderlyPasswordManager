@@ -15,6 +15,8 @@ import { ipAddress } from "../../assets/constants";
 export async function createIdentity(userId: string, username: string): Promise<void> {
 
     if (usernameSubject.value === username) return
+    console.log("Username: ", username)
+    console.log("userId: ", userId)
 
     //TODO: este url tem que ser obtido da firebase, porque o url do server pode alterar.
     const url = `http://${ipAddress}:442`
@@ -50,7 +52,7 @@ export async function createIdentity(userId: string, username: string): Promise<
     if(identityKeyPair === undefined) {
         const identityKeyPairAux = await KeyHelper.generateIdentityKeyPair()
         await signalStore.storeIdentityKeyPair(identityKeyPairAux)
-        identityKeyPair = await signalStore.getIdentityKeyPair()
+        identityKeyPair = identityKeyPairAux //await signalStore.getIdentityKeyPair()
     }
 
     if(identityKeyPair === undefined) {
@@ -64,11 +66,11 @@ export async function createIdentity(userId: string, username: string): Promise<
         baseKeyId = await signalStore.getBaseKeyId()
     }
 
-    let preKeyPair = await signalStore.getIdentityKeyPair()
+    let preKeyPair = await signalStore.loadPreKey(baseKeyId)
     if(preKeyPair === undefined) {
         const preKeyPairAux = await KeyHelper.generatePreKey(baseKeyId)
         await signalStore.storePreKey(`${baseKeyId}`, preKeyPairAux.keyPair)
-        preKeyPair = await signalStore.getIdentityKeyPair()
+        preKeyPair = preKeyPairAux.keyPair//await signalStore.loadPreKey(baseKeyId)
     }
     if(preKeyPair === undefined) {
         throw new Error("Error generating preKeyPair")

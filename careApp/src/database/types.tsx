@@ -21,3 +21,8 @@ export enum ElderlyRequestStatus {
     RECEIVED = 2, //Pedido recebido
     WAITING = 3 //À espera de resposta
 }
+
+export enum TimeoutType {
+    SSS = 1,
+    SPLASH = 2
+}

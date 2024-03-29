@@ -44,7 +44,6 @@ async function initSSS(userId: string): Promise<string> {
     //console.log("InitSSS Shared:  " + shared + " userid: " + userId)
 
     if(fireKey != '') return fireKey
-
     const key = generateKey()
     const shares: string[] = generateShares(key, 3, 2)
     //console.log(shares)

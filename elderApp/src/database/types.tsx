@@ -22,3 +22,8 @@ export enum CaregiverRequestStatus {
     WAITING = 3,
     DECOUPLING = 4
 }
+
+export enum TimeoutType {
+    SSS = 1,
+    SPLASH = 2
+}

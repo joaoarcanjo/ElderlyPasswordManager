@@ -36,6 +36,14 @@ export function initDb() {
                 PRIMARY KEY (userId, credentialId)
             );`
         )
-
+        
+        tx.executeSql(
+            `CREATE TABLE IF NOT EXISTS timeout (
+                userId TEXT NOT NULL,
+                timestamp INTEGER NOT NULL,
+                type INTEGER NOT NULL,
+                PRIMARY KEY (userId, type)
+            );`
+        )
     })
 }

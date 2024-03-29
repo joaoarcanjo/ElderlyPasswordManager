@@ -176,6 +176,7 @@ export class SignalProtocolStore implements StorageType {
         //console.log("===> getIdentityKeyPairCalled")
         const kPub = await this.get(identityIdPubKey(await this.getUserId()), '')
         const kPriv = await this.get(identityIdPrivKey(await this.getUserId()), '')
+        console.log(kPub, kPriv)
 
         if (typeof kPub !== 'string' || typeof kPriv !== 'string' || kPub === '' || kPriv === '') return undefined
 

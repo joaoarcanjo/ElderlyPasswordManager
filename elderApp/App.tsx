@@ -26,9 +26,8 @@ import SplashScreen from './src/screens/splash_screen/actions';
 import * as SplashFunctions from 'expo-splash-screen';
 import { createIdentity } from './src/e2e/identity/functions';
 import * as Notifications from "expo-notifications";
-import { StackNavigationProp } from '@react-navigation/stack';
 import { executeKeyChangeIfTimeout } from './src/algorithms/sss/sssOperations';
-import { getAllCredentialsAndValidate } from './src/screens/list_credentials/actions/functions';
+import { flashTimeoutPromise } from './src/screens/splash_screen/actions/functions';
 
 const Stack = createNativeStackNavigator()
 const InsideStack = createNativeStackNavigator()
@@ -42,15 +41,9 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const im_testing = false
-const time = 1000
-
 function InsideLayout() {
-  const [appIsReady, setAppIsReady] = useState(false)
-
-  const flashTimeoutPromise = () => { if (!appIsReady) { return new Promise(resolve => setTimeout(resolve, time)) } else return Promise.resolve() }
-  const navigation = useNavigation<StackNavigationProp<any>>()
-  const { userId, userFireKey, localDBKey, setUserFireKey } = useSessionInfo()
+  const { userId, userFireKey, setUserFireKey } = useSessionInfo()
+  const [appIsReady, setAppIsReady] = useState(true)
 
   const keyVerification = async () => {
     if (!userId || !userFireKey || userId === '' || userFireKey === '') return
@@ -59,10 +52,9 @@ function InsideLayout() {
   }
 
   useEffect(() => {
-    flashTimeoutPromise()
+      flashTimeoutPromise(userId, setAppIsReady)
       .then(() => setAppIsReady(true))
       .then(() => keyVerification())
-      .then(() => { navigation.push('MainMenu')})
   }, [])
 
   const onLayoutRootView = useCallback(async () => { if (!appIsReady) await SplashFunctions.hideAsync() }, [appIsReady]);
@@ -88,6 +80,7 @@ function InsideLayout() {
 function Inicialization() {
 
   const [user, setUser] = useState<User | null>(null)
+  const [notLoading, setNotLoading] = useState(false)
   const { setUserId, setUserEmail, setLocalDBKey, setUserFireKey, userId } = useSessionInfo()
 
   useEffect(() => {
@@ -95,7 +88,7 @@ function Inicialization() {
       const userEmail = user?.email
       if(userId) {
         setUser(user)
-      }else if(userEmail && user.uid) {
+      }else if(userEmail && user.uid && !notLoading) {
         await initKeychain(user.uid, userEmail)
         .then((DBKey) => setLocalDBKey(DBKey))
         .then(() => {setUserId(user.uid); setUserEmail(userEmail); setUser(user)})
@@ -106,6 +99,7 @@ function Inicialization() {
         .then(() => changeFirestoreKey(user.uid))
         .then(() => createIdentity(user.uid, userEmail))
         .then(() => console.log("User: ", user.uid))
+        .then(() => setNotLoading(true))
       }
 
       let { status } = await Notifications.requestPermissionsAsync()
@@ -119,7 +113,7 @@ function Inicialization() {
       <NavigationContainer>
         <View style={{flex: 0.06}}/>
         <Stack.Navigator initialRouteName="LoginPage">
-          {user != null && userId != null ?
+          {user != null && userId != null && userId != '' ?
           <Stack.Screen name="InsideLayout" component={InsideLayout} options={{title: "InsideLayout", headerShown:false}}/>:
           <>
             <Stack.Screen name="LoginPage" component={SignInPage} options={{title: "LoginPage", headerShown:false}}/>
@@ -135,7 +129,7 @@ function Inicialization() {
 export default function App() {
   return (
     <SessionProvider>
-      <StatusBar hidden />
+      <StatusBar/>
       <Inicialization/>
     </SessionProvider>
   )

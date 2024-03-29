@@ -60,9 +60,6 @@ const SignInPage = () => {
 
         signInOperation(email, password).then((loginResult) => {
             setLoading(false)
-            if(loginResult) {
-                navigation.push('InsideLayout')
-            } 
         })
     }
 

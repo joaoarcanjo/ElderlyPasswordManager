@@ -125,24 +125,21 @@ export default function MainMenu() {
 
     const { userId, setUserName, setUserPhone, userPhone, userName, userEmail, localDBKey, userFireKey } = useSessionInfo()
     //const { expoPushToken } = usePushNotifications()
-
-    const executeCredentialValidation = (userId: string, userFireKey: string, localDBKey: string) => {
+    
+    useEffect(() => {
         if(userId == '' || userFireKey == '' || localDBKey == '') return
         
-        useEffect(() => {
-            const interval = setInterval(async () => {
-                await getAllCredentialsAndValidate(userId, userFireKey, localDBKey)
-            }, 10 * 1000 * 60) //12 em 12 segundos
-    
-            return () => clearInterval(interval)
-        }, [])
-    }
-    
-    executeCredentialValidation(userId, userFireKey, localDBKey)
+        const interval = setInterval(async () => {
+            await getAllCredentialsAndValidate(userId, userFireKey, localDBKey)
+        }, 12 * 1000) //12 em 12 segundos
+
+        return () => clearInterval(interval)
+    }, [])
+
     useEffect(() => {
         savePhoneAndName()
         identityCreation()
-    })
+    }, [])
     
     const savePhoneAndName = async () => {
         if(userPhone == '' && userName == '' && userId != '') {
