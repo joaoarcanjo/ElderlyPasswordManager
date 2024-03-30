@@ -11,7 +11,7 @@ import { FlashMessage, copyPasswordDescription, copyUsernameDescription, copyVal
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
 import { deleteCredential, updateCredentialFromFirestore, verifyIfCanManipulateCredentials } from '../../../firebase/firestore/functionalities'
-import { YesOrNoModal, YesOrNoSpinnerModal } from '../../../components/Modal'
+import { PasswordOptionsModal, YesOrNoModal, YesOrNoSpinnerModal } from '../../../components/Modal'
 import Algorithm from '../../password_generator/actions/algorithm'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
 import { useSessionInfo } from '../../../firebase/authentication/session'
@@ -19,6 +19,7 @@ import { buildEditMessage, sendElderlyCredentialInfoAction } from './functions'
 import { ChatMessageType } from '../../../e2e/messages/types'
 import { updateCredentialFromLocalDB } from '../../../database/credentials'
 import { encrypt } from '../../../algorithms/0thers/crypto'
+import { regeneratePassword } from '../../../components/passwordGenerator/functions'
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
@@ -33,17 +34,15 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
   const [usernameEdited, setUsernameEdited] = useState(un)
   const [passwordEdited, setPasswordEdited] = useState(pw)
   const [uriEditted, setUriEditted] = useState(uri)
-
-  const [avaliation, setAvaliation] = useState<number>(0)
-
-  const { userId, userEmail, localDBKey } = useSessionInfo()
-  
+  const [passwordOptionsModalVisible, setPasswordOptionsModalVisible] = useState(false)
+  const [requirements, setRequirements] = useState<Object>({length: 15, strict: true, symbols: false, uppercase: true, lowercase: true, numbers: true})
+  const [avaliation, setAvaliation] = useState<number>(0)  
   const [showPassword, setShowPassword] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
   const [loading, setLoading] = useState(false)
-
   const [editFlag, setEditFlag] = useState(true)
-
+  const { userId, userEmail, localDBKey } = useSessionInfo()
+  
   useEffect(() => setAvaliation(getScore(passwordEdited)), [passwordEdited])
 
   const toggleShowPassword = () => {setShowPassword(!showPassword);}
@@ -123,11 +122,6 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
     editCanceledFlash(FlashMessage.editModeCanceled)
     setUsernameEdited(username)
     setPasswordEdited(password)
-  }
-
-  const regeneratePassword = () => {
-    const newPassword = Algorithm({length: 15, strict: true, symbols: false, uppercase: true, lowercase: true, numbers: true})
-    setPasswordEdited(newPassword)
   }
 
   /**
@@ -227,8 +221,12 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
             </TouchableOpacity>
           </View>
           :
-          <View style={{ flex: 0.14, flexDirection: 'row', justifyContent: 'flex-end', marginBottom: '5%' }}>
-            <TouchableOpacity style={[{flex: 0.50, marginRight: '5%'}, credentials.regenerateButton, stylesButtons.mainConfig]} onPress={() => {regeneratePassword()} }>
+          <View style={{ flex: 0.14, flexDirection: 'row', justifyContent: 'flex-end', marginBottom: '5%', marginHorizontal: '5%' }}>
+            <TouchableOpacity style={[{flex: 0.50}, stylesButtons.blueButton, stylesButtons.mainConfig]} onPress={() => {setPasswordOptionsModalVisible(true)}}>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Opções</Text>
+            </TouchableOpacity>
+            <View style={{margin: '1%'}}/>
+            <TouchableOpacity style={[{flex: 0.50}, credentials.regenerateButton, stylesButtons.mainConfig]} onPress={() => {regeneratePassword(requirements, setPasswordEdited)} }>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Regenerar</Text>
             </TouchableOpacity>
           </View>}
@@ -236,6 +234,7 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
       </View>
     </View>
     <Options/>
+    <PasswordOptionsModal saveFunction={setRequirements} closeFunction={() => {setPasswordOptionsModalVisible(false)}} visibleFlag={passwordOptionsModalVisible} loading={false}/>
     <YesOrNoSpinnerModal question={'Guardar as alterações?'} yesFunction={saveCredentialUpdate} noFunction={dontSaveCredentialsUpdate} visibleFlag={modalVisible} loading={loading}/>
     {editFlag && <DeleteCredential ownerId={ownerId} id={id} platform={platform} isElderlyCredential={isElderlyCredential} auxKey={auxKey} />}
     </>

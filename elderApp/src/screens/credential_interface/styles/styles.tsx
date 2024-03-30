@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native'
-import { blueBorder, cancelButtonBackground, cancelButtonBorder, editCredentialsButtonBackground, editCredentialsButtonBorder, greyBackgroud, greyBorder, hiperlightBlueBackground, lightBlueBackground, lightYellowBackground, logoutButtonBackgroud, logoutButtonBorder, permissionsButtonBackground, permissionsButtonBorder, regenerateButtonBackgroud, regenerateButtonBorder, saveButtonBackground, saveButtonBorder, superlightBlueBackgroud, whiteBackgroud } from '../../../assets/styles/colors'
+import { blueBorder, cancelButtonBackground, cancelButtonBorder, editCredentialsButtonBackground, editCredentialsButtonBorder, greyBackgroud, greyBorder, hiperlightBlueBackground, logoutButtonBackgroud, logoutButtonBorder, regenerateButtonBackgroud, regenerateButtonBorder, saveButtonBackground, saveButtonBorder, superlightBlueBackgroud, whiteBackgroud } from '../../../assets/styles/colors'
 
 /**
  * Estilos da view para adicionar uma nova credencial

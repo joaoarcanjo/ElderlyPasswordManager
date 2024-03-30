@@ -11,7 +11,7 @@ import { FlashMessage, copyURIDescription, copyUsernameDescription, copyValue, e
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
 import { deleteCredentialFromFiretore, updateCredentialFromFiretore } from '../../../firebase/firestore/functionalities'
-import { YesOrNoModal, YesOrNoSpinnerModal } from '../../../components/Modal'
+import { PasswordOptionsModal, YesOrNoModal, YesOrNoSpinnerModal } from '../../../components/Modal'
 import Algorithm from '../../password_generator/actions/algorithm'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
@@ -32,11 +32,12 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
   const [usernameEdited, setUsernameEdited] = useState(un)
   const [passwordEdited, setPasswordEdited] = useState(pw)
   const [uriEditted, setUriEditted] = useState(uri)
-
+  const [requirements, setRequirements] = useState<Object>({length: 15, strict: true, symbols: false, uppercase: true, lowercase: true, numbers: true})
   const [avaliation, setAvaliation] = useState<number>(0)
   
   const [showPassword, setShowPassword] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
+  const [passwordOptionsModalVisible, setPasswordOptionsModalVisible] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const { userId, userFireKey, userEmail, localDBKey } = useSessionInfo()
@@ -113,11 +114,6 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
     setPasswordEdited(password)
   }
 
-  const regeneratePassword = () => {
-    const newPassword = Algorithm({length: 15, strict: true, symbols: false, uppercase: true, lowercase: true, numbers: true})
-    setPasswordEdited(newPassword)
-  }
-
   /**
    * Componente que apresenta as ações que o utilizador pode efetuar sobre as credenciais.
    * -> Ações relativamente a editar, selecionar as permissões, 
@@ -143,6 +139,10 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
         }
       </View>
     )
+  }
+
+  function regeneratePassword(requirements: Object, setPasswordEdited: React.Dispatch<React.SetStateAction<string>>) {
+    throw new Error('Function not implemented.')
   }
 
   return (
@@ -198,6 +198,7 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
             <View style={[{ flex: 0.4, alignItems: 'center', justifyContent: 'center', marginHorizontal: '4%', marginVertical: '2%'}, inputStyle]}>
               <View style={{marginHorizontal: '4%', marginVertical: '1%', flexDirection: 'row'}}>
                 <TextInput 
+                  multiline={true}
                   editable={!editFlag} 
                   value={editFlag ? password : passwordEdited}
                   secureTextEntry={!(!showPassword || !editFlag)}
@@ -215,16 +216,20 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
             </TouchableOpacity>
           </View>
           :
-          <View style={{ flex: 0.14, flexDirection: 'row', justifyContent: 'flex-end', marginBottom: '5%' }}>
-            <TouchableOpacity style={[{flex: 0.50, marginRight: '5%'}, credentials.regenerateButton, stylesButtons.mainConfig]} onPress={() => {regeneratePassword()} }>
+          <View style={{ flex: 0.14, flexDirection: 'row', justifyContent: 'flex-end', marginBottom: '5%', marginHorizontal: '5%' }}>
+            <TouchableOpacity style={[{flex: 0.50}, stylesButtons.blueButton, stylesButtons.mainConfig]} onPress={() => {setPasswordOptionsModalVisible(true)}}>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Opções</Text>
+            </TouchableOpacity>
+            <View style={{margin: '1%'}}/>
+            <TouchableOpacity style={[{flex: 0.50}, credentials.regenerateButton, stylesButtons.mainConfig]} onPress={() => {regeneratePassword(requirements, setPasswordEdited)} }>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Regenerar</Text>
             </TouchableOpacity>
           </View>}
           <Text numberOfLines={2} adjustsFontSizeToFit style={[{marginLeft: '6%', marginBottom: '2%',fontSize: 13}, {opacity: editFlag ? 100 : 0}]}>{buildEditMessage(edited.updatedBy, edited.updatedAt)}</Text> 
-      
       </View>
-    </View>
+      </View>
     <Options/>
+    <PasswordOptionsModal saveFunction={setRequirements} closeFunction={() => {setPasswordOptionsModalVisible(false)}} visibleFlag={passwordOptionsModalVisible} loading={false}/>
     <YesOrNoSpinnerModal question={'Guardar as alterações?'} yesFunction={saveCredentialUpdate} noFunction={dontSaveCredentialsUpdate} visibleFlag={modalVisible} loading={loading}/>
     {editFlag && <DeleteCredential id={id} platform={platform} />}
     </>

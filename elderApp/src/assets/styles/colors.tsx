@@ -5,7 +5,7 @@ export const purpleBackground =    '#DBB8E9'
 export const lightPurpleBackground =    '#f7e3ff'
 export const darkGreenBackgroud =  '#58b859'
 export const lightGreenBackgroud = '#7FCA82'
-export const superlightGreenBackground = '#9dedb0'
+export const superlightGreenBackground = '#cefad0'
 export const hiperlightBlueBackground = '#f7feff'
 export const superlightBlueBackgroud = '#d0f0f7'
 export const lightBlueBackground = '#9FCFDD'
@@ -28,10 +28,13 @@ export const darkRedBorder =       '#a31f1f'
 export const copyButtonBackground = yellowBackground
 export const copyButtonBorder = yellowBorder
 
+export const visibilityButtonBackground = yellowBackground
+export const visibilityButtonBorder = yellowBorder
+
 export const generatorButtonBackgroud = lightBlueBackground
 export const generatorButtonBorder = blueBorder
 
-export const saveButtonBackground = lightGreenBackgroud
+export const saveButtonBackground = superlightGreenBackground
 export const saveButtonBorder = darkGreenBorder
 
 export const cancelButtonBackground = lightRedBackground
@@ -39,6 +42,9 @@ export const cancelButtonBorder = lightRedBorder
 
 export const regenerateButtonBackgroud = darkGreenBackgroud
 export const regenerateButtonBorder = darkGreenBorder
+
+export const optionsButtonBackgroud = lightBlueBackground
+export const optionsButtonBorder = blueBorder
 
 //MAIN MENU PAGE COLORS
 export const credencialsButtonBackgroud = lightGreenBackgroud

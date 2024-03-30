@@ -18,6 +18,8 @@ import { sendElderlyCredentialInfoAction } from "../../credential_interface/acti
 import { useSessionInfo } from "../../../firebase/authentication/session";
 import { ChatMessageType } from "../../../e2e/messages/types";
 import { insertCredentialToLocalDB } from "../../../database/credentials";
+import { regeneratePassword } from "../../../components/passwordGenerator/functions";
+import { PasswordOptionsModal } from "../../../components/Modal";
 
 const placeholderPlatform = 'Insira a plataforma'
 const placeholderURI = 'Insira o URI da plataforma'
@@ -30,11 +32,16 @@ function CredentialsInput({ ownerId, auxKey, isElderlyCredential }: Readonly<{ow
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [avaliation, setAvaliation] = useState<number>(0)
-
+    const [requirements, setRequirements] = useState<Object>({length: 15, strict: true, symbols: false, uppercase: true, lowercase: true, numbers: true})
     const [showPassword, setShowPassword] = useState(false)
     const navigation = useNavigation<StackNavigationProp<any>>()
+    const [modalVisible, setModalVisible] = useState(false)
 
     const { userId, userEmail, localDBKey } = useSessionInfo()
+
+    useEffect(() => setAvaliation(getScore(password)), [password])
+
+    useEffect(() => regeneratePassword(requirements, setPassword), [])
   
     const handleSave = async () => {
         if(platform != '' && uri != '' && username != '' && password != '') {
@@ -58,17 +65,13 @@ function CredentialsInput({ ownerId, auxKey, isElderlyCredential }: Readonly<{ow
         }
     }
 
-    const toggleShowPassword = () => setShowPassword(!showPassword);
+    const toggleShowPassword = () => setShowPassword(!showPassword)
 
-    const regeneratePassword = () => {
-        const password = Algorithm({length: 15, strict: true, symbols: true, uppercase: true, lowercase: true, numbers: true})
-        setPassword(password)
+    const saveRequirements = (requirements: Object) => {
+        regeneratePassword(requirements, setPassword)
+        setRequirements(requirements)
     }
-
-    useEffect(() => setAvaliation(getScore(password)), [password])
-
-    useEffect(() => regeneratePassword(), [])
-
+    
     return (
         <View style={[{flex: 0.85}]}>
             <View style={{width: '100%', flexDirection: 'row'}}>
@@ -107,6 +110,8 @@ function CredentialsInput({ ownerId, auxKey, isElderlyCredential }: Readonly<{ow
                     <View style={[{margin: '4%', marginTop: '1%'}, { borderRadius: 15, borderWidth: 1, backgroundColor: whiteBackgroud }]}>
                         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginHorizontal: '5%'}}>
                             <TextInput
+                            multiline={true}
+                            numberOfLines={2}
                             placeholder={placeholderPassword}
                             value={password}
                             style={{ flex: 1, fontSize: 22, marginRight: '5%', padding: '3%'}}
@@ -116,24 +121,28 @@ function CredentialsInput({ ownerId, auxKey, isElderlyCredential }: Readonly<{ow
                             <AvaliationEmoji avaliation={avaliation}/>
                         </View>
                     </View>
-                    <View style={{flexDirection: 'row', margin: '5%'}}>
-                        <TouchableOpacity style={[{flex: 0.35, marginRight: '2%', flexDirection: 'row'}, passwordFirstHalf.copyButton, stylesButtons.mainConfig]}  onPress={toggleShowPassword} >
+                    <View style={{flexDirection: 'row', marginVertical: '5%', marginHorizontal: '3%'}}>
+                        <TouchableOpacity style={[{flex: 0.40}, stylesButtons.blueButton, stylesButtons.mainConfig]} onPress={() => {setModalVisible(true)}}>
+                            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Opções</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[{flex: 0.20, marginHorizontal: '3%', flexDirection: 'row'}, stylesButtons.visibilityButton, stylesButtons.mainConfig]}  onPress={toggleShowPassword} >
                             <MaterialCommunityIcons name={showPassword ? 'eye-off' : 'eye'} size={35} color="black"/> 
                         </TouchableOpacity>
-                        <TouchableOpacity style={[{flex: 0.65, marginLeft: '2%'}, passwordFirstHalf.regenerateButton, stylesButtons.mainConfig]} onPress={() => {regeneratePassword()} }>
+                        <TouchableOpacity style={[{flex: 0.40}, passwordFirstHalf.regenerateButton, stylesButtons.mainConfig]} onPress={() => regeneratePassword(requirements, setPassword)}>
                             <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Regenerar</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             </View>
-            <TouchableOpacity style={[{flex: 0.1, marginHorizontal: '10%', marginVertical: '2%'}, stylesAddCredential.button, stylesButtons.mainConfig]} onPress={() => handleSave()}>
+            <TouchableOpacity style={[{flex: 0.1, marginHorizontal: '10%', marginVertical: '2%'}, stylesAddCredential.button, stylesButtons.mainConfig]} onPress={handleSave}>
                 <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCredential.buttonText]}>ADICIONAR</Text>
             </TouchableOpacity>
+            <PasswordOptionsModal saveFunction={saveRequirements} closeFunction={() => {setModalVisible(false)}} visibleFlag={modalVisible} loading={false}/>
         </View>
     )
 }
 
-function AddCredencial({ route }: Readonly<{route: any}>) {
+export function AddCredencial({ route }: Readonly<{route: any}>) {
     return (
         <>
         <KeyboardAvoidingWrapper>
@@ -146,6 +155,3 @@ function AddCredencial({ route }: Readonly<{route: any}>) {
         </>
     )
 }
-  
-
-export { AddCredencial }

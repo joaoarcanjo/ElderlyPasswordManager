@@ -167,15 +167,11 @@ function AccountInfo() {
         {editFlag ?
           <View style={{ flex: 0.2, flexDirection: 'row', justifyContent: 'space-between', marginTop: '1%' }}>
             <TouchableOpacity style={[{marginLeft:'5%', marginTop: '0%'}, stylesButtons.mainConfig, stylesButtons.copyButton]}  onPress={toggleShowPassword} >
-              <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={showPassword ? 'eye' : 'eye-off'} size={40} color="black"/> 
+              <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={!showPassword ? 'eye' : 'eye-off'} size={40} color="black"/> 
             </TouchableOpacity>
           </View>
           :
-          <View style={{ flex: 0.2, flexDirection: 'row', justifyContent: 'flex-end', marginTop: '1%' }}>
-            <TouchableOpacity style={[{flex: 0.50, marginRight: '5%', marginTop: '1%'}, stylesButtons.mainConfig, stylesButtons.regenerateButton]} onPress={() => {regeneratePassword()} }>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Gerar nova password</Text>
-            </TouchableOpacity>
-          </View>}       
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: '10%' }}></View>}       
           <Options />
         <YesOrNoSpinnerModal question={'Guardar as alterações?'} yesFunction={saveCredentialUpdate} noFunction={dontSaveCredentialsUpdate} visibleFlag={modalVisible} loading={loading}/>
       </View>

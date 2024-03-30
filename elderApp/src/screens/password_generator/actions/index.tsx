@@ -8,46 +8,27 @@ import Algorithm from './algorithm'
 import { FlashMessage, copyPasswordDescription, copyValue } from '../../../components/UserMessages'
 import MainBox from '../../../components/MainBox'
 import { useSessionInfo } from '../../../firebase/authentication/session'
+import { decLength, incLength, updateUpperCase, updateLowerCase, updateNumbers, updateSpecial } from '../../../components/passwordGenerator/functions'
+import { lengthLabel, requirementLabel, upperLabel, lowerLabel, numbersLabel, specialLabel } from '../../../assets/constants'
 
-const minusImage = "../../../assets/images/minus.png"
-const plusImage = "../../../assets/images/plus.png"
-const crossImage = "../../../assets/images/cross.png"
-const checkImage = "../../../assets/images/check.png"
+const minusImage = "../../../assets/images/minus.png" //TODO: colocar no ficheiro de constantes
+const plusImage = "../../../assets/images/plus.png" //TODO: colocar no ficheiro de constantes
+const crossImage = "../../../assets/images/cross.png" //TODO: colocar no ficheiro de constantes
+const checkImage = "../../../assets/images/check.png" //TODO: colocar no ficheiro de constantes
 
-const defaultLength = 12
-const saveTimer = 3000
-
-const requirementLabel = "REQUISITOS:"
-const lengthLabel = "Tamanho:"
-const upperLabel = "Maiúsculas"
-const lowerLabel = "Minúsculas"
-const specialLabel = "&%/$#\"@?"
-const numbersLabel = "Números"
-
-const enum Requirements {
-  Upper = 'upper',
-  Lower = 'lower',
-  Special = 'special',
-  Numbers = 'numbers'
-}
+const defaultLength = 12 //TODO: colocar no ficheiro de constantes
+const saveTimer = 3000 //TODO: colocar no ficheiro de constantes
 
 export default function Generator({ navigation }: {readonly navigation: any}) {
 
-  const [passGenerated, setPassGenerated] = useState("");
-  const [password, setPassword] = useState("");
-  const [length, setLength] = useState(defaultLength);
-  const [uppercase, setUppercase] = useState(true);
-  const [lowercase, setLowercase] = useState(true);
-  const [numbers, setNumbers] = useState(true);
-  const [special, setSpecial] = useState(true);
-  const { localDBKey } = useSessionInfo();
-
-  const incLength = () => {if(length < 40)setLength(length + 1)}
-  const decLength = () => {if(length > 8)setLength(length - 1)}
-  const updateUpperCase = () => {if(!verifyPool(Requirements.Upper)) setUppercase(!uppercase)}
-  const updateLowerCase = () => {if(!verifyPool(Requirements.Lower)) setLowercase(!lowercase)}
-  const updateSpecial = () => {if(!verifyPool(Requirements.Special)) setSpecial(!special)}
-  const updateNumbers = () => {if(!verifyPool(Requirements.Numbers)) setNumbers(!numbers)}
+  const [passGenerated, setPassGenerated] = useState("")
+  const [password, setPassword] = useState("")
+  const [length, setLength] = useState(defaultLength)
+  const [uppercase, setUppercase] = useState(true)
+  const [lowercase, setLowercase] = useState(true)
+  const [numbers, setNumbers] = useState(true)
+  const [special, setSpecial] = useState(true)
+  const { localDBKey } = useSessionInfo()
 
   //UseEffects: ---
   useEffect(() => { 
@@ -62,22 +43,6 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
     }, saveTimer);
     return () => clearTimeout(timer);
   }, [password, passGenerated]);
-
-
-  //Auxiliar functions: ---
-  function verifyPool(currentCase: string): boolean {
-    switch(currentCase) {
-      case Requirements.Upper: 
-        return (uppercase && !lowercase && !numbers && !special)
-      case Requirements.Lower: 
-        return (!uppercase && lowercase && !numbers && !special)
-      case Requirements.Special: 
-        return (!lowercase && special && !uppercase && !numbers)
-      case Requirements.Numbers: 
-        return (!lowercase && !special && numbers && !uppercase)
-    }
-    return (!lowercase && !uppercase && !numbers && !special) 
-  }
 
   async function saveNewPassword() {
     if(passGenerated != password) {
@@ -150,13 +115,13 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
           <Text numberOfLines={1} adjustsFontSizeToFit style={[passwordSecondHalf.lengthText]}>{lengthLabel}</Text>
         </View>
         <View style={[{flex: 0.60, flexDirection: 'row', margin: '5%', justifyContent: 'center',  alignItems: 'center'}]}>
-        <TouchableOpacity style={[{flex: 0.30}]} onPress={() => decLength()}>
+        <TouchableOpacity style={[{flex: 0.30}]} onPress={() => decLength(setLength, length)}>
           <Image source={require(minusImage)} style={[{width: '100%', height: 40, margin: '5%', resizeMode: 'contain'}]}/>
         </TouchableOpacity>
         <View style={[{flex: 0.40, marginHorizontal: '5%', alignItems: 'center'}, passwordSecondHalf.lengthDisplay]}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '1%'}, passwordSecondHalf.numberSelectedText]}>{length}</Text>
         </View>
-        <TouchableOpacity style={[{flex: 0.30}]} onPress={() => incLength()}>
+        <TouchableOpacity style={[{flex: 0.30}]} onPress={() => incLength(setLength, length)}>
           <Image source={require(plusImage)} style={[{width: '100%', height: 40, margin: '5%', resizeMode: 'contain'}]}/>
         </TouchableOpacity>
         </View>
