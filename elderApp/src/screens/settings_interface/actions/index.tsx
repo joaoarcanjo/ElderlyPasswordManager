@@ -8,7 +8,6 @@ import { FIREBASE_AUTH } from '../../../firebase/FirebaseConfig'
 import { elderlyId, elderlyName, elderlyPhone, elderlyPwd } from '../../../keychain/constants'
 import { getKeychainValueFor, saveKeychainValue } from '../../../keychain'
 import { useSessionInfo } from '../../../firebase/authentication/session'
-import { FlashMessage, editCanceledFlash, editCompletedFlash, editValueFlash } from '../../../components/UserMessages'
 import { options } from '../../credential_interface/styles/styles'
 import { YesOrNoSpinnerModal } from '../../../components/Modal'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
@@ -19,6 +18,8 @@ import { closeWebsocket } from '../../../e2e/network/webSockets'
 import { usernameSubject } from '../../../e2e/identity/state'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
 import { cancelLabel, editLabel, saveLabel } from '../../../assets/constants'
+import { FlashMessage } from '../../../components/userMessages/messages'
+import { editCompletedFlash, editCanceledFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
 
 const gitHubUrl = 'https://github.com/joaoarcanjo/ThesisApps'
 
@@ -119,7 +120,7 @@ function AccountInfo() {
    */
   function cancelUpdate() {
     toggleEditFlag()
-    editCanceledFlash(FlashMessage.editModeCanceled)
+    editCanceledFlash()
     setUsernameEdited(username)
     setUserpasswordEdited(userpassword)
     setUserphoneEdited(userphone)

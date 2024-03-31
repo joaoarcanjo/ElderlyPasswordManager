@@ -27,18 +27,6 @@ export const generatorLabel = 'Gerar nova'
 export const settingsLabel = 'Definições'
 export const questionsLabel = 'FAQs'
 
-//Images:
-//TODO: colocar os caminhos das imagens
-const credentialsImage = '../images/credenciais.png'
-const generatorImage = '../images/gerador.png'
-const settingsImage = '../images/definições.png'
-const questionsImage = '../images/perguntas.png'
-const elderlyImage = '../../../assets/images/elderly.png'
-const minusImage = "../../../assets/images/minus.png"
-const plusImage = "../../../assets/images/plus.png" 
-const crossImage = "../../../assets/images/cross.png"
-const checkImage = "../../../assets/images/check.png" 
-
 //SplashScreen:
 export const splashScreenDuration = 3000
 export const timeoutToNewSplash = 1000 * 60 * 5
@@ -86,3 +74,6 @@ export const pageCredentials = 'Credentials'
 export const pageSettings = 'Settings'
 export const pageFAQs = 'FrequentQuestions'
 export const pageCaregivers = 'Caregivers'
+
+//APP state:
+export const appActive = 'active'

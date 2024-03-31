@@ -7,12 +7,10 @@ import MainBox from '../../../components/MainBox'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import AvaliationEmoji from '../../../components/EmojiAvaliation'
 import { getScore } from '../../../algorithms/zxcvbn/algorithm'
-import { FlashMessage, copyURIDescription, copyUsernameDescription, copyValue, editCanceledFlash, editCompletedFlash, editValueFlash } from '../../../components/UserMessages'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
 import { deleteCredentialFromFiretore, updateCredentialFromFiretore } from '../../../firebase/firestore/functionalities'
 import { PasswordOptionsModal, YesOrNoModal, YesOrNoSpinnerModal } from '../../../components/Modal'
-import Algorithm from '../../password_generator/actions/algorithm'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
 import { ChatMessageType } from '../../../e2e/messages/types'
@@ -20,6 +18,9 @@ import { buildEditMessage, sendCaregiversCredentialInfoAction } from './function
 import { deleteCredentialFromLocalDB, updateCredentialFromLocalDB } from '../../../database/credentials'
 import { encrypt } from '../../../algorithms/0thers/crypto'
 import { passwordDefaultLengthGenerator } from '../../../assets/constants'
+import { copyValue, editCanceledFlash, editCompletedFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
+import { FlashMessage, copyURIDescription, copyUsernameDescription } from '../../../components/userMessages/messages'
+import { regeneratePassword } from '../../../components/passwordGenerator/functions'
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
@@ -111,7 +112,7 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
    */
   function cancelUpdate() {
     toggleEditFlag()
-    editCanceledFlash(FlashMessage.editModeCanceled)
+    editCanceledFlash()
     setUsernameEdited(username)
     setPasswordEdited(password)
   }
@@ -141,10 +142,6 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
         }
       </View>
     )
-  }
-
-  function regeneratePassword(requirements: Object, setPasswordEdited: React.Dispatch<React.SetStateAction<string>>) {
-    throw new Error('Function not implemented.')
   }
 
   return (

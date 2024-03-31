@@ -1,5 +1,5 @@
 import { executeKeyExchange } from "../../../algorithms/sss/sssOperations"
-import { sessionAcceptedFlash, sessionRejectedFlash } from "../../../components/UserMessages"
+import { sessionAcceptedFlash, sessionEndedFlash, sessionRejectedFlash } from "../../../components/userMessages/UserMessages"
 import { changeCaregiverStatusOnDatabase, deleteCaregiver, getCaregiverWaitingForResponse, isMaxCaregiversReached } from "../../../database/caregivers"
 import { CaregiverRequestStatus } from "../../../database/types"
 import { encryptAndSendMessage } from "../../../e2e/messages/sendMessage"
@@ -83,6 +83,7 @@ export async function decouplingCaregiver(caregiverEmail: string, caregiverId: s
     .then(() => removeCaregiverFromArray(userId, caregiverId, 'writeCaregivers')) 
     .then(() => removeCaregiverFromArray(userId, caregiverId, 'readCaregivers'))
     .then(() => sendCaregiversDecoupling(caregiverEmail))
+    .then(() => sessionEndedFlash(caregiverEmail, true))
     .then(() => {return executeKeyExchange(userId)})
     .catch(() => console.log('#1 Error decoupling caregiver'))
 }

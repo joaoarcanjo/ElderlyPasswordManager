@@ -5,11 +5,12 @@ import { historyStyle, passwordFirstHalf, passwordSecondHalf } from '../styles/s
 import Navbar from '../../../navigation/actions'
 import { savePasswordGenerated } from '../../../database/passwords'
 import Algorithm from './algorithm'
-import { FlashMessage, copyPasswordDescription, copyValue } from '../../../components/UserMessages'
 import MainBox from '../../../components/MainBox'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { decLength, incLength, updateUpperCase, updateLowerCase, updateNumbers, updateSpecial } from '../../../components/passwordGenerator/functions'
 import { lengthLabel, requirementLabel, upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, timeoutToSavePassword } from '../../../assets/constants'
+import { copyValue } from '../../../components/userMessages/UserMessages'
+import { FlashMessage, copyPasswordDescription } from '../../../components/userMessages/messages'
 
 const minusImage = "../../../assets/images/minus.png" //TODO: colocar no ficheiro de constantes
 const plusImage = "../../../assets/images/plus.png" //TODO: colocar no ficheiro de constantes

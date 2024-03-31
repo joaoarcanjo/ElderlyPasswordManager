@@ -8,8 +8,6 @@ import { Spinner } from "../../../components/LoadingComponents";
 import { useSessionInfo } from "../../../firebase/authentication/session";
 import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
 import { signUpOperation } from "../../../firebase/authentication/funcionalities";
-import { useNavigation } from '@react-navigation/native'
-import { StackNavigationProp } from "@react-navigation/stack";
 
 const SignUpPage = () => {
 

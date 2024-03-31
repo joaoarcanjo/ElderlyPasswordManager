@@ -6,7 +6,6 @@ import { signalWebsocket } from "../network/webSockets"
 import { ChatSession } from "../session/types"
 import { ChatMessageType, CaregiverDataBody, ProcessedChatMessage, CredentialBody, ElderlyDataBody } from "./types"
 import { setCaregiverListUpdated } from "../../screens/list_caregivers/actions/state"
-import { FlashMessage, credentialCreatedByOtherFlash, credentialDeletedByOtherFlash, credentialUpdatedByOtherFlash, editCompletedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionRejectedFlash, sessionRejectMaxReachedFlash, sessionRequestReceivedFlash, sessionRejectedMaxReachedFlash } from "../../components/UserMessages"
 import { getKeychainValueFor } from "../../keychain"
 import { caregiver1SSSKey, caregiver2SSSKey, elderlyId, localDBKey } from "../../keychain/constants"
 import { addCaregiverToArray, removeCaregiverFromArray } from "../../firebase/firestore/functionalities"
@@ -17,6 +16,7 @@ import { setCredentialsListUpdated } from "../../screens/list_credentials/action
 import { getAllCredentialsAndValidate } from "../../screens/list_credentials/actions/functions"
 import { executeKeyExchange } from "../../algorithms/sss/sssOperations"
 import { encryptAndSendMessage } from "./sendMessage"
+import { caregiverPersonalInfoUpdatedFlash, credentialCreatedByOtherFlash, credentialDeletedByOtherFlash, credentialUpdatedByOtherFlash, sessionAcceptedFlash, sessionEndedFlash, sessionRejectMaxReachedFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionRequestReceivedFlash } from "../../components/userMessages/UserMessages"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -142,7 +142,7 @@ async function processPersonalData(currentUserId: string, cm: ProcessedChatMessa
     if (await checkCaregiverByEmail(currentUserId, cm.from)) {  
         await updateCaregiver(data.userId, currentUserId, data.email, data.name, data.phone)
         .then(() => setCaregiverListUpdated(currentUserId))
-        .then(() =>  editCompletedFlash(FlashMessage.caregiverPersonalInfoUpdated))
+        .then(() =>  caregiverPersonalInfoUpdatedFlash(data.email))
         .catch(() => console.log('#1 Error updating caregiver'))
        
     } else if(await checkCaregiverByEmailNotAccepted(currentUserId, cm.from)) {

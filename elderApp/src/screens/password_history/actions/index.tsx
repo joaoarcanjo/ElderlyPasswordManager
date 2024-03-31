@@ -5,10 +5,11 @@ import { styleScroolView } from '../styles/styles'
 import formatTimestamp from '../../../algorithms/0thers/time';
 import Navbar from '../../../navigation/actions';
 import { getGeneratedPasswords } from '../../../database/passwords'
-import { Password } from '../../../database/types'
-import { FlashMessage, copyPasswordDescription, copyValue } from '../../../components/UserMessages'
+import { Password } from '../../../database/types';
 import MainBox from '../../../components/MainBox';
 import { useSessionInfo } from '../../../firebase/authentication/session';
+import { FlashMessage, copyPasswordDescription } from '../../../components/userMessages/messages';
+import { copyValue } from '../../../components/userMessages/UserMessages';
 
 export default function PasswordHistory() {
 

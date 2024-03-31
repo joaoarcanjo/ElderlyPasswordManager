@@ -6,7 +6,7 @@ import { ModalBox } from "../../../components/Modal"
 import { modal, options } from "../../credential_interface/styles/styles"
 import { startSessionWithCaregiver } from "./functions"
 import { useSessionInfo } from "../../../firebase/authentication/session"
-import { sessionRequestSent } from "../../../components/UserMessages"
+import { sessionRequestSent } from "../../../components/userMessages/UserMessages"
 import { deleteCaregiver, saveCaregiver } from "../../../database/caregivers"
 import { CaregiverRequestStatus } from "../../../database/types"
 import { ErrorInstance } from "../../../exceptions/error"
@@ -21,7 +21,7 @@ function AddCaregiverModal({visibility, concludeAction}: Readonly<{visibility: b
     console.log("addCaregiverButtonPressed")
     saveCaregiver(userId, '', '', email, '', CaregiverRequestStatus.WAITING)
     .then(() =>  startSessionWithCaregiver(email, userId, userName, userEmail, userPhone))
-    .then(() => sessionRequestSent())
+    .then(() => sessionRequestSent(email))
     .then(() => concludeAction())
     .catch(async (error) => {
       const errorAux = error as ErrorInstance
