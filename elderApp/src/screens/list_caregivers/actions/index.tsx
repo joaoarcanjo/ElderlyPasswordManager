@@ -6,61 +6,31 @@ import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import AddCaregiver from './addCaregiver'
 import {CaregiverItem} from './caregiverItem'
-import { Caregiver, CaregiverRequestStatus } from '../../../database/types'
-import { caregiverListUpdated } from './state'
-import { getCaregiversArray } from '../../../firebase/firestore/functionalities'
+import { caregiverListUpdated, setCaregiverListUpdated } from './state'
 import { useSessionInfo } from '../../../firebase/authentication/session'
-import { deleteCaregiver, getCaregivers } from '../../../database/caregivers'
-import { executeKeyExchange } from '../../../algorithms/sss/sssOperations'
+import { CaregiverPermission } from '../../list_credentials/actions/functions'
 
-interface CaregiverPermission {
-  canRead: boolean,
-  canWrite: boolean,
-  caregiver: Caregiver
-}
 
-async function getCaregiversPermissions(userId: string, setUserFireKey: Function): Promise<CaregiverPermission[]> {
-  console.log('===> getCaregiversPermissionsCalled')
-  const caregivers = await getCaregivers(userId)
-  const readCaregivers = await getCaregiversArray(userId, 'readCaregivers')
-  const writeCaregivers = await getCaregiversArray(userId, 'writeCaregivers')
-
-  let caregiversPermissions: CaregiverPermission[] = []
-  caregivers.forEach(async (caregiver) => {
-    if(caregiver.requestStatus === CaregiverRequestStatus.ACCEPTED || caregiver.requestStatus === CaregiverRequestStatus.RECEIVED) {
-      caregiversPermissions.push({
-        canRead: readCaregivers.includes(caregiver.caregiverId),
-        canWrite: writeCaregivers.includes(caregiver.caregiverId),
-        caregiver
-      })
-    } else if (caregiver.requestStatus === CaregiverRequestStatus.DECOUPLING) {
-      await deleteCaregiver(userId, caregiver.email)
-      try {
-        const share = await executeKeyExchange(userId)
-        setUserFireKey(share)
-      } catch (error) {
-        console.log('Error deleting caregiver')
-      }
-    }
-  })
-  return caregiversPermissions
-}
-
-function CaregiversList() {
+const CaregiversList = React.memo(function CaregiversList() {
 
   const [caregivers, setCaregivers] = useState<CaregiverPermission[]>([])
-  const { userId, setUserFireKey } = useSessionInfo()
+  const { userId } = useSessionInfo()
 
   const refreshValue = async () => {
-    console.log('===> CaregiversList refreshed.')
-    const caregiversPermissions = await getCaregiversPermissions(userId, setUserFireKey)
-    setCaregivers(caregiversPermissions)
+    try {
+      await setCaregiverListUpdated(userId)
+    } catch (error) {
+      console.log('Error refreshing caregiver list')
+    }
   }
 
   useEffect(() => {
-    caregiverListUpdated.subscribe(refreshValue)
-      //return () => subscription.unsubscribe()
+    caregiverListUpdated.subscribe((caregivers) => {
+      setCaregivers(caregivers)
+    })
   }, [caregiverListUpdated])
+
+  useEffect(() => {setCaregiverListUpdated(userId)}, [])
 
   return (
     <View style = {{ flex: 0.85, flexDirection: 'row', marginTop: '1%', justifyContent: 'space-around'}}>
@@ -85,17 +55,16 @@ function CaregiversList() {
       </View>
     </View>
   )
-}
+})
 
-export default function Caregivers() {
-  const navigation = useNavigation<StackNavigationProp<any>>()
+export const Caregivers = React.memo(function Caregivers() {
+  console.log('## Caregivers component rendered')
 
   return (
     <View    style = {{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
     <MainBox text  = {'Cuidadores'}/>
-      {/*<Button title="TEST" onPress={() => navigation.push('ChatTest')}></Button>*/}
       <CaregiversList/>
       <Navbar/>
     </View>
   )
-}
+})

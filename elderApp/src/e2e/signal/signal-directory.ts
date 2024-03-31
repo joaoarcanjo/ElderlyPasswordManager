@@ -1,7 +1,7 @@
 import { SignedPublicPreKeyType, DeviceType, PreKeyType } from '@privacyresearch/libsignal-protocol-typescript'
 
 import * as base64 from 'base64-js'
-import { ipAddress } from '../../assets/constants'
+import { apiPort, ipAddress } from '../../assets/constants'
 
 export interface PublicDirectoryEntry {
     identityKey: ArrayBuffer
@@ -50,7 +50,7 @@ export class SignalDirectory {
     constructor(private _url: string/*, private _apiKey: string*/) {}
 
     async storeKeyBundle(username: string, bundle: FullDirectoryEntry): Promise<void> {
-        const res = await fetch(`http://${ipAddress}:443/addBundle`, {
+        const res = await fetch(`http://${ipAddress}:${apiPort}/addBundle`, {
             method: 'PUT',
             //headers: { 'x-api-key': this._apiKey },
             headers: {
@@ -65,7 +65,7 @@ export class SignalDirectory {
 
     async getPreKeyBundle(address: string): Promise<DeviceType | undefined> {
         //console.log("-> getPreKeyBundle: "+address)
-        const res = await fetch(`http://${ipAddress}:443/getBundle/${address}`/*, { headers: { 'x-api-key': this._apiKey } }*/)
+        const res = await fetch(`http://${ipAddress}:${apiPort}/getBundle/${address}`/*, { headers: { 'x-api-key': this._apiKey } }*/)
         
         const bundle = await res.json()
         if (!bundle) {

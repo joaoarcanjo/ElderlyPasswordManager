@@ -9,6 +9,7 @@ import { getKeychainValueFor, saveKeychainValue } from '../../../keychain';
 import { elderlyName, elderlyPhone } from '../../../keychain/constants';
 import { createIdentity } from '../../../e2e/identity/functions';
 import { getAllCredentialsAndValidate } from '../../list_credentials/actions/functions';
+import { credentialTimoutRefresh, credentialsLabel, cuidadoresLabel, generatorLabel, pageCaregivers, pageCredentials, pageFAQs, pageGenerator, pageSettings, questionsLabel, settingsLabel } from '../../../assets/constants';
 
 const credentialsImage = '../images/credenciais.png'
 const generatorImage = '../images/gerador.png'
@@ -38,79 +39,62 @@ function ElderlyInfoBox() {
     )
 }
 
-function CaregiversButtonBox() {
-
-    const navigation = useNavigation<StackNavigationProp<any>>();
-
-    const GeneratorsNavigation = () => {
-        navigation.push('Caregivers')
-    }
-
-    return (
-        <View style={[{flex: 0.4}]}>
-            <TouchableOpacity style={[{flex: 1, justifyContent: 'center', alignItems: 'center'}, stylesFirstHalf.caregiversButton, stylesButtons.mainConfig]} onPress={() => {GeneratorsNavigation()}}>
-                <Text numberOfLines={1} adjustsFontSizeToFit style={stylesFirstHalf.caregiversButtonText}>Cuidadores</Text>
-            </TouchableOpacity>
-        </View>
-    )
-}
-
 function Functionalities() {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const CaregiversNavigation = () => {
-        navigation.push('Caregivers')
+        navigation.push(pageCaregivers)
     }
 
     const CredencialsNavigation = async () => {
         // Your code to handle the click event
         //console.log('Credentials button clicked!');
-        navigation.push('Credentials')
+        navigation.push(pageCredentials)
     }
 
     const GeneratorsNavigation = () => {
         // Your code to handle the click event
         //console.log('Generator button clicked!');
-        navigation.push('Generator')
+        navigation.push(pageGenerator)
     }
 
     const FrequentQuestionsNavigation = () => {
         // Your code to handle the click event
         //console.log('Questions button clicked!');
-        navigation.push('FrequentQuestions')
+        navigation.push(pageFAQs)
     }
 
     const SettingsNavigation = () => {
         // Your code to handle the click event
         //console.log('Questions button clicked!');
-        navigation.push('Settings')
+        navigation.push(pageSettings)
     }
 
     return (
         <View style={{flex: 0.80, marginBottom: '10%', justifyContent: 'center', alignItems: 'center'}}>
              <View style={[{flex: 0.25, marginVertical: '2%', width: '90%'}]} >
                 <TouchableOpacity style={[{flex: 1, justifyContent: 'center', alignItems: 'center'}, stylesFirstHalf.caregiversButton, stylesButtons.mainConfig]} onPress={() => {CaregiversNavigation()}}>
-                    <Text style={[stylesFirstHalf.caregiversButtonText]}>Cuidadores</Text>
+                    <Text style={[stylesFirstHalf.caregiversButtonText]}>{cuidadoresLabel}</Text>
                 </TouchableOpacity>
             </View>
            <View style={{flex: 0.5, flexDirection: 'row', justifyContent: 'space-around' }}>
                 <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareCredentials, stylesButtons.mainConfig]} onPress={() => CredencialsNavigation()}>
                     <Image source={require(credentialsImage)} style={[stylesOptions.squarePhoto]}/>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>Credenciais</Text>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>{credentialsLabel}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareGenerator, stylesButtons.mainConfig]} onPress={() => GeneratorsNavigation()}>
                     <Image source={require(generatorImage)} style={[stylesOptions.squarePhoto]}/>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '0%'}, stylesOptions.squareText]}>Gerar nova</Text>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '0%'}, stylesOptions.squareText]}>{generatorLabel}</Text>
                 </TouchableOpacity>
            </View>
            <View style={{flex: 0.5, flexDirection: 'row', justifyContent: 'space-around' }}>
                 <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareSettings, stylesButtons.mainConfig]} onPress={() => SettingsNavigation()}>
                     <Image source={require(settingsImage)} style={[stylesOptions.squarePhoto]}/>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>Definições</Text>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>{settingsLabel}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareQuestions, stylesButtons.mainConfig]} onPress={() => FrequentQuestionsNavigation()}>
                     <Image source={require(questionsImage)} style={[stylesOptions.squarePhoto]}/>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>Perguntas</Text>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>{questionsLabel}</Text>
                 </TouchableOpacity>
            </View>
         </View>
@@ -123,15 +107,15 @@ function Functionalities() {
  */
 export default function MainMenu() {
 
-    const { userId, setUserName, setUserPhone, userPhone, userName, userEmail, localDBKey, userFireKey } = useSessionInfo()
+    const { userId, setUserName, setUserPhone, userPhone, userName, userEmail, localDBKey } = useSessionInfo()
     //const { expoPushToken } = usePushNotifications()
     
     useEffect(() => {
-        if(userId == '' || userFireKey == '' || localDBKey == '') return
+        if(userId == '' || localDBKey == '') return
         
         const interval = setInterval(async () => {
-            await getAllCredentialsAndValidate(userId, userFireKey, localDBKey)
-        }, 12 * 1000) //12 em 12 segundos
+            await getAllCredentialsAndValidate(userId, localDBKey)
+        }, credentialTimoutRefresh) //12 em 12 segundos
 
         return () => clearInterval(interval)
     }, [])

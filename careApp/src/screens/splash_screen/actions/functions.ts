@@ -19,7 +19,6 @@ export const flashTimeoutPromise = async (userId: string, setXd: Function) => {
         return insertTimeoutToLocalDB(userId, new Date().getTime(), TimeoutType.SPLASH)
         .then(() => new Promise(resolve => setTimeout(resolve, time)))
     } else {
-        console.log("AHHHH")
         setXd(false)
         const currentDate = new Date().getTime()
         if(currentDate - timestamp > timeToNewSplash) {

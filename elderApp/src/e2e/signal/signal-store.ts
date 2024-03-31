@@ -292,25 +292,34 @@ export class SignalProtocolStore implements StorageType {
     //==-> obter do sql.
     async loadSession(identifier: string): Promise<SessionRecordType | undefined> {
         //console.log("===> LoadSessionCalled")
-        const rec = await getSessionById('session' + identifier, await this.getUserId(), await this.getDBKey())
-        if (typeof rec === 'object') {
-            return rec.record
-        } else if (typeof rec === 'undefined') {
-            return rec
-        }
-        throw new Error(`session record is not an ArrayBuffer`)
+        return await getSessionById('session' + identifier, await this.getUserId(), await this.getDBKey())
+        .then((rec) => {
+            if (typeof rec === 'object') {
+                return rec.record
+            } else if (typeof rec === 'undefined') {
+                return rec
+            }
+            return undefined
+        })
+        .catch(() => {
+            console.log('#1 Error retrieving session')
+            return undefined
+        })
     }
     async storeSession(identifier: string, record: SessionRecordType): Promise<void> {
         //console.log("===> StoreSessionCalled")
         await saveSignalSessions(await this.getUserId(), 'session' + identifier, record, await this.getDBKey())
+        .catch(() => console.log('#1 Error storing session'))
     }
     async removeSession(identifier: string): Promise<void> {
         //console.log("===> RemoveSessionCalled")
         await deleteSessionById(await this.getUserId(),'session' + identifier)
+        .catch(() => console.log('#1 Error removing session'))
     }
     async removeAllSessions(identifier: string): Promise<void> {
         //console.log("===> RemoveAllSessionsCalled")
         await deleteAllSessions(await this.getUserId())
+        .catch(() => console.log('#1 Error removing all sessions'))
     }
 }
 

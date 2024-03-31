@@ -1,12 +1,10 @@
 import { BlurView } from "expo-blur";
 import React, { ReactNode, useState } from "react";
-import {View, StyleSheet, Modal, TouchableOpacity, Text, Image} from 'react-native'
+import { View, StyleSheet, Modal, TouchableOpacity, Text } from 'react-native'
 import { stylesButtons } from "../assets/styles/main_style"
 import { modal, options } from "../screens/credential_interface/styles/styles"
 import { Spinner } from "./LoadingComponents"
-import { useSessionInfo } from "../firebase/authentication/session";
-import { passwordSecondHalf } from "../screens/password_generator/styles/styles";
-import { requirementLabel, upperLabel, lowerLabel, numbersLabel, specialLabel } from "../assets/constants";
+import { upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, modalIntentity } from "../assets/constants";
 import { updateUpperCase, updateLowerCase, updateNumbers, updateSpecial } from "./passwordGenerator/functions";
 import { Requirement, RequirementLength } from "./passwordGenerator/Requirement";
 
@@ -55,7 +53,7 @@ export function PasswordOptionsModal({saveFunction, closeFunction, visibleFlag}:
   const [lowercase, setLowercase] = useState(true)
   const [numbers, setNumbers] = useState(true)
   const [special, setSpecial] = useState(true)
-  const [length, setLength] = useState(15)
+  const [length, setLength] = useState(passwordDefaultLengthGenerator)
 
   const saveRequirements = () => {
     saveFunction({length: length, strict: true, symbols: special, uppercase: uppercase, lowercase: lowercase, numbers: numbers})
@@ -97,7 +95,7 @@ export function ModalBox({children, visibleFlag}: Readonly<{children: ReactNode,
       >
         <BlurView
           style={{ flex: 1 }}
-          intensity={60} // You can adjust the intensity of the blur
+          intensity={modalIntentity}
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>

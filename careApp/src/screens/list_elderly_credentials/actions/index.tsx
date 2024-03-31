@@ -52,7 +52,6 @@ function ScrollItemExample({credential, elderlyId}: Readonly<{credential: Creden
     const cloudKey = await getKey(elderlyId)
     const sssKey = await getKeychainValueFor(elderlySSSKey(elderlyId))
     const encryptionKey = deriveSecret([cloudKey, sssKey]) 
-    console.log("Encryption Key: ", encryptionKey)
     navigation.navigate('CredentialPage', 
     { 
       userId: elderlyId,
@@ -129,7 +128,7 @@ function ElderlyCredentialsList({ elderlyId }: Readonly<{elderlyId: string}>) {
     const cloudKey = await getKey(elderlyId)
     const sssKey = await getKeychainValueFor(elderlySSSKey(elderlyId))
     const encryptionKey = deriveSecret([cloudKey, sssKey])
-    
+    console.log("Encryption Key 1: ", encryptionKey)
     listAllCredentialsFromFirestore(elderlyId, encryptionKey, true).then((credencials) => {
       let auxCredencials: Credential[] = [];
       credencials.forEach(value => {

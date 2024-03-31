@@ -6,7 +6,7 @@ import MainMenu from './src/screens/main_menu/actions';
 import ElderlyListScreen from './src/screens/list_elderly/actions';
 import { initDb } from './src/database';
 import FlashMessage from "react-native-flash-message";
-import ElderlyCredentials from './src/screens/elderly_credentials/actions';
+import ElderlyCredentials from './src/screens/list_elderly_credentials/actions';
 import { AddCredencial } from './src/screens/add_credentials/actions';
 import { SessionProvider, useSessionInfo } from './src/firebase/authentication/session';
 import * as Notifications from "expo-notifications";

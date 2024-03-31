@@ -5,12 +5,12 @@ import { caregiverContactInfo, caregiverStyle, decouplingOption, newCaregiverCon
 import { acceptCaregiver, decouplingCaregiver, refuseCaregiver } from "./functions"
 import { YesOrNoModal } from "../../../components/Modal"
 import { addCaregiverToArray, removeCaregiverFromArray } from "../../../firebase/firestore/functionalities"
-import { encryptAndSendMessage } from "../../../e2e/messages/functions"
 import { ChatMessageType } from "../../../e2e/messages/types"
 import { useSessionInfo } from "../../../firebase/authentication/session"
 import { currentSessionSubject, sessionForRemoteUser } from "../../../e2e/session/state"
 import { startSession } from "../../../e2e/session/functions"
 import { CaregiverRequestStatus } from "../../../database/types"
+import { encryptAndSendMessage } from "../../../e2e/messages/sendMessage"
 
 const caregiverImage = '../../../assets/images/caregiver.png'
 const telephoneImage = '../../../assets/images/telephone.png'
@@ -83,13 +83,10 @@ export function Caregiver({name, phone, email, caregiverId, setRefresh, canWrite
 
   const [modalVisible, setModalVisible] = useState(false)
   const [writePermission, setWritePermission] = useState(canWrite)
-  const { userId, setUserFireKey } = useSessionInfo()
+  const { userId } = useSessionInfo()
 
   const deleteCaregiver = () => {
     decouplingCaregiver(email, caregiverId, userId)
-    .then((userFireKey) => {
-      setUserFireKey(userFireKey)
-    })
     .then(() => setModalVisible(false))
     .then(() => setRefresh())
   }

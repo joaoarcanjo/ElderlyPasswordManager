@@ -1,13 +1,13 @@
 import FormatTimestamp from "../../../algorithms/0thers/time"
 import { getCaregivers } from "../../../database/caregivers"
-import { encryptAndSendMessage } from "../../../e2e/messages/functions"
+import { encryptAndSendMessage } from "../../../e2e/messages/sendMessage"
 import { ChatMessageType, CredentialBody } from "../../../e2e/messages/types"
 import { startSession } from "../../../e2e/session/functions"
 import { currentSessionSubject, sessionForRemoteUser } from "../../../e2e/session/state"
 
 export async function sendCaregiversCredentialInfoAction(userId: string, credentialId: string, platform: string, type: ChatMessageType) {
     console.log("===> sendCaregiversCredentialInfoActionCalled")
-    const caregivers = await getCaregivers(userId)   
+    const caregivers = await getCaregivers(userId)
     caregivers.forEach(async (caregiver) => {
         if(!sessionForRemoteUser(caregiver.email)) {
             await startSession(caregiver.email)

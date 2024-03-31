@@ -26,7 +26,10 @@ function AddCaregiverModal({visibility, concludeAction}: Readonly<{visibility: b
     .catch(async (error) => {
       const errorAux = error as ErrorInstance
       if(errorAux.code === Errors.ERROR_CAREGIVER_ALREADY_ADDED.valueOf()) alert(errorAux.code)
-      else await deleteCaregiver(userId, email).then(() => alert(errorAux.code))
+      else {
+        await deleteCaregiver(userId, email).then(() => alert(errorAux.code))
+        .catch(() => console.log('#1 Error deleting caregiver'))
+      }
     })
   }
 

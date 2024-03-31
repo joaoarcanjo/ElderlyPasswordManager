@@ -6,6 +6,7 @@ import React from 'react';
 import { darkGreenBackgroud, lightBlueBackground, lightGreenBackgroud, lightRedBackground, lightYellowBackground, purpleBackground, superlightBlueBackgroud, superlightGreenBackground, yellowBackground } from '../assets/styles/colors';
 import { triggerNotifications } from '../notifications/localNotifications';
 import { CredentialBody } from '../e2e/messages/types';
+import { durationQuickMessage, durationSlowMessage } from '../assets/constants';
 
 export const enum FlashMessage {
   uriCopied = 'URI COPIADO!!',
@@ -40,7 +41,7 @@ export function copyValue(value: string, message: FlashMessage, description: str
       description: description,
       icon: props => <Image source={require("../assets/images/copy.png")} {...props} />,
       backgroundColor: superlightGreenBackground,
-      duration: 6000,
+      duration: durationQuickMessage,
       color: "black", // text color
     });
 }
@@ -52,7 +53,7 @@ export function editValueFlash() {
     description: '',
     icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
     backgroundColor: superlightBlueBackgroud,
-    duration: 6000,
+    duration: durationQuickMessage,
     color: "black", // text color
   });
 } 
@@ -63,7 +64,7 @@ export function editCanceledFlash(flashMessage: FlashMessage) {
     message: flashMessage,
     icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
     backgroundColor: lightYellowBackground,
-    duration: 6000,
+    duration: durationQuickMessage,
     color: "black", // text color
   });
 } 
@@ -75,7 +76,7 @@ export function editCompletedFlash(flashMessage: FlashMessage) {
     message: flashMessage,
     icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
     backgroundColor: darkGreenBackgroud,
-    duration: 6000,
+    duration: durationQuickMessage,
     color: "black", // text color
   });
 } 
@@ -87,7 +88,7 @@ export function sessionRequestSent() {
     message: FlashMessage.sessionRequest,
     icon: props => <Image source={require("../assets/images/check.png")} {...props} />,
     backgroundColor: lightBlueBackground,
-    duration: 6000,
+    duration: durationQuickMessage,
     color: "black", // text color
   });
 } 
@@ -99,7 +100,7 @@ export function sessionRequestReceivedFlash(from: string) {
       message: FlashMessage.sessionRequestReceived,
       icon: props => <Image source={require("../assets/images/plus.png")} {...props} />,
       backgroundColor: purpleBackground,
-      duration: 6000,
+      duration: durationQuickMessage,
       color: "black", // text color
     });
   } else {
@@ -115,7 +116,7 @@ export function sessionAcceptedFlash(from: string, byMe: boolean) {
       message:  byMe ? FlashMessage.sessionAccepted : FlashMessage.caregiverAccept,
       icon: props => <Image source={require("../assets/images/check.png")} {...props} />,
       backgroundColor: darkGreenBackgroud,
-      duration: 6000,
+      duration: durationQuickMessage,
       color: "black", // text color
     });
   } else if(byMe) {
@@ -133,7 +134,7 @@ export function sessionRejectedFlash(from: string, byMe: boolean) {
       message:  byMe ? FlashMessage.sessionRejected : FlashMessage.caregiverReject,
       icon: props => <Image source={require("../assets/images/cross.png")} {...props} />,
       backgroundColor: lightRedBackground,
-      duration: 6000,
+      duration: durationQuickMessage,
       color: "black", // text color
     });
   } else if(byMe) {
@@ -152,7 +153,7 @@ export function sessionRejectMaxReachedFlash(from: string) {
       description: `O número máximo de conexões foi atingido, conexão com o cuidador ${from} rejeitada.`,
       icon: props => <Image source={require("../assets/images/cross.png")} {...props} />,
       backgroundColor: lightRedBackground,
-      duration: 10000,
+      duration: durationSlowMessage,
       color: "black", // text color
     });
   } else {
@@ -169,7 +170,7 @@ export function sessionRejectedMaxReachedFlash(from: string) {
       description: `O cuidador ${from} não pode aceitar mais conexões, sendo assim rejeitada.`,
       icon: props => <Image source={require("../assets/images/cross.png")} {...props} />,
       backgroundColor: lightRedBackground,
-      duration: 10000,
+      duration: durationSlowMessage,
       color: "black", // text color
     });
   } else {
@@ -184,7 +185,7 @@ export function sessionEndedFlash(from: string, byMe: boolean) {
       message: FlashMessage.sessionEnded,
       icon: props => <Image source={require("../assets/images/minus.png")} {...props} />,
       backgroundColor: lightRedBackground,
-      duration: 6000,
+      duration: durationQuickMessage,
       color: "black", // text color
     });
   } else {
@@ -200,7 +201,7 @@ export function credentialUpdatedByOtherFlash(from: string, info: CredentialBody
       description: `A informação da credencial ${info.platform} foi atualizada!`,
       icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
       backgroundColor: superlightBlueBackgroud,
-      duration: 7000,
+      duration: durationSlowMessage,
       color: "black", // text color
       position: 'top'
     });
@@ -217,7 +218,7 @@ export function credentialCreatedByOtherFlash(from: string, info: CredentialBody
       description: `A credencial ${info.platform} foi criada.`,
       icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
       backgroundColor: lightGreenBackgroud,
-      duration: 7000,
+      duration: durationSlowMessage,
       color: "black", // text color
       position: 'top'
     });
@@ -234,7 +235,7 @@ export function credentialDeletedByOtherFlash(from: string, info: CredentialBody
       description: `A informação da credencial ${info.platform} foi apagada!`,
       icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
       backgroundColor: lightRedBackground,
-      duration: 7000,
+      duration: durationSlowMessage,
       color: "black", // text color
       position: 'top'
     });

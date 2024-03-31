@@ -22,4 +22,12 @@ export enum Errors {
     ERROR_GETTING_TIMEOUT = "Não foi possível obter o timeout.",
 
     ERROR_DELETING_CAREGIVER = "Não foi possível eliminar o cuidador.",
+    ERROR_UPDATING_CAREGIVER = "Não foi possível atualizar o cuidador.",
+
+    ERROR_DELETING_SESSION = "Não foi possível eliminar a sessão.",
+    ERROR_UPDATING_SESSION = "Não foi possível atualizar a sessão.",
+    ERROR_CREATING_SESSION = "Não foi possível criar a sessão.",
+    ERROR_RETRIEVING_SESSION = "Não foi possível recuperar a sessão.",
+
+    ERROR_GETTING_GENERATED_PASSWORDS = "Não foi possível obter as passwords geradas.",
 }

@@ -2,18 +2,16 @@ import { dbSQL } from "."
 import { ErrorInstance } from "../exceptions/error"
 import { Errors } from "../exceptions/types"
 
-/**
- * Insere uma credencial no banco de dados
- * 
- * @param userId - O ID do utilizador
- * @param credentialId - O ID da credencial
- * @param record - Os dados associados à credencial
- * @param updatedBy - O usuário que atualizou a credencial
- * @param updatedAt - O timestamp da atualização da credencial
- * @returns Uma Promise que é resolvida quando a credencial é inserida com sucesso, ou rejeitada com um erro se a inserção falhar
- */
 
 //TODO: chamado quando a inserção é bem sucedida na cloud.
+/**
+ * Inserts a credential into the local database.
+ * 
+ * @param userId - The ID of the user.
+ * @param credentialId - The ID of the credential.
+ * @param record - The record to be inserted.
+ * @returns A Promise that resolves when the credential is successfully inserted, or rejects with an error.
+ */
 export async function insertCredentialToLocalDB(userId: string, credentialId: string, record: string): Promise<void> {
     console.log("===> insertCredentialCalled")
     return new Promise((resolve, reject) => {
@@ -39,11 +37,12 @@ export async function insertCredentialToLocalDB(userId: string, credentialId: st
 }
 
 /**
- * Obtém uma credencial do banco de dados.
- * 
- * @param userId - O ID do utilizador.
- * @param credentialId - O ID da credencial.
- * @returns Uma Promise que é resolvida com os dados da credencial se for encontrada, ou rejeitada com um erro se a busca falhar.
+ * Retrieves a credential from the database for a given user and credential ID.
+ * @param userId - The ID of the user.
+ * @param credentialId - The ID of the credential.
+ * @returns A Promise that resolves with the retrieved credential record.
+ * @throws {Errors.ERROR_RETRIEVING_CREDENTIAL} If there was an error retrieving the credential.
+ * @throws {Errors.ERROR_DATABASE_NOT_INITIALIZED} If the database is not initialized.
  */
 export async function getCredential(userId: string, credentialId: string): Promise<any> {
     //console.log("===> getCredentialCalled")
@@ -71,15 +70,14 @@ export async function getCredential(userId: string, credentialId: string): Promi
             reject(Errors.ERROR_DATABASE_NOT_INITIALIZED)
         }
     })
-    //return Promise.resolve()
 }
 
 /**
- * Apaga uma credencial do banco de dados.
+ * Deletes a credential from the database.
  * 
- * @param userId - O ID do utilizador.
- * @param credentialId - O ID da credencial.
- * @returns Uma Promise que é resolvida quando a credencial é deletada com sucesso, ou rejeitada com um erro se a deleção falhar.
+ * @param userId - The ID of the user.
+ * @param credentialId - The ID of the credential.
+ * @returns A Promise that resolves when the credential is successfully deleted, or rejects with an error.
  */
 export async function deleteCredentialFromLocalDB(userId: string, credentialId: string): Promise<void> {
     console.log("===> deleteCredential called");
@@ -107,14 +105,12 @@ export async function deleteCredentialFromLocalDB(userId: string, credentialId: 
 }
 
 /**
- * Atualiza uma credencial no banco de dados.
+ * Updates a credential in the local database.
  * 
- * @param userId - O ID do utilizador.
- * @param credentialId - O ID da credencial.
- * @param newRecord - Os novos dados associados à credencial.
- * @param updatedBy - O usuário que atualizou a credencial.
- * @param updatedAt - O timestamp da atualização da credencial.
- * @returns Uma Promise que é resolvida quando a credencial é atualizada com sucesso, ou rejeitada com um erro se a atualização falhar.
+ * @param userId - The ID of the user.
+ * @param credentialId - The ID of the credential.
+ * @param newRecord - The new record to be updated.
+ * @returns A Promise that resolves when the credential is successfully updated, or rejects with an error.
  */
 export async function updateCredentialFromLocalDB(userId: string, credentialId: string, newRecord: string): Promise<void> {
     console.log("===> updateCredentialCalled")
@@ -138,19 +134,18 @@ export async function updateCredentialFromLocalDB(userId: string, credentialId: 
         }
     })
 }
-/**
- * Obtém todas as credenciais de um determinado usuário.
- * 
- * @param userId - O ID do usuário.
- * @returns Uma Promise que é resolvida com um array contendo todas as credenciais do usuário, ou rejeitada com um erro se a busca falhar.
- */
-
 
 export interface CredentialLocalRecord {
     credentialId: string;
     record: string;
 }
 
+/**
+ * Retrieves all credentials from the local database for a given user.
+ * 
+ * @param userId - The ID of the user.
+ * @returns A Promise that resolves with an array of all credential records.
+ */
 export async function getAllLocalCredentials(userId: string): Promise<CredentialLocalRecord[]> {
     console.log("===> getAllCredentialsCalled");
     return new Promise((resolve, reject) => {

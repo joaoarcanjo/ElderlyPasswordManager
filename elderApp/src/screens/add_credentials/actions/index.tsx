@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { TextInput, View, Text, TouchableOpacity } from "react-native";
 import { stylesButtons } from "../../../assets/styles/main_style";
-import { passwordFirstHalf, stylesAddCredential, stylesInputsCredencials } from "../styles/styles";
+import { stylesAddCredential, stylesInputsCredencials } from "../styles/styles";
 import { whiteBackgroud } from "../../../assets/styles/colors";
 import Navbar from "../../../navigation/actions";
 import { addCredencialToFirestore } from "../../../firebase/firestore/functionalities";
@@ -19,6 +19,7 @@ import { ChatMessageType } from "../../../e2e/messages/types";
 import { insertCredentialToLocalDB } from "../../../database/credentials";
 import { PasswordOptionsModal } from "../../../components/Modal";
 import { regeneratePassword } from "../../../components/passwordGenerator/functions";
+import { optionsLabel, passwordDefaultLengthGenerator, passwordLabel, regenerateLabel, usernameLabel } from "../../../assets/constants";
 
 const placeholderPlatform = 'Insira a plataforma'
 const placeholderURI = 'Insira o URI da plataforma'
@@ -32,34 +33,38 @@ function CredentialsInput() {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [avaliation, setAvaliation] = useState<number>(0)
-    const [requirements, setRequirements] = useState<Object>({length: 15, strict: true, symbols: false, uppercase: true, lowercase: true, numbers: true})
+    const [requirements, setRequirements] = useState<Object>({length: passwordDefaultLengthGenerator, strict: true, symbols: false, uppercase: true, lowercase: true, numbers: true})
     const [showPassword, setShowPassword] = useState(false)
     const [modalVisible, setModalVisible] = useState(false)
     const navigation = useNavigation<StackNavigationProp<any>>()
-    const { userId, userEmail, userFireKey, localDBKey } = useSessionInfo()
+    const { userId, userEmail, localDBKey } = useSessionInfo()
 
     useEffect(() => setAvaliation(getScore(password)), [password])
 
     useEffect(() => regeneratePassword(requirements, setPassword), [])
   
     const handleSave = async () => {
-        if(platform != '' && uri != '' && username != '' && password != '') {
-            const uuid = getNewId()
-            const jsonValue = JSON.stringify({
-                id: uuid,
-                platform: platform, 
-                uri: uri, 
-                username: username, 
-                password: password,
-                edited: {
-                    updatedBy: userEmail,
-                    updatedAt: Date.now()
-                }
-            })
-            await addCredencialToFirestore(userId, userFireKey, uuid, jsonValue)
-            await insertCredentialToLocalDB(userId, uuid, encrypt(jsonValue, localDBKey))
-            await sendCaregiversCredentialInfoAction(userId, '', platform, ChatMessageType.CREDENTIALS_CREATED)
-            navigation.goBack()
+        try {
+            if(platform != '' && uri != '' && username != '' && password != '') {
+                const uuid = getNewId()
+                const jsonValue = JSON.stringify({
+                    id: uuid,
+                    platform: platform, 
+                    uri: uri, 
+                    username: username, 
+                    password: password,
+                    edited: {
+                        updatedBy: userEmail,
+                        updatedAt: Date.now()
+                    }
+                })
+                await addCredencialToFirestore(userId, uuid, jsonValue)
+                await insertCredentialToLocalDB(userId, uuid, encrypt(jsonValue, localDBKey))
+                await sendCaregiversCredentialInfoAction(userId, '', platform, ChatMessageType.CREDENTIALS_CREATED)
+                navigation.goBack()
+            }
+        } catch (error) {
+            console.log('#1 Error creating credential')
         }
     }
 
@@ -94,7 +99,7 @@ function CredentialsInput() {
                         onChangeText={text => setURI(text)}
                         />
                     </View>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: 20}]}>Username</Text>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: 20}]}>{usernameLabel}</Text>
                     <View style={[{margin: '4%', marginTop: '1%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 1, backgroundColor: whiteBackgroud }]}>
                         <TextInput
                         placeholder={placeholderUsername}
@@ -104,7 +109,7 @@ function CredentialsInput() {
                         onChangeText={text => setUsername(text)}
                         />
                     </View>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: 20}]}>Password</Text>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: 20}]}>{passwordLabel}</Text>
                     <View style={[{margin: '4%', marginTop: '1%'}, { borderRadius: 15, borderWidth: 1, backgroundColor: whiteBackgroud }]}>
                         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginHorizontal: '5%'}}>
                             <TextInput
@@ -120,13 +125,13 @@ function CredentialsInput() {
                     </View>
                     <View style={{flexDirection: 'row', marginVertical: '5%', marginHorizontal: '3%'}}>
                         <TouchableOpacity style={[{flex: 0.40}, stylesButtons.blueButton, stylesButtons.mainConfig]} onPress={() => {setModalVisible(true)}}>
-                            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Opções</Text>
+                            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>{optionsLabel}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[{flex: 0.20, marginHorizontal: '3%', flexDirection: 'row'}, stylesButtons.visibilityButton, stylesButtons.mainConfig]}  onPress={toggleShowPassword} >
                             <MaterialCommunityIcons name={showPassword ? 'eye-off' : 'eye'} size={35} color="black"/> 
                         </TouchableOpacity>
                         <TouchableOpacity style={[{flex: 0.40}, stylesButtons.regenerateButton, stylesButtons.mainConfig]} onPress={() => regeneratePassword(requirements, setPassword)}>
-                            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Regenerar</Text>
+                            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>{regenerateLabel}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

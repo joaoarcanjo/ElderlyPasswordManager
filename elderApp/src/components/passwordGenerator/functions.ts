@@ -1,3 +1,4 @@
+import { passwordMaxLengthGenerator, passwordMinLengthGenerator } from "../../assets/constants"
 import Algorithm from "../../screens/password_generator/actions/algorithm"
 import { Requirements } from "./constants"
 
@@ -117,7 +118,7 @@ export const updateNumbers = (
  * @param length O comprimento atual.
  */
 export const incLength = (setLength: Function, length: number): void => {
-    if (length < 40) {
+    if (length < passwordMaxLengthGenerator) {
         setLength(length + 1);
     }
 };
@@ -128,7 +129,7 @@ export const incLength = (setLength: Function, length: number): void => {
  * @param length O comprimento atual.
  */
 export const decLength = (setLength: Function, length: number): void => {
-    if (length > 8) {
+    if (length > passwordMinLengthGenerator) {
         setLength(length - 1);
     }
 }

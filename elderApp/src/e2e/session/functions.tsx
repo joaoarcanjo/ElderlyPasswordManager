@@ -2,10 +2,10 @@ import { SessionBuilder, SessionCipher, SignalProtocolAddress } from "@privacyre
 import { directorySubject, signalStore, usernameSubject } from "../identity/state"
 import { ChatSession } from "./types"
 import { sessionListSubject } from "./state"
-import { sendSignalProtocolMessage } from "../messages/functions"
 import { stringToArrayBuffer } from "../signal/signal-store"
 import { ChatMessageType, ProcessedChatMessage } from "../messages/types"
 import { randomUUID } from 'expo-crypto'
+import { sendSignalProtocolMessage } from "../messages/sendMessage"
 //import { SessionBuilder, SessionCipher, SignalProtocolAddress } from "../../algorithms/signal"
 
 /**

@@ -13,7 +13,7 @@ import { caregiverId, elderlySSSKey } from "../../keychain/constants"
 import { FlashMessage, credentialCreatedByOtherFlash, credentialDeletedByOtherFlash, credentialUpdatedByOtherFlash, editCompletedFlash, elderlySentFirstKey, sessionAcceptedFlash, sessionEndedFlash, sessionPermissionsFlash, sessionRejectMaxReachedFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionRequestReceivedFlash } from "../../components/UserMessages"
 import { ElderlyRequestStatus } from "../../database/types"
 import { checkElderlyByEmail, checkElderlyByEmailWaitingForResponse, deleteElderly, isMaxElderlyReached, saveElderly, updateElderly } from "../../database/elderlyFunctions"
-import { setCredentialsListUpdated } from "../../screens/elderly_credentials/actions/state"
+import { setCredentialsListUpdated } from "../../screens/list_elderly_credentials/actions/state"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3

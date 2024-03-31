@@ -1,9 +1,9 @@
 import { encrypt } from '../../algorithms/0thers/crypto';
-import { deriveSecret } from '../../algorithms/sss/sss';
+import { elderlyCollectionName, keyCollectionName, keyDocumentName, caregiversCollectionName, caregiversDocumentName, credencialsCollectionName } from '../../assets/constants';
 import { getKeychainValueFor } from '../../keychain';
-import { firestoreSSSKey } from '../../keychain/constants';
+import { elderlyFireKey, firestoreSSSKey } from '../../keychain/constants';
 import { firebase } from '../FirebaseConfig';
-import { caregiversCollectionName, caregiversDocumentName, credencialsCollectionName, defaultCaregivers, defaultCredencials, defaultElderly, elderlyCollectionName, keyCollectionName, keyDocumentName, updateDataCredencial } from './constants';
+import { defaultCaregivers, defaultCredencials, defaultElderly, updateDataCredencial } from './constants';
 
 const firestore = firebase.firestore()
 
@@ -11,13 +11,20 @@ const firestore = firebase.firestore()
  * Função para alterar a chave que se encontra na cloud.
  */
 async function changeFirestoreKey(userId: string) {
-    const firestoreKey = await getKeychainValueFor(firestoreSSSKey(userId))
-    await firestore.collection(elderlyCollectionName)
+    console.log("===> changeFirestoreKeyCalled")
+    await getKeychainValueFor(firestoreSSSKey(userId))
+    .then(async (firestoreKey) => {
+        await firestore.collection(elderlyCollectionName)
         .doc(userId).collection(keyCollectionName).doc(keyDocumentName).set({key: firestoreKey})
         .catch((error) => {
             //console.log('Error: ', error)
             throw new Error('Erro ao alterar a chave na firestore, tente novamente!')
         })
+    })
+    .catch((error) => {
+        //console.log('Error: ', error)
+        throw new Error('Erro ao alterar a chave na firestore, tente novamente!')
+    })
 }
 
 /**
@@ -169,8 +176,9 @@ async function elderlyExists(elderlyId: string): Promise<boolean> {
  * @param newCredencialId 
  * @param data 
  */
-export async function addCredencialToFirestore(userId: string, userKey: string, newCredencialId: string, data: string) {
+export async function addCredencialToFirestore(userId: string, newCredencialId: string, data: string) {
     console.log("===> addCredencialToFirestoreCalled")
+    const userKey = await getKeychainValueFor(elderlyFireKey(userId))
     const encrypted = encrypt(data, userKey)
     const credential = defaultCredencials(encrypted)
 
@@ -261,9 +269,10 @@ async function deleteCredentialFromFiretore(userId: string, credentialId: string
         }).then(() => { return true })
 }
 
-async function updateCredentialFromFiretore(userId: string, credencialId: string, userKey: string, data: string): Promise<boolean> {
-    //console.log("===> updateCredentialFromFiretoreCalled")
+async function updateCredentialFromFiretore(userId: string, credencialId: string, data: string): Promise<boolean> {
+    console.log("===> updateCredentialFromFiretoreCalled")
 
+    const userKey = await getKeychainValueFor(elderlyFireKey(userId))
     const encrypted = encrypt(data, userKey)
     const updatedCredencial = updateDataCredencial(encrypted)
     

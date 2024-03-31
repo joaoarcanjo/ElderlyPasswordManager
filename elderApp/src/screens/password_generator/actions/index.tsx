@@ -9,21 +9,18 @@ import { FlashMessage, copyPasswordDescription, copyValue } from '../../../compo
 import MainBox from '../../../components/MainBox'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { decLength, incLength, updateUpperCase, updateLowerCase, updateNumbers, updateSpecial } from '../../../components/passwordGenerator/functions'
-import { lengthLabel, requirementLabel, upperLabel, lowerLabel, numbersLabel, specialLabel } from '../../../assets/constants'
+import { lengthLabel, requirementLabel, upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, timeoutToSavePassword } from '../../../assets/constants'
 
 const minusImage = "../../../assets/images/minus.png" //TODO: colocar no ficheiro de constantes
 const plusImage = "../../../assets/images/plus.png" //TODO: colocar no ficheiro de constantes
 const crossImage = "../../../assets/images/cross.png" //TODO: colocar no ficheiro de constantes
 const checkImage = "../../../assets/images/check.png" //TODO: colocar no ficheiro de constantes
 
-const defaultLength = 12 //TODO: colocar no ficheiro de constantes
-const saveTimer = 3000 //TODO: colocar no ficheiro de constantes
-
 export default function Generator({ navigation }: {readonly navigation: any}) {
 
   const [passGenerated, setPassGenerated] = useState("")
   const [password, setPassword] = useState("")
-  const [length, setLength] = useState(defaultLength)
+  const [length, setLength] = useState(passwordDefaultLengthGenerator)
   const [uppercase, setUppercase] = useState(true)
   const [lowercase, setLowercase] = useState(true)
   const [numbers, setNumbers] = useState(true)
@@ -40,7 +37,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
       if(passGenerated != password) {
         saveNewPassword()
       }
-    }, saveTimer);
+    }, timeoutToSavePassword);
     return () => clearTimeout(timer);
   }, [password, passGenerated]);
 
@@ -150,12 +147,12 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
               <RequirementLength/>
               <View style={{flex: 0.70, marginHorizontal: '5%', marginVertical: '5%'}}>
                 <View style={[{flex: 0.50, width: '90%', flexDirection: 'row', justifyContent: 'center',  alignItems: 'center'}]}>
-                  <Requirement name={upperLabel} value={uppercase} func={updateUpperCase}/>
-                  <Requirement name={lowerLabel} value={lowercase} func={updateLowerCase}/>
+                  <Requirement name={upperLabel} value={uppercase} func={() => updateUpperCase(setUppercase, uppercase, lowercase, numbers, special)}/>
+                  <Requirement name={lowerLabel} value={lowercase} func={() => updateLowerCase(setLowercase, uppercase, lowercase, numbers, special)}/>
                 </View>
                 <View style={[{flex: 0.50, width: '90%', flexDirection: 'row', justifyContent: 'center',  alignItems: 'center'}]}>
-                  <Requirement name={numbersLabel} value={numbers} func={updateNumbers}/>
-                  <Requirement name={specialLabel} value={special} func={updateSpecial}/>
+                  <Requirement name={numbersLabel} value={numbers} func={() => updateNumbers(setNumbers, uppercase, lowercase, numbers, special)}/>
+                  <Requirement name={specialLabel} value={special} func={() => updateSpecial(setSpecial, uppercase, lowercase, numbers, special)}/>
                 </View>
               </View>
           </View>

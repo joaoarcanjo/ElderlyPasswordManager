@@ -17,7 +17,7 @@ async function getKey(elderlyId: string): Promise<string> {
         })
         .catch((error: any) => {
             alert('Erro ao tentar obter a chave, tente novamente!')
-           console.log('Error: ', error)
+            console.log('Error: ', error)
             return ''
         })
 }
@@ -61,7 +61,10 @@ export async function listAllCredentialsFromFirestore(userId: string, encryption
         const values: Credential[] = []
         docs.forEach((doc: any) => { 
             if(doc.data()) {
+                console.log('Encrypted: ', doc.data().data)
+                console.log('Key: ', encryptionKey)
                 const decrypted = decrypt(doc.data().data, encryptionKey)
+                console.log('Decrypted: ', decrypted)
                 values.push({'id': doc.id, 'data': decrypted}) 
             }
         });

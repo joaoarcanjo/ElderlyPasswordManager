@@ -1,23 +1,22 @@
 import { MessageType, SessionCipher, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript"
-
 import { currentSessionSubject, removeSession, sessionForRemoteUser, sessionListSubject } from "../session/state"
-import { SendAcknowledgeMessage, SendWebSocketMessage } from "../network/types"
+import { SendAcknowledgeMessage } from "../network/types"
 import { signalStore, usernameSubject } from "../identity/state"
-import { stringToArrayBuffer } from "../signal/signal-store"
 import { signalWebsocket } from "../network/webSockets"
 import { ChatSession } from "../session/types"
 import { ChatMessageType, CaregiverDataBody, ProcessedChatMessage, CredentialBody, ElderlyDataBody } from "./types"
-import { randomUUID } from 'expo-crypto'
 import { setCaregiverListUpdated } from "../../screens/list_caregivers/actions/state"
 import { FlashMessage, credentialCreatedByOtherFlash, credentialDeletedByOtherFlash, credentialUpdatedByOtherFlash, editCompletedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionRejectedFlash, sessionRejectMaxReachedFlash, sessionRequestReceivedFlash, sessionRejectedMaxReachedFlash } from "../../components/UserMessages"
 import { getKeychainValueFor } from "../../keychain"
-import { caregiver1SSSKey, caregiver2SSSKey, elderlyFireKey, elderlyId, localDBKey } from "../../keychain/constants"
+import { caregiver1SSSKey, caregiver2SSSKey, elderlyId, localDBKey } from "../../keychain/constants"
 import { addCaregiverToArray, removeCaregiverFromArray } from "../../firebase/firestore/functionalities"
 import { changeCaregiverStatusOnDatabase, checkCaregiverByEmail, checkCaregiverByEmailNotAccepted, checkNumberOfCaregivers, deleteCaregiver, getCaregiverId, isMaxCaregiversReached, saveCaregiver, updateCaregiver } from "../../database/caregivers"
 //import { MessageType, SessionCipher, SignalProtocolAddress } from "../../algorithms/signal"
 import { CaregiverRequestStatus } from "../../database/types"
 import { setCredentialsListUpdated } from "../../screens/list_credentials/actions/state"
 import { getAllCredentialsAndValidate } from "../../screens/list_credentials/actions/functions"
+import { executeKeyExchange } from "../../algorithms/sss/sssOperations"
+import { encryptAndSendMessage } from "./sendMessage"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -95,51 +94,11 @@ export async function processRegularMessage(address: string, message: string, ty
     sendAcknowledgement(address, cm.id)
 }
 
-/**
- * Para encriptar e enviar uma mensagem para determinado destinatário.
- * @param to 
- * @param message 
- */
-export async function encryptAndSendMessage(to: string, message: string, firstMessage: boolean, type: ChatMessageType): Promise<void> {
-    
-    const address = new SignalProtocolAddress(to, 1)
-    const cipher = new SessionCipher(signalStore, address)
-
-    const cm: ProcessedChatMessage = {
-        id: randomUUID(),
-        address: to,
-        from: usernameSubject.value,
-        timestamp: Date.now(),
-        firstMessage: firstMessage,
-        body: message,
-        type: type,
-    }
- 
-    const signalMessage = await cipher.encrypt(stringToArrayBuffer(JSON.stringify(cm)))
-    sendSignalProtocolMessage(to, usernameSubject.value, signalMessage)
-}
-
-/**
- * @param to Username do destinatário
- * @param from Username de quem está a enviar
- * @param message Este campo é um objeto retornado pelo método "sessionCipher.encrypt"
- */
-export function sendSignalProtocolMessage(to: string, from: string, message: MessageType): void {
-    const wsm: SendWebSocketMessage = {
-        action: 'sendMessage',
-        address: to,
-        from,
-        message: JSON.stringify(message),
-    }
-    signalWebsocket.next(wsm)
-}
-
 export async function addMessageToSession(address: string, cm: ProcessedChatMessage, type: number, itsMine?: boolean): Promise<void> {
     const userSession = { ...sessionForRemoteUser(address)! }
 
     const currentUserId = await getKeychainValueFor(elderlyId)
     const localKey = await getKeychainValueFor(localDBKey(currentUserId))
-    const fireKey = await getKeychainValueFor(elderlyFireKey(currentUserId))
 
     //Se for uma mensagem de dados do cuidador e não for uma mensagem nossa (tipo 0)
     if(cm.type === ChatMessageType.PERSONAL_DATA && !itsMine) {
@@ -152,17 +111,17 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
     } else if (cm.type === ChatMessageType.CREDENTIALS_UPDATED && !itsMine) {
         const data = JSON.parse(cm.body) as CredentialBody
         credentialUpdatedByOtherFlash(cm.from, data)
-        await getAllCredentialsAndValidate(currentUserId, fireKey, localKey)
+        await getAllCredentialsAndValidate(currentUserId, localKey)
         setCredentialsListUpdated() 
     } else if (cm.type === ChatMessageType.CREDENTIALS_CREATED && !itsMine) {
         const data = JSON.parse(cm.body) as CredentialBody
         credentialCreatedByOtherFlash(cm.from, data)
-        await getAllCredentialsAndValidate(currentUserId, fireKey, localKey)
+        await getAllCredentialsAndValidate(currentUserId, localKey)
         setCredentialsListUpdated()
     } else if (cm.type === ChatMessageType.CREDENTIALS_DELETED && !itsMine) {
         const data = JSON.parse(cm.body) as CredentialBody
         credentialDeletedByOtherFlash(cm.from, data)
-        await getAllCredentialsAndValidate(currentUserId, fireKey, localKey)
+        await getAllCredentialsAndValidate(currentUserId, localKey)
         setCredentialsListUpdated()
     } else if (cm.type === ChatMessageType.DECOUPLING_SESSION && !itsMine) {
         await processDecouplingMessage(currentUserId, cm)
@@ -182,23 +141,30 @@ async function processPersonalData(currentUserId: string, cm: ProcessedChatMessa
     const data = JSON.parse(cm.body) as CaregiverDataBody
     if (await checkCaregiverByEmail(currentUserId, cm.from)) {  
         await updateCaregiver(data.userId, currentUserId, data.email, data.name, data.phone)
-        setCaregiverListUpdated()
-        editCompletedFlash(FlashMessage.caregiverPersonalInfoUpdated)
+        .then(() => setCaregiverListUpdated(currentUserId))
+        .then(() =>  editCompletedFlash(FlashMessage.caregiverPersonalInfoUpdated))
+        .catch(() => console.log('#1 Error updating caregiver'))
+       
     } else if(await checkCaregiverByEmailNotAccepted(currentUserId, cm.from)) {
         await updateCaregiver(data.userId, currentUserId, data.email, data.name, data.phone)
         .then(() => addCaregiverToArray(currentUserId, data.userId, "readCaregivers"))
         .then(() => sessionAcceptedFlash(cm.from, false))
-        .then(() => setCaregiverListUpdated())
+        .then(() => setCaregiverListUpdated(currentUserId))
         .then(() => sendCaregiverKey(currentUserId, cm.from))
+        .catch(() => console.log('#1 Error updating caregiver'))
     } else {
-      const isMaxReached = await isMaxCaregiversReached(currentUserId)
-      if(isMaxReached) {
-        await refuseCaregiverMaxReached(cm)
-      } else {
-        await saveCaregiver(currentUserId, data.userId, data.name, data.email, data.phone, CaregiverRequestStatus.RECEIVED)
-        .then(() => sessionRequestReceivedFlash(cm.from))
-        .then(() => setCaregiverListUpdated())
-      }
+        await isMaxCaregiversReached(currentUserId)
+        .then(async (isMaxReached) => {
+            if(isMaxReached) {
+                await refuseCaregiverMaxReached(cm)
+            } else {
+                await saveCaregiver(currentUserId, data.userId, data.name, data.email, data.phone, CaregiverRequestStatus.RECEIVED)
+                .then(() => sessionRequestReceivedFlash(cm.from))
+                .then(() => setCaregiverListUpdated(currentUserId))
+                .catch(() => console.log('#1 Error saving caregiver'))
+            }
+        })
+        .catch(() => console.log('#1 Error checking if max caregivers reached'))
     }
 }
 
@@ -214,24 +180,28 @@ async function processRejectMessage(currentUserId: string, cm: ProcessedChatMess
     await deleteCaregiver(currentUserId, cm.from)
     .then(() => removeCaregiverFromArray(currentUserId, caregiverId, 'readCaregivers'))
     .then(() => removeCaregiverFromArray(currentUserId, caregiverId, 'writeCaregivers'))
-    sessionRejectedFlash(cm.from, false)
+    .then(() => sessionRejectedFlash(cm.from, false))
+    .catch(() => console.log('#1 Error deleting caregiver'))
 }
 
 async function processDecouplingMessage(currentUserId: string, cm: ProcessedChatMessage) {
     console.log("===> processDecouplingMessageCalled")
     const caregiverId = await getCaregiverId(cm.from, currentUserId)
     //await deleteCaregiver(currentUserId, cm.from)
-    removeCaregiverFromArray(currentUserId, caregiverId, 'readCaregivers')
+    await removeCaregiverFromArray(currentUserId, caregiverId, 'readCaregivers')
     .then(() => removeCaregiverFromArray(currentUserId, caregiverId, 'writeCaregivers'))
     .then(() => changeCaregiverStatusOnDatabase(currentUserId, cm.from, CaregiverRequestStatus.DECOUPLING))
-    .then(() => setCaregiverListUpdated())
-    sessionEndedFlash(cm.from, false)
+    .then(() => setCaregiverListUpdated(currentUserId))
+    .then(() => sessionEndedFlash(cm.from, false))
+    .then(() => executeKeyExchange(currentUserId))
+    .catch(() => console.log('#1 Error decoupling caregiver'))
 }
 
 async function processMaxReachedMessage(currentUserId: string, cm: ProcessedChatMessage) {
     console.log("===> processMaxReachedMessageCalled")
     await deleteCaregiver(currentUserId, cm.from)
-    sessionRejectedMaxReachedFlash(cm.from)
+    .then(() => sessionRejectedMaxReachedFlash(cm.from))
+    .catch(() => console.log('#1 Error deleting caregiver'))
 }
 
 async function sendCaregiverKey(currentUserId: string, to: string) {

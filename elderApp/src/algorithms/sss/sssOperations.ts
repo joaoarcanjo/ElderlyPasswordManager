@@ -1,14 +1,11 @@
-import { getCaregivers } from "../../database/caregivers"
+import { keyRefreshTimeout, numberOfShares, threshold } from "../../assets/constants"
 import { getTimeoutFromLocalDB, insertTimeoutToLocalDB, updateTimeoutToLocalDB } from "../../database/timeout"
 import { TimeoutType } from "../../database/types"
-import { encryptAndSendMessage } from "../../e2e/messages/functions"
-import { ElderlyDataBody, ChatMessageType } from "../../e2e/messages/types"
-import { startSession } from "../../e2e/session/functions"
-import { sessionForRemoteUser, currentSessionSubject } from "../../e2e/session/state"
 import { changeFirestoreKey, listAllElderlyCredencials, updateCredentialFromFiretore } from "../../firebase/firestore/functionalities"
 import { getKeychainValueFor, saveKeychainValue } from "../../keychain"
 import { caregiver1SSSKey, caregiver2SSSKey, firestoreSSSKey, elderlyFireKey } from "../../keychain/constants"
 import { decrypt, generateKey } from "../0thers/crypto"
+import { sendShares } from "./sendShares"
 import { generateShares } from "./sss"
 
 /**
@@ -18,9 +15,10 @@ import { generateShares } from "./sss"
  * @returns The new shared secret.
  */
 export async function changeKey(userId: string): Promise<string> {
+    console.log("===> changeKeyCalled")
     const key = generateKey()
     //console.log("New key: ", key)
-    const shares: string[] = generateShares(key, 3, 2)
+    const shares: string[] = generateShares(key, numberOfShares, threshold)
     //console.log(shares)
    
     const caregiver1Key = shares[2]+''
@@ -41,15 +39,18 @@ export async function executeKeyChangeIfTimeout(userId: string): Promise<string>
     const timer = await getTimeoutFromLocalDB(userId, TimeoutType.SSS)
     if(timer == null) {
         await insertTimeoutToLocalDB(userId, new Date().getTime(), TimeoutType.SSS)
+        .catch(() => console.log("#1 Error inserting timeout"))
         return ''
     }
 
-    const thirtyDaysInMillis = 11//30 * 24 * 60 * 60 * 1000
     const currentDate = new Date().getTime()
-    
-    if (currentDate - timer > thirtyDaysInMillis) {
-        await updateTimeoutToLocalDB(userId, currentDate, TimeoutType.SSS)
-        return await executeKeyExchange(userId)
+    if (currentDate - timer > keyRefreshTimeout) {
+        return await updateTimeoutToLocalDB(userId, currentDate, TimeoutType.SSS)
+        .then(() => {return executeKeyExchange(userId) })
+        .catch(() => {
+            console.log("#1 Error inserting timeout")
+            return ''
+        })
     }
     return ''
 }
@@ -60,48 +61,26 @@ export async function executeKeyExchange(userId: string): Promise<string> {
     const credentialsCloud = await listAllElderlyCredencials(userId)
     const newKey = await changeKey(userId)
     
-    credentialsCloud.forEach(async (credential) => {
-        if(credential === undefined) return
-        let credentialCloud = JSON.parse(decrypt(credential.data, oldkey)) 
-        if (credentialCloud != undefined) {
-            await updateCredentialFromFiretore(
-                userId,
-                credential.id,
-                newKey,
-                JSON.stringify(credentialCloud)
-            )
-        }
-    })
+    try {
+        credentialsCloud.forEach(async (credential) => {
+            if(credential === undefined) return
+            let decryptedCredential = undefined
+            try { 
+                decryptedCredential = decrypt(credential.data, oldkey)
+            } catch (error) {
+                console.log("#1 Error updating credentials after keyExchange")
+            }
+            if (decryptedCredential != undefined) {
+                let credentialCloud = JSON.parse(decryptedCredential) 
+                await updateCredentialFromFiretore(
+                    userId,
+                    credential.id,
+                    JSON.stringify(credentialCloud)
+                )
+            } 
+        })
+    } catch (error) {
+        console.log("#1 Error updating credentials after keyExchange")
+    }
     return newKey
-}
-
-export async function sendCaregiversShares(userId: string) {   
-    const caregiver1Key = await getKeychainValueFor(caregiver1SSSKey(userId))
-    const caregiver2Key = await getKeychainValueFor(caregiver2SSSKey(userId)) 
-    sendShares(userId, caregiver1Key, caregiver2Key)
-}
-
-export const sendShares = async (userId: string, caregiver1Key: string, caregiver2Key: string) => {
-    console.log("===> sendSharesCalled")
-    const caregivers = await getCaregivers(userId)  
-    caregivers.forEach(async (caregiver, index) => {
-        if(!sessionForRemoteUser(caregiver.email)) {
-            await startSession(caregiver.email)
-            const session = sessionForRemoteUser(caregiver.email)
-            currentSessionSubject.next(session ?? null)
-        }
-
-        if (index > 1) return
-        const valueKey = index == 0 ? caregiver1Key : caregiver2Key
-
-        const data: ElderlyDataBody = {
-            userId: userId,
-            key: valueKey,
-            name: '',
-            email: '',
-            phone: '',
-            photo: ''
-        }
-        await encryptAndSendMessage(caregiver.email, JSON.stringify(data), false, ChatMessageType.KEY_UPDATE)
-    }) 
 }

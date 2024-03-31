@@ -51,6 +51,10 @@ const decrypt = (messageWithNonce, key) => {
     messageWithNonce.length
   )
 
+  //console.log("message", message)
+  //console.log("nonce", nonce)
+  //console.log("keyUint8Array", keyUint8Array)
+
   const decrypted = secretbox.open(message, nonce, keyUint8Array)
 
   if (!decrypted) {

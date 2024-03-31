@@ -19,6 +19,7 @@ import { ChatMessageType } from '../../../e2e/messages/types'
 import { buildEditMessage, sendCaregiversCredentialInfoAction } from './functions'
 import { deleteCredentialFromLocalDB, updateCredentialFromLocalDB } from '../../../database/credentials'
 import { encrypt } from '../../../algorithms/0thers/crypto'
+import { passwordDefaultLengthGenerator } from '../../../assets/constants'
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
@@ -32,7 +33,7 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
   const [usernameEdited, setUsernameEdited] = useState(un)
   const [passwordEdited, setPasswordEdited] = useState(pw)
   const [uriEditted, setUriEditted] = useState(uri)
-  const [requirements, setRequirements] = useState<Object>({length: 15, strict: true, symbols: false, uppercase: true, lowercase: true, numbers: true})
+  const [requirements, setRequirements] = useState<Object>({length: passwordDefaultLengthGenerator, strict: true, symbols: false, uppercase: true, lowercase: true, numbers: true})
   const [avaliation, setAvaliation] = useState<number>(0)
   
   const [showPassword, setShowPassword] = useState(false)
@@ -40,7 +41,7 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
   const [passwordOptionsModalVisible, setPasswordOptionsModalVisible] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const { userId, userFireKey, userEmail, localDBKey } = useSessionInfo()
+  const { userId, userEmail, localDBKey } = useSessionInfo()
   const [editFlag, setEditFlag] = useState(true)
 
   useEffect(() => setAvaliation(getScore(passwordEdited)), [passwordEdited])
@@ -73,7 +74,7 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
         }
       })
 
-      updateCredentialFromFiretore(userId, id, userFireKey, data)
+      updateCredentialFromFiretore(userId, id, data)
       .then(async (updated) => {
         toggleEditFlag()
         if(updated) {
@@ -91,6 +92,7 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
         setLoading(false)
         setModalVisible(false)
       })
+      .catch(() => console.log('#1 Error updating credential'))
     }
   }
 
@@ -251,6 +253,7 @@ function DeleteCredential({id, platform}: Readonly<{id: string, platform: string
     .then(() => deleteCredentialFromLocalDB(userId, id))
     .then(async () => await sendCaregiversCredentialInfoAction(userId, '', platform, ChatMessageType.CREDENTIALS_DELETED))
     .then(() => navigation.goBack())
+    .catch(() => console.log('#1 Error deleting credential'))
   }
 
   return (

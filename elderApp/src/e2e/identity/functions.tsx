@@ -5,7 +5,7 @@ import { subscribeWebsocket } from "../network/webSockets";
 import { SignalDirectory } from "../signal/signal-directory";
 import { directorySubject, usernameSubject, signalStore } from "./state";
 import { networkInfoSubject } from "../network/state";
-import { ipAddress } from "../../assets/constants";
+import { ipAddress, port } from "../../assets/constants";
 //import { KeyHelper, PreKeyPairType, PreKeyType, SignedPreKeyPairType, SignedPublicPreKeyType } from "../../algorithms/signal";
 
 /**
@@ -19,7 +19,7 @@ export async function createIdentity(userId: string, username: string): Promise<
     console.log("userId: ", userId)
 
     //TODO: este url tem que ser obtido da firebase, porque o url do server pode alterar.
-    const url = `http://${ipAddress}:442`
+    const url = `http://${ipAddress}:${port}`
     
     //Inicia a ligação ao servidor 
     initializeSignalWebsocket(url)

@@ -22,8 +22,7 @@ const SignUpPage = () => {
     const [showPassword, setShowPassword] = useState(true)
 
     const toggleShowPassword = () => {setShowPassword(!showPassword)}
-    const { setUserEmail, setUserPhone, setUserName, userPhone, userName, userEmail } = useSessionInfo()
-    const navigation = useNavigation<StackNavigationProp<any>>()
+    const { setUserEmail, setUserPhone, setUserName } = useSessionInfo()
 
     const signUp = async () => {
         setLoading(true)
@@ -33,7 +32,6 @@ const SignUpPage = () => {
                 setUserPhone(phoneNumber)
                 setUserName(name) 
                 setUserEmail(email)
-                //navigation.push('Home')
             }
         })
     }

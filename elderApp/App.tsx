@@ -10,7 +10,7 @@ import PasswordHistory from './src/screens/password_history/actions';
 import React, { useCallback, useEffect, useState } from 'react';
 import { initDb } from './src/database';
 import FlashMessage from 'react-native-flash-message';
-import Caregivers from './src/screens/list_caregivers/actions';
+import { Caregivers } from './src/screens/list_caregivers/actions';
 import { changeFirestoreKey, initFirestore } from './src/firebase/firestore/functionalities';
 import { initKeychain } from './src/keychain';
 import { AddCredencial } from './src/screens/add_credentials/actions';
@@ -42,13 +42,12 @@ Notifications.setNotificationHandler({
 });
 
 function InsideLayout() {
-  const { userId, userFireKey, setUserFireKey } = useSessionInfo()
+  const { userId } = useSessionInfo()
   const [appIsReady, setAppIsReady] = useState(true)
 
   const keyVerification = async () => {
-    if (!userId || !userFireKey || userId === '' || userFireKey === '') return
-    const shared = await executeKeyChangeIfTimeout(userId)
-    if(shared != '') setUserFireKey(shared)
+    if (!userId ||  userId === '') return
+    await executeKeyChangeIfTimeout(userId)
   }
 
   useEffect(() => {
@@ -81,7 +80,7 @@ function Inicialization() {
 
   const [user, setUser] = useState<User | null>(null)
   const [notLoading, setNotLoading] = useState(false)
-  const { setUserId, setUserEmail, setLocalDBKey, setUserFireKey, userId } = useSessionInfo()
+  const { setUserId, setUserEmail, setLocalDBKey, userId } = useSessionInfo()
 
   useEffect(() => {
     onAuthStateChanged(FIREBASE_AUTH, async (user) => {
@@ -93,7 +92,6 @@ function Inicialization() {
         .then((DBKey) => setLocalDBKey(DBKey))
         .then(() => {setUserId(user.uid); setUserEmail(userEmail); setUser(user)})
         .then(() => initSSS(user.uid))
-        .then((myShare) => setUserFireKey(myShare))
         .then(() => initFirestore(user.uid))
         .then(() => initDb())
         .then(() => changeFirestoreKey(user.uid))
