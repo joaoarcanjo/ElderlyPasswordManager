@@ -82,7 +82,7 @@ function CredentialsInput({ ownerId, auxKey, isElderlyCredential }: Readonly<{ow
                         placeholder={placeholderPlatform}
                         value={platform}
                         autoFocus={true}
-                        style={{ flex: 1, fontSize: 22, padding: '2%', marginHorizontal: '5%' }}
+                        style={{ flex: 1, fontSize: 22, padding: '2%', marginHorizontal: '1%' }}
                         onChangeText={text => setPlatform(text)}
                         />
                     </View>
@@ -92,7 +92,7 @@ function CredentialsInput({ ownerId, auxKey, isElderlyCredential }: Readonly<{ow
                         placeholder={placeholderURI}
                         value={uri}
                         autoCapitalize='none'
-                        style={{ flex: 1, fontSize: 22, padding: '2%', marginHorizontal: '5%' }}
+                        style={{ flex: 1, fontSize: 22, padding: '2%', marginHorizontal: '1%' }}
                         onChangeText={text => setURI(text)}
                         />
                     </View>
@@ -102,20 +102,18 @@ function CredentialsInput({ ownerId, auxKey, isElderlyCredential }: Readonly<{ow
                         placeholder={placeholderUsername}
                         value={username}
                         autoCapitalize='none'
-                        style={{ flex: 1, fontSize: 22, padding: '2%', marginHorizontal: '5%' }}
+                        style={{ flex: 1, fontSize: 22, padding: '2%', marginHorizontal: '1%' }}
                         onChangeText={text => setUsername(text)}
                         />
                     </View>
                     <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: 20}]}>Password</Text>
                     <View style={[{margin: '4%', marginTop: '1%'}, { borderRadius: 15, borderWidth: 1, backgroundColor: whiteBackgroud }]}>
-                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginHorizontal: '5%'}}>
+                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginHorizontal: '2%'}}>
                             <TextInput
-                            multiline={true}
-                            numberOfLines={2}
                             placeholder={placeholderPassword}
                             value={password}
-                            style={{ flex: 1, fontSize: 22, marginRight: '5%', padding: '3%'}}
-                            secureTextEntry={!showPassword}
+                            style={{ flex: 1, fontSize: 17, marginLeft: '1%', marginRight: '3%', marginVertical: '4%'}}
+                            secureTextEntry={showPassword}
                             onChangeText={text => setPassword(text)}
                             />
                             <AvaliationEmoji avaliation={avaliation}/>

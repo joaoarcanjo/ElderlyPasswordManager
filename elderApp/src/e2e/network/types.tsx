@@ -1,5 +1,13 @@
 export interface WebSocketMessage {
-    action: 'sendMessage' | 'subscribe' | 'recent' | 'hey' | 'acknowledge'
+    action: 'sendMessage' | 'subscribe' | 'recent' | 'hey' | 'acknowledge' | 'sendBundle'
+}
+
+export enum WebSocketMessageType {
+    SEND_MESSAGE = 'sendMessage',
+    SUBSCRIBE = 'subscribe',
+    RECENT = 'recent',
+    HEY = 'hey',
+    ACKNOWLEDGE = 'acknowledge',
 }
 
 export interface SendWebSocketMessage extends WebSocketMessage {
@@ -7,6 +15,13 @@ export interface SendWebSocketMessage extends WebSocketMessage {
     address: string
     from: string
     message: string
+}
+
+export interface SendBundleMessage extends WebSocketMessage {
+    action: 'sendBundle'
+    address: string
+    from: string
+    message: any
 }
 
 export interface SendAcknowledgeMessage extends WebSocketMessage {

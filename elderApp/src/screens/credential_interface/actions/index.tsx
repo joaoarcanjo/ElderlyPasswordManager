@@ -197,14 +197,13 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar</Text>
               </TouchableOpacity>}
             </View>
-            <View style={[{ flex: 0.4, alignItems: 'center', justifyContent: 'center', marginHorizontal: '4%', marginVertical: '2%'}, inputStyle]}>
-              <View style={{marginHorizontal: '4%', marginVertical: '1%', flexDirection: 'row'}}>
+            <View style={[{ flex: 0.4, marginHorizontal: '4%', marginVertical: '2%'}, inputStyle]}>
+              <View style={{marginHorizontal: '4%', alignItems: 'center', justifyContent: 'center', marginVertical: '1%', flexDirection: 'row'}}>
                 <TextInput 
-                  multiline={true}
                   editable={!editFlag} 
                   value={editFlag ? password : passwordEdited}
                   secureTextEntry={!(!showPassword || !editFlag)}
-                  style={[{ flex: 1, fontSize: 22}, credentials.credentialInfoText]}
+                  style={[{ flex: 1, fontSize: 17}]}
                   onChangeText={text => editFlag ? setPassword(text): setPasswordEdited(text)}
                 />
                 <AvaliationEmoji avaliation={avaliation}/>

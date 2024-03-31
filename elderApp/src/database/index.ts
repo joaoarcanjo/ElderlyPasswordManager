@@ -6,7 +6,7 @@ export function initDb() {
     dbSQL = SQLite.openDatabase('elderly.db')
     
     dbSQL.transaction(tx => {
-        /*tx.executeSql(
+        /**/tx.executeSql(
             'DROP TABLE IF EXISTS caregivers;'
         )
         tx.executeSql(
@@ -14,7 +14,7 @@ export function initDb() {
         )
         tx.executeSql(
             'DROP TABLE IF EXISTS credentials;'
-        )*/
+        )
     })
 
     dbSQL.transaction(tx => {

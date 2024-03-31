@@ -60,7 +60,6 @@ export class SignalDirectory {
             },
             body: JSON.stringify(serializeKeyRegistrationBundle(username, bundle)),
         })
-        await res.json()
     }
 
     async getPreKeyBundle(address: string): Promise<DeviceType | undefined> {
