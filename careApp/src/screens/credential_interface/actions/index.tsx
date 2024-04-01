@@ -7,12 +7,10 @@ import MainBox from '../../../components/MainBox'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import AvaliationEmoji from '../../../components/EmojiAvaliation'
 import { getScore } from '../../../algorithms/zxcvbn/algorithm'
-import { FlashMessage, copyPasswordDescription, copyUsernameDescription, copyValue, editCanceledFlash, editCompletedFlash, editValueFlash } from '../../../components/UserMessages'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
 import { deleteCredential, updateCredentialFromFirestore, verifyIfCanManipulateCredentials } from '../../../firebase/firestore/functionalities'
 import { PasswordOptionsModal, YesOrNoModal, YesOrNoSpinnerModal } from '../../../components/Modal'
-import Algorithm from '../../password_generator/actions/algorithm'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { buildEditMessage, sendElderlyCredentialInfoAction } from './functions'
@@ -20,6 +18,9 @@ import { ChatMessageType } from '../../../e2e/messages/types'
 import { updateCredentialFromLocalDB } from '../../../database/credentials'
 import { encrypt } from '../../../algorithms/0thers/crypto'
 import { regeneratePassword } from '../../../components/passwordGenerator/functions'
+import { copyLabel, optionsLabel, regenerateLabel, saveChangesLabel, uriLabel, userLabel } from '../../../assets/constants'
+import { copyValue, credentialUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
+import { FlashMessage, copyPasswordDescription, copyUsernameDescription } from '../../../components/userMessages/messages'
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
@@ -84,7 +85,7 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
       .then(async (updated) => {
         setEditFlag(!editFlag)
         if(updated) {
-          editCompletedFlash(FlashMessage.editCredentialCompleted)      
+          credentialUpdatedFlash('', platform, true)      
           if(ownerId != userId) {
             await sendElderlyCredentialInfoAction(userId, ownerId, id, platform, ChatMessageType.CREDENTIALS_UPDATED)
           } else {
@@ -119,7 +120,7 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
    */
   function cancelUpdate() {
     setEditFlag(!editFlag)
-    editCanceledFlash(FlashMessage.editModeCanceled)
+    editCanceledFlash()
     setUsernameEdited(username)
     setPasswordEdited(password)
   }
@@ -157,10 +158,10 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
       <View style={[{ flex: 1, marginHorizontal: '4%'}, credentials.credentialInfoContainer]}>
           <View style={{flex: 0.40}}>
             <View style={{flex: 0.6, flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '4%'}}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>URI</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>{uriLabel}</Text>
               {editFlag && 
               <TouchableOpacity style={[{flex: 0.4, marginTop:'3%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(uri, FlashMessage.uriCopied)}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>{copyLabel}</Text>
               </TouchableOpacity>}
             </View>
             <View style={[{ flex: 0.4, alignItems: 'center', justifyContent: 'center', marginHorizontal: '4%', marginVertical: '2%'}, inputStyle]}>
@@ -176,10 +177,10 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
           </View>
           <View style={{flex: 0.40}}>
             <View style={{flex: 0.6, flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '4%'}}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>UTILIZADOR</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>{userLabel}</Text>
               {editFlag && 
               <TouchableOpacity style={[{flex: 0.4, marginTop:'3%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(username, FlashMessage.usernameCopied, copyUsernameDescription)}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>{copyLabel}</Text>
               </TouchableOpacity>}
             </View>
             <View style={[{ flex: 0.4, alignItems: 'center', justifyContent: 'center', marginHorizontal: '4%', marginVertical: '2%'}, inputStyle]}>
@@ -195,10 +196,10 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
           </View>
           <View style={{flex: 0.40}}>
             <View style={{flex: 0.6, flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '4%'}}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>PASSWORD</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>{password}</Text>
               {editFlag && 
               <TouchableOpacity style={[{flex: 0.4, marginTop:'3%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(password, FlashMessage.passwordCopied, copyPasswordDescription)}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>{copyLabel}</Text>
               </TouchableOpacity>}
             </View>
             <View style={[{ flex: 0.4, marginHorizontal: '4%', marginVertical: '2%'}, inputStyle]}>
@@ -223,11 +224,11 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
           :
           <View style={{ flex: 0.14, flexDirection: 'row', justifyContent: 'flex-end', marginBottom: '5%', marginHorizontal: '5%' }}>
             <TouchableOpacity style={[{flex: 0.50}, stylesButtons.blueButton, stylesButtons.mainConfig]} onPress={() => {setPasswordOptionsModalVisible(true)}}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Opções</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>{optionsLabel}</Text>
             </TouchableOpacity>
             <View style={{margin: '1%'}}/>
             <TouchableOpacity style={[{flex: 0.50}, credentials.regenerateButton, stylesButtons.mainConfig]} onPress={() => {regeneratePassword(requirements, setPasswordEdited)} }>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Regenerar</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>{regenerateLabel}</Text>
             </TouchableOpacity>
           </View>}
           <Text numberOfLines={2} adjustsFontSizeToFit style={[{marginLeft: '6%', marginBottom: '2%',fontSize: 13}, {opacity: editFlag ? 100 : 0}]}>{buildEditMessage(edited.updatedBy, edited.updatedAt)}</Text> 
@@ -235,7 +236,7 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
     </View>
     <Options/>
     <PasswordOptionsModal saveFunction={setRequirements} closeFunction={() => {setPasswordOptionsModalVisible(false)}} visibleFlag={passwordOptionsModalVisible} loading={false}/>
-    <YesOrNoSpinnerModal question={'Guardar as alterações?'} yesFunction={saveCredentialUpdate} noFunction={dontSaveCredentialsUpdate} visibleFlag={modalVisible} loading={loading}/>
+    <YesOrNoSpinnerModal question={saveChangesLabel} yesFunction={saveCredentialUpdate} noFunction={dontSaveCredentialsUpdate} visibleFlag={modalVisible} loading={loading}/>
     {editFlag && <DeleteCredential ownerId={ownerId} id={id} platform={platform} isElderlyCredential={isElderlyCredential} auxKey={auxKey} />}
     </>
   )

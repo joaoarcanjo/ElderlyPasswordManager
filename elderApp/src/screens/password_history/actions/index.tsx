@@ -10,6 +10,7 @@ import MainBox from '../../../components/MainBox';
 import { useSessionInfo } from '../../../firebase/authentication/session';
 import { FlashMessage, copyPasswordDescription } from '../../../components/userMessages/messages';
 import { copyValue } from '../../../components/userMessages/UserMessages';
+import { pageTitleHistory } from '../../../assets/constants';
 
 export default function PasswordHistory() {
 
@@ -53,7 +54,7 @@ export default function PasswordHistory() {
   
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-      <MainBox text={'Histórico'}/>
+      <MainBox text={pageTitleHistory}/>
       <PasswordsList/>   
       <Navbar/>
     </View>

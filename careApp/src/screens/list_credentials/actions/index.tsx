@@ -10,6 +10,7 @@ import MainBox from '../../../components/MainBox'
 import { Spinner } from '../../../components/LoadingComponents'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { getAllCredentialsAndValidate } from './functions'
+import { addCredentialsLabel, detailsLabel, navigateLabel, pageCredential, pageTitleCredentials } from '../../../assets/constants'
 
 function AddCredencial() {
 
@@ -23,7 +24,7 @@ function AddCredencial() {
   return (
     <View style= { { flex: 0.10, marginTop: '5%', flexDirection: 'row'} }>
       <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, stylesAddCredential.addCredentialButton, stylesButtons.mainConfig]} onPress={navigateToAddCredential}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCredential.addCredentialButtonText]}>ADICIONAR CREDENCIAIS</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCredential.addCredentialButtonText]}>{addCredentialsLabel}</Text>
       </TouchableOpacity>
     </View>
   )
@@ -35,7 +36,7 @@ function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
   const { setUsernameCopied, setPasswordCopied, userId, localDBKey } = useSessionInfo()
   //const { expoPushToken } = usePushNotifications()
   const OpenCredentialPage = () => {
-    navigation.navigate('CredentialPage', 
+    navigation.navigate(pageCredential, 
     { 
       id: credential.id, 
       platform: credential.data.platform, 
@@ -76,10 +77,10 @@ function ScrollItemExample({credential}: Readonly<{credential: Credential}>) {
       <View style={{flex: 0.65, marginHorizontal: '3%', marginBottom: '3%', flexDirection: 'row'}}>
         <View style={{flex: 1, marginHorizontal: '3%', flexDirection: 'row'}}>
           <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.itemMoreInfoButton, stylesButtons.mainConfig]} onPress={OpenCredentialPage}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Detalhes</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>{detailsLabel}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.navigateButton, stylesButtons.mainConfig]} onPress={() => {NavigateToApp(credential.data.uri, credential.data.platform, credential.data.username, credential.data.password)}}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Navegar</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>{navigateLabel}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -143,7 +144,7 @@ function CredentialsList() {
 export default function Credentials() {
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-      <MainBox text={'Credenciais'}/>
+      <MainBox text={pageTitleCredentials}/>
       <AddCredencial/>
       <CredentialsList/>
       <Navbar/>

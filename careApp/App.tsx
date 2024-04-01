@@ -23,6 +23,7 @@ import { createIdentity } from './src/e2e/identity/functions';
 import { flashTimeoutPromise } from './src/screens/splash_screen/actions/functions';
 import SplashScreen from './src/screens/splash_screen/actions';
 import * as SplashFunctions from 'expo-splash-screen';
+import { pageAddCredential, pageCredential, pageCredentials, pageElderlyCredentials, pageElderlyList, pageLogin, pageMainMenu, pageSettings, pageSignup } from './src/assets/constants';
 
 const Stack = createNativeStackNavigator()
 const InsideStack = createNativeStackNavigator()
@@ -41,14 +42,14 @@ function InsideLayout() {
 
   if (!appIsReady) return <SplashScreen test={onLayoutRootView} />
   return (
-    <InsideStack.Navigator initialRouteName="MainMenu">
-      <InsideStack.Screen name="MainMenu" component={MainMenu} options={{ title: "MainMenu", headerShown: false }} />
-      <InsideStack.Screen name="Credentials" component={Credentials} options={{ title: "Credencials", headerShown: false }} />
-      <InsideStack.Screen name="ElderlyList" component={ElderlyListScreen} options={{ title: "listElderly", headerShown: false }} />
-      <InsideStack.Screen name="ElderlyCredentials" component={ElderlyCredentials} options={{ title: "ElderlyCredencials", headerShown: false }} />
-      <InsideStack.Screen name="AddCredential" component={AddCredencial} options={{ title: "AddCredential", headerShown: false }} />
-      <InsideStack.Screen name="Settings" component={Settings} options={{ title: "Settings", headerShown: false }} />
-      <InsideStack.Screen name="CredentialPage" component={CredencialPage} options={{ title: "CredencialPage", headerShown: false }} />
+    <InsideStack.Navigator initialRouteName={pageMainMenu}>
+      <InsideStack.Screen name={pageMainMenu} component={MainMenu} options={{ title: "MainMenu", headerShown: false }} />
+      <InsideStack.Screen name={pageCredentials} component={Credentials} options={{ title: "Credencials", headerShown: false }} />
+      <InsideStack.Screen name={pageElderlyList} component={ElderlyListScreen} options={{ title: "listElderly", headerShown: false }} />
+      <InsideStack.Screen name={pageElderlyCredentials} component={ElderlyCredentials} options={{ title: "ElderlyCredencials", headerShown: false }} />
+      <InsideStack.Screen name={pageAddCredential} component={AddCredencial} options={{ title: "AddCredential", headerShown: false }} />
+      <InsideStack.Screen name={pageSettings} component={Settings} options={{ title: "Settings", headerShown: false }} />
+      <InsideStack.Screen name={pageCredential} component={CredencialPage} options={{ title: "CredencialPage", headerShown: false }} />
     </InsideStack.Navigator>
   );
 }
@@ -85,12 +86,12 @@ function Inicialization() {
   return (
       <NavigationContainer>
         <View style={{flex: 0.06}}/>
-        <Stack.Navigator initialRouteName="LoginPage">
+        <Stack.Navigator initialRouteName={pageLogin}>
           {user != null && userId != null && userId != '' ?
           <Stack.Screen name="InsideLayout" component={InsideLayout} options={{title: "InsideLayout", headerShown:false}}/>:
           <>
-            <Stack.Screen name="LoginPage" component={SignInPage} options={{title: "LoginPage", headerShown:false}}/>
-            <Stack.Screen name="SignupPage" component={SignUpPage} options={{title: "SignupPage", headerShown:false}}/>
+            <Stack.Screen name={pageLogin} component={SignInPage} options={{title: "LoginPage", headerShown:false}}/>
+            <Stack.Screen name={pageSignup} component={SignUpPage} options={{title: "SignupPage", headerShown:false}}/>
           </>
           }
         </Stack.Navigator>

@@ -8,7 +8,7 @@ import Algorithm from '../../../algorithms/newPassword/algorithm'
 import MainBox from '../../../components/MainBox'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { decLength, incLength, updateUpperCase, updateLowerCase, updateNumbers, updateSpecial } from '../../../components/passwordGenerator/functions'
-import { lengthLabel, requirementLabel, upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, timeoutToSavePassword, historyLabel, copyLabel, regenerateLabel } from '../../../assets/constants'
+import { lengthLabel, requirementLabel, upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, timeoutToSavePassword, historyLabel, copyLabel, regenerateLabel, pagePasswordHistory, pageTitleGenerator } from '../../../assets/constants'
 import { copyValue } from '../../../components/userMessages/UserMessages'
 import { FlashMessage, copyPasswordDescription } from '../../../components/userMessages/messages'
 
@@ -69,7 +69,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
 
     const HistoryPressed = () => {
       saveNewPassword()
-      navigation.push('PasswordHistory')
+      navigation.push(pagePasswordHistory)
     }
 
     return (
@@ -163,7 +163,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
 
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-      <MainBox text='Gerador'/>
+      <MainBox text={pageTitleGenerator}/>
       <HistoryButton/>
       <PasswordFirstBox/>
       <PasswordSecondBox/>

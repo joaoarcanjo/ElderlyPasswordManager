@@ -6,8 +6,7 @@ import React from 'react';
 import { darkGreenBackgroud, lightBlueBackground, lightGreenBackgroud, lightRedBackground, lightYellowBackground, purpleBackground, superlightBlueBackgroud, superlightGreenBackground, yellowBackground } from '../../assets/styles/colors';
 import { triggerNotifications } from '../../notifications/localNotifications';
 import { appActive, durationQuickMessage, durationSlowMessage } from '../../assets/constants';
-import { FlashMessage, caregiverPersonalInfoUpdatedDescription, editModeActiveDescription, editModeCanceledDescription, maxNumberOfConnectionsDescription, maxNumberOfConnectionsCaregiverDescription, sessionAcceptedDescription, sessionEndedDescription, sessionRejectedDescription, sessionRequestReceivedDescription, sessionRequestSentDescription, credentialUpdatedByCaregiver, credentialCreatedByCaregiver, credentialDeletedByCaregiver, credentialDeletedDescription, credentialCreatedDescription, credentialUpdatedDescription, personalInfoUpdatedDescription } from './messages';
-
+import { FlashMessage, credentialCreatedByElderlyDescription, credentialCreatedDescription, credentialDeletedByElderlyDescription, credentialDeletedDescription, credentialUpdatedByElderlyDescription, credentialUpdatedDescription, editModeActiveDescription, editModeCanceledDescription, elderlyPersonalInfoUpdatedDescription, maxNumberOfConnectionsDescription, maxNumberOfConnectionsElderlyDescription, permissionsChangedDescription, personalInfoUpdatedDescription, sessionAcceptedDescription, sessionEndedDescription, sessionRejectedDescription, sessionRequestReceivedDescription, sessionRequestSentDescription, sessionVerifiedDescription } from './messages';
 
 /**
  * Copies the provided value to the clipboard and shows a flash message.
@@ -61,14 +60,14 @@ export function editCanceledFlash() {
 } 
 
 /**
- * Displays a flash message indicating that the caregiver's personal information has been updated.
- * @param caregiverEmail - The email of the caregiver.
+ * Displays a flash message indicating that the elderly's personal information has been updated.
+ * @param elderlyEmail - The email of the elderly.
  */
-export function caregiverPersonalInfoUpdatedFlash(caregiverEmail: string) {
+export function elderlyPersonalInfoUpdatedFlash(elderlyEmail: string) {
   showMessage({
     floating: true,
-    message: FlashMessage.caregiverPersonalInfoUpdated,
-    description: caregiverPersonalInfoUpdatedDescription(caregiverEmail),
+    message: FlashMessage.elderlyPersonalInfoUpdated,
+    description: elderlyPersonalInfoUpdatedDescription(elderlyEmail),
     icon: props => <Image source={require("../../assets/images/edit.png")} {...props} />,
     backgroundColor: superlightGreenBackground,
     duration: durationQuickMessage,
@@ -77,9 +76,9 @@ export function caregiverPersonalInfoUpdatedFlash(caregiverEmail: string) {
 }
 
 /**
- * Displays a flash message indicating that the elderly's personal information has been updated.
+ * Displays a flash message indicating that the caregiver's personal information has been updated.
  */
-export function elderlyPersonalInfoUpdatedFlash() {
+export function caregiverPersonalInfoUpdatedFlash() {
   showMessage({
     floating: true,
     message: FlashMessage.personalInfoUpdated,
@@ -93,13 +92,13 @@ export function elderlyPersonalInfoUpdatedFlash() {
 
 /**
  * Displays a flash message when a session request is sent.
- * @param caregiverEmail - The email of the caregiver.
+ * @param elderlyEmail - The email of the elderly.
  */
-export function sessionRequestSent(caregiverEmail: string) {
+export function sessionRequestSent(elderlyEmail: string) {
   showMessage({
     floating: true,
     message: FlashMessage.sessionRequest,
-    description: sessionRequestSentDescription(caregiverEmail),
+    description: sessionRequestSentDescription(elderlyEmail),
     icon: props => <Image source={require("../../assets/images/check.png")} {...props} />,
     backgroundColor: lightBlueBackground,
     duration: durationQuickMessage,
@@ -109,21 +108,21 @@ export function sessionRequestSent(caregiverEmail: string) {
 
 /**
  * Displays a flash message when a session request is received.
- * @param caregiverEmail - The email of the caregiver who sent the session request.
+ * @param elderlyEmail - The email of the elderly who sent the session request.
  */
-export function sessionRequestReceivedFlash(caregiverEmail: string) {
+export function sessionRequestReceivedFlash(elderlyEmail: string) {
   if(AppState.currentState === appActive) {
     showMessage({
       floating: true,
       message: FlashMessage.sessionRequestReceived,
-      description: sessionRequestReceivedDescription(caregiverEmail),
+      description: sessionRequestReceivedDescription(elderlyEmail),
       icon: props => <Image source={require("../../assets/images/plus.png")} {...props} />,
       backgroundColor: purpleBackground,
       duration: durationQuickMessage,
       color: "black",
     })
   } else {
-    triggerNotifications(FlashMessage.sessionRequestReceived, sessionRequestReceivedDescription(caregiverEmail), "")
+    triggerNotifications(FlashMessage.sessionRequestReceived, sessionRequestReceivedDescription(elderlyEmail), "")
   }
 }
 
@@ -136,7 +135,7 @@ export function sessionAcceptedFlash(from: string, byMe: boolean) {
   if(AppState.currentState === appActive) {
     showMessage({
       floating: true,
-      message:  byMe ? FlashMessage.sessionAccepted : FlashMessage.caregiverAccept,
+      message:  byMe ? FlashMessage.sessionAccepted : FlashMessage.elderlyAccept,
       description: sessionAcceptedDescription(from),
       icon: props => <Image source={require("../../assets/images/check.png")} {...props} />,
       backgroundColor: darkGreenBackgroud,
@@ -144,7 +143,7 @@ export function sessionAcceptedFlash(from: string, byMe: boolean) {
       color: "black",
     })
   } else {
-    triggerNotifications(byMe ? FlashMessage.sessionAccepted : FlashMessage.caregiverAccept, sessionAcceptedDescription(from), "")
+    triggerNotifications(byMe ? FlashMessage.sessionAccepted : FlashMessage.elderlyAccept, sessionAcceptedDescription(from), "")
   }
 }
 
@@ -157,7 +156,7 @@ export function sessionRejectedFlash(from: string, byMe: boolean) {
   if(AppState.currentState === appActive) {
     showMessage({
       floating: true,
-      message:  byMe ? FlashMessage.sessionRejected : FlashMessage.caregiverReject,
+      message:  byMe ? FlashMessage.sessionRejected : FlashMessage.elderlyReject,
       description: sessionRejectedDescription(from),
       icon: props => <Image source={require("../../assets/images/cross.png")} {...props} />,
       backgroundColor: lightRedBackground,
@@ -165,7 +164,7 @@ export function sessionRejectedFlash(from: string, byMe: boolean) {
       color: "black",
     })
   } else {
-    triggerNotifications(byMe ? FlashMessage.sessionRejected : FlashMessage.caregiverReject, sessionRejectedDescription(from), "")
+    triggerNotifications(byMe ? FlashMessage.sessionRejected : FlashMessage.elderlyReject, sessionRejectedDescription(from), "")
   }
 }
 
@@ -192,36 +191,35 @@ export function sessionRejectMaxReachedFlash(from: string) {
 
 
 /**
- * Displays a flash message when the maximum number of session rejections is reached.
- * by caregiver.
+ * Displays a flash message when the maximum number of session rejections is reached by elderly.
  * @param from - The source of the rejection.
  */
 export function sessionRejectedMaxReachedFlash(from: string) {
   if(AppState.currentState === appActive) {
     showMessage({
       floating: true,
-      message: FlashMessage.caregiverCantAcceptConnection,
-      description: maxNumberOfConnectionsCaregiverDescription(from),
+      message: FlashMessage.elderlyCantAcceptConnection,
+      description: maxNumberOfConnectionsElderlyDescription(from),
       icon: props => <Image source={require("../../assets/images/cross.png")} {...props} />,
       backgroundColor: lightRedBackground,
       duration: durationSlowMessage,
       color: "black",
     })
   } else {
-    triggerNotifications(FlashMessage.caregiverCantAcceptConnection, maxNumberOfConnectionsCaregiverDescription(from), "")
+    triggerNotifications(FlashMessage.elderlyCantAcceptConnection, maxNumberOfConnectionsElderlyDescription(from), "")
   }
 }
 
 /**
  * Displays a flash message indicating that a session has ended.
- * @param from - The source of the session end event.
+ * @param from - The sender of the session acceptance. It is empty if byMe is true.
  * @param byMe - Indicates whether the session was ended by the user.
  */
 export function sessionEndedFlash(from: string, byMe: boolean) {
   if(AppState.currentState === appActive) {
     showMessage({
       floating: true,
-      message: byMe ? FlashMessage.sessionEnded : FlashMessage.sessionEndedByCaregiver,
+      message: byMe ? FlashMessage.sessionEnded : FlashMessage.sessionEndedByElderly,
       description: sessionEndedDescription(from),
       icon: props => <Image source={require("../../assets/images/minus.png")} {...props} />,
       backgroundColor: lightRedBackground,
@@ -229,20 +227,20 @@ export function sessionEndedFlash(from: string, byMe: boolean) {
       color: "black",
     })
   } else {
-    triggerNotifications(byMe ? FlashMessage.sessionEnded : FlashMessage.sessionEndedByCaregiver, sessionEndedDescription(from), "")
+    triggerNotifications(byMe ? FlashMessage.sessionEnded : FlashMessage.sessionEndedByElderly, sessionEndedDescription(from), "")
   }
 }
 
 /**
- * Displays a flash message indicating that the credential has been updated by another user.
+ * Displays a flash message indicating that the credential has been updated.
  * If the app is active, it shows a floating message with an icon and a description.
  * If the app is not active, it triggers a notification with the message and description.
- * @param from - The user who updated the credential.
+ * @param from - The sender of the session acceptance. It is empty if byMe is true.
  * @param info - The information about the updated credential.
  */
 export function credentialUpdatedFlash(from: string, platform: string, byMe: boolean) {
-  const message = byMe ? FlashMessage.credentialUpdated : FlashMessage.credentialUpdatedByCaregiver
-  const description = byMe ? credentialUpdatedDescription(platform) : credentialUpdatedByCaregiver(from, platform)
+  const message = byMe ? FlashMessage.credentialUpdated : FlashMessage.credentialUpdatedByElderly
+  const description = byMe ? credentialUpdatedDescription(platform) : credentialUpdatedByElderlyDescription(from, platform)
   
   if(AppState.currentState === appActive) {
     showMessage({
@@ -255,19 +253,19 @@ export function credentialUpdatedFlash(from: string, platform: string, byMe: boo
       color: "black",
     })
   } else {
-    triggerNotifications(FlashMessage.credentialUpdatedByCaregiver, credentialUpdatedByCaregiver(from, platform), "")
+    triggerNotifications(FlashMessage.credentialUpdatedByElderly, credentialUpdatedByElderlyDescription(from, platform), "")
   }
 }
 
 /**
  * Displays a flash message indicating that a credential has been created by someone other than the current user.
  * If the app is active, the message is shown as a floating message. Otherwise, a notification is triggered.
- * @param from - The name of the person who created the credential.
+ * @param from - The sender of the session acceptance. It is empty if byMe is true.
  * @param info - The information about the credential.
  */
 export function credentialCreatedFlash(from: string, platform: string, byMe: boolean) {
-  const message = byMe ? FlashMessage.credentialCreated : FlashMessage.credentialCreatedByCaregiver
-  const description = byMe ? credentialCreatedDescription(platform) : credentialCreatedByCaregiver(from, platform)
+  const message = byMe ? FlashMessage.credentialCreated : FlashMessage.credentialCreatedByElderly
+  const description = byMe ? credentialCreatedDescription(platform) : credentialCreatedByElderlyDescription(from, platform)
 
   if(AppState.currentState === appActive) {
     showMessage({
@@ -287,12 +285,12 @@ export function credentialCreatedFlash(from: string, platform: string, byMe: boo
 
 /**
  * Displays a flash message indicating that a credential has been deleted by another user.
- * @param from - The username of the user who deleted the credential.
+ * @param from - The sender of the session acceptance. It is empty if byMe is true.
  * @param info - The information about the deleted credential.
  */
 export function credentialDeletedFlash(from: string, platform: string, byMe: boolean) {
-  const message = byMe ? FlashMessage.credentialDeleted : FlashMessage.credentialDeletedByCaregiver
-  const description = byMe ? credentialDeletedDescription(platform) : credentialDeletedByCaregiver(from, platform)
+  const message = byMe ? FlashMessage.credentialDeleted : FlashMessage.credentialDeletedByEdlerly
+  const description = byMe ? credentialDeletedDescription(platform) : credentialDeletedByElderlyDescription(from, platform)
   if(AppState.currentState === appActive) {
     showMessage({
       floating: true,
@@ -307,3 +305,47 @@ export function credentialDeletedFlash(from: string, platform: string, byMe: boo
     triggerNotifications(message, description, "")
   }
 }
+
+/**
+ * Displays a flash message with session permissions information.
+ * @param from - The source of the permissions change.
+ */
+export function sessionPermissionsFlash(from: string) {
+  if(AppState.currentState === appActive) {
+    showMessage({
+      floating: true,
+      message: FlashMessage.elderlyPermissionsReceived, 
+      description: permissionsChangedDescription(from),
+      icon: props => <Image source={require("../../assets/images/minus.png")} {...props} />,
+      backgroundColor: yellowBackground,
+      duration: durationSlowMessage,
+      color: "black",
+    });
+  } else {
+    triggerNotifications(FlashMessage.elderlyPermissionsReceived, permissionsChangedDescription(from), "")
+  }
+}
+
+/**
+ * Sends the first key from the elderly to the specified recipient.
+ * If the app state is 'active', it shows a floating message with the session verification details.
+ * Otherwise, it triggers a notification with the session verification details.
+ * 
+ * @param from - The sender of the key.
+ */
+export function elderlySentFirstKey(from: string) {
+  if(AppState.currentState === 'active') {
+    showMessage({
+      floating: true,
+      message: FlashMessage.sessionVerified,
+      description: sessionVerifiedDescription(from),
+      icon: props => <Image source={require("../../assets/images/plus.png")} {...props} />,
+      backgroundColor: purpleBackground,
+      duration: durationSlowMessage,
+      color: "black",
+    });
+  } else {
+    triggerNotifications(FlashMessage.sessionVerified, sessionVerifiedDescription(from), "")
+  }
+}
+

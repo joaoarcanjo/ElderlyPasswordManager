@@ -3,8 +3,9 @@ import {View, Text, TouchableOpacity, Image, ScrollView, StyleSheet} from 'react
 import Navbar from '../../../navigation/actions'
 import { styleScroolView } from '../styles/styles'
 import MainBox from '../../../components/MainBox';
+import { pageTitleFAQs } from '../../../assets/constants';
 
-const jsonData = require('./questions.json');
+const jsonData = require('../../../assets/questions.json');
 
 interface Question { response: any, question: any }
 
@@ -58,7 +59,7 @@ function QuestionsList() {
 export default function FrequentQuestions() {
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-      <MainBox text={'FAQs'}/>
+      <MainBox text={pageTitleFAQs}/>
       <QuestionsList/>
       <Navbar/>
     </View>

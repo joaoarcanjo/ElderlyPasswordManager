@@ -5,42 +5,28 @@ import { historyStyle, passwordFirstHalf, passwordSecondHalf } from '../styles/s
 import Navbar from '../../../navigation/actions'
 import { savePasswordGenerated } from '../../../database/'
 import Algorithm from './algorithm'
-import { FlashMessage, copyPasswordDescription, copyValue } from '../../../components/UserMessages'
 import MainBox from '../../../components/MainBox'
 import { useSessionInfo } from '../../../firebase/authentication/session'
+import { lengthLabel, lowerLabel, numbersLabel, pageTitleGenerator, passwordDefaultLengthGenerator, requirementLabel, specialLabel, timeoutToSavePassword, upperLabel } from '../../../assets/constants'
+import { Requirements } from '../../../components/passwordGenerator/constants'
+import { copyValue } from '../../../components/userMessages/UserMessages'
+import { FlashMessage, copyPasswordDescription } from '../../../components/userMessages/messages'
 
 const minusImage = "../../../assets/images/minus.png"
 const plusImage = "../../../assets/images/plus.png"
 const crossImage = "../../../assets/images/cross.png"
 const checkImage = "../../../assets/images/check.png"
 
-const defaultLength = 12
-const saveTimer = 3000
-
-const requirementLabel = "REQUISITOS:"
-const lengthLabel = "Tamanho:"
-const upperLabel = "Maiúsculas"
-const lowerLabel = "Minúsculas"
-const specialLabel = "&%/$#\"@?"
-const numbersLabel = "Números"
-
-const enum Requirements {
-  Upper = 'upper',
-  Lower = 'lower',
-  Special = 'special',
-  Numbers = 'numbers'
-}
-
 export default function Generator({ navigation }: {readonly navigation: any}) {
 
-  const [passGenerated, setPassGenerated] = useState("");
-  const [password, setPassword] = useState("");
-  const [length, setLength] = useState(defaultLength);
-  const [uppercase, setUppercase] = useState(true);
-  const [lowercase, setLowercase] = useState(true);
-  const [numbers, setNumbers] = useState(true);
-  const [special, setSpecial] = useState(true);
-  const { localDBKey } = useSessionInfo();
+  const [passGenerated, setPassGenerated] = useState('')
+  const [password, setPassword] = useState('')
+  const [length, setLength] = useState(passwordDefaultLengthGenerator)
+  const [uppercase, setUppercase] = useState(true)
+  const [lowercase, setLowercase] = useState(true)
+  const [numbers, setNumbers] = useState(true)
+  const [special, setSpecial] = useState(true)
+  const { localDBKey } = useSessionInfo()
 
   const incLength = () => {if(length < 40)setLength(length + 1)}
   const decLength = () => {if(length > 8)setLength(length - 1)}
@@ -59,7 +45,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
       if(passGenerated != password) {
         saveNewPassword()
       }
-    }, saveTimer);
+    }, timeoutToSavePassword);
     return () => clearTimeout(timer);
   }, [password, passGenerated]);
 
@@ -200,7 +186,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
 
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-      <MainBox text='Gerador'/>
+      <MainBox text={pageTitleGenerator}/>
       <HistoryButton/>
       <PasswordFirstBox/>
       <PasswordSecondBox/>

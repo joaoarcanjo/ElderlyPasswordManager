@@ -11,6 +11,8 @@ import { currentSessionSubject, sessionForRemoteUser } from "../../../e2e/sessio
 import { startSession } from "../../../e2e/session/functions"
 import { CaregiverRequestStatus } from "../../../database/types"
 import { encryptAndSendMessage } from "../../../e2e/messages/sendMessage"
+import { unlink } from "firebase/auth"
+import { unlinkLabel } from "../../../assets/constants"
 
 const caregiverImage = '../../../assets/images/caregiver.png'
 const telephoneImage = '../../../assets/images/telephone.png'
@@ -113,7 +115,7 @@ export function Caregiver({name, phone, email, caregiverId, setRefresh, canWrite
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 20, marginTop: '5%' }]}>{name}</Text>
         </View>
         <TouchableOpacity style={[{flex: 0.5, margin: '3%', height: '80%'}, decouplingOption.button, stylesButtons.mainConfig]} onPress={() => setModalVisible(true)}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[decouplingOption.buttonText]}>DESVINCULAR</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[decouplingOption.buttonText]}>{unlinkLabel}</Text>
         </TouchableOpacity>
       </View>
       <View style={{flex: 1}}>

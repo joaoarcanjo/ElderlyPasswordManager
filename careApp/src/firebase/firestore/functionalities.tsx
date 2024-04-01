@@ -1,6 +1,7 @@
 import { decrypt, encrypt } from '../../algorithms/0thers/crypto';
+import { elderlyCollectionName, keyCollectionName, keyDocumentName, caregiverCollectionName, credencialsCollectionName, caregiversCollectionName, caregiversDocumentName } from '../../assets/constants';
 import { firebase } from '../FirebaseConfig';
-import { caregiverCollectionName, caregiversCollectionName, caregiversDocumentName, credencialsCollectionName, defaultCaregiver, defaultCredencials, elderlyCollectionName, keyCollectionName, keyDocumentName, updateDataCredencial } from './constants';
+import { defaultCaregiver, defaultCredencials, updateDataCredencial } from './constants';
 
 const firestore = firebase.firestore()
 

@@ -13,6 +13,7 @@ export const userLabel = 'UTILIADOR'
 export const nameLabel = 'NOME COMPLETO'
 export const emailLabel = 'EMAIL'
 export const mobileLabel = 'TELEMOVEL'
+export const passwordLabelBig = 'PASSWORD'
 
 export const lengthLabel = "Tamanho:"
 export const upperLabel = "Maiúsculas"
@@ -30,6 +31,7 @@ export const editLabel = 'Editar'
 export const saveLabel = 'Guardar'
 export const cancelLabel = 'Cancelar'
 export const linkLabel = 'Vincular'
+export const unlinkLabel = 'Desvincular'
 
 export const cuidadoresLabel = 'Cuidadores'
 export const credentialsLabel = 'Credenciais'
@@ -46,12 +48,22 @@ export const heyLabel = 'Olá,'
 export const addCaregiverLabel = 'Adicionar Cuidador'
 export const deleteCredentialLabel = 'Apagar Credencial'
 export const addLabel = 'Adicionar'
+export const moreAboutTheApp = 'Mais sobre a aplicação'
+export const leaveAccountLabel = 'Sair da conta'
+export const addCredentialsLabel = 'Adicionar Credenciais'
+export const detailsLabel = 'Detalhes'
+export const navigateLabel = 'Navegar'
+export const saveChangesLabel = 'Guardar Alterações?'
 
 //Placeholders:
 export const namePlaceholder = 'Nome Completo'
 export const emailPlaceholder = 'Email'
 export const passwordPlaceholder = 'Password'
 export const mobilePlaceholder = 'Telemovel'
+export const placeholderPlatform = 'Insira a plataforma'
+export const placeholderURI = 'Insira o URI da plataforma'
+export const placeholderUsername = 'Insira o seu username'
+export const placeholderPassword = "Insira a password"
 
 //SplashScreen:
 export const splashScreenDuration = 3000
@@ -91,9 +103,6 @@ export const caregiversDocumentName = 'Value'
 //Credentials:
 export const credentialTimoutRefresh = 1000 * 60 * 5 // 5 minutes
 
-//MainBoxLabels:
-export const mainboxFAQs = 'FAQs'
-
 //Pages
 export const pageGenerator = 'Generator'
 export const pageCredentials = 'Credentials'
@@ -101,6 +110,20 @@ export const pageSettings = 'Settings'
 export const pageFAQs = 'FrequentQuestions'
 export const pageCaregivers = 'Caregivers'
 export const pageMainMenu = 'MainMenu'
+export const pageCredential = 'CredentialPage'
+export const pageLogin = 'LoginPage'
+export const pageSignup = 'SignupPage'
+export const pageAddCredential = 'AddCredentialPage'
+export const pagePasswordHistory = 'PasswordHistory'
+
+export const pageTitleGenerator = 'Gerador de Passwords'
+export const pageTitleCredentials = 'Credenciais'
+export const pageTitleSettings = 'Definições'
+export const pageTitleFAQs = 'FAQs' 
+export const pageTitleCaregiversList = 'Cuidadores'
+export const pageTitleElderlyCredentials = 'Credenciais do Idoso'
+export const pageAddCredentialTitle = 'Adicionar Credencial'
+export const pageTitleHistory = 'Histórico de Passwords'
 
 //APP state:
 export const appActive = 'active'

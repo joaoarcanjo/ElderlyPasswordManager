@@ -12,7 +12,7 @@ import { stylesButtons } from "../../../assets/styles/main_style";
 import { Spinner } from "../../../components/LoadingComponents";
 import { useSessionInfo } from "../../../firebase/authentication/session";
 import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
-import { appActive, appName, createAccountLabel, doesNotHaveAccountLabel, emailLabel, emailPlaceholder, enterLabel, passwordLabel, passwordPlaceholder } from "../../../assets/constants";
+import { appActive, appName, createAccountLabel, doesNotHaveAccountLabel, emailLabel, emailPlaceholder, enterLabel, pageSignup, passwordLabel, passwordPlaceholder } from "../../../assets/constants";
 
 const SignInPage = () => {
 
@@ -58,14 +58,11 @@ const SignInPage = () => {
 
     const signIn = async () => {
         setLoading(true)
-
-        signInOperation(email, password).then((loginResult) => {
-            setLoading(false)
-        })
+        signInOperation(email, password).then(() => setLoading(false))
     }
 
     const signUp = async () => {
-        navigation.navigate('SignupPage')
+        navigation.navigate(pageSignup)
     }
 
     return (        

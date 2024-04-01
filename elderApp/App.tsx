@@ -28,6 +28,7 @@ import { createIdentity } from './src/e2e/identity/functions';
 import * as Notifications from "expo-notifications";
 import { executeKeyChangeIfTimeout } from './src/algorithms/sss/sssOperations';
 import { flashTimeoutPromise } from './src/screens/splash_screen/actions/functions';
+import { pageAddCredential, pageCaregivers, pageCredential, pageCredentials, pageFAQs, pageGenerator, pageLogin, pageMainMenu, pagePasswordHistory, pageSettings, pageSignup } from './src/assets/constants';
 
 const Stack = createNativeStackNavigator()
 const InsideStack = createNativeStackNavigator()
@@ -60,18 +61,18 @@ function InsideLayout() {
 
   if (!appIsReady) return <SplashScreen test={onLayoutRootView} />
   return (
-    <InsideStack.Navigator initialRouteName="MainMenu">
-      <InsideStack.Screen name="MainMenu" component={MainMenu} options={{ title: "MainMenu", headerShown: false }} />
-      <InsideStack.Screen name="Credentials" component={Credentials} options={{ title: "Credencials", headerShown: false }} />
-      <InsideStack.Screen name="AddCredential" component={AddCredencial} options={{ title: "AddCredencial", headerShown: false }} />
-      <InsideStack.Screen name="Settings" component={Settings} options={{ title: "Settings", headerShown: false }} />
-      <InsideStack.Screen name="Generator" component={Generator} options={{ title: "Generator", headerShown: false }} />
-      <InsideStack.Screen name="PasswordHistory" component={PasswordHistory} options={{ title: "Password history", headerShown: false }} />
-      <InsideStack.Screen name="FrequentQuestions" component={FrequentQuestions} options={{ title: "Frequent Questions", headerShown: false }} />
-      <InsideStack.Screen name="Caregivers" component={Caregivers} options={{ title: "Caregivers", headerShown: false }} />
-      <InsideStack.Screen name="CredentialPage" component={CredencialPage} options={{ title: "CredencialPage", headerShown: false }} />
-      <InsideStack.Screen name="LoginPage" component={SignInPage} options={{title: "LoginPage", headerShown:false}}/>
-      <InsideStack.Screen name="SignupPage" component={SignUpPage} options={{title: "SignupPage", headerShown:false}}/>
+    <InsideStack.Navigator initialRouteName={pageMainMenu}>
+      <InsideStack.Screen name={pageMainMenu} component={MainMenu} options={{ title: "MainMenu", headerShown: false }} />
+      <InsideStack.Screen name={pageCredentials} component={Credentials} options={{ title: "Credencials", headerShown: false }} />
+      <InsideStack.Screen name={pageAddCredential} component={AddCredencial} options={{ title: "AddCredencial", headerShown: false }} />
+      <InsideStack.Screen name={pageSettings} component={Settings} options={{ title: "Settings", headerShown: false }} />
+      <InsideStack.Screen name={pageGenerator} component={Generator} options={{ title: "Generator", headerShown: false }} />
+      <InsideStack.Screen name={pagePasswordHistory} component={PasswordHistory} options={{ title: "Password history", headerShown: false }} />
+      <InsideStack.Screen name={pageFAQs} component={FrequentQuestions} options={{ title: "Frequent Questions", headerShown: false }} />
+      <InsideStack.Screen name={pageCaregivers} component={Caregivers} options={{ title: "Caregivers", headerShown: false }} />
+      <InsideStack.Screen name={pageCredential} component={CredencialPage} options={{ title: "CredencialPage", headerShown: false }} />
+      <InsideStack.Screen name={pageLogin} component={SignInPage} options={{title: "LoginPage", headerShown:false}}/>
+      <InsideStack.Screen name={pageSignup} component={SignUpPage} options={{title: "SignupPage", headerShown:false}}/>
     </InsideStack.Navigator>
   )
 }

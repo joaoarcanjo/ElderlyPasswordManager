@@ -6,7 +6,6 @@ import { whiteBackgroud } from "../../../assets/styles/colors";
 import Navbar from "../../../navigation/actions";
 import { addCredencialToFirestore } from "../../../firebase/firestore/functionalities";
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
-import Algorithm from "../../password_generator/actions/algorithm";
 import { getScore } from '../../../algorithms/zxcvbn/algorithm'
 import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
 import MainBox from "../../../components/MainBox";
@@ -20,11 +19,7 @@ import { ChatMessageType } from "../../../e2e/messages/types";
 import { insertCredentialToLocalDB } from "../../../database/credentials";
 import { regeneratePassword } from "../../../components/passwordGenerator/functions";
 import { PasswordOptionsModal } from "../../../components/Modal";
-
-const placeholderPlatform = 'Insira a plataforma'
-const placeholderURI = 'Insira o URI da plataforma'
-const placeholderUsername = 'Insira o seu username'
-const placeholderPassword = "Insira a password"
+import { placeholderPlatform, placeholderURI, placeholderUsername, placeholderPassword, pageAddCredentialTitle } from "../../../assets/constants";
 
 function CredentialsInput({ ownerId, auxKey, isElderlyCredential }: Readonly<{ownerId: string, auxKey: string, isElderlyCredential: boolean }>) {
     const [platform, setPlatform] = useState('')
@@ -145,7 +140,7 @@ export function AddCredencial({ route }: Readonly<{route: any}>) {
         <>
         <KeyboardAvoidingWrapper>
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <MainBox text="Adicionar credencial"/>
+                <MainBox text={pageAddCredentialTitle}/>
                 <CredentialsInput auxKey={route.params.key} ownerId={route.params.userId} isElderlyCredential={route.params.isElderlyCredential}  />
             </View>
         </KeyboardAvoidingWrapper>

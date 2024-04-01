@@ -17,7 +17,7 @@ import { ChatMessageType } from '../../../e2e/messages/types'
 import { buildEditMessage, sendCaregiversCredentialInfoAction } from './functions'
 import { deleteCredentialFromLocalDB, updateCredentialFromLocalDB } from '../../../database/credentials'
 import { encrypt } from '../../../algorithms/0thers/crypto'
-import { cancelLabel, copyLabel, deleteCredentialLabel, editLabel, optionsLabel, passwordDefaultLengthGenerator, passwordLabel, regenerateLabel, saveLabel, uriLabel, userLabel } from '../../../assets/constants'
+import { cancelLabel, copyLabel, deleteCredentialLabel, editLabel, optionsLabel, passwordDefaultLengthGenerator, passwordLabel, regenerateLabel, saveChangesLabel, saveLabel, uriLabel, userLabel } from '../../../assets/constants'
 import { copyValue, credentialDeletedFlash, credentialUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
 import { FlashMessage, copyURIDescription, copyUsernameDescription } from '../../../components/userMessages/messages'
 import { regeneratePassword } from '../../../components/passwordGenerator/functions'
@@ -84,7 +84,7 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
           setUsername(usernameEdited)
           setPassword(passwordEdited)
           await sendCaregiversCredentialInfoAction(userId, '', platform, ChatMessageType.CREDENTIALS_UPDATED)
-          credentialUpdatedFlash(userEmail, platform, true)
+          credentialUpdatedFlash('', platform, true)
         } else {
           setUriEditted(currUri)
           setUsernameEdited(username)
@@ -228,7 +228,7 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
       </View>
     <Options/>
     <PasswordOptionsModal saveFunction={setRequirements} closeFunction={() => {setPasswordOptionsModalVisible(false)}} visibleFlag={passwordOptionsModalVisible} loading={false}/>
-    <YesOrNoSpinnerModal question={'Guardar as alterações?'} yesFunction={saveCredentialUpdate} noFunction={dontSaveCredentialsUpdate} visibleFlag={modalVisible} loading={loading}/>
+    <YesOrNoSpinnerModal question={saveChangesLabel} yesFunction={saveCredentialUpdate} noFunction={dontSaveCredentialsUpdate} visibleFlag={modalVisible} loading={loading}/>
     {editFlag && <DeleteCredential id={id} platform={platform} />}
     </>
   )

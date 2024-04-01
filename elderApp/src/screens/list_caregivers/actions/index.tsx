@@ -7,6 +7,7 @@ import {CaregiverItem} from './caregiverItem'
 import { caregiverListUpdated, setCaregiverListUpdated } from './state'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { CaregiverPermission } from '../../list_credentials/actions/functions'
+import { pageTitleCaregiversList } from '../../../assets/constants'
 
 
 const CaregiversList = React.memo(function CaregiversList() {
@@ -60,7 +61,7 @@ export const Caregivers = React.memo(function Caregivers() {
 
   return (
     <View    style = {{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-    <MainBox text  = {'Cuidadores'}/>
+    <MainBox text  = {pageTitleCaregiversList}/>
       <CaregiversList/>
       <Navbar/>
     </View>

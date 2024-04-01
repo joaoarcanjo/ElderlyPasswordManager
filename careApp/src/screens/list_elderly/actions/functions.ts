@@ -1,5 +1,4 @@
-import { sessionEstablishedFlash, sessionRejectedFlash } from "../../../components/ShowFlashMessage"
-import { sessionRejectMaxReachedFlash } from "../../../components/UserMessages"
+import { sessionAcceptedFlash, sessionRejectedFlash } from "../../../components/userMessages/UserMessages"
 import { acceptElderlyOnDatabase, deleteElderly, getElderlyWaitingForResponse, isMaxElderlyReached } from "../../../database/elderlyFunctions"
 import { encryptAndSendMessage } from "../../../e2e/messages/functions"
 import { ChatMessageType, CaregiverDataBody } from "../../../e2e/messages/types"
@@ -54,7 +53,7 @@ export async function acceptElderly(userId: string, elderlyEmail: string, userNa
     //await encryptAndSendMessage(to, 'acceptSession', true, ChatMessageType.ACCEPTED_SESSION)
     await encryptAndSendMessage(elderlyEmail, JSON.stringify(data), true, ChatMessageType.PERSONAL_DATA)
     await acceptElderlyOnDatabase(userId, elderlyEmail)
-    sessionEstablishedFlash(true)
+    sessionAcceptedFlash('', true)
     await refuseIfMaxReached(userId)
     
 }
@@ -69,7 +68,7 @@ export async function refuseElderly(userId: string, to: string) {
     await encryptAndSendMessage(to, 'rejectSession', true, ChatMessageType.REJECT_SESSION)
     setElderlyListUpdated()
     removeSession(to)
-    sessionRejectedFlash(true)
+    sessionRejectedFlash('', true)
 }
 
 /**

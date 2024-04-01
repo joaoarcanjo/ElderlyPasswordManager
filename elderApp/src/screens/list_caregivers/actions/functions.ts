@@ -57,7 +57,7 @@ export async function acceptCaregiver(caregiverId: string, number: number, userI
     await encryptAndSendMessage(caregiverEmail, JSON.stringify(data), true, ChatMessageType.PERSONAL_DATA)
     await addCaregiverToArray(userId, caregiverId, "readCaregivers")
     await changeCaregiverStatusOnDatabase(userId, caregiverEmail, CaregiverRequestStatus.ACCEPTED.valueOf())
-    sessionAcceptedFlash(caregiverEmail, true)
+    sessionAcceptedFlash('', true)
     await refuseIfMaxReached(userId)
 }
 
@@ -72,7 +72,7 @@ export async function refuseCaregiver(userId: string, to: string, elderlyName: s
     .then(() => encryptAndSendMessage(to, 'rejectSession', true, ChatMessageType.REJECT_SESSION))
     .then(() => setCaregiverListUpdated(userId))
     .then(() => removeSession(to))
-    .then(() => sessionRejectedFlash(to, true))
+    .then(() => sessionRejectedFlash('', true))
     .catch(() => console.log('#1 Error refusing caregiver'))
 }
 

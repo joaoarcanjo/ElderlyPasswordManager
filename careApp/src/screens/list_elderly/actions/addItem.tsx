@@ -5,12 +5,13 @@ import { stylesAddCaregiver } from "../styles/styles"
 import { ModalBox } from "../../../components/Modal"
 import { modal, options } from "../../credential_interface/styles/styles"
 import { useSessionInfo } from "../../../firebase/authentication/session"
-import { sessionRequestSent } from "../../../components/UserMessages"
 import { startSessionWithElderly } from "./functions"
 import { ElderlyRequestStatus } from "../../../database/types"
 import { ErrorInstance } from "../../../exceptions/error"
 import { Errors } from "../../../exceptions/types"
 import { deleteElderly, saveElderly } from "../../../database/elderlyFunctions"
+import { addElderlyLabel, cancelLabel, elderlyEmailLabel, emailPlaceholder, linkLabel } from "../../../assets/constants"
+import { sessionRequestSent } from "../../../components/userMessages/UserMessages"
 
 export function AddElderlyModal({visibility, concludeAction}: Readonly<{visibility: boolean, concludeAction: Function}>) {
 
@@ -20,7 +21,7 @@ export function AddElderlyModal({visibility, concludeAction}: Readonly<{visibili
   const addElderly = async (email: string) => {
     saveElderly(userId, '0', '0', email, '0', ElderlyRequestStatus.WAITING)
     .then(() => startSessionWithElderly(email, userId, userName, userEmail, userPhone))
-    .then(() => sessionRequestSent())
+    .then(() => sessionRequestSent(elderlyEmail))
     .then(() => concludeAction())
     .catch((error) => {
       const errorAux = error as ErrorInstance
@@ -31,10 +32,10 @@ export function AddElderlyModal({visibility, concludeAction}: Readonly<{visibili
 
   return (
     <ModalBox visibleFlag={visibility}>
-        <Text numberOfLines={2} adjustsFontSizeToFit style={modal.modalText}>{'Email do idoso:'}</Text>
+        <Text numberOfLines={2} adjustsFontSizeToFit style={modal.modalText}>{elderlyEmailLabel}</Text>
         <View style={[{marginBottom: '10%',flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 2 }]}>
           <TextInput
-            placeholder="Email"
+            placeholder={emailPlaceholder}
             value={elderlyEmail} 
             autoFocus={true} 
             autoCapitalize="none"
@@ -45,10 +46,10 @@ export function AddElderlyModal({visibility, concludeAction}: Readonly<{visibili
         <View style={{ borderBottomColor: 'black', borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: '3%' }}/>
         <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
           {(elderlyEmail != '') && <TouchableOpacity style={[{flex: 0.5, marginVertical: '3%', marginRight: '3%'}, stylesButtons.mainConfig, options.saveButton]} onPress={() => addElderly(elderlyEmail)}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Vincular</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{linkLabel}</Text>
           </TouchableOpacity> }
           <TouchableOpacity style={[{flex: 0.5, marginVertical: '3%', marginLeft: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={() => {setElderlyEmail(''); concludeAction()}}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Cancelar</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{cancelLabel}</Text>
           </TouchableOpacity>
         </View>
     </ModalBox>
@@ -58,8 +59,6 @@ export function AddElderlyModal({visibility, concludeAction}: Readonly<{visibili
 export default function AddElderly({setRefresh}: Readonly<{setRefresh: Function}>) {
 
   const [modalVisible, setModalVisible] = useState(false)
-  
-  const buttonName = 'Adicionar idoso.'
 
   const concludeAction = () => {
     setRefresh()
@@ -71,7 +70,7 @@ export default function AddElderly({setRefresh}: Readonly<{setRefresh: Function}
       <View style= { { flex: 1, flexDirection: 'row', justifyContent: 'space-around'} }>
         <AddElderlyModal concludeAction={concludeAction} visibility={modalVisible}/>
         <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, stylesAddCaregiver.button, stylesButtons.mainConfig]} onPress={() => {setModalVisible(true)}}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCaregiver.buttonText]}>{buttonName}</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCaregiver.buttonText]}>{addElderlyLabel}</Text>
         </TouchableOpacity>
       </View>
     </View>

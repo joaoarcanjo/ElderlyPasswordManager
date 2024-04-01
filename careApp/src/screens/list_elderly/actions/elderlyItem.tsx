@@ -10,6 +10,7 @@ import { useSessionInfo } from "../../../firebase/authentication/session";
 import { ElderlyRequestStatus } from "../../../database/types";
 import { getKeychainValueFor } from "../../../keychain";
 import { elderlySSSKey } from "../../../keychain/constants";
+import { credentialsLabel, pageElderlyCredentials, unlinkLabel } from "../../../assets/constants";
 
 const caregiverImage = '../../../assets/images/elderly.png'
 const telephoneImage = '../../../assets/images/telephone.png'
@@ -75,7 +76,7 @@ export function Elderly({ elderlyId, name, phone, email, setRefresh }: Readonly<
       return
     }
 
-    navigation.navigate('ElderlyCredentials', { elderlyEmail: email, elderlyName: name, elderlyId: elderlyId })
+    navigation.navigate(pageElderlyCredentials, { elderlyEmail: email, elderlyName: name, elderlyId: elderlyId })
   }
 
   return (
@@ -87,7 +88,7 @@ export function Elderly({ elderlyId, name, phone, email, setRefresh }: Readonly<
           <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }} />
           <View style={{flex: 1, marginVertical: '3%', marginRight: '5%', flexDirection: 'row'}}>
             <TouchableOpacity style={[{flex: 0.65, marginHorizontal: '1%', marginVertical: '1%'}, elderlyOptions.openCredentials, stylesButtons.mainConfig]} onPress={navigateToElderlyCredentials}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginVertical: '6%' }]}>Credenciais</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginVertical: '6%' }]}>{credentialsLabel}</Text>
             </TouchableOpacity>
             <View style={{flex: 0.30, marginLeft: '8%'}}>
               {showInfo ? 
@@ -118,7 +119,7 @@ export function Elderly({ elderlyId, name, phone, email, setRefresh }: Readonly<
         <View>
           <View style={{ height: 2, backgroundColor: '#ccc', margin: '4%', marginTop: '5%' }} />
           <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, decouplingOption.button, stylesButtons.mainConfig]} onPress={() => setModalVisible(true)}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginVertical: '2%' }, decouplingOption.buttonText]}>Desvincular</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginVertical: '2%' }, decouplingOption.buttonText]}>{unlinkLabel}</Text>
           </TouchableOpacity>
         </View>
       </View> : <></>}

@@ -5,13 +5,14 @@ import { stylesButtons } from "../../assets/styles/main_style";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Entypo, FontAwesome5 } from '@expo/vector-icons'; 
+import { pageMainMenu } from "../../assets/constants";
 
 export default function Navbar() {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const goBack = () => navigation.goBack()
 
-    const goToFirstPage = () => navigation.push('MainMenu')
+    const goToFirstPage = () => navigation.push(pageMainMenu)
 
     return (
         <View style={[{flex: 0.12, backgroundColor: 'red', flexDirection: 'row'}, navigationStyle.pageInfoContainer]}>

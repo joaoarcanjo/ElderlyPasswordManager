@@ -8,7 +8,7 @@ import { Spinner } from "../../../components/LoadingComponents";
 import { useSessionInfo } from "../../../firebase/authentication/session";
 import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
 import { signUpOperation } from "../../../firebase/authentication/funcionalities";
-import { appName, emailLabel, emailPlaceholder, mobileLabel, mobilePlaceholder, nameLabel, namePlaceholder, passwordLabel, passwordPlaceholder } from "../../../assets/constants";
+import { appName, createAccountLabel, emailLabel, emailPlaceholder, mobileLabel, mobilePlaceholder, nameLabel, namePlaceholder, passwordLabel, passwordPlaceholder } from "../../../assets/constants";
 
 export default function SignUpPage () {
 
@@ -95,7 +95,7 @@ export default function SignUpPage () {
                                 </TouchableOpacity>
                             </View><View style={{ flex: 0.4 }}>
                                 <TouchableOpacity style={[{ flex: 0.4, width: '80%', marginVertical: '5%', marginHorizontal: '10%' }, stylesButtons.mainConfig, stylesButtons.copyButton, actions.sinUpButton]} onPress={signUp}>
-                                    <Text style={{ fontSize: 30, marginVertical: '5%' }}>Criar</Text>
+                                    <Text style={{ fontSize: 30, marginVertical: '5%' }}>{createAccountLabel}</Text>
                                 </TouchableOpacity>
                             </View></>
                     }

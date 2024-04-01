@@ -3,7 +3,7 @@ import {View, Text, TouchableOpacity, Image, ScrollView, StyleSheet} from 'react
 import Navbar from '../../../navigation/actions'
 import { styleScroolView } from '../styles/styles'
 import MainBox from '../../../components/MainBox';
-import { mainboxFAQs } from '../../../assets/constants';
+import { pageTitleFAQs } from '../../../assets/constants';
 
 const jsonData = require('../../../assets/questions.json');
 
@@ -59,7 +59,7 @@ function QuestionsList() {
 export default function FrequentQuestions() {
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-      <MainBox text={mainboxFAQs}/>
+      <MainBox text={pageTitleFAQs}/>
       <QuestionsList/>
       <Navbar/>
     </View>

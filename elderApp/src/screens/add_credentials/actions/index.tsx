@@ -19,13 +19,8 @@ import { ChatMessageType } from "../../../e2e/messages/types";
 import { insertCredentialToLocalDB } from "../../../database/credentials";
 import { PasswordOptionsModal } from "../../../components/Modal";
 import { regeneratePassword } from "../../../components/passwordGenerator/functions";
-import { addLabel, optionsLabel, passwordDefaultLengthGenerator, passwordLabel, regenerateLabel, usernameLabel } from "../../../assets/constants";
+import { addLabel, optionsLabel, pageAddCredentialTitle, passwordDefaultLengthGenerator, passwordLabel, placeholderPassword, placeholderPlatform, placeholderURI, placeholderUsername, regenerateLabel, usernameLabel } from "../../../assets/constants";
 import { credentialCreatedFlash } from "../../../components/userMessages/UserMessages";
-
-const placeholderPlatform = 'Insira a plataforma'
-const placeholderURI = 'Insira o URI da plataforma'
-const placeholderUsername = 'Insira o seu username'
-const placeholderPassword = "Insira a password"
 
 function CredentialsInput() {
 
@@ -150,7 +145,7 @@ export function AddCredencial() {
         <>
         <KeyboardAvoidingWrapper>
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <MainBox text="Adicionar credencial"/>
+                <MainBox text={pageAddCredentialTitle}/>
                 <CredentialsInput />
             </View>
         </KeyboardAvoidingWrapper>

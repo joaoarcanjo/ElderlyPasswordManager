@@ -10,10 +10,10 @@ import { randomUUID } from 'expo-crypto'
 import { setElderlyListUpdated } from "../../screens/list_elderly/actions/state"
 import { getKeychainValueFor, saveKeychainValue } from "../../keychain"
 import { caregiverId, elderlySSSKey } from "../../keychain/constants"
-import { FlashMessage, credentialCreatedByOtherFlash, credentialDeletedByOtherFlash, credentialUpdatedByOtherFlash, editCompletedFlash, elderlySentFirstKey, sessionAcceptedFlash, sessionEndedFlash, sessionPermissionsFlash, sessionRejectMaxReachedFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionRequestReceivedFlash } from "../../components/UserMessages"
 import { ElderlyRequestStatus } from "../../database/types"
 import { checkElderlyByEmail, checkElderlyByEmailWaitingForResponse, deleteElderly, isMaxElderlyReached, saveElderly, updateElderly } from "../../database/elderlyFunctions"
 import { setCredentialsListUpdated } from "../../screens/list_elderly_credentials/actions/state"
+import { credentialCreatedFlash, credentialDeletedFlash, credentialUpdatedFlash, elderlyPersonalInfoUpdatedFlash, elderlySentFirstKey, sessionAcceptedFlash, sessionEndedFlash, sessionPermissionsFlash, sessionRejectMaxReachedFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionRequestReceivedFlash } from "../../components/userMessages/UserMessages"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -142,15 +142,15 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
         await processMaxReachedMessage(currentUserId, cm)
     } else if (cm.type === ChatMessageType.CREDENTIALS_UPDATED && !itsMine) {
         const data = JSON.parse(cm.body) as CredentialBody
-        credentialUpdatedByOtherFlash(cm.from, data)
+        credentialUpdatedFlash(cm.from, data.platform, false)
         await setCredentialsListUpdated(currentUserId, cm.from)
     } else if (cm.type === ChatMessageType.CREDENTIALS_CREATED && !itsMine) {
         const data = JSON.parse(cm.body) as CredentialBody
-        credentialCreatedByOtherFlash(cm.from, data)
+        credentialCreatedFlash(cm.from, data.platform, false)
         await setCredentialsListUpdated(currentUserId, cm.from)
     } else if (cm.type === ChatMessageType.CREDENTIALS_DELETED && !itsMine) {
         const data = JSON.parse(cm.body) as CredentialBody
-        credentialDeletedByOtherFlash(cm.from, data)
+        credentialDeletedFlash(cm.from, data.platform, false)
         await setCredentialsListUpdated(currentUserId, cm.from)
     } else if (cm.type === ChatMessageType.PERMISSION_DATA && !itsMine) {
         //Quando o idoso atualiza as permissoes. 
@@ -177,11 +177,11 @@ async function processPersonalData(currentUserId: string, cm: ProcessedChatMessa
     if (await checkElderlyByEmail(currentUserId, cm.from)) {
         await updateElderly(currentUserId, data.userId, data.email, data.name, data.phone)
         setElderlyListUpdated()
-        editCompletedFlash(FlashMessage.elderlyPersonalInfoUpdated)   
+        elderlyPersonalInfoUpdatedFlash(cm.from)   
     }  else if(await checkElderlyByEmailWaitingForResponse(currentUserId, cm.from)) {
         await updateElderly(currentUserId, data.userId, data.email, data.name, data.phone)
         .then(() => saveKeychainValue(elderlySSSKey(data.userId), data.key))
-        .then(() => sessionAcceptedFlash(cm.from))
+        .then(() => sessionAcceptedFlash(cm.from, false))
         .then(() => setElderlyListUpdated())
     } else {
         const isMaxReached = await isMaxElderlyReached(currentUserId)
@@ -226,6 +226,6 @@ async function processMaxReachedMessage(currentUserId: string, cm: ProcessedChat
 async function processDecouplingMessage(currentUserId: string, cm: ProcessedChatMessage) {
     console.log("===> processDecouplingMessageCalled")
     await deleteElderly(currentUserId, cm.from)
-    sessionEndedFlash(cm.from)
+    sessionEndedFlash(cm.from, false)
     setElderlyListUpdated()
 }

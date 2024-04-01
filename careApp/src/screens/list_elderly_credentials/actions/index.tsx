@@ -13,6 +13,7 @@ import { deriveSecret } from '../../../algorithms/sss/sss'
 import { credentialsListUpdated } from './state'
 import { getKeychainValueFor } from '../../../keychain'
 import { elderlySSSKey } from '../../../keychain/constants'
+import { addCredentialsLabel, detailsLabel, navigateLabel, pageCredential, pageTitleCredentials } from '../../../assets/constants'
 
 function AddCredencial({ elderlyId }: Readonly<{elderlyId: string}>) {
 
@@ -35,7 +36,7 @@ function AddCredencial({ elderlyId }: Readonly<{elderlyId: string}>) {
   return (
     <View style= { { flex: 0.10, marginTop: '5%', flexDirection: 'row'} }>
         <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, stylesAddCredential.addCredentialButton, stylesButtons.mainConfig]} onPress={navigateToAddCredential}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCredential.addCredentialButtonText]}>ADICIONAR CREDENCIAIS</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCredential.addCredentialButtonText]}>{addCredentialsLabel}</Text>
         </TouchableOpacity>
     </View>
   )
@@ -52,7 +53,7 @@ function ScrollItemExample({credential, elderlyId}: Readonly<{credential: Creden
     const cloudKey = await getKey(elderlyId)
     const sssKey = await getKeychainValueFor(elderlySSSKey(elderlyId))
     const encryptionKey = deriveSecret([cloudKey, sssKey]) 
-    navigation.navigate('CredentialPage', 
+    navigation.navigate(pageCredential, 
     { 
       userId: elderlyId,
       id: credential.id, 
@@ -92,10 +93,10 @@ function ScrollItemExample({credential, elderlyId}: Readonly<{credential: Creden
       <View style={{flex: 0.65, marginHorizontal: '3%', marginBottom: '3%', flexDirection: 'row'}}> 
         <View style={{flex: 1, marginHorizontal: '3%', flexDirection: 'row'}}>
           <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.itemMoreInfoButton, stylesButtons.mainConfig]} onPress={() => {OpenCredentialPage()}}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Detalhes</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>{detailsLabel}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.navigateButton, stylesButtons.mainConfig]} onPress={() => {NavigateToApp(credential.data.uri, credential.data.platform, credential.data.username, credential.data.password)}}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Navegar</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>{navigateLabel}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -165,7 +166,7 @@ export default function ElderlyCredentials({ route }: Readonly<{route: any}>) {
 
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-      <MainBox text={'Credenciais'}/>
+      <MainBox text={pageTitleCredentials}/>
       <View style={[{flex: 0.1, justifyContent: 'center', alignItems: 'center'}, elderlyName.container]}>
           <Text style={elderlyName.text}>{route.params.elderlyName}</Text>
       </View>
