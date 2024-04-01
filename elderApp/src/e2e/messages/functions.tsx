@@ -16,7 +16,7 @@ import { setCredentialsListUpdated } from "../../screens/list_credentials/action
 import { getAllCredentialsAndValidate } from "../../screens/list_credentials/actions/functions"
 import { executeKeyExchange } from "../../algorithms/sss/sssOperations"
 import { encryptAndSendMessage } from "./sendMessage"
-import { caregiverPersonalInfoUpdatedFlash, credentialCreatedByOtherFlash, credentialDeletedByOtherFlash, credentialUpdatedByOtherFlash, sessionAcceptedFlash, sessionEndedFlash, sessionRejectMaxReachedFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionRequestReceivedFlash } from "../../components/userMessages/UserMessages"
+import { caregiverPersonalInfoUpdatedFlash, credentialCreatedFlash, credentialDeletedFlash, credentialUpdatedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionRejectMaxReachedFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionRequestReceivedFlash } from "../../components/userMessages/UserMessages"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -110,17 +110,17 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
         await processMaxReachedMessage(currentUserId, cm)
     } else if (cm.type === ChatMessageType.CREDENTIALS_UPDATED && !itsMine) {
         const data = JSON.parse(cm.body) as CredentialBody
-        credentialUpdatedByOtherFlash(cm.from, data)
+        credentialUpdatedFlash(cm.from, data.platform, false)
         await getAllCredentialsAndValidate(currentUserId, localKey)
         setCredentialsListUpdated() 
     } else if (cm.type === ChatMessageType.CREDENTIALS_CREATED && !itsMine) {
         const data = JSON.parse(cm.body) as CredentialBody
-        credentialCreatedByOtherFlash(cm.from, data)
+        credentialCreatedFlash(cm.from, data.platform, false)
         await getAllCredentialsAndValidate(currentUserId, localKey)
         setCredentialsListUpdated()
     } else if (cm.type === ChatMessageType.CREDENTIALS_DELETED && !itsMine) {
         const data = JSON.parse(cm.body) as CredentialBody
-        credentialDeletedByOtherFlash(cm.from, data)
+        credentialDeletedFlash(cm.from, data.platform, false)
         await getAllCredentialsAndValidate(currentUserId, localKey)
         setCredentialsListUpdated()
     } else if (cm.type === ChatMessageType.DECOUPLING_SESSION && !itsMine) {

@@ -9,7 +9,7 @@ import { getKeychainValueFor, saveKeychainValue } from '../../../keychain';
 import { elderlyName, elderlyPhone } from '../../../keychain/constants';
 import { createIdentity } from '../../../e2e/identity/functions';
 import { getAllCredentialsAndValidate } from '../../list_credentials/actions/functions';
-import { credentialTimoutRefresh, credentialsLabel, cuidadoresLabel, generatorLabel, pageCaregivers, pageCredentials, pageFAQs, pageGenerator, pageSettings, questionsLabel, settingsLabel } from '../../../assets/constants';
+import { credentialTimoutRefresh, credentialsLabel, cuidadoresLabel, generatorLabel, heyLabel, pageCaregivers, pageCredentials, pageFAQs, pageGenerator, pageSettings, questionsLabel, settingsLabel } from '../../../assets/constants';
 
 const credentialsImage = '../images/credenciais.png'
 const generatorImage = '../images/gerador.png'
@@ -26,7 +26,7 @@ function ElderlyInfoBox() {
         <View style={[{ flex: 0.2, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginHorizontal: '5%', marginTop: '2%' }, stylesFirstHalf.elderContainer]}>
             <View style={{flex: 0.55}}>
                 <View style={{flex: 0.50, justifyContent: 'center'}}>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={{fontSize: 25, fontWeight: 'bold', marginLeft: '10%'}}>Olá,</Text>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={{fontSize: 25, fontWeight: 'bold', marginLeft: '10%'}}>{heyLabel}</Text>
                 </View>
                 <View style={{flex: 0.50, marginLeft: '10%'}}>
                     <Text numberOfLines={1} adjustsFontSizeToFit style={{fontSize: 35, fontWeight: 'bold'}}>{userName}</Text>
@@ -47,26 +47,18 @@ function Functionalities() {
     }
 
     const CredencialsNavigation = async () => {
-        // Your code to handle the click event
-        //console.log('Credentials button clicked!');
         navigation.push(pageCredentials)
     }
 
     const GeneratorsNavigation = () => {
-        // Your code to handle the click event
-        //console.log('Generator button clicked!');
         navigation.push(pageGenerator)
     }
 
     const FrequentQuestionsNavigation = () => {
-        // Your code to handle the click event
-        //console.log('Questions button clicked!');
         navigation.push(pageFAQs)
     }
 
     const SettingsNavigation = () => {
-        // Your code to handle the click event
-        //console.log('Questions button clicked!');
         navigation.push(pageSettings)
     }
 

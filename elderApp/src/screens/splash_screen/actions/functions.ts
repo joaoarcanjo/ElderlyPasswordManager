@@ -4,7 +4,7 @@ import { getTimeoutFromLocalDB, insertTimeoutToLocalDB, updateTimeoutToLocalDB }
 import { TimeoutType } from "../../../database/types"
 
 export const flashTimeoutPromise = async (userId: string, setXd: Function) => {
-    console.log("flashTimeoutPromise")
+    console.log("==> flashTimeoutPromiseCalled")
     if(userId == '' || userId == null) return Promise.resolve()
     if(dbSQL == null) {
         initDb()

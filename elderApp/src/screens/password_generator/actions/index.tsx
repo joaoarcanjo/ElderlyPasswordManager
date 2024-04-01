@@ -4,18 +4,18 @@ import { stylesButtons } from '../../../assets/styles/main_style'
 import { historyStyle, passwordFirstHalf, passwordSecondHalf } from '../styles/styles'
 import Navbar from '../../../navigation/actions'
 import { savePasswordGenerated } from '../../../database/passwords'
-import Algorithm from './algorithm'
+import Algorithm from '../../../algorithms/newPassword/algorithm'
 import MainBox from '../../../components/MainBox'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { decLength, incLength, updateUpperCase, updateLowerCase, updateNumbers, updateSpecial } from '../../../components/passwordGenerator/functions'
-import { lengthLabel, requirementLabel, upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, timeoutToSavePassword } from '../../../assets/constants'
+import { lengthLabel, requirementLabel, upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, timeoutToSavePassword, historyLabel, copyLabel, regenerateLabel } from '../../../assets/constants'
 import { copyValue } from '../../../components/userMessages/UserMessages'
 import { FlashMessage, copyPasswordDescription } from '../../../components/userMessages/messages'
 
-const minusImage = "../../../assets/images/minus.png" //TODO: colocar no ficheiro de constantes
-const plusImage = "../../../assets/images/plus.png" //TODO: colocar no ficheiro de constantes
-const crossImage = "../../../assets/images/cross.png" //TODO: colocar no ficheiro de constantes
-const checkImage = "../../../assets/images/check.png" //TODO: colocar no ficheiro de constantes
+const minusImage = "../../../assets/images/minus.png"
+const plusImage = "../../../assets/images/plus.png"
+const crossImage = "../../../assets/images/cross.png"
+const checkImage = "../../../assets/images/check.png"
 
 export default function Generator({ navigation }: {readonly navigation: any}) {
 
@@ -75,7 +75,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
     return (
       <View style= { { flex: 0.06, width: '100%', marginTop: '2%', alignItems: 'flex-end' } }>
             <TouchableOpacity style={[{flex: 1,  width: '45%', marginRight: '8%'}, historyStyle.historyButton, stylesButtons.mainConfig]} onPress={() => HistoryPressed()}>
-                <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontWeight: 'bold', fontSize: 22 }]}>Histórico</Text>
+                <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontWeight: 'bold', fontSize: 22 }]}>{historyLabel}</Text>
             </TouchableOpacity>
       </View>
     )
@@ -95,10 +95,10 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
               {/* Botões para copiar a password e para gerar uma nova */}
               <View style={{flexDirection: 'row', margin: '3%', marginBottom: '5%'}}>
                 <TouchableOpacity style={[{flex: 0.5, marginRight: '2%'}, passwordFirstHalf.copyButton, stylesButtons.mainConfig]} onPress={() => saveOnClickBoard() }>
-                  <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Copiar</Text>
+                  <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>{copyLabel}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[{flex: 0.5, marginLeft: '2%'}, passwordFirstHalf.regenerateButton, stylesButtons.mainConfig]} onPress={() => generatePassword() }>
-                  <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Regenerar</Text>
+                  <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>{regenerateLabel}</Text>
                 </TouchableOpacity>
               </View>
           </View>

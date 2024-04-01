@@ -19,7 +19,8 @@ import { ChatMessageType } from "../../../e2e/messages/types";
 import { insertCredentialToLocalDB } from "../../../database/credentials";
 import { PasswordOptionsModal } from "../../../components/Modal";
 import { regeneratePassword } from "../../../components/passwordGenerator/functions";
-import { optionsLabel, passwordDefaultLengthGenerator, passwordLabel, regenerateLabel, usernameLabel } from "../../../assets/constants";
+import { addLabel, optionsLabel, passwordDefaultLengthGenerator, passwordLabel, regenerateLabel, usernameLabel } from "../../../assets/constants";
+import { credentialCreatedFlash } from "../../../components/userMessages/UserMessages";
 
 const placeholderPlatform = 'Insira a plataforma'
 const placeholderURI = 'Insira o URI da plataforma'
@@ -43,7 +44,6 @@ function CredentialsInput() {
 
     useEffect(() => regeneratePassword(requirements, setPassword), [])
   
-    console.log(password)
     const handleSave = async () => {
         try {
             if(platform != '' && uri != '' && username != '' && password != '') {
@@ -62,6 +62,7 @@ function CredentialsInput() {
                 await addCredencialToFirestore(userId, uuid, jsonValue)
                 await insertCredentialToLocalDB(userId, uuid, encrypt(jsonValue, localDBKey))
                 await sendCaregiversCredentialInfoAction(userId, '', platform, ChatMessageType.CREDENTIALS_CREATED)
+                credentialCreatedFlash(userEmail, platform, true)
                 navigation.goBack()
             }
         } catch (error) {
@@ -137,7 +138,7 @@ function CredentialsInput() {
                 </View>
             </View>
             <TouchableOpacity style={[{flex: 0.1, marginHorizontal: '10%', marginVertical: '2%'}, stylesAddCredential.button, stylesButtons.mainConfig]} onPress={handleSave}>
-                <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCredential.buttonText]}>Adicionar</Text>
+                <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCredential.buttonText]}>{addLabel}</Text>
             </TouchableOpacity>
             <PasswordOptionsModal saveFunction={saveRequirements} closeFunction={() => {setModalVisible(false)}} visibleFlag={modalVisible} loading={false}/>
         </View>

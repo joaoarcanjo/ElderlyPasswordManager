@@ -7,7 +7,7 @@ import { darkGreenBackgroud, lightBlueBackground, lightGreenBackgroud, lightRedB
 import { triggerNotifications } from '../../notifications/localNotifications';
 import { CredentialBody } from '../../e2e/messages/types';
 import { appActive, durationQuickMessage, durationSlowMessage } from '../../assets/constants';
-import { FlashMessage, caregiverPersonalInfoUpdatedDescription, editCredentialCompletedDescription, editModeActiveDescription, editModeCanceledDescription, maxNumberOfConnectionsDescription, maxNumberOfConnectionsCaregiverDescription, sessionAcceptedDescription, sessionEndedDescription, sessionRejectedDescription, sessionRequestReceivedDescription, sessionRequestSentDescription, credentialUpdatedByCaregiver, credentialCreatedByCaregiver, credentialDeletedByCaregiver } from './messages';
+import { FlashMessage, caregiverPersonalInfoUpdatedDescription, editModeActiveDescription, editModeCanceledDescription, maxNumberOfConnectionsDescription, maxNumberOfConnectionsCaregiverDescription, sessionAcceptedDescription, sessionEndedDescription, sessionRejectedDescription, sessionRequestReceivedDescription, sessionRequestSentDescription, credentialUpdatedByCaregiver, credentialCreatedByCaregiver, credentialDeletedByCaregiver, credentialDeletedDescription, credentialCreatedDescription, credentialUpdatedDescription, personalInfoUpdatedDescription } from './messages';
 
 
 /**
@@ -62,22 +62,6 @@ export function editCanceledFlash() {
 } 
 
 /**
- * Edits completed flash message.
- * @param flashMessage - The flash message to be presented.
- */
-export function editCompletedFlash(flashMessage: FlashMessage) {
-  showMessage({
-    floating: true,
-    message: flashMessage,
-    description: editCredentialCompletedDescription,
-    icon: props => <Image source={require("../../assets/images/edit.png")} {...props} />,
-    backgroundColor: darkGreenBackgroud,
-    duration: durationQuickMessage,
-    color: "black",
-  })
-}
-
-/**
  * Displays a flash message indicating that the caregiver's personal information has been updated.
  * @param caregiverEmail - The email of the caregiver.
  */
@@ -86,6 +70,21 @@ export function caregiverPersonalInfoUpdatedFlash(caregiverEmail: string) {
     floating: true,
     message: FlashMessage.caregiverPersonalInfoUpdated,
     description: caregiverPersonalInfoUpdatedDescription(caregiverEmail),
+    icon: props => <Image source={require("../../assets/images/edit.png")} {...props} />,
+    backgroundColor: superlightGreenBackground,
+    duration: durationQuickMessage,
+    color: "black",
+  })
+}
+
+/**
+ * Displays a flash message indicating that the elderly's personal information has been updated.
+ */
+export function elderlyPersonalInfoUpdatedFlash() {
+  showMessage({
+    floating: true,
+    message: FlashMessage.personalInfoUpdated,
+    description: personalInfoUpdatedDescription,
     icon: props => <Image source={require("../../assets/images/edit.png")} {...props} />,
     backgroundColor: superlightGreenBackground,
     duration: durationQuickMessage,
@@ -242,19 +241,22 @@ export function sessionEndedFlash(from: string, byMe: boolean) {
  * @param from - The user who updated the credential.
  * @param info - The information about the updated credential.
  */
-export function credentialUpdatedByOtherFlash(from: string, info: CredentialBody) {
+export function credentialUpdatedFlash(from: string, platform: string, byMe: boolean) {
+  const message = byMe ? FlashMessage.credentialUpdated : FlashMessage.credentialUpdatedByCaregiver
+  const description = byMe ? credentialUpdatedDescription(platform) : credentialUpdatedByCaregiver(from, platform)
+  
   if(AppState.currentState === appActive) {
     showMessage({
       floating: true,
-      message: FlashMessage.credentialUpdatedByCaregiver,
-      description: credentialUpdatedByCaregiver(from, info.platform),
+      message: message,
+      description: description,
       icon: props => <Image source={require("../../assets/images/edit.png")} {...props} />,
       backgroundColor: superlightBlueBackgroud,
       duration: durationSlowMessage,
       color: "black",
     })
   } else {
-    triggerNotifications(FlashMessage.credentialUpdatedByCaregiver, credentialUpdatedByCaregiver(from, info.platform), "")
+    triggerNotifications(FlashMessage.credentialUpdatedByCaregiver, credentialUpdatedByCaregiver(from, platform), "")
   }
 }
 
@@ -264,20 +266,23 @@ export function credentialUpdatedByOtherFlash(from: string, info: CredentialBody
  * @param from - The name of the person who created the credential.
  * @param info - The information about the credential.
  */
-export function credentialCreatedByOtherFlash(from: string, info: CredentialBody) {
+export function credentialCreatedFlash(from: string, platform: string, byMe: boolean) {
+  const message = byMe ? FlashMessage.credentialCreated : FlashMessage.credentialCreatedByCaregiver
+  const description = byMe ? credentialCreatedDescription(platform) : credentialCreatedByCaregiver(from, platform)
+
   if(AppState.currentState === appActive) {
     showMessage({
       floating: true,
-      message: FlashMessage.credentialCreatedByCaregiver,
-      description: credentialCreatedByCaregiver(from, info.platform),
+      message: message,
+      description: description,
       icon: props => <Image source={require("../../assets/images/edit.png")} {...props} />,
       backgroundColor: lightGreenBackgroud,
       duration: durationSlowMessage,
-      color: "black", // text color
+      color: "black",
       position: 'top'
     })
   } else {
-    triggerNotifications(FlashMessage.credentialCreatedByCaregiver,  credentialCreatedByCaregiver(from, info.platform), "")
+    triggerNotifications(message,  description, "")
   }
 }
 
@@ -286,18 +291,20 @@ export function credentialCreatedByOtherFlash(from: string, info: CredentialBody
  * @param from - The username of the user who deleted the credential.
  * @param info - The information about the deleted credential.
  */
-export function credentialDeletedByOtherFlash(from: string, info: CredentialBody) {
+export function credentialDeletedFlash(from: string, platform: string, byMe: boolean) {
+  const message = byMe ? FlashMessage.credentialDeleted : FlashMessage.credentialDeletedByCaregiver
+  const description = byMe ? credentialDeletedDescription(platform) : credentialDeletedByCaregiver(from, platform)
   if(AppState.currentState === appActive) {
     showMessage({
       floating: true,
-      message: FlashMessage.credentialDeletedByCaregiver,
-      description: credentialDeletedByCaregiver(from, info.platform),
+      message: message,
+      description: description,
       icon: props => <Image source={require("../../assets/images/edit.png")} {...props} />,
       backgroundColor: lightRedBackground,
       duration: durationSlowMessage,
       color: "black",
     })
   } else {
-    triggerNotifications(FlashMessage.credentialDeletedByCaregiver, credentialDeletedByCaregiver(from, info.platform), "")
+    triggerNotifications(message, description, "")
   }
 }

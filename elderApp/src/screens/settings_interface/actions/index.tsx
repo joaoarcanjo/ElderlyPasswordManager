@@ -11,17 +11,13 @@ import { useSessionInfo } from '../../../firebase/authentication/session'
 import { options } from '../../credential_interface/styles/styles'
 import { YesOrNoSpinnerModal } from '../../../components/Modal'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
-import Algorithm from '../../password_generator/actions/algorithm'
 import { updatePasswordOperation } from '../../../firebase/authentication/funcionalities'
 import { sendCaregiversNewInfo } from './functions'
 import { closeWebsocket } from '../../../e2e/network/webSockets'
 import { usernameSubject } from '../../../e2e/identity/state'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
-import { cancelLabel, editLabel, saveLabel } from '../../../assets/constants'
-import { FlashMessage } from '../../../components/userMessages/messages'
-import { editCompletedFlash, editCanceledFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
-
-const gitHubUrl = 'https://github.com/joaoarcanjo/ThesisApps'
+import { accountInfoLabel, cancelLabel, editLabel, gitHubUrl, saveLabel } from '../../../assets/constants'
+import { editCanceledFlash, editValueFlash, elderlyPersonalInfoUpdatedFlash } from '../../../components/userMessages/UserMessages'
 
 function AccountInfo() {
   
@@ -91,7 +87,7 @@ function AccountInfo() {
       setLoading(true)
       updateInfo().then((updated) => {
         if(updated) {
-          editCompletedFlash(FlashMessage.editPersonalInfoCompleted)
+          elderlyPersonalInfoUpdatedFlash()
           setLoading(false)
           setModalVisible(false)
           toggleEditFlag()
@@ -129,7 +125,7 @@ function AccountInfo() {
   return (
     <View style={[{flex: 1, width: '100%'}]}>
         <View style={[{ marginTop:'4%', marginHorizontal: '2%'}, accountInfo.accountInfoContainer]}>
-        <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.10, marginTop: '3%', marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: 20}]}>Informação da conta:</Text>
+        <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.10, marginTop: '3%', marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: 20}]}>{accountInfoLabel}</Text>
         <View style={[{flex: 0.17, marginVertical:'1%', marginHorizontal: '2%', justifyContent: 'center',  alignItems: 'center', flexDirection: 'row'}]}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[accountInfo.emailInfoText]}>{userEmail}</Text>
         </View>
@@ -204,8 +200,8 @@ function AccountInfo() {
 }
 
 const onGitHub = () => Linking.canOpenURL(gitHubUrl).then(() => {
-  Linking.openURL(gitHubUrl);
-});
+  Linking.openURL(gitHubUrl)
+})
 
 function AppInfo() {
   return (

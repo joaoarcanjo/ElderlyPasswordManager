@@ -17,8 +17,8 @@ import { ChatMessageType } from '../../../e2e/messages/types'
 import { buildEditMessage, sendCaregiversCredentialInfoAction } from './functions'
 import { deleteCredentialFromLocalDB, updateCredentialFromLocalDB } from '../../../database/credentials'
 import { encrypt } from '../../../algorithms/0thers/crypto'
-import { passwordDefaultLengthGenerator } from '../../../assets/constants'
-import { copyValue, editCanceledFlash, editCompletedFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
+import { cancelLabel, copyLabel, deleteCredentialLabel, editLabel, optionsLabel, passwordDefaultLengthGenerator, passwordLabel, regenerateLabel, saveLabel, uriLabel, userLabel } from '../../../assets/constants'
+import { copyValue, credentialDeletedFlash, credentialUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
 import { FlashMessage, copyURIDescription, copyUsernameDescription } from '../../../components/userMessages/messages'
 import { regeneratePassword } from '../../../components/passwordGenerator/functions'
 
@@ -84,7 +84,7 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
           setUsername(usernameEdited)
           setPassword(passwordEdited)
           await sendCaregiversCredentialInfoAction(userId, '', platform, ChatMessageType.CREDENTIALS_UPDATED)
-          editCompletedFlash(FlashMessage.editCredentialCompleted)
+          credentialUpdatedFlash(userEmail, platform, true)
         } else {
           setUriEditted(currUri)
           setUsernameEdited(username)
@@ -128,15 +128,15 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
         {editFlag ?
           <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
             <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.editButton]} onPress={() => {toggleEditFlag(); editValueFlash();}}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>Editar</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>{editLabel}</Text>
             </TouchableOpacity>
           </View> :
           <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
             {credentialsModified && <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.saveButton]} onPress={() => setModalVisible(true)}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>Guardar</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>{saveLabel}</Text>
             </TouchableOpacity>}
             <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={cancelUpdate}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>Cancelar</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>{cancelLabel}</Text>
             </TouchableOpacity>
           </View>
         }
@@ -150,10 +150,10 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
       <View style={[{ flex: 1, marginHorizontal: '4%'}, credentials.credentialInfoContainer]}>
           <View style={{flex: 0.40}}>
             <View style={{flex: 0.6, flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '4%'}}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>URI</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>{uriLabel}</Text>
               {editFlag && 
               <TouchableOpacity style={[{flex: 0.4, marginTop:'3%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(uri, FlashMessage.uriCopied, copyURIDescription)}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>{copyLabel}</Text>
               </TouchableOpacity>}
             </View>
             <View style={[{ flex: 0.4, alignItems: 'center', justifyContent: 'center', marginHorizontal: '4%', marginVertical: '2%'}, inputStyle]}>
@@ -169,10 +169,10 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
           </View>
           <View style={{flex: 0.40}}>
             <View style={{flex: 0.6, flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '4%'}}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>UTILIZADOR</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>{userLabel}</Text>
               {editFlag && 
               <TouchableOpacity style={[{flex: 0.4, marginTop:'3%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(username, FlashMessage.usernameCopied, copyUsernameDescription)}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>{copyLabel}</Text>
               </TouchableOpacity>}
             </View>
             <View style={[{ flex: 0.4, alignItems: 'center', justifyContent: 'center', marginHorizontal: '4%', marginVertical: '2%'}, inputStyle]}>
@@ -188,7 +188,7 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
           </View>
           <View style={{flex: 0.40}}>
             <View style={{flex: 0.6, flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '4%'}}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>PASSWORD</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>{passwordLabel}</Text>
               {editFlag && 
               <TouchableOpacity style={[{flex: 0.4, marginTop:'3%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(password, FlashMessage.passwordCopied, copyUsernameDescription)}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar</Text>
@@ -216,11 +216,11 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
           :
           <View style={{ flex: 0.14, flexDirection: 'row', justifyContent: 'flex-end', marginBottom: '5%', marginHorizontal: '5%' }}>
             <TouchableOpacity style={[{flex: 0.50}, stylesButtons.blueButton, stylesButtons.mainConfig]} onPress={() => {setPasswordOptionsModalVisible(true)}}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Opções</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>{optionsLabel}</Text>
             </TouchableOpacity>
             <View style={{margin: '1%'}}/>
             <TouchableOpacity style={[{flex: 0.50}, credentials.regenerateButton, stylesButtons.mainConfig]} onPress={() => {regeneratePassword(requirements, setPasswordEdited)} }>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Regenerar</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>{regenerateLabel}</Text>
             </TouchableOpacity>
           </View>}
           <Text numberOfLines={2} adjustsFontSizeToFit style={[{marginLeft: '6%', marginBottom: '2%',fontSize: 13}, {opacity: editFlag ? 100 : 0}]}>{buildEditMessage(edited.updatedBy, edited.updatedAt)}</Text> 
@@ -248,6 +248,7 @@ function DeleteCredential({id, platform}: Readonly<{id: string, platform: string
     await deleteCredentialFromFiretore(userId, id)
     .then(() => deleteCredentialFromLocalDB(userId, id))
     .then(async () => await sendCaregiversCredentialInfoAction(userId, '', platform, ChatMessageType.CREDENTIALS_DELETED))
+    .then(() => credentialDeletedFlash(userId, platform, true))
     .then(() => navigation.goBack())
     .catch(() => console.log('#1 Error deleting credential'))
   }
@@ -256,7 +257,7 @@ function DeleteCredential({id, platform}: Readonly<{id: string, platform: string
     <View style= { { flex: 0.10, flexDirection: 'row', justifyContent: 'space-around', marginBottom: '2%'} }>
       <YesOrNoModal question={'Apagar a credencial?'} yesFunction={() => deleteCredentialAction()} noFunction={() => setModalVisible(false)} visibleFlag={modalVisible}/>
       <TouchableOpacity style={[{flex: 1, marginHorizontal: '20%', marginVertical: '3%'}, logout.logoutButton, stylesButtons.mainConfig]} onPress={() => setModalVisible(true)}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>Apagar credencial</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>{deleteCredentialLabel}</Text>
       </TouchableOpacity>
     </View>
   )

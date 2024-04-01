@@ -325,3 +325,32 @@ export const isMaxElderlyReached = async (userId: string): Promise<boolean> => {
         }
     })
 }
+
+/**
+ * Retrieves the elderly ID based on the elderly's email and user ID.
+ * @param elderlyEmail - The email of the elderly.
+ * @param userId - The ID of the user.
+ * @returns A Promise that resolves to the caregiver ID.
+ */
+export async function getElderlyId(elderlyEmail: string, userId: string): Promise<string> {
+    console.log("===> getElderlyIdCalled")
+    return new Promise((resolve, reject) => {
+        if (dbSQL != null) {
+            dbSQL.transaction(tx => {
+                tx.executeSql(
+                    'SELECT elderlyId FROM elderly WHERE email = ? AND userId = ?;',
+                    [elderlyEmail, userId],
+                    (_, result) => {
+                        return resolve(result.rows.item(0).elderlyId);
+                    },
+                    (_, error) => {
+                        console.log("Error: "+ error.message)
+                        return false
+                    }
+                )
+            })
+        } else {
+            reject(new ErrorInstance(Errors.ERROR_DATABASE_NOT_INITIALIZED))
+        }
+    })
+}

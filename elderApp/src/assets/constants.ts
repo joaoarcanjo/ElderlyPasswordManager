@@ -3,29 +3,55 @@ export const ipAddress = "192.168.1.68";
 export const port = "442";
 export const apiPort = "443";
 
+export const gitHubUrl = 'https://github.com/joaoarcanjo/ThesisApps'
+
 //Labels:
+export const appName = 'ElderAPP'
+
 export const requirementLabel = "REQUISITOS:"
+export const userLabel = 'UTILIADOR'
+export const nameLabel = 'NOME COMPLETO'
+export const emailLabel = 'EMAIL'
+export const mobileLabel = 'TELEMOVEL'
+
 export const lengthLabel = "Tamanho:"
 export const upperLabel = "Maiúsculas"
 export const lowerLabel = "Minúsculas"
 export const specialLabel = "&%/$#\"@?"
 export const numbersLabel = "Números"
-
-export const optionsLabel = 'Opções'
-export const regenerateLabel = 'Regenerar'
-
+export const uriLabel = 'URI'
 export const usernameLabel = 'Username'
 export const passwordLabel = 'Password'
 
+export const optionsLabel = 'Opções'
+export const regenerateLabel = 'Regenerar'
+export const copyLabel = 'Copiar'
 export const editLabel = 'Editar'
 export const saveLabel = 'Guardar'
 export const cancelLabel = 'Cancelar'
+export const linkLabel = 'Vincular'
 
 export const cuidadoresLabel = 'Cuidadores'
 export const credentialsLabel = 'Credenciais'
-export const generatorLabel = 'Gerar nova'
 export const settingsLabel = 'Definições'
 export const questionsLabel = 'FAQs'
+
+export const generatorLabel = 'Gerar nova'
+export const createAccountLabel = 'Criar Conta'
+export const doesNotHaveAccountLabel = 'Não tem conta?'
+export const enterLabel = 'Entrar'
+export const accountInfoLabel = 'Informação da Conta'
+export const historyLabel = 'Histórico'
+export const heyLabel = 'Olá,'
+export const addCaregiverLabel = 'Adicionar Cuidador'
+export const deleteCredentialLabel = 'Apagar Credencial'
+export const addLabel = 'Adicionar'
+
+//Placeholders:
+export const namePlaceholder = 'Nome Completo'
+export const emailPlaceholder = 'Email'
+export const passwordPlaceholder = 'Password'
+export const mobilePlaceholder = 'Telemovel'
 
 //SplashScreen:
 export const splashScreenDuration = 3000
@@ -74,6 +100,7 @@ export const pageCredentials = 'Credentials'
 export const pageSettings = 'Settings'
 export const pageFAQs = 'FrequentQuestions'
 export const pageCaregivers = 'Caregivers'
+export const pageMainMenu = 'MainMenu'
 
 //APP state:
 export const appActive = 'active'

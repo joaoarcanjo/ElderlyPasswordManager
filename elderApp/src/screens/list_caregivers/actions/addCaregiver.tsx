@@ -11,6 +11,7 @@ import { deleteCaregiver, saveCaregiver } from "../../../database/caregivers"
 import { CaregiverRequestStatus } from "../../../database/types"
 import { ErrorInstance } from "../../../exceptions/error"
 import { Errors } from "../../../exceptions/types"
+import { addCaregiverLabel, cancelLabel, linkLabel } from "../../../assets/constants"
 
 function AddCaregiverModal({visibility, concludeAction}: Readonly<{visibility: boolean, concludeAction: Function}>) {
 
@@ -49,10 +50,10 @@ function AddCaregiverModal({visibility, concludeAction}: Readonly<{visibility: b
         <View style={{ borderBottomColor: 'black', borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: '3%' }}/>
         <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
           {(caregiverEmail != '') && <TouchableOpacity style={[{flex: 0.5, marginVertical: '3%', marginRight: '3%'}, stylesButtons.mainConfig, options.saveButton]} onPress={() => addCaregiver(caregiverEmail)}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Vincular</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{linkLabel}</Text>
           </TouchableOpacity> }
           <TouchableOpacity style={[{flex: 0.5, marginVertical: '3%', marginLeft: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={() => {setCaregiverEmail(''); concludeAction()}}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Cancelar</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{cancelLabel}</Text>
           </TouchableOpacity>
         </View>
     </ModalBox>
@@ -63,7 +64,7 @@ export default function AddCaregiver({number, setRefresh}: Readonly<{number: num
 
   const [modalVisible, setModalVisible] = useState(false)
   
-  const buttonName = 'Adicionar cuidador ' + number
+  const buttonName = `${addCaregiverLabel} ` + number
 
   const concludeAction = () => {
     setRefresh()

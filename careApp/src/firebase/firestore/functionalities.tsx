@@ -9,6 +9,7 @@ const firestore = firebase.firestore()
  */
 async function getKey(elderlyId: string): Promise<string> {
     console.log("===> getFirebaseKeyCalled")
+    console.log("elderlyId: ", elderlyId)
     return firestore.collection(elderlyCollectionName)
         .doc(elderlyId).collection(keyCollectionName).doc(keyDocumentName).get().then((doc: any) => {
             if(doc.exists) {

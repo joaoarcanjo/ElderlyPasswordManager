@@ -4,7 +4,6 @@ import { webSocket } from "rxjs/webSocket"
 import { SendWebSocketMessage, WebSocketMessage, isSendWebSocketMessage, isAcknowledgeMessage } from "./types"
 import { MessageType } from "@privacyresearch/libsignal-protocol-typescript"
 import { processRegularMessage, processPreKeyMessage } from "../messages/functions"
-//import { MessageType } from "../../algorithms/signal"
 
 /**
  * Recebe o uri do servidor e cria uma subscrição no mesmo, que significa uma sessão com o servidor.

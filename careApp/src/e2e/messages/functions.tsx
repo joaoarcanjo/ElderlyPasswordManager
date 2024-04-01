@@ -143,15 +143,15 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
     } else if (cm.type === ChatMessageType.CREDENTIALS_UPDATED && !itsMine) {
         const data = JSON.parse(cm.body) as CredentialBody
         credentialUpdatedByOtherFlash(cm.from, data)
-        setCredentialsListUpdated()
+        await setCredentialsListUpdated(currentUserId, cm.from)
     } else if (cm.type === ChatMessageType.CREDENTIALS_CREATED && !itsMine) {
         const data = JSON.parse(cm.body) as CredentialBody
         credentialCreatedByOtherFlash(cm.from, data)
-        setCredentialsListUpdated()
+        await setCredentialsListUpdated(currentUserId, cm.from)
     } else if (cm.type === ChatMessageType.CREDENTIALS_DELETED && !itsMine) {
         const data = JSON.parse(cm.body) as CredentialBody
         credentialDeletedByOtherFlash(cm.from, data)
-        setCredentialsListUpdated()
+        await setCredentialsListUpdated(currentUserId, cm.from)
     } else if (cm.type === ChatMessageType.PERMISSION_DATA && !itsMine) {
         //Quando o idoso atualiza as permissoes. 
         setElderlyListUpdated()
