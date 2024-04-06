@@ -19,19 +19,22 @@ function AddCaregiverModal({visibility, concludeAction}: Readonly<{visibility: b
   const { userId, userEmail, userName, userPhone } = useSessionInfo()
 
   const addCaregiver = async (email: string) => {
-    console.log("addCaregiverButtonPressed")
-    saveCaregiver(userId, '', '', email, '', CaregiverRequestStatus.WAITING)
-    .then(() =>  startSessionWithCaregiver(email, userId, userName, userEmail, userPhone))
-    .then(() => sessionRequestSent(email))
-    .then(() => concludeAction())
-    .catch(async (error) => {
-      const errorAux = error as ErrorInstance
-      if(errorAux.code === Errors.ERROR_CAREGIVER_ALREADY_ADDED.valueOf()) alert(errorAux.code)
-      else {
-        await deleteCaregiver(userId, email).then(() => alert(errorAux.code))
-        .catch(() => console.log('#1 Error deleting caregiver'))
-      }
-    })
+    if(email == userEmail) {
+      alert(Errors.ERROR_USER_EMAIL)
+    } else {
+      await saveCaregiver(userId, '', '', email, '', CaregiverRequestStatus.WAITING)
+      .then(() =>  startSessionWithCaregiver(email, userId, userName, userEmail, userPhone))
+      .then(() => sessionRequestSent(email))
+      .then(() => concludeAction())
+      .catch(async (error) => {
+        const errorAux = error as ErrorInstance
+        if(errorAux.code === Errors.ERROR_CAREGIVER_ALREADY_ADDED.valueOf()) alert(errorAux.code)
+        else {
+          await deleteCaregiver(userId, email).then(() => alert(errorAux.code))
+          .catch(() => console.log('#1 Error deleting caregiver'))
+        }
+      })    
+    }
   }
 
   return (

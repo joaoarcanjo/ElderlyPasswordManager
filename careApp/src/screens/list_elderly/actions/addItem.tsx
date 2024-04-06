@@ -19,15 +19,21 @@ export function AddElderlyModal({visibility, concludeAction}: Readonly<{visibili
   const { userId, userEmail, userName, userPhone } = useSessionInfo()
 
   const addElderly = async (email: string) => {
-    saveElderly(userId, '0', '0', email, '0', ElderlyRequestStatus.WAITING)
-    .then(() => startSessionWithElderly(email, userId, userName, userEmail, userPhone))
-    .then(() => sessionRequestSent(elderlyEmail))
-    .then(() => concludeAction())
-    .catch((error) => {
-      const errorAux = error as ErrorInstance
-      if(errorAux.code === Errors.ERROR_ELDERLY_ALREADY_ADDED.valueOf()) alert(errorAux.code)
-      else deleteElderly(userId, email).then(() => alert(errorAux.code))
-    })
+    if(email == userEmail) {
+      alert(Errors.ERROR_USER_EMAIL) 
+    } else {
+      await saveElderly(userId, '0', '0', email, '0', ElderlyRequestStatus.WAITING)
+      .then(() => startSessionWithElderly(email, userId, userName, userEmail, userPhone))
+      .then(() => sessionRequestSent(elderlyEmail))
+      .then(() => concludeAction())
+      .catch((error) => {
+        const errorAux = error as ErrorInstance
+        if(errorAux.code === Errors.ERROR_ELDERLY_ALREADY_ADDED
+          || errorAux.code === Errors.ERROR_ELDERLY_REQUEST_ALREADY_SENT
+        ) alert(errorAux.code)
+        else deleteElderly(userId, email).then(() => alert(errorAux.code))
+      })
+    }
   }
 
   return (

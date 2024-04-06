@@ -90,13 +90,11 @@ function Inicialization() {
         setUser(user)
       }else if(userEmail && user.uid && !notLoading) {
         await initKeychain(user.uid, userEmail)
-        .then((DBKey) => setLocalDBKey(DBKey))
-        .then(() => {setUserId(user.uid); setUserEmail(userEmail); setUser(user)})
         .then(() => initSSS(user.uid))
+        .then(() => initDb(user.uid)).then((DBKey) => setLocalDBKey(DBKey))
         .then(() => initFirestore(user.uid))
-        .then(() => initDb())
-        .then(() => changeFirestoreKey(user.uid))
         .then(() => createIdentity(user.uid, userEmail))
+        .then(() => {setUserId(user.uid); setUserEmail(userEmail); setUser(user)})
         .then(() => console.log("User: ", user.uid))
         .then(() => setNotLoading(true))
       }

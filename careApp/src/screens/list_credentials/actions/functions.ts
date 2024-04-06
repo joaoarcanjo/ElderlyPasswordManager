@@ -25,37 +25,41 @@ export const getAllCredentialsAndValidate = async (userId: string, key: string):
     console.log("getAllCredentialsAndValidateCalled")
 
     const credentialsCloud = await listAllCredentialsFromFirestore(userId, key, false)
-    const toReturn = await Promise.all(credentialsCloud.map(async cloudCredential => {
-        const localCredential = await getCredential(userId, cloudCredential.id)
-        try {
-            if (cloudCredential.data.length != 0) {
-                const credentialCloud = JSON.parse(decrypt(cloudCredential.data, key)) as CredentialData
+    let toReturn: (Credential | undefined)[] = []
+    try {
+        toReturn = await Promise.all(credentialsCloud.map(async cloudCredential => {
+            const localCredential = await getCredential(userId, cloudCredential.id)
+            try {
+                if (cloudCredential.data.length != 0) {
+                    const credentialCloud = JSON.parse(decrypt(cloudCredential.data, key)) as CredentialData
 
-                if (credentialCloud.id !== cloudCredential.id) {
-                    throw new ErrorInstance(Errors.ERROR_CREDENTIAL_INVALID_ID)
+                    if (credentialCloud.id !== cloudCredential.id) {
+                        throw new ErrorInstance(Errors.ERROR_CREDENTIAL_INVALID_ID)
+                    }
+                    if (localCredential === '') {
+                        await insertCredentialToLocalDB(userId, cloudCredential.id, encrypt(JSON.stringify(credentialCloud), key))
+                    } else {
+                        await updateCredentialIfNeeded(userId, cloudCredential.id, credentialCloud, key)
+                    }
+                    return { id: cloudCredential.id, data: credentialCloud }
                 }
-                if (localCredential === '') {
-                    await insertCredentialToLocalDB(userId, cloudCredential.id, encrypt(JSON.stringify(credentialCloud), key))
-                } else {
-                    await updateCredentialIfNeeded(userId, cloudCredential.id, credentialCloud, key)
+            } catch (error) {
+                const errorAux = error as ErrorInstance
+                if (errorAux.code === Errors.ERROR_INVALID_MESSAGE_OR_KEY ||
+                errorAux.code === Errors.ERROR_CREDENTIAL_ON_CLOUD_OUTDATED ||
+                errorAux.code === Errors.ERROR_CREDENTIAL_INVALID_ID) {
+
+                const localParsed = JSON.parse(decrypt(localCredential, key))
+                if (localParsed) {
+                    updateCredentialFromFirestore(userId, cloudCredential.id, key, JSON.stringify(localParsed), false)
                 }
-                return { id: cloudCredential.id, data: credentialCloud }
+                return { id: cloudCredential.id, data: localParsed }
+                }
             }
-        } catch (error) {
-            const errorAux = error as ErrorInstance
-            if (errorAux.code === Errors.ERROR_INVALID_MESSAGE_OR_KEY ||
-            errorAux.code === Errors.ERROR_CREDENTIAL_ON_CLOUD_OUTDATED ||
-            errorAux.code === Errors.ERROR_CREDENTIAL_INVALID_ID) {
-
-            const localParsed = JSON.parse(decrypt(localCredential, key))
-            if (localParsed) {
-                updateCredentialFromFirestore(userId, cloudCredential.id, key, JSON.stringify(localParsed), false)
-            }
-            return { id: cloudCredential.id, data: localParsed }
-            }
-        }
-    }))
-
+        }))
+    } catch (error) {
+        alert("Error validating credentials from cloud")
+    }
     const credentialsLocal = await getAllLocalCredentials(userId)
     addMissingCredentialsToReturn(credentialsLocal, toReturn, key, userId)
     return toReturn

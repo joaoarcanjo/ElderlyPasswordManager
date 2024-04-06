@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { View, ScrollView } from 'react-native'
-import Navbar from '../../../navigation/actions'
+import {Navbar} from '../../../navigation/actions'
 import MainBox from '../../../components/MainBox'
 import { ElderlyItem, Elderly as ElderlyItemMockup } from './elderlyItem'
 import { Elderly } from '../../../database/types'

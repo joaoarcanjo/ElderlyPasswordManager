@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {View, Text, TouchableOpacity, TextInput} from 'react-native'
 import { stylesButtons } from '../../../assets/styles/main_style'
-import Navbar from '../../../navigation/actions'
+import  { Navbar } from "../../../navigation/actions"
 import { credentials, logout, options } from '../styles/styles'
 import MainBox from '../../../components/MainBox'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
@@ -15,7 +15,7 @@ import { useSessionInfo } from '../../../firebase/authentication/session'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
 import { ChatMessageType } from '../../../e2e/messages/types'
 import { buildEditMessage, sendCaregiversCredentialInfoAction } from './functions'
-import { deleteCredentialFromLocalDB, updateCredentialFromLocalDB } from '../../../database/credentials'
+import { deleteCredentialFromLocalDB, updateCredentialOnLocalDB } from '../../../database/credentials'
 import { encrypt } from '../../../algorithms/0thers/crypto'
 import { cancelLabel, copyLabel, deleteCredentialLabel, editLabel, optionsLabel, passwordDefaultLengthGenerator, passwordLabel, regenerateLabel, saveChangesLabel, saveLabel, uriLabel, userLabel } from '../../../assets/constants'
 import { copyValue, credentialDeletedFlash, credentialUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
@@ -59,7 +59,7 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
    * -> Manipula o estado de loading, atualiza as credenciais e manipula 
    * os estados de edição e normais.
    */
-  function saveCredentialUpdate() {
+  async function saveCredentialUpdate() {
     if(credentialsModified) {
       setLoading(true)
 
@@ -75,11 +75,11 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
         }
       })
 
-      updateCredentialFromFiretore(userId, id, data)
+      await updateCredentialFromFiretore(userId, id, data)
       .then(async (updated) => {
         toggleEditFlag()
         if(updated) {
-          await updateCredentialFromLocalDB(userId, id, encrypt(data, localDBKey))
+          await updateCredentialOnLocalDB(userId, id, encrypt(data, localDBKey))
           setURI(uriEditted)
           setUsername(usernameEdited)
           setPassword(passwordEdited)

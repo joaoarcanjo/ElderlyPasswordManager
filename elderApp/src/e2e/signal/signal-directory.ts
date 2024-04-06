@@ -2,6 +2,7 @@ import { SignedPublicPreKeyType, DeviceType, PreKeyType } from '@privacyresearch
 
 import * as base64 from 'base64-js'
 import { apiPort, ipAddress } from '../../assets/constants'
+import { Errors } from '../../exceptions/types'
 
 export interface PublicDirectoryEntry {
     identityKey: ArrayBuffer
@@ -50,7 +51,7 @@ export class SignalDirectory {
     constructor(private _url: string/*, private _apiKey: string*/) {}
 
     async storeKeyBundle(username: string, bundle: FullDirectoryEntry): Promise<void> {
-        const res = await fetch(`http://${ipAddress}:${apiPort}/addBundle`, {
+        return await fetch(`http://${ipAddress}:${apiPort}/addBundle`, {
             method: 'PUT',
             //headers: { 'x-api-key': this._apiKey },
             headers: {
@@ -59,6 +60,12 @@ export class SignalDirectory {
                 //'x-api-key': this._apiKey
             },
             body: JSON.stringify(serializeKeyRegistrationBundle(username, bundle)),
+        })
+        .then((res) => {
+            return res.json()
+        })
+        .catch((_error) => {
+            alert(Errors.ERROR_SERVER_INTERNAL_ERROR)
         })
     }
 

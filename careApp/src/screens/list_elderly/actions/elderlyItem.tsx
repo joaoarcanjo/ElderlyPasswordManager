@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import { View, Text, Image, TouchableOpacity, Linking } from "react-native"
 import { elderlyOptions, elderlyStyle, newElderlyOptions, elderlyContactInfo, decouplingOption } from "../styles/styles"
 import { stylesButtons } from "../../../assets/styles/main_style";
-import { acceptElderly, decouplingElderly, refuseElderly } from "./functions";
+import { acceptElderly, cancelWaitingElderly, decouplingElderly, refuseElderly } from "./functions";
 import { StackNavigationProp } from "@react-navigation/stack/lib/typescript/src/types";
 import { useNavigation } from "@react-navigation/native";
 import { YesOrNoModal } from "../../../components/Modal";
@@ -10,23 +10,25 @@ import { useSessionInfo } from "../../../firebase/authentication/session";
 import { ElderlyRequestStatus } from "../../../database/types";
 import { getKeychainValueFor } from "../../../keychain";
 import { elderlySSSKey } from "../../../keychain/constants";
-import { credentialsLabel, pageElderlyCredentials, unlinkLabel } from "../../../assets/constants";
+import { acceptLabel, cancelLabel, credentialsLabel, pageElderlyCredentials, refuseLabel, unlinkLabel } from "../../../assets/constants";
 
 const caregiverImage = '../../../assets/images/elderly.png'
 const telephoneImage = '../../../assets/images/telephone.png'
 const emailImage = '../../../assets/images/email.png'
 
 export function ElderlyItem({elderlyId, name, phone, email, setRefresh, status}: Readonly<{elderlyId: string, name: string, phone: string, email: string, setRefresh: Function, status: number}>) {
-  if(status == ElderlyRequestStatus.RECEIVED.valueOf()) {
-    return <ElderlyPending name={name} email={email} setRefresh={setRefresh}/>
-  } else if (status == ElderlyRequestStatus.ACCEPTED.valueOf()) {
+  if(status == ElderlyRequestStatus.RECEIVED) {
+    return <ElderlyToBeAccepted name={name} email={email} setRefresh={setRefresh}/>
+  } else if (status == ElderlyRequestStatus.ACCEPTED) {
     return <Elderly name={name} phone={phone} email={email} elderlyId={elderlyId} setRefresh={setRefresh}/>
+  } else if (status == ElderlyRequestStatus.WAITING) {
+      return <ElderlyWaiting elderlyEmail={email} setRefresh={setRefresh}/>
   } else {
     //Nada por agora.
   }
 }
 
-export function ElderlyPending({ name, email, setRefresh }: Readonly<{name: string, email: string, setRefresh: Function}>) {
+export function ElderlyToBeAccepted({ name, email, setRefresh }: Readonly<{name: string, email: string, setRefresh: Function}>) {
 
   const { userId, userEmail, userName, userPhone } = useSessionInfo()
   
@@ -37,21 +39,49 @@ export function ElderlyPending({ name, email, setRefresh }: Readonly<{name: stri
     <View style={[{flex: 1}, elderlyStyle.newElderlyContainer]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: '3%' }}>
         <View style={{ flex: 1 }}>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 20, marginLeft: '5%', fontWeight: 'bold' }]}>{`Pedido recebido de: ${email}`}</Text>
+          <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }}/>
           <View style={{flexDirection: 'row', marginHorizontal: '3%'}}>
             <Text numberOfLines={3} adjustsFontSizeToFit style={{ fontSize: 15 }}>{`O idoso ${name} com o email ${email} enviou-lhe um pedido!`}</Text>
           </View>
           <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }}/>
           <View style={{flexDirection: 'row'}}>
-            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, newElderlyOptions.acceptButton, stylesButtons.mainConfig]} onPress={accept}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginVertical: '5%' }, newElderlyOptions.buttonText]}>Aceitar</Text>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.acceptButton, stylesButtons.mainConfig]} onPress={accept}>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginVertical: '5%' }, newElderlyOptions.buttonText]}>{acceptLabel}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, newElderlyOptions.rejectButton, stylesButtons.mainConfig]} onPress={refuse}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginVertical: '5%' }, newElderlyOptions.buttonText]}>Recusar</Text>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.rejectButton, stylesButtons.mainConfig]} onPress={refuse}>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginVertical: '5%' }, newElderlyOptions.buttonText]}>{refuseLabel}</Text>
             </TouchableOpacity>
           </View>
         </View>
       </View>
     </View> 
+  )
+}
+
+export function ElderlyWaiting({elderlyEmail, setRefresh}: Readonly<{ elderlyEmail: string,  setRefresh: Function}>) {
+  
+  const { userId } = useSessionInfo()
+  const cancel = () => cancelWaitingElderly(userId, elderlyEmail).then(() => setRefresh()) 
+
+  return (
+    <View style={{flex: 0.55, justifyContent: 'center', alignItems: 'center'}}>
+      <View style={[{ flexDirection: 'row', alignItems: 'center', marginVertical: '3%' }, elderlyStyle.sentRequestElderlyContainer]}>
+        <View style={{ flex: 1, marginTop: '4%' }}>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 20, marginLeft: '5%', fontWeight: 'bold' }]}>{`Pedido enviado para: ${elderlyEmail}`}</Text>
+          <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }}/>
+          <View style={{flexDirection: 'row', marginHorizontal: '3%'}}>
+            <Text numberOfLines={2} adjustsFontSizeToFit style={{ fontSize: 18 }}>{`À espera que o idoso com o email ${elderlyEmail} aceite o seu pedido.`}</Text>
+          </View>
+          <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }}/>
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.cancelButton, stylesButtons.mainConfig]} onPress={cancel}>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginVertical: '5%' }]}>{cancelLabel}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </View>
   )
 }
 

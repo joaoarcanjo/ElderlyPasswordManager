@@ -1,5 +1,6 @@
 import { dbSQL } from ".";
 import { decrypt, encrypt } from "../algorithms/0thers/crypto";
+import { Errors } from "../exceptions/types";
 import { SessionSignal } from "./types";
 
 /**
@@ -98,10 +99,13 @@ export const getSessionById = async (otherId: string, userId: string, localDBKey
 }
 
 /**
- * Função para apagar a sessão com determinado id.
- * @param userId 
- * @param otherId 
- * @returns 
+ * Deletes a session by its user ID and other ID.
+ * 
+ * @param {string} userId - The user ID.
+ * @param {string} otherId - The other ID.
+ * @returns {Promise<boolean>} A promise that resolves to true if the session was deleted successfully, or false otherwise.
+ * @throws {Errors.ERROR_DELETING_SESSION} If there was an error deleting the session.
+ * @throws {Errors.ERROR_DATABASE_NOT_INITIALIZED} If the database is not initialized.
  */
 export const deleteSessionById = async (userId: string, otherId: string) => {
     if(dbSQL != null) {
@@ -112,14 +116,15 @@ export const deleteSessionById = async (userId: string, otherId: string) => {
                 (_, result) => {
                     return Promise.resolve(result.rowsAffected > 0)
                 },
-                (_, error) => {
-                    console.log(error)
+                (_, _error) => {
+                    Promise.reject(Errors.ERROR_DELETING_SESSION)
                     return false
                 }
             )
         })
+    } else {
+        Promise.reject(Errors.ERROR_DATABASE_NOT_INITIALIZED)
     }
-    return Promise.reject(false)
 }
 
 /**

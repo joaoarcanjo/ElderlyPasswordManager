@@ -165,7 +165,7 @@ async function elderlyExists(elderlyId: string): Promise<boolean> {
     return firestore.collection(elderlyCollectionName).doc(elderlyId).get()
     .then((doc) => doc.exists)
     .catch((error) => {                        
-        console.log("Error: "+ error.message)
+        console.log("Error 14: "+ error.message)
         return false
     })
 }
@@ -292,9 +292,10 @@ async function initFirestore(userId: string): Promise<boolean> {
     console.log("===> initFirestoreCalled")
     if(userId === '') return false
     //throw new Error("Erro ao iniciar a firestore, tente novamente!")
-    return elderlyExists(userId).then((result) => {
+    return elderlyExists(userId).then(async (result) => {
         if (!result) { //se não existir
-            createElderly(userId)
+            await createElderly(userId)
+            .then(() => changeFirestoreKey(userId))
             //console.log('Elderly created sucessfully!!')
         }
         return true

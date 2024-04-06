@@ -1,6 +1,7 @@
 import { executeKeyExchange } from "../../../algorithms/sss/sssOperations"
 import { sessionAcceptedFlash, sessionEndedFlash, sessionRejectedFlash } from "../../../components/userMessages/UserMessages"
-import { changeCaregiverStatusOnDatabase, deleteCaregiver, getCaregiverWaitingForResponse, isMaxCaregiversReached } from "../../../database/caregivers"
+import { changeCaregiverStatusOnDatabase, deleteCaregiver, getCaregiversWithSpecificState, isMaxCaregiversReached } from "../../../database/caregivers"
+import { deleteSessionById } from "../../../database/signalSessions"
 import { CaregiverRequestStatus } from "../../../database/types"
 import { encryptAndSendMessage } from "../../../e2e/messages/sendMessage"
 import { ChatMessageType, ElderlyDataBody } from "../../../e2e/messages/types"
@@ -53,12 +54,12 @@ export async function acceptCaregiver(caregiverId: string, number: number, userI
         photo: ""
     }
     
-    //await encryptAndSendMessage(to, 'acceptSession', true, ChatMessageType.ACCEPTED_SESSION)
-    await encryptAndSendMessage(caregiverEmail, JSON.stringify(data), true, ChatMessageType.PERSONAL_DATA)
-    await addCaregiverToArray(userId, caregiverId, "readCaregivers")
     await changeCaregiverStatusOnDatabase(userId, caregiverEmail, CaregiverRequestStatus.ACCEPTED.valueOf())
-    sessionAcceptedFlash('', true)
-    await refuseIfMaxReached(userId)
+    .then(() => encryptAndSendMessage(caregiverEmail, JSON.stringify(data), true, ChatMessageType.PERSONAL_DATA))
+    .then(() => cancelWaitingCaregivers(userId))
+    .then(() => addCaregiverToArray(userId, caregiverId, "readCaregivers"))
+    .then(() => sessionAcceptedFlash(caregiverEmail, true))
+    .then(() => refuseIfMaxReached(userId))
 }
 
 /**
@@ -70,21 +71,37 @@ export async function refuseCaregiver(userId: string, to: string, elderlyName: s
     console.log("===> refuseCaregiverCalled")
     await deleteCaregiver(userId, to)
     .then(() => encryptAndSendMessage(to, 'rejectSession', true, ChatMessageType.REJECT_SESSION))
-    .then(() => setCaregiverListUpdated(userId))
     .then(() => removeSession(to))
-    .then(() => sessionRejectedFlash('', true))
+    .then(() => deleteSessionById(userId, to))
+    .then(() => sessionRejectedFlash(to, true))
+    .then(() => setCaregiverListUpdated(userId))
     .catch(() => console.log('#1 Error refusing caregiver'))
+}
+
+/**
+ * This function is to cancel the requests that were made to other caregivers.
+ * @param userId 
+ */
+export async function cancelWaitingCaregivers(userId: string) {
+    const elderlies = await getCaregiversWithSpecificState(userId, CaregiverRequestStatus.WAITING.valueOf())
+    elderlies.forEach(async email => {
+        await encryptAndSendMessage(email, 'rejectSession', true, ChatMessageType.CANCEL_SESSION)
+        .then(() => removeSession(email))
+        .then(() => deleteCaregiver(userId, email))
+        .then(() => setCaregiverListUpdated(userId))
+    })
 }
 
 
 export async function decouplingCaregiver(caregiverEmail: string, caregiverId: string, userId: string) {
     console.log("===> decouplingCaregiverCalled")
     return await deleteCaregiver(userId, caregiverEmail)
+    .then(() => deleteSessionById(userId, caregiverId))
     .then(() => removeCaregiverFromArray(userId, caregiverId, 'writeCaregivers')) 
     .then(() => removeCaregiverFromArray(userId, caregiverId, 'readCaregivers'))
     .then(() => sendCaregiversDecoupling(caregiverEmail))
     .then(() => sessionEndedFlash(caregiverEmail, true))
-    .then(() => {return executeKeyExchange(userId)})
+    .then(() => executeKeyExchange(userId))
     .catch(() => console.log('#1 Error decoupling caregiver'))
 }
 
@@ -102,7 +119,7 @@ export async function refuseIfMaxReached(userId: string) {
     await isMaxCaregiversReached(userId)
     .then(async (isMaxReached) => {
         if(isMaxReached) {
-            const waitingElderlyEmails = await getCaregiverWaitingForResponse(userId)
+            const waitingElderlyEmails = await getCaregiversWithSpecificState(userId, CaregiverRequestStatus.RECEIVED.valueOf())
             waitingElderlyEmails.forEach(async email => {
                 await encryptAndSendMessage(email, 'rejectSession', true, ChatMessageType.MAX_REACHED_SESSION)
                 .then(() => removeSession(email))

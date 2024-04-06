@@ -32,6 +32,8 @@ export const saveLabel = 'Guardar'
 export const cancelLabel = 'Cancelar'
 export const linkLabel = 'Vincular'
 export const unlinkLabel = 'Desvincular'
+export const acceptLabel = 'Aceitar'
+export const refuseLabel = 'Recusar'
 
 export const cuidadoresLabel = 'Cuidadores'
 export const credentialsLabel = 'Credenciais'
@@ -81,14 +83,14 @@ export const passwordDefaultLengthGenerator = 12
 export const timeoutToSavePassword = 3000
 
 //Modal:
-export const modalIntentity = 60
+export const modalIntensity = 60
 
 //UserMessages:
 export const durationQuickMessage = 6000
 export const durationSlowMessage = 10000
 
 //Caregivers:
-export const maxCaregiversCount = 2
+export const maxCaregiversCount = 1
 
 //Firestore:
 export const elderlyCollectionName = 'Elderly'
@@ -110,10 +112,10 @@ export const pageSettings = 'Settings'
 export const pageFAQs = 'FrequentQuestions'
 export const pageCaregivers = 'Caregivers'
 export const pageMainMenu = 'MainMenu'
-export const pageCredential = 'CredentialPage'
+export const pageCredential = 'Credential'
 export const pageLogin = 'LoginPage'
 export const pageSignup = 'SignupPage'
-export const pageAddCredential = 'AddCredentialPage'
+export const pageAddCredential = 'AddCredential'
 export const pagePasswordHistory = 'PasswordHistory'
 
 export const pageTitleGenerator = 'Gerador de Passwords'

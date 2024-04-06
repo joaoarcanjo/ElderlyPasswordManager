@@ -1,12 +1,23 @@
 import * as SQLite from 'expo-sqlite'
+import { generateKey } from '../algorithms/0thers/crypto';
+import { getKeychainValueFor, saveKeychainValue } from '../keychain';
+import { localDBKey } from '../keychain/constants';
 
 export let dbSQL: SQLite.SQLiteDatabase | null = null;
 
-export function initDb() {
+async function createLocalDBKey(userId: string) {
+  if(await getKeychainValueFor(localDBKey(userId)) == '') {
+    await saveKeychainValue(localDBKey(userId), generateKey()) 
+  }
+  return await getKeychainValueFor(localDBKey(userId))
+}
+
+export async function initDb(userId: string) {
+
     dbSQL = SQLite.openDatabase('elderly.db')
     
     dbSQL.transaction(tx => {
-        /**/tx.executeSql(
+        /*tx.executeSql(
             'DROP TABLE IF EXISTS caregivers;'
         )
         tx.executeSql(
@@ -14,7 +25,7 @@ export function initDb() {
         )
         tx.executeSql(
             'DROP TABLE IF EXISTS credentials;'
-        )
+        )*/
     })
 
     dbSQL.transaction(tx => {
@@ -68,4 +79,6 @@ export function initDb() {
             );`
         )
     })
+
+    return await createLocalDBKey(userId)
 }

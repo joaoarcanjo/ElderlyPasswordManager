@@ -5,6 +5,9 @@ export const apiPort = "443";
 
 export const gitHubUrl = 'https://github.com/joaoarcanjo/ThesisApps'
 
+//Elderly:
+export const maxElderlyCount = 1
+
 //Labels:
 export const appName = 'CaregiverAPP'
 
@@ -32,6 +35,8 @@ export const saveLabel = 'Guardar'
 export const cancelLabel = 'Cancelar'
 export const linkLabel = 'Vincular'
 export const unlinkLabel = 'Desvincular'
+export const acceptLabel = 'Aceitar'
+export const refuseLabel = 'Recusar'
 
 export const elderlyLabel = 'Idosos'
 export const credentialsLabel = 'Credenciais'
@@ -116,7 +121,7 @@ export const pageElderlyCredentials = 'ElderlyCredentials'
 export const pageCredential = 'CredentialPage'
 export const pageLogin = 'LoginPage'
 export const pageSignup = 'SignupPage'
-export const pageAddCredential = 'AddCredentialPage'
+export const pageAddCredential = 'AddCredential'
 export const pagePasswordHistory = 'PasswordHistory'
 
 //Pages Titles:

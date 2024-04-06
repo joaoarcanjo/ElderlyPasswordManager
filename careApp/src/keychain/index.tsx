@@ -56,7 +56,6 @@ export async function cleanKeychain(id: string) {
  * @returns 
  */
 export async function initKeychain(userId: string, userEmail: string): Promise<string> {
-
   if(await getKeychainValueFor(caregiverId) !== userId) {
     await cleanKeychain(userId).then(async () => {
       await saveKeychainValue(caregiverId, userId)

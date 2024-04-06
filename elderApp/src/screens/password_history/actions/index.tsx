@@ -3,7 +3,7 @@ import {View, Text, TouchableOpacity, ScrollView } from 'react-native'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import { styleScroolView } from '../styles/styles'
 import formatTimestamp from '../../../algorithms/0thers/time';
-import Navbar from '../../../navigation/actions';
+import  { Navbar } from "../../../navigation/actions";
 import { getGeneratedPasswords } from '../../../database/passwords'
 import { Password } from '../../../database/types';
 import MainBox from '../../../components/MainBox';

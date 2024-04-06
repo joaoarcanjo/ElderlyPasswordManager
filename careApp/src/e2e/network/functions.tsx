@@ -4,6 +4,7 @@ import { webSocket } from "rxjs/webSocket"
 import { SendWebSocketMessage, WebSocketMessage, isSendWebSocketMessage, isAcknowledgeMessage } from "./types"
 import { MessageType } from "@privacyresearch/libsignal-protocol-typescript"
 import { processRegularMessage, processPreKeyMessage } from "../messages/functions"
+import { Errors } from "../../exceptions/types"
 
 /**
  * Recebe o uri do servidor e cria uma subscrição no mesmo, que significa uma sessão com o servidor.
@@ -31,7 +32,7 @@ export function initializeSignalWebsocket(uri: string): Subscription {
             }
         },
         error: (err) => {
-            console.error(err)
+           console.log(`#1 signal websocket error`, Errors.ERROR_SERVER_INTERNAL_ERROR)
         },
         complete: () => {
             console.log(`- signal websocket complete`)

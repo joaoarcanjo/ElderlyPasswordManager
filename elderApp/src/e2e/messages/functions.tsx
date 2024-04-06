@@ -9,14 +9,15 @@ import { setCaregiverListUpdated } from "../../screens/list_caregivers/actions/s
 import { getKeychainValueFor } from "../../keychain"
 import { caregiver1SSSKey, caregiver2SSSKey, elderlyId, localDBKey } from "../../keychain/constants"
 import { addCaregiverToArray, removeCaregiverFromArray } from "../../firebase/firestore/functionalities"
-import { changeCaregiverStatusOnDatabase, checkCaregiverByEmail, checkCaregiverByEmailNotAccepted, checkNumberOfCaregivers, deleteCaregiver, getCaregiverId, isMaxCaregiversReached, saveCaregiver, updateCaregiver } from "../../database/caregivers"
+import { changeCaregiverStatusOnDatabase, checkCaregiverByEmailAccepted, checkCaregiverByEmailNotAccepted, checkNumberOfCaregivers, deleteCaregiver, getCaregiverId, getCaregivers, getCaregiversWithSpecificState, isMaxCaregiversReached, saveCaregiver, updateCaregiver } from "../../database/caregivers"
 //import { MessageType, SessionCipher, SignalProtocolAddress } from "../../algorithms/signal"
 import { CaregiverRequestStatus } from "../../database/types"
 import { setCredentialsListUpdated } from "../../screens/list_credentials/actions/state"
 import { getAllCredentialsAndValidate } from "../../screens/list_credentials/actions/functions"
 import { executeKeyExchange } from "../../algorithms/sss/sssOperations"
 import { encryptAndSendMessage } from "./sendMessage"
-import { caregiverPersonalInfoUpdatedFlash, credentialCreatedFlash, credentialDeletedFlash, credentialUpdatedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionRejectMaxReachedFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionRequestReceivedFlash } from "../../components/userMessages/UserMessages"
+import { caregiverPersonalInfoUpdatedFlash, credentialCreatedFlash, credentialDeletedFlash, credentialUpdatedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionRejectMaxReachedFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionRequestCanceledFlash, sessionRequestReceivedFlash } from "../../components/userMessages/UserMessages"
+import { deleteSessionById } from "../../database/signalSessions"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -41,9 +42,8 @@ export async function processPreKeyMessage(address: string, message: MessageType
         plaintext = plaintext.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F]/g, '')
         cm = JSON.parse(plaintext) as ProcessedChatMessage
         addMessageToSession(address, cm, type)
-        //encryptAndSendMessage(address, 'firstMessage', true, ChatMessageType.START_SESSION)
     } catch (e) {
-        //console.log(e)
+        //console.log(e) //TODO: Verificar se é necessário realizar algum alerta
     }
 }
 
@@ -85,13 +85,13 @@ export async function processRegularMessage(address: string, message: string, ty
     const protocolAddress = new SignalProtocolAddress(address, 1)
     const cipher = new SessionCipher(signalStore, protocolAddress)
     
-    const plaintextBytes = await cipher.decryptWhisperMessage(message, 'binary')
+    const plaintextBytes = await cipher.decryptWhisperMessage(message, 'binary') //TODO: Se os dados forem inválidos, a aplicação crasha, temos q fazer um trycatch
     
     let plaintext = String.fromCharCode(...new Uint8Array(plaintextBytes))
     plaintext = plaintext.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F]/g, '');
     const cm: ProcessedChatMessage = JSON.parse(plaintext)
     addMessageToSession(address, cm, type)
-    sendAcknowledgement(address, cm.id)
+    sendAcknowledgement(address, cm.id) //TODO: veriiicar se é necessário, possivelmente não
 }
 
 export async function addMessageToSession(address: string, cm: ProcessedChatMessage, type: number, itsMine?: boolean): Promise<void> {
@@ -105,6 +105,9 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
         await processPersonalData(currentUserId, cm)
     } else if (cm.type === ChatMessageType.REJECT_SESSION) {
         await processRejectMessage(currentUserId, cm)
+    } else if (cm.type === ChatMessageType.CANCEL_SESSION && !itsMine) {
+        //vai apagar a sessão que foi criada com o possível cuidador
+        await processCancelSession(currentUserId, cm)
     } else if (cm.type === ChatMessageType.MAX_REACHED_SESSION && !itsMine) {
         //vai apagar a sessão que foi criada com o possível cuidador
         await processMaxReachedMessage(currentUserId, cm)
@@ -139,25 +142,30 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
 async function processPersonalData(currentUserId: string, cm: ProcessedChatMessage) {
     console.log("===> processPersonalDataCalled")
     const data = JSON.parse(cm.body) as CaregiverDataBody
-    if (await checkCaregiverByEmail(currentUserId, cm.from)) {  
+    
+    //Se for uma relação já aceite, o cuidador quer atualizar os seus dados locais.
+    if (await checkCaregiverByEmailAccepted(currentUserId, cm.from)) {  
         await updateCaregiver(data.userId, currentUserId, data.email, data.name, data.phone)
         .then(() => setCaregiverListUpdated(currentUserId))
         .then(() =>  caregiverPersonalInfoUpdatedFlash(data.email))
         .catch(() => console.log('#1 Error updating caregiver'))
-       
+    
+    //Se for uma relação que estamos à espera de resposta, o cuidador aceitou a relação.
     } else if(await checkCaregiverByEmailNotAccepted(currentUserId, cm.from)) {
         await updateCaregiver(data.userId, currentUserId, data.email, data.name, data.phone)
         .then(() => addCaregiverToArray(currentUserId, data.userId, "readCaregivers"))
         .then(() => sessionAcceptedFlash(cm.from, false))
         .then(() => setCaregiverListUpdated(currentUserId))
-        .then(() => sendCaregiverKey(currentUserId, cm.from))
+        .then(() => sendCaregiverShare(currentUserId, cm.from))
+        .then(() => cancelWaitingCaregivers(currentUserId))
         .catch(() => console.log('#1 Error updating caregiver'))
+
+    //Significa que o cuidador está a enviar um pedido para iniciar uma relação
     } else {
         await isMaxCaregiversReached(currentUserId)
         .then(async (isMaxReached) => {
-            if(isMaxReached) {
-                await refuseCaregiverMaxReached(cm)
-            } else {
+            if(isMaxReached) await refuseCaregiverMaxReached(currentUserId, cm)
+            else {
                 await saveCaregiver(currentUserId, data.userId, data.name, data.email, data.phone, CaregiverRequestStatus.RECEIVED)
                 .then(() => sessionRequestReceivedFlash(cm.from))
                 .then(() => setCaregiverListUpdated(currentUserId))
@@ -168,32 +176,41 @@ async function processPersonalData(currentUserId: string, cm: ProcessedChatMessa
     }
 }
 
-async function refuseCaregiverMaxReached(cm: ProcessedChatMessage) {
+async function refuseCaregiverMaxReached(currentUserId: string, cm: ProcessedChatMessage) {
     await encryptAndSendMessage(cm.from, 'rejectSession', true, ChatMessageType.MAX_REACHED_SESSION)
     .then(() => removeSession(cm.from))
+    .then(() => deleteSessionById(currentUserId, cm.from))
     .then(() => sessionRejectMaxReachedFlash(cm.from))    
+}
+
+export async function processCancelSession(currentUserId: string, cm: ProcessedChatMessage) {
+    console.log("===> processCancelRequestCalled")
+    await deleteCaregiver(currentUserId, cm.from)
+    .then(() => deleteSessionById(currentUserId, cm.from))
+    .then(() => sessionRequestCanceledFlash(cm.from, false))
+    .then(() => setCaregiverListUpdated(currentUserId))
+    .catch(() => console.log('#1 Error canceling caregiver request'))
 }
 
 async function processRejectMessage(currentUserId: string, cm: ProcessedChatMessage) {
     console.log("===> processRejectMessageCalled")
-    const caregiverId = await getCaregiverId(cm.from, currentUserId)
     await deleteCaregiver(currentUserId, cm.from)
-    .then(() => removeCaregiverFromArray(currentUserId, caregiverId, 'readCaregivers'))
-    .then(() => removeCaregiverFromArray(currentUserId, caregiverId, 'writeCaregivers'))
     .then(() => sessionRejectedFlash(cm.from, false))
+    .then(() => deleteSessionById(currentUserId, cm.from))
     .catch(() => console.log('#1 Error deleting caregiver'))
 }
 
 async function processDecouplingMessage(currentUserId: string, cm: ProcessedChatMessage) {
     console.log("===> processDecouplingMessageCalled")
     const caregiverId = await getCaregiverId(cm.from, currentUserId)
-    //await deleteCaregiver(currentUserId, cm.from)
-    await removeCaregiverFromArray(currentUserId, caregiverId, 'readCaregivers')
+    
+    await deleteCaregiver(currentUserId, cm.from)
     .then(() => removeCaregiverFromArray(currentUserId, caregiverId, 'writeCaregivers'))
-    .then(() => changeCaregiverStatusOnDatabase(currentUserId, cm.from, CaregiverRequestStatus.DECOUPLING))
+    .then(() => removeCaregiverFromArray(currentUserId, caregiverId, 'readCaregivers'))
     .then(() => setCaregiverListUpdated(currentUserId))
     .then(() => sessionEndedFlash(cm.from, false))
     .then(() => executeKeyExchange(currentUserId))
+    .then(() => deleteSessionById(currentUserId, cm.from))
     .catch(() => console.log('#1 Error decoupling caregiver'))
 }
 
@@ -201,11 +218,32 @@ async function processMaxReachedMessage(currentUserId: string, cm: ProcessedChat
     console.log("===> processMaxReachedMessageCalled")
     await deleteCaregiver(currentUserId, cm.from)
     .then(() => sessionRejectedMaxReachedFlash(cm.from))
+    .then(() => deleteSessionById(currentUserId, cm.from))
     .catch(() => console.log('#1 Error deleting caregiver'))
 }
 
-async function sendCaregiverKey(currentUserId: string, to: string) {
-    console.log("===> sendCaregiverKeyCalled")
+export async function cancelWaitingCaregivers(userId: string) {
+    console.log("===> cancelWaitingCaregiversCalled")
+    console.log(await getCaregivers(userId))
+    const elderlies = await getCaregiversWithSpecificState(userId, CaregiverRequestStatus.WAITING)
+    elderlies.forEach(async email => {
+        await encryptAndSendMessage(email, 'cancelSession', true, ChatMessageType.CANCEL_SESSION)
+        .then(() => removeSession(email))
+        .then(() => deleteCaregiver(userId, email))
+        .then(() => setCaregiverListUpdated(userId))
+    })
+}
+
+export async function cancelWaitingCaregiver(userId: string, caregiverEmail: string) {
+    console.log("===> cancelWaitingCaregiverCalled")
+    await encryptAndSendMessage(caregiverEmail, 'cancelSession', true, ChatMessageType.CANCEL_SESSION)
+    .then(() => removeSession(caregiverEmail))
+    .then(() => deleteCaregiver(userId, caregiverEmail))
+    .then(() => setCaregiverListUpdated(userId))
+}
+
+async function sendCaregiverShare(currentUserId: string, to: string) {
+    console.log("===> sendCaregiverShareCalled")
     const numberOfCaregivers = await checkNumberOfCaregivers(currentUserId)
     const caregiver1Key = await getKeychainValueFor(caregiver1SSSKey(currentUserId))
     const caregiver2Key = await getKeychainValueFor(caregiver2SSSKey(currentUserId)) 

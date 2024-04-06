@@ -42,7 +42,6 @@ export async function deleteKeychainValueFor(key: string): Promise<void> {
  * Apenas utilizado para debug, para limpar tudo.
  */
 export async function cleanKeychain(id: string) {
-
   await deleteItemAsync(firestoreSSSKey(id))
   .then(() => deleteItemAsync(elderlyFireKey(id)))
   .then(() => deleteItemAsync(caregiver1SSSKey(id)))
@@ -57,17 +56,10 @@ export async function cleanKeychain(id: string) {
  * @param userId 
  * @returns 
  */
-export async function initKeychain(userId: string, userEmail: string): Promise<string> {
+export async function initKeychain(userId: string, userEmail: string): Promise<void> {
   console.log("===> InitkeychainCalled")
   if(await getKeychainValueFor(elderlyId) !== userId) {
-    await cleanKeychain(userId).then(async () => {
-      await saveKeychainValue(elderlyId, userId).then(async () => {
-        await saveKeychainValue(elderlyEmail, userEmail) 
-      }) 
-    })
+    await saveKeychainValue(elderlyId, userId)
+    .then(() => saveKeychainValue(elderlyEmail, userEmail)) 
   }
-  if(await getKeychainValueFor(localDBKey(userId)) == '') {
-    await saveKeychainValue(localDBKey(userId), generateKey()) 
-  }
-  return await getKeychainValueFor(localDBKey(userId))
 }

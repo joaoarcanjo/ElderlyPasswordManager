@@ -32,6 +32,17 @@ const caregiverStyle = StyleSheet.create({
         backgroundColor: superlightBlueBackgroud, // Cor de fundo
         borderColor: blueBorder,
         marginBottom: 15,
+    },
+    newCaregiverText: {
+        fontSize: 20,
+        color: 'black'
+    },
+    sentRequestCaregiverContainer: {
+        borderRadius: 10, // Define o raio dos cantos para arredondá-los
+        borderWidth: 2, // Largura da linha na margem
+        backgroundColor: greyBackgroud, // Cor de fundo
+        borderColor: greyBorder,
+        marginBottom: 15,
     }
 })
 
@@ -63,7 +74,7 @@ const decouplingOption = StyleSheet.create({
     },
     buttonText: {
         fontWeight: 'bold',
-        fontSize: 18, 
+        fontSize: 22, 
         color: '#f5f5f5'
     }
 })
@@ -106,16 +117,6 @@ const permission = StyleSheet.create({
 })
 
 const newCaregiverContainer = StyleSheet.create({
-    acceptButton: {
-        borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        backgroundColor: acceptButtonBackground,
-        borderColor: acceptButtonBorder
-    },
-    rejectButton: {
-        borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        backgroundColor: rejectButtonBackground,
-        borderColor: rejectButtonBorder
-    },
     buttonText: {
       fontSize: 25,
       color: 'black'

@@ -32,6 +32,13 @@ const elderlyStyle = StyleSheet.create({
         backgroundColor: superlightBlueBackgroud, // Cor de fundo
         borderColor: blueBorder,
         marginBottom: 15,
+    },
+    sentRequestElderlyContainer: {
+        borderRadius: 10, // Define o raio dos cantos para arredondá-los
+        borderWidth: 2, // Largura da linha na margem
+        backgroundColor: greyBackgroud, // Cor de fundo
+        borderColor: greyBorder,
+        marginBottom: 15,
     }
 })
 
@@ -55,16 +62,6 @@ const elderlyContactInfo = StyleSheet.create({
 })
 
 const newElderlyOptions = StyleSheet.create({
-    acceptButton: {
-        borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        backgroundColor: acceptButtonBackground,
-        borderColor: acceptButtonBorder
-    },
-    rejectButton: {
-        borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        backgroundColor: rejectButtonBackground,
-        borderColor: rejectButtonBorder
-    },
     buttonText: {
       fontSize: 25,
       color: 'black'

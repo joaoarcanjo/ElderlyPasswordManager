@@ -74,6 +74,7 @@ function Inicialization() {
         .then(() => createIdentity(user.uid, userEmail))
         .then(() => initDb()) 
         .then(() => setLoading(true))
+        .catch((e) => alert(e))
       }
 
       let { status } = await Notifications.requestPermissionsAsync()

@@ -1,6 +1,6 @@
 import React,{useState} from 'react'
 import {View, Text, TouchableOpacity, Image, ScrollView, StyleSheet} from 'react-native'
-import Navbar from '../../../navigation/actions'
+import { Navbar } from '../../../navigation/actions'
 import { styleScroolView } from '../styles/styles'
 import MainBox from '../../../components/MainBox';
 import { pageTitleFAQs } from '../../../assets/constants';

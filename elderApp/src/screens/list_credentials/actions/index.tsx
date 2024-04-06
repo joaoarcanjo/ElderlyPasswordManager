@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import {View, Text, TouchableOpacity, ScrollView, Linking} from 'react-native'
 import { stylesAddCredential, styleScroolView } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
-import Navbar from '../../../navigation/actions'
+import  { Navbar } from "../../../navigation/actions";
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import MainBox from '../../../components/MainBox'
@@ -12,7 +12,7 @@ import { usePushNotifications } from '../../../notifications/usePushNotification
 import { sendPushNotification } from '../../../notifications/functionalities'
 import { credentialsListUpdated } from './state'
 import { getAllCredentialsAndValidate, getAllLocalCredentialsFormatted } from './functions'
-import { addCredentialsLabel, detailsLabel, navigateLabel, pageCredential, pageTitleCredentials } from '../../../assets/constants'
+import { addCredentialsLabel, detailsLabel, navigateLabel, pageAddCredential, pageCredential, pageTitleCredentials } from '../../../assets/constants'
 
 function AddCredencial() {
 
@@ -20,7 +20,7 @@ function AddCredencial() {
   
   return (
     <View style= { { flex: 0.10, marginTop: '5%', flexDirection: 'row'} }>
-      <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, stylesAddCredential.addCredentialButton, stylesButtons.mainConfig]} onPress={() => {navigation.push('AddCredential')}}>
+      <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, stylesAddCredential.addCredentialButton, stylesButtons.mainConfig]} onPress={() => {navigation.push(pageAddCredential)}}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCredential.addCredentialButtonText]}>{addCredentialsLabel}</Text>
       </TouchableOpacity>
     </View>
@@ -123,8 +123,8 @@ function CredentialsList() {
 
   const refreshValue = async () => {
     setIsFething(true)
-    getAllCredentialsAndValidate(userId, localDBKey)
-    getAllLocalCredentialsFormatted(userId, localDBKey)
+   getAllCredentialsAndValidate(userId, localDBKey)
+    await getAllLocalCredentialsFormatted(userId, localDBKey)
     .then((credentials) => {   
       setCredencials(credentials)
       setIsFething(false)

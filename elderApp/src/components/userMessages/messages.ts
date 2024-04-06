@@ -18,6 +18,7 @@ export const enum FlashMessage {
     sessionEndedByCaregiver = 'O CUIDADOR TERMINOU A RELAÇÃO!',
     sessionAccepted = 'A CONEXÃO FOI ESTABELECIDA!',
     sessionRejected = 'A CONEXÃO NÃO FOI ESTABELECIDA!',
+    sessionRequestCanceled = 'O IDOSO CANCELOU O PEDIDO DE SESSÃO!',
 
     caregiverReject = 'O CUIDADOR REJEITOU A CONEXÃO!',
     caregiverAccept = 'O CUIDADOR ACEITOU A CONEXÃO!',
@@ -67,8 +68,10 @@ export const maxNumberOfConnectionsDescription = (caregiverEmail: string) => `O 
 
 export const maxNumberOfConnectionsCaregiverDescription = (caregiverEmail: string) => `O número máximo de conexões foi atingido, o cuidador ${caregiverEmail} não pode aceitar mais conexões! 🚫`
 
-export const credentialUpdatedByCaregiver = (caregiverEmail: string, platform: string) => `O cuidador com o email ${caregiverEmail} atualizou as credenciais de ${platform}! 🔧`
+export const credentialUpdatedByCaregiver = (caregiverEmail: string, platform: string) => `O cuidador com o email ${caregiverEmail} atualizou a credencial ${platform}! 🔧`
 
-export const credentialCreatedByCaregiver = (caregiverEmail: string, platform: string) => `O cuidador com o email ${caregiverEmail} adicionou credenciais de ${platform}! ⭐️`
+export const credentialCreatedByCaregiver = (caregiverEmail: string, platform: string) => `O cuidador com o email ${caregiverEmail} adicionou a credencial ${platform}! ⭐️`
 
-export const credentialDeletedByCaregiver = (caregiverEmail: string, platform: string) => `O cuidador com o email ${caregiverEmail} eliminou as credenciais de ${platform}! ❌`
+export const credentialDeletedByCaregiver = (caregiverEmail: string, platform: string) => `O cuidador com o email ${caregiverEmail} eliminou a credencial ${platform}! ❌`
+
+export const sessionRequestCanceledDescription = (caregiverEmail: string) => `O cuidador com o email ${caregiverEmail} cancelou o pedido de sessão! ❌`

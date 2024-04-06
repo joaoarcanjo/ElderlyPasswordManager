@@ -6,7 +6,6 @@ import { MessageType, SessionCipher, SignalProtocolAddress } from "@privacyresea
 import { SendWebSocketMessage } from "../network/types"
 import { signalWebsocket } from "../network/webSockets"
 
-
 /**
  * Para encriptar e enviar uma mensagem para determinado destinatário.
  * @param to 

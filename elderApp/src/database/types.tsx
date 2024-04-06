@@ -19,8 +19,7 @@ export interface SessionSignal {
 export enum CaregiverRequestStatus {
     ACCEPTED = 1,
     RECEIVED = 2,
-    WAITING = 3,
-    DECOUPLING = 4
+    WAITING = 3
 }
 
 export enum TimeoutType {

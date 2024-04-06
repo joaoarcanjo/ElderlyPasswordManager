@@ -4,7 +4,7 @@ import { View, StyleSheet, Modal, TouchableOpacity, Text } from 'react-native'
 import { stylesButtons } from "../assets/styles/main_style"
 import { modal, options } from "../screens/credential_interface/styles/styles"
 import { Spinner } from "./LoadingComponents"
-import { upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, modalIntentity } from "../assets/constants";
+import { upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, modalIntensity } from "../assets/constants";
 import { updateUpperCase, updateLowerCase, updateNumbers, updateSpecial } from "./passwordGenerator/functions";
 import { Requirement, RequirementLength } from "./passwordGenerator/Requirement";
 
@@ -95,7 +95,7 @@ export function ModalBox({children, visibleFlag}: Readonly<{children: ReactNode,
       >
         <BlurView
           style={{ flex: 1 }}
-          intensity={modalIntentity}
+          intensity={modalIntensity}
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>

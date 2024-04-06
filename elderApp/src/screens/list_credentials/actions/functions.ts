@@ -1,6 +1,6 @@
 import { decrypt, encrypt } from "../../../algorithms/0thers/crypto";
 import { getCaregivers, deleteCaregiver } from "../../../database/caregivers";
-import { CredentialLocalRecord, deleteCredentialFromLocalDB, getAllLocalCredentials, getCredential, insertCredentialToLocalDB, updateCredentialFromLocalDB } from "../../../database/credentials";
+import { CredentialLocalRecord, deleteCredentialFromLocalDB, getAllLocalCredentials, getCredential, insertCredentialToLocalDB, updateCredentialOnLocalDB } from "../../../database/credentials";
 import { Caregiver, CaregiverRequestStatus } from "../../../database/types";
 import { ErrorInstance } from "../../../exceptions/error";
 import { Errors } from "../../../exceptions/types";
@@ -29,61 +29,69 @@ export const getAllCredentialsAndValidate = async (userId: string, localDbKey: s
     console.log("===> getAllCredentialsAndValidateCalled")
     const userKey = await getKeychainValueFor(elderlyFireKey(userId))
     const credentialsCloud = await listAllElderlyCredencials(userId)
-    const toReturn = await Promise.all(credentialsCloud.map(async value => {
-        let credentialInfo = 'undefined'
-        try {
-            credentialInfo = await getCredential(userId, value.id)
-            if (value.data.length != 0) {
-                const credentialCloud = JSON.parse(decrypt(value.data, userKey)) as CredentialData
-
-                if (credentialCloud.id !== value.id) {
-                    throw new ErrorInstance(Errors.ERROR_CREDENTIAL_INVALID_ID)
+    let toReturn: (Credential | undefined)[] = []
+    try {
+        const startTime = performance.now(); // Start measuring time
+        toReturn = await Promise.all(credentialsCloud.map(async value => {
+            let credentialInfo = undefined
+            try {
+                credentialInfo = await getCredential(userId, value.id)
+                if (value.data.length != 0) { //Caso contrário não deve lançar exceção?
+                    let credentialCloud = undefined
+                    const valueDecrypted = decrypt(value.data, userKey)
+                    credentialCloud = JSON.parse(valueDecrypted) as CredentialData
+                    if (credentialCloud.id !== value.id) {
+                        throw new ErrorInstance(Errors.ERROR_CREDENTIAL_INVALID_ID)
+                    }
+                    if (credentialInfo === '') {
+                        if (credentialCloud.password === '' || credentialCloud.username === '' || credentialCloud.uri === '') {
+                            await deleteCredentialFromLocalDB(userId, value.id)
+                        } else {
+                            await insertCredentialToLocalDB(userId, value.id, encrypt(JSON.stringify(credentialCloud), localDbKey))
+                        }
+                    } else {
+                        await deleteCredentialIfNeeded(userId, value.id, credentialCloud, credentialInfo, localDbKey)
+                        await updateCredentialIfNeeded(userId, value.id, credentialCloud, credentialInfo, localDbKey)
+                    }
+                    return { id: value.id, data: credentialCloud }
                 }
-                if (credentialInfo === '') {
-                    await insertCredentialToLocalDB(userId, value.id, encrypt(JSON.stringify(credentialCloud), localDbKey))
-                } else {
-                    await deleteCredentialIfNeeded(userId, value.id, credentialCloud, localDbKey)
-                    await updateCredentialIfNeeded(userId, value.id, credentialCloud, localDbKey)
+            } catch (error) {
+                const errorAux = error as ErrorInstance
+                if (errorAux.code === Errors.ERROR_INVALID_MESSAGE_OR_KEY ||
+                errorAux.code === Errors.ERROR_CREDENTIAL_ON_CLOUD_OUTDATED ||
+                errorAux.code === Errors.ERROR_CREDENTIAL_INVALID_ID) {
+                    
+                    const credencialLocal = JSON.parse(decrypt(credentialInfo, localDbKey))
+                    if (credencialLocal) {
+                        await updateCredentialFromFiretore(userId, value.id, JSON.stringify(credencialLocal))
+                    }
+                    return { id: value.id, data: credencialLocal }
                 }
-                return { id: value.id, data: credentialCloud }
             }
-        } catch (error) {
-            const errorAux = error as ErrorInstance
-            if (errorAux.code === Errors.ERROR_INVALID_MESSAGE_OR_KEY ||
-            errorAux.code === Errors.ERROR_CREDENTIAL_ON_CLOUD_OUTDATED ||
-            errorAux.code === Errors.ERROR_CREDENTIAL_INVALID_ID) {
-                
-                const credencialLocal = JSON.parse(decrypt(credentialInfo, localDbKey))
-                if (credencialLocal) {
-                    await updateCredentialFromFiretore(userId, value.id, JSON.stringify(credencialLocal))
-                }
-                return { id: value.id, data: credencialLocal }
-            }
-        }
-    }))
-
+        }))
+    } catch (error) {  
+        alert("Error validating credentials from cloud")
+    }
     await addMissingCredentialsToReturn(toReturn, localDbKey, userId, userKey)
     return toReturn
 }
 
-const deleteCredentialIfNeeded = async (userId: string, credentialId: string, credentialCloud: any, localDBKey: string) => {
-    const credentialInfo = await getCredential(userId, credentialId)
+const deleteCredentialIfNeeded = async (userId: string, credentialId: string, credentialCloud: any, credentialInfo: any, localDBKey: string) => {
     const credencialLocal = JSON.parse(decrypt(credentialInfo, localDBKey))
     if (credentialCloud.uri == '' &&
         credentialCloud.username == '' &&
         credentialCloud.password == '' &&
-        credentialCloud.edited.updatedAt >= credencialLocal.edited.updatedAt) {
+        credentialCloud.edited.updatedAt > credencialLocal.edited.updatedAt) {
         await deleteCredentialFromLocalDB(userId, credentialId)
         await deleteCredentialFromFiretore(userId, credentialId)
         return undefined
     }
 };
 
-const updateCredentialIfNeeded = async (userId: string, credentialId: string, credentialCloud: any, localDBKey: string) => {
-    const credentialInfo = await getCredential(userId, credentialId)
+const updateCredentialIfNeeded = async (userId: string, credentialId: string, credentialCloud: any, credentialInfo: any, localDBKey: string) => {
     const credencialLocal = JSON.parse(decrypt(credentialInfo, localDBKey))
-    if (credencialLocal.edited.updatedAt < credentialCloud.edited.updatedAt) {
-        updateCredentialFromLocalDB(userId, credentialId, encrypt(JSON.stringify(credentialCloud), localDBKey))
+    if (credentialCloud.edited.updatedAt > credencialLocal.edited.updatedAt) {
+        updateCredentialOnLocalDB(userId, credentialId, encrypt(JSON.stringify(credentialCloud), localDBKey))
     } else if (credencialLocal.edited.updatedAt > credentialCloud.edited.updatedAt) {
         throw new ErrorInstance(Errors.ERROR_CREDENTIAL_ON_CLOUD_OUTDATED)
     }
@@ -105,17 +113,25 @@ const addMissingCredentialsToReturn = async (toReturn: (Credential | undefined)[
 export const getAllLocalCredentialsFormatted = async (userId: string, localDBKey: string): Promise<(Credential | undefined)[]> => {
     console.log("===> getAllLocalCredentialsFormattedCalled")
 
-    return await getAllLocalCredentials(userId) 
-    .then(async (credentialsLocal: CredentialLocalRecord[]) => {
-        return credentialsLocal.map(value => {
-            const credential = JSON.parse(decrypt(value.record, localDBKey)) as CredentialData
-            return { id: credential.id, data: credential }
+    //const startTime = performance.now(); // Start measuring time
+
+    const credentialsLocal = await getAllLocalCredentials(userId)
+        .then(async (credentialsLocal: CredentialLocalRecord[]) => {
+            return credentialsLocal.map(value => {
+                const credential = JSON.parse(decrypt(value.record, localDBKey)) as CredentialData
+                return { id: credential.id, data: credential }
+            })
         })
-    })
-    .catch(() => {
-        console.log('#1 Error getting all local credentials')
-        return []
-    })
+        .catch(() => {
+            console.log('#1 Error getting all local credentials')
+            return []
+        })
+
+    //const endTime = performance.now(); // Stop measuring time
+    //const executionTime = endTime - startTime; // Calculate execution time
+    //console.log(`Execution time: ${executionTime} milliseconds`);
+
+    return credentialsLocal;
 }
 
 export interface CaregiverPermission {
@@ -132,18 +148,14 @@ export interface CaregiverPermission {
   
     let caregiversPermissions: CaregiverPermission[] = []
     caregivers.forEach(async (caregiver) => {
-      if(caregiver.requestStatus === CaregiverRequestStatus.ACCEPTED || caregiver.requestStatus === CaregiverRequestStatus.RECEIVED) {
+      if(caregiver.requestStatus === CaregiverRequestStatus.ACCEPTED 
+        || caregiver.requestStatus === CaregiverRequestStatus.RECEIVED 
+        || caregiver.requestStatus === CaregiverRequestStatus.WAITING) {
         caregiversPermissions.push({
           canRead: readCaregivers.includes(caregiver.caregiverId),
           canWrite: writeCaregivers.includes(caregiver.caregiverId),
           caregiver
         })
-      } else if (caregiver.requestStatus === CaregiverRequestStatus.DECOUPLING) {
-        try {
-          await deleteCaregiver(userId, caregiver.email)
-        } catch (error) {
-          console.log('#1 Error deleting caregiver')
-        }
       }
     })
     return caregiversPermissions

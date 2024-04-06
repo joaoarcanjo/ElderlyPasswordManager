@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native'
-import { blueBorder, copyButtonBackground, copyButtonBorder, darkGreenBorder, greyBackgroud, greyBorder, lightGreenBackgroud, regenerateButtonBackgroud, regenerateButtonBorder, saveButtonBackground, saveButtonBorder, superlightBlueBackgroud, superlightGreenBackground, visibilityButtonBackground, visibilityButtonBorder, whiteBackgroud } from './colors'
+import { acceptButtonBackground, acceptButtonBorder, blueBorder, cancelButtonBackground, cancelButtonBorder, copyButtonBackground, copyButtonBorder, darkGreenBorder, greyBackgroud, greyBorder, lightGreenBackgroud, regenerateButtonBackgroud, regenerateButtonBorder, rejectButtonBackground, rejectButtonBorder, saveButtonBackground, saveButtonBorder, superlightBlueBackgroud, superlightGreenBackground, visibilityButtonBackground, visibilityButtonBorder, whiteBackgroud } from './colors'
 
 const stylesMainBox = StyleSheet.create({
     pageInfoContainer: {
@@ -24,6 +24,21 @@ const stylesButtons = StyleSheet.create({
         shadowOffset: { height: 1, width: 1 }, // IOS
         shadowOpacity: 1, // IOS
         shadowRadius: 1, //IOS
+    },
+    acceptButton: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        backgroundColor: acceptButtonBackground,
+        borderColor: acceptButtonBorder
+    },
+    cancelButton: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        backgroundColor: cancelButtonBackground,
+        borderColor: cancelButtonBorder
+    },
+    rejectButton: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        backgroundColor: rejectButtonBackground,
+        borderColor: rejectButtonBorder
     },
     copyButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los

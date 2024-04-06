@@ -10,9 +10,9 @@ import { useSessionInfo } from "../../../firebase/authentication/session"
 import { currentSessionSubject, sessionForRemoteUser } from "../../../e2e/session/state"
 import { startSession } from "../../../e2e/session/functions"
 import { CaregiverRequestStatus } from "../../../database/types"
+import { acceptLabel, cancelLabel, refuseLabel, unlinkLabel } from "../../../assets/constants"
+import { cancelWaitingCaregiver } from "../../../e2e/messages/functions"
 import { encryptAndSendMessage } from "../../../e2e/messages/sendMessage"
-import { unlink } from "firebase/auth"
-import { unlinkLabel } from "../../../assets/constants"
 
 const caregiverImage = '../../../assets/images/caregiver.png'
 const telephoneImage = '../../../assets/images/telephone.png'
@@ -42,16 +42,18 @@ function Requirement({name, value, func}:Readonly<{name: string, value: boolean,
 }
 
 export function CaregiverItem({number, caregiverId, name, phone, email, setRefresh, status, canWrite}: Readonly<{number: number, caregiverId: string, name: string, phone: string, email: string, setRefresh: Function, status: number, canWrite: boolean}>) {
-  if(status == CaregiverRequestStatus.RECEIVED.valueOf()) {
-    return <CaregiverPending caregiverId={caregiverId} number={number} name={name} email={email} setRefresh={setRefresh}/>
-  } else if (status == CaregiverRequestStatus.ACCEPTED.valueOf()) {
+  if(status == CaregiverRequestStatus.RECEIVED) {
+    return <CaregiverToBeAccepted caregiverId={caregiverId} number={number} name={name} email={email} setRefresh={setRefresh}/>
+  } else if (status == CaregiverRequestStatus.ACCEPTED) {
     return <Caregiver name={name} phone={phone} email={email} caregiverId={caregiverId} setRefresh={setRefresh} canWrite={canWrite}/>
+  } else if (status == CaregiverRequestStatus.WAITING) {
+    return <CaregiverWaiting caregiverEmail={email} setRefresh={setRefresh} />
   } else {
     //Nada por agora.
   }
 }
 
-export function CaregiverPending({ caregiverId, number, name, email, setRefresh }: Readonly<{caregiverId: string, number: number, name: string, email: string, setRefresh: Function}>) {
+export function CaregiverToBeAccepted({ caregiverId, number, name, email, setRefresh }: Readonly<{caregiverId: string, number: number, name: string, email: string, setRefresh: Function}>) {
 
   const { userId, userEmail, userName, userPhone } = useSessionInfo()
   
@@ -60,18 +62,20 @@ export function CaregiverPending({ caregiverId, number, name, email, setRefresh 
 
   return (
     <View style={{flex: 0.55, justifyContent: 'center', alignItems: 'center'}}>
-       <View style={[{ flexDirection: 'row', alignItems: 'center', marginVertical: '3%', backgroundColor: 'red' }, caregiverStyle.newCaregiverContainer]}>
-        <View style={{ flex: 1 }}>
+       <View style={[{ flexDirection: 'row', alignItems: 'center', marginVertical: '3%' }, caregiverStyle.newCaregiverContainer]}>
+        <View style={{ flex: 1, marginTop: '4%' }}>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 20, marginLeft: '5%', fontWeight: 'bold' }]}>{`Pedido recebido de: ${email}`}</Text>
+          <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }}/>
           <View style={{flexDirection: 'row', marginHorizontal: '3%'}}>
-            <Text numberOfLines={2} adjustsFontSizeToFit style={{ fontSize: 18 }}>{`O idoso ${name} com o email ${email} enviou-lhe um pedido!`}</Text>
+            <Text numberOfLines={2} adjustsFontSizeToFit style={[{ fontSize: 18 }, caregiverStyle.newCaregiverText]}>{`O idoso ${name} com o email ${email} enviou-lhe um pedido!`}</Text>
           </View>
           <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }}/>
           <View style={{flexDirection: 'row'}}>
-            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, newCaregiverContainer.acceptButton, stylesButtons.mainConfig]} onPress={accept}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginVertical: '5%' }, newCaregiverContainer.buttonText]}>Aceitar</Text>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.acceptButton, stylesButtons.mainConfig]} onPress={accept}>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginVertical: '5%' }, newCaregiverContainer.buttonText]}>{acceptLabel}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, newCaregiverContainer.rejectButton, stylesButtons.mainConfig]} onPress={refuse}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginVertical: '5%' }, newCaregiverContainer.buttonText]}>Recusar</Text>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.rejectButton, stylesButtons.mainConfig]} onPress={refuse}>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginVertical: '5%' }, newCaregiverContainer.buttonText]}>{refuseLabel}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -80,6 +84,31 @@ export function CaregiverPending({ caregiverId, number, name, email, setRefresh 
   )
 }
 
+export function CaregiverWaiting({caregiverEmail, setRefresh}: Readonly<{ caregiverEmail: string,  setRefresh: Function}>) {
+  
+  const { userId } = useSessionInfo()
+  const cancel = () => cancelWaitingCaregiver(userId, caregiverEmail).then(() => setRefresh()) 
+
+  return (
+    <View style={{flex: 0.55, justifyContent: 'center', alignItems: 'center'}}>
+      <View style={[{ flexDirection: 'row', alignItems: 'center', marginVertical: '3%' }, caregiverStyle.sentRequestCaregiverContainer]}>
+        <View style={{ flex: 1, marginTop: '4%' }}>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 20, marginLeft: '5%', fontWeight: 'bold' }]}>{`Pedido enviado para: ${caregiverEmail}`}</Text>
+          <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }}/>
+          <View style={{flexDirection: 'row', marginHorizontal: '3%'}}>
+            <Text numberOfLines={2} adjustsFontSizeToFit style={{ fontSize: 18 }}>{`À espera que o cuidador com o email ${caregiverEmail} aceite o seu pedido.`}</Text>
+          </View>
+          <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }}/>
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.cancelButton, stylesButtons.mainConfig]} onPress={cancel}>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginVertical: '5%' }, newCaregiverContainer.buttonText]}>{cancelLabel}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </View>
+  )
+}
 
 export function Caregiver({name, phone, email, caregiverId, setRefresh, canWrite}: Readonly<{name: string, phone: string, email: string, caregiverId: string, setRefresh: Function, canWrite: boolean}>) {
 

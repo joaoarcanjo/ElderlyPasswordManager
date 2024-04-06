@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { View } from 'react-native'
-import Navbar from '../../../navigation/actions'
+import {Navbar} from '../../../navigation/actions'
 import MainBox from '../../../components/MainBox'
 import AddCaregiver from './addCaregiver'
 import {CaregiverItem} from './caregiverItem'
@@ -57,8 +57,6 @@ const CaregiversList = React.memo(function CaregiversList() {
 })
 
 export const Caregivers = React.memo(function Caregivers() {
-  console.log('## Caregivers component rendered')
-
   return (
     <View    style = {{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
     <MainBox text  = {pageTitleCaregiversList}/>

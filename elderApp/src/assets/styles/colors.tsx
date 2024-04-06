@@ -46,6 +46,12 @@ export const regenerateButtonBorder = darkGreenBorder
 export const optionsButtonBackgroud = lightBlueBackground
 export const optionsButtonBorder = blueBorder
 
+export const rejectButtonBackground = lightRedBackground
+export const rejectButtonBorder = lightRedBorder
+
+export const acceptButtonBackground = lightGreenBackgroud
+export const acceptButtonBorder = darkGreenBorder
+
 //MAIN MENU PAGE COLORS
 export const credencialsButtonBackgroud = lightGreenBackgroud
 export const credencialsButtonBorder = darkGreenBorder
@@ -123,11 +129,3 @@ export const manualButtonBorder = purpleBorder
 
 export const signupButtonBackgroundU = lightGreenBackgroud
 export const signupButtonBorderU = darkGreenBorder
-
-//ELDERLY LIST (TODO: MOVE TO CAREGIVER APP)
-
-export const rejectButtonBackground = lightRedBackground
-export const rejectButtonBorder = lightRedBorder
-
-export const acceptButtonBackground = lightGreenBackgroud
-export const acceptButtonBorder = darkGreenBorder

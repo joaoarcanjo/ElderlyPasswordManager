@@ -1,7 +1,9 @@
 
 export enum Errors {
-    ERROR_ELDERLY_ALREADY_ADDED = "O pedido para o respetivo utilizador já foi enviado, ou já se encontra vinculado.",
+    ERROR_ELDERLY_REQUEST_ALREADY_SENT = "O pedido para o respetivo utilizador já foi enviado, ou já se encontra vinculado.",
+    ERROR_ELDERLY_ALREADY_ADDED = "O idoso já se encontra adicionado.",
     ERROR_STARTING_SESSION = "Não foi possível enviar o pedido, verifique se o email é válido.\n Tente novamente.",
+    ERROR_USER_EMAIL = "O email fornecido é o seu email, não se pode vincular a si mesmo.",
     ERROR_SAVING_SESSION = "Não foi possível estabelecer a sessão, algo de inesperado aconteceu.\n Tente novamente.",
 
     ERROR_NO_CONNECTION_TO_NETWORK = "Sem conexão à internet, verifique a sua conexão e tente novamente.",
@@ -20,4 +22,11 @@ export enum Errors {
     ERROR_CREATING_TIMEOUT = "Não foi possível criar o timeout.",
     ERROR_UPDATING_TIMEOUT = "Não foi possível atualizar o timeout.",
     ERROR_GETTING_TIMEOUT = "Não foi possível obter o timeout.",
+
+    ERROR_DELETING_SESSION = "Não foi possível eliminar a sessão.",
+    ERROR_UPDATING_SESSION = "Não foi possível atualizar a sessão.",
+    ERROR_CREATING_SESSION = "Não foi possível criar a sessão.",
+    ERROR_RETRIEVING_SESSION = "Não foi possível recuperar a sessão.",
+
+    ERROR_SERVER_INTERNAL_ERROR = 'Erro interno, tente novamente mais tarde ou contacte o administrador. A comunicação com o idoso não está disponível \n#1',
 }

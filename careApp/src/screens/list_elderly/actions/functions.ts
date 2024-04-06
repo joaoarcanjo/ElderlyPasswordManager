@@ -1,5 +1,7 @@
 import { sessionAcceptedFlash, sessionRejectedFlash } from "../../../components/userMessages/UserMessages"
-import { acceptElderlyOnDatabase, deleteElderly, getElderlyWaitingForResponse, isMaxElderlyReached } from "../../../database/elderlyFunctions"
+import { acceptElderlyOnDatabase, deleteElderly, getElderlyWithSpecificState, isMaxElderlyReached } from "../../../database/elderlyFunctions"
+import { deleteSessionById } from "../../../database/signalSessions"
+import { ElderlyRequestStatus } from "../../../database/types"
 import { encryptAndSendMessage } from "../../../e2e/messages/functions"
 import { ChatMessageType, CaregiverDataBody } from "../../../e2e/messages/types"
 import { startSession } from "../../../e2e/session/functions"
@@ -53,8 +55,10 @@ export async function acceptElderly(userId: string, elderlyEmail: string, userNa
     //await encryptAndSendMessage(to, 'acceptSession', true, ChatMessageType.ACCEPTED_SESSION)
     await encryptAndSendMessage(elderlyEmail, JSON.stringify(data), true, ChatMessageType.PERSONAL_DATA)
     await acceptElderlyOnDatabase(userId, elderlyEmail)
-    sessionAcceptedFlash('', true)
-    await refuseIfMaxReached(userId)
+    .then(() => cancelWaitingElderly(userId, elderlyEmail))
+    .then(() => sessionAcceptedFlash('', true))
+    .then(() => setElderlyListUpdated())
+    .then(() => refuseIfMaxReached(userId))
     
 }
 
@@ -65,20 +69,40 @@ export async function acceptElderly(userId: string, elderlyEmail: string, userNa
  */
 export async function refuseElderly(userId: string, to: string) {
     await deleteElderly(userId, to)
-    await encryptAndSendMessage(to, 'rejectSession', true, ChatMessageType.REJECT_SESSION)
-    setElderlyListUpdated()
-    removeSession(to)
-    sessionRejectedFlash('', true)
+    .then(() => encryptAndSendMessage(to, 'rejectSession', true, ChatMessageType.REJECT_SESSION))
+    .then(() => removeSession(to))
+    .then(() => deleteSessionById(userId, to))
+    .then(() => setElderlyListUpdated())
+    .then(() => sessionRejectedFlash('', true))
+    .catch(() => console.log('#1 Error refusing elderly'))
 }
+
+/**
+ * This function is to cancel the requests that were made to other caregivers.
+ * @param userId 
+ */
+export async function cancelWaitingElderly(userId: string, to: string) {
+    const elderlies = await getElderlyWithSpecificState(userId, ElderlyRequestStatus.WAITING.valueOf())
+    elderlies.forEach(async email => {
+        await encryptAndSendMessage(email, 'rejectSession', true, ChatMessageType.CANCEL_SESSION)
+        .then(() => removeSession(email))
+        .then(() => deleteSessionById(userId, to))
+        .then(() => deleteElderly(userId, email))
+        .then(() => setElderlyListUpdated())
+    })
+}
+
+
 
 /**
  * Todas as ações que têm que ser realizadas quando se realiza a desvinculação do idoso.
  * @param email 
  */
 export async function decouplingElderly(userId: string, email: string) {
-    //TODO: Enviar notificação a informar do desligamento.
     await deleteElderly(userId, email)
-    await sendElderlyDecoupling(email)
+    .then(() => sendElderlyDecoupling(email))
+    .catch(() => console.log('#1 Error decoupling elderly'))
+
 }
 
 async function sendElderlyDecoupling(elderlyEmail: string) {
@@ -94,7 +118,7 @@ async function sendElderlyDecoupling(elderlyEmail: string) {
 export async function refuseIfMaxReached(userId: string) {
     const isMaxReached = await isMaxElderlyReached(userId)
     if(isMaxReached) {
-        const waitingElderlyEmails = await getElderlyWaitingForResponse(userId)
+        const waitingElderlyEmails = await getElderlyWithSpecificState(userId, ElderlyRequestStatus.RECEIVED.valueOf())
         console.log(waitingElderlyEmails)
         waitingElderlyEmails.forEach(async email => {
             await encryptAndSendMessage(email, 'rejectSession', true, ChatMessageType.MAX_REACHED_SESSION)

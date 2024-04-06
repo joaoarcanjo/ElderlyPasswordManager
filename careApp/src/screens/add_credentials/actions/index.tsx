@@ -3,7 +3,7 @@ import { TextInput, View, Text, TouchableOpacity } from "react-native";
 import { stylesButtons } from "../../../assets/styles/main_style";
 import { passwordFirstHalf, stylesAddCredential, stylesInputsCredencials } from "../styles/styles";
 import { whiteBackgroud } from "../../../assets/styles/colors";
-import Navbar from "../../../navigation/actions";
+import {Navbar} from "../../../navigation/actions";
 import { addCredencialToFirestore } from "../../../firebase/firestore/functionalities";
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import { getScore } from '../../../algorithms/zxcvbn/algorithm'

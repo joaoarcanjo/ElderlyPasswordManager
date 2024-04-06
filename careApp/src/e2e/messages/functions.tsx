@@ -11,9 +11,10 @@ import { setElderlyListUpdated } from "../../screens/list_elderly/actions/state"
 import { getKeychainValueFor, saveKeychainValue } from "../../keychain"
 import { caregiverId, elderlySSSKey } from "../../keychain/constants"
 import { ElderlyRequestStatus } from "../../database/types"
-import { checkElderlyByEmail, checkElderlyByEmailWaitingForResponse, deleteElderly, isMaxElderlyReached, saveElderly, updateElderly } from "../../database/elderlyFunctions"
+import { checkElderlyByEmail, checkElderlyByEmailWaitingForResponse, deleteElderly, getElderlyWithSpecificState, isMaxElderlyReached, saveElderly, updateElderly } from "../../database/elderlyFunctions"
 import { setCredentialsListUpdated } from "../../screens/list_elderly_credentials/actions/state"
-import { credentialCreatedFlash, credentialDeletedFlash, credentialUpdatedFlash, elderlyPersonalInfoUpdatedFlash, elderlySentFirstKey, sessionAcceptedFlash, sessionEndedFlash, sessionPermissionsFlash, sessionRejectMaxReachedFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionRequestReceivedFlash } from "../../components/userMessages/UserMessages"
+import { credentialCreatedFlash, credentialDeletedFlash, credentialUpdatedFlash, elderlyPersonalInfoUpdatedFlash, elderlySentFirstKey, sessionAcceptedFlash, sessionEndedFlash, sessionPermissionsFlash, sessionRejectMaxReachedFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionRequestCanceledFlash, sessionRequestReceivedFlash } from "../../components/userMessages/UserMessages"
+import { deleteSessionById } from "../../database/signalSessions"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -137,6 +138,9 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
     } else if (cm.type === ChatMessageType.REJECT_SESSION && !itsMine) {
         //vai apagar a sessão que foi criada com o possível cuidador
         await processRejectMessage(currentUserId, cm)
+    } else if (cm.type === ChatMessageType.CANCEL_SESSION && !itsMine) {
+        //vai apagar a sessão que foi criada com o possível cuidador
+        await processCancelSession(currentUserId, cm)
     } else if (cm.type === ChatMessageType.MAX_REACHED_SESSION && !itsMine) {
         //vai apagar a sessão que foi criada com o possível cuidador
         await processMaxReachedMessage(currentUserId, cm)
@@ -181,12 +185,13 @@ async function processPersonalData(currentUserId: string, cm: ProcessedChatMessa
     }  else if(await checkElderlyByEmailWaitingForResponse(currentUserId, cm.from)) {
         await updateElderly(currentUserId, data.userId, data.email, data.name, data.phone)
         .then(() => saveKeychainValue(elderlySSSKey(data.userId), data.key))
+        .then(() => cancelWaitingElderlies(currentUserId))
         .then(() => sessionAcceptedFlash(cm.from, false))
         .then(() => setElderlyListUpdated())
     } else {
         const isMaxReached = await isMaxElderlyReached(currentUserId)
         if(isMaxReached) {
-            await refuseCaregiverMaxReached(cm)
+            await refuseElderlyMaxReached(currentUserId, cm)
         } else {
             await saveKeychainValue(elderlySSSKey(data.userId), data.key)
             .then(() => saveElderly(currentUserId, data.userId, data.name, data.email, data.phone, ElderlyRequestStatus.RECEIVED.valueOf()))
@@ -205,27 +210,61 @@ async function updateKeyMessage(cm: ProcessedChatMessage) {
     saveKeychainValue(elderlySSSKey(data.userId), data.key)
 }
 
-export async function refuseCaregiverMaxReached(cm: ProcessedChatMessage) {
+export async function cancelWaitingElderlies(userId: string) {
+    const elderlies = await getElderlyWithSpecificState(userId, ElderlyRequestStatus.WAITING.valueOf())
+    console.log('===> cancelWaitingElderlyCalled', { elderlies })
+    elderlies.forEach(async email => {
+        await encryptAndSendMessage(email, 'rejectSession', true, ChatMessageType.CANCEL_SESSION)
+        .then(() => removeSession(email))
+        .then(() => deleteElderly(userId, email))
+        .then(() => setElderlyListUpdated())
+    })
+}
+
+export async function cancelWaitingElderly(userId: string, elderlyEmail: string) {
+    console.log("===> cancelWaitingCaregiverCalled")
+    await encryptAndSendMessage(elderlyEmail, 'cancelSession', true, ChatMessageType.CANCEL_SESSION)
+    .then(() => removeSession(elderlyEmail))
+    .then(() => deleteElderly(userId, elderlyEmail))
+    .then(() => setElderlyListUpdated())
+}
+
+export async function refuseElderlyMaxReached(currentUserId: string, cm: ProcessedChatMessage) {
     await encryptAndSendMessage(cm.from, 'rejectSession', true, ChatMessageType.MAX_REACHED_SESSION)
     .then(() => removeSession(cm.from))
+    .then(() => deleteSessionById(currentUserId, cm.from))
     .then(() => sessionRejectMaxReachedFlash(cm.from))    
+}
+
+export async function processCancelSession(currentUserId: string, cm: ProcessedChatMessage) {
+    console.log("===> processCancelRequestCalled")
+    await deleteElderly(currentUserId, cm.from)
+    .then(() => deleteSessionById(currentUserId, cm.from))
+    .then(() => sessionRequestCanceledFlash(cm.from, false))
+    .then(() => setElderlyListUpdated())
+    .catch(() => console.log('#1 Error canceling caregiver request'))
 }
 
 async function processRejectMessage(currentUserId: string, cm: ProcessedChatMessage) {
     console.log("===> processRejectMessageCalled")
     await deleteElderly(currentUserId, cm.from)
-    sessionRejectedFlash(cm.from, false)
+    .then(() => sessionRejectedFlash(cm.from, false))
+    .then(() => deleteSessionById(currentUserId, cm.from))
+    .catch(() => console.log('#1 Error deleting caregiver'))
 }
 
 async function processMaxReachedMessage(currentUserId: string, cm: ProcessedChatMessage) {
     console.log("===> processMaxReachedMessageCalled")
     await deleteElderly(currentUserId, cm.from)
-    sessionRejectedMaxReachedFlash(cm.from)
+    .then(() => deleteSessionById(currentUserId, cm.from))
+    .then(() => sessionRejectedMaxReachedFlash(cm.from))
+    .catch(() => console.log('#1 Error deleting caregiver'))
 }
 
 async function processDecouplingMessage(currentUserId: string, cm: ProcessedChatMessage) {
     console.log("===> processDecouplingMessageCalled")
     await deleteElderly(currentUserId, cm.from)
-    sessionEndedFlash(cm.from, false)
-    setElderlyListUpdated()
+    .then(() => deleteSessionById(currentUserId, cm.from))
+    .then(() => sessionEndedFlash(cm.from, false))
+    .then(() => setElderlyListUpdated())
 }

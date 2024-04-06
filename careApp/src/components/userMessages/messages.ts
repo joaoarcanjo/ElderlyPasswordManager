@@ -18,6 +18,7 @@ export const enum FlashMessage {
   sessionEndedByElderly = 'O IDOSO TERMINOU A RELAÇÃO!',
   sessionAccepted = 'A CONEXÃO FOI ESTABELECIDA!',
   sessionRejected = 'A CONEXÃO NÃO FOI ESTABELECIDA!',
+  sessionRequestCanceled = 'O IDOSO CANCELOU O PEDIDO DE SESSÃO!',
 
   elderlyReject = 'O IDOSO REJEITOU A CONEXÃO!',
   elderlyAccept = 'O IDOSO ACEITOU A CONEXÃO!',
@@ -70,12 +71,14 @@ export const maxNumberOfConnectionsDescription = (elderlyEmail: string) => `O n�
 
 export const maxNumberOfConnectionsElderlyDescription = (elderlyEmail: string) => `O número máximo de conexões foi atingido, o idoso ${elderlyEmail} não pode aceitar mais conexões! 🚫`
 
-export const credentialUpdatedByElderlyDescription = (elderlyEmail: string, platform: string) => `O idoso com o email ${elderlyEmail} atualizou as credenciais de ${platform}! 🔧`
+export const credentialUpdatedByElderlyDescription = (elderlyEmail: string, platform: string) => `O idoso com o email ${elderlyEmail} atualizou a credencial ${platform}! 🔧`
 
-export const credentialCreatedByElderlyDescription = (elderlyEmail: string, platform: string) => `O idoso com o email ${elderlyEmail} adicionou credenciais de ${platform}! ⭐️`
+export const credentialCreatedByElderlyDescription = (elderlyEmail: string, platform: string) => `O idoso com o email ${elderlyEmail} adicionou a credencial ${platform}! ⭐️`
 
-export const credentialDeletedByElderlyDescription = (elderlyEmail: string, platform: string) => `O idoso com o email ${elderlyEmail} eliminou as credenciais de ${platform}! ❌`
+export const credentialDeletedByElderlyDescription = (elderlyEmail: string, platform: string) => `O idoso com o email ${elderlyEmail} eliminou a credencial ${platform}! ❌`
 
 export const permissionsChangedDescription = (elderlyEmail: string) => `As permissões sobre os dados do idoso com o email ${elderlyEmail} foram alteradas pelo mesmo! 🔧`
 
 export const sessionVerifiedDescription = (elderlyEmail: string) => `A sessão com o idoso ${elderlyEmail} foi verificada pelo mesmo, e já tem acessos de leitura! 🎉`
+
+export const sessionRequestCanceledDescription = (elderlyEmail: string) => `O idoso com o email ${elderlyEmail} cancelou o pedido de sessão! ❌`

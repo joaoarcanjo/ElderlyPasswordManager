@@ -1,4 +1,5 @@
 import { dbSQL } from ".";
+import { maxElderlyCount } from "../assets/constants";
 import { ErrorInstance } from "../exceptions/error";
 import { Errors } from "../exceptions/types";
 import { Elderly, ElderlyRequestStatus } from "./types";
@@ -15,8 +16,12 @@ import { Elderly, ElderlyRequestStatus } from "./types";
  */
 export const saveElderly = async (userId: string, elderlyId: string, elderlyName: string, elderlyEmail: string, elderlyphoneNumber: string, requestStatus: ElderlyRequestStatus): Promise<void> => {
 
-    if (requestStatus == ElderlyRequestStatus.WAITING && await checkElderlyByEmailWaitingForResponse(userId, elderlyEmail)) {
-        return Promise.reject(new ErrorInstance(Errors.ERROR_ELDERLY_ALREADY_ADDED))
+    if (requestStatus == ElderlyRequestStatus.WAITING) {
+        if(await checkElderlyByEmailWaitingForResponse(userId, elderlyEmail)) {
+            return Promise.reject(new ErrorInstance(Errors.ERROR_ELDERLY_REQUEST_ALREADY_SENT))
+        } else if (await checkElderlyByEmail(userId, elderlyEmail)) {
+            return Promise.reject(new ErrorInstance(Errors.ERROR_ELDERLY_ALREADY_ADDED))
+        }
     } 
 
     return new Promise((resolve, reject) => {
@@ -168,38 +173,32 @@ export const checkElderlyByEmailWaitingForResponse = async (userId: string, emai
 }
 
 /**
- * Obtém os idosos que estão à espera de resposta para um determinado utilizador.
- * 
- * @param userId O ID do utilizador.
- * @returns Uma Promise que resolve num array de strings email.
+ * Retrieves the emails of elderly who received a request from the user.
+ * @param userId - The ID of the user.
+ * @returns A promise that resolves to an array of caregiver emails.
  */
-export const getElderlyWaitingForResponse = async (userId: string): Promise<string[]> => {
+export const getElderlyWithSpecificState = async (userId: string, state: ElderlyRequestStatus): Promise<string[]> => {
     return new Promise((resolve, reject) => {
-        try {
-            if (dbSQL != null) {
-                dbSQL.transaction((tx) => {
-                    tx.executeSql('SELECT email FROM elderly WHERE userId = ? AND status = ?;', 
-                    [userId, ElderlyRequestStatus.RECEIVED.valueOf()], 
-                    (_tx, results) => {
-                        console.log(results)
-                        const data: string[] = [];
-                        for (let i = 0; i < results.rows.length; i++) {
-                            data.push(results.rows.item(i).email)
-                        }
-                        return resolve(data)
-                    },
-                    (_, _error) => {
-                        return false;
+        if (dbSQL != null) {
+            dbSQL.transaction((tx) => {
+                tx.executeSql('SELECT email FROM elderly WHERE userId = ? AND status = ?;', 
+                [userId, state.valueOf()], 
+                (_tx, results) => {
+                    const data: string[] = [];
+                    for (let i = 0; i < results.rows.length; i++) {
+                        data.push(results.rows.item(i).email)
                     }
-                    )
-                })
-            } else {
-                alert("Problema ao tentar obter os idosos, tente novamente.")
-            }            
-        } catch (error) {
-            console.log("-> Erro a obter os idosos.")
-            reject(error)
-        }
+                    return resolve(data)
+                },
+                (_, _error) => {
+                    resolve([])
+                    return false
+                }
+                )
+            })
+        } else {
+            resolve([])
+        }         
     })
 }
 
@@ -313,7 +312,7 @@ export const isMaxElderlyReached = async (userId: string): Promise<boolean> => {
                     [userId, ElderlyRequestStatus.ACCEPTED.valueOf()],
                     (_, result) => {
                         const count = result.rows.item(0).count
-                        resolve(count >= 4)
+                        resolve(count >= maxElderlyCount)
                     },
                     (_, _error) => {
                         return false

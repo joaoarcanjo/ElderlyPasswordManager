@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {View, Text, TouchableOpacity, Image, Linking, TextInput} from 'react-native'
 import { stylesButtons } from '../../../assets/styles/main_style'
-import Navbar from '../../../navigation/actions'
+import {Navbar} from '../../../navigation/actions'
 import { accountInfo, appInfo, logout } from '../styles/styles'
 import MainBox from '../../../components/MainBox'
 import { FIREBASE_AUTH } from '../../../firebase/FirebaseConfig'

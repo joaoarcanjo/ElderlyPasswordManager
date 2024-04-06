@@ -1,7 +1,9 @@
 
 export enum Errors {
-    ERROR_CAREGIVER_ALREADY_ADDED = "O pedido para o respetivo utilizador já foi enviado, ou já se encontra vinculado.",
+    ERROR_CAREGIVER_REQUEST_ALREADY_SENT = "O pedido para o respetivo utilizador já foi enviado, ou já se encontra vinculado.",
+    ERROR_CAREGIVER_ALREADY_ADDED = "O cuidador já se encontra adicionado.",
     ERROR_STARTING_SESSION = "Não foi possível enviar o pedido, verifique se o email é válido.\n Tente novamente.",
+    ERROR_USER_EMAIL = "O email fornecido é o seu email, não se pode vincular a si mesmo.",
     ERROR_SAVING_SESSION = "Não foi possível estabelecer a sessão, algo de inesperado aconteceu.\n Tente novamente.",
 
     ERROR_NO_CONNECTION_TO_NETWORK = "Sem conexão à internet, verifique a sua conexão e tente novamente.",
@@ -30,4 +32,6 @@ export enum Errors {
     ERROR_RETRIEVING_SESSION = "Não foi possível recuperar a sessão.",
 
     ERROR_GETTING_GENERATED_PASSWORDS = "Não foi possível obter as passwords geradas.",
+    
+    ERROR_SERVER_INTERNAL_ERROR = 'Erro interno, tente novamente mais tarde ou contacte o administrador. A comunicação com o idoso não está disponível \n#1',
 }

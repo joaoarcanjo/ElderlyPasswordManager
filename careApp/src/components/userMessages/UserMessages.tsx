@@ -6,7 +6,7 @@ import React from 'react';
 import { darkGreenBackgroud, lightBlueBackground, lightGreenBackgroud, lightRedBackground, lightYellowBackground, purpleBackground, superlightBlueBackgroud, superlightGreenBackground, yellowBackground } from '../../assets/styles/colors';
 import { triggerNotifications } from '../../notifications/localNotifications';
 import { appActive, durationQuickMessage, durationSlowMessage } from '../../assets/constants';
-import { FlashMessage, credentialCreatedByElderlyDescription, credentialCreatedDescription, credentialDeletedByElderlyDescription, credentialDeletedDescription, credentialUpdatedByElderlyDescription, credentialUpdatedDescription, editModeActiveDescription, editModeCanceledDescription, elderlyPersonalInfoUpdatedDescription, maxNumberOfConnectionsDescription, maxNumberOfConnectionsElderlyDescription, permissionsChangedDescription, personalInfoUpdatedDescription, sessionAcceptedDescription, sessionEndedDescription, sessionRejectedDescription, sessionRequestReceivedDescription, sessionRequestSentDescription, sessionVerifiedDescription } from './messages';
+import { FlashMessage, credentialCreatedByElderlyDescription, credentialCreatedDescription, credentialDeletedByElderlyDescription, credentialDeletedDescription, credentialUpdatedByElderlyDescription, credentialUpdatedDescription, editModeActiveDescription, editModeCanceledDescription, elderlyPersonalInfoUpdatedDescription, maxNumberOfConnectionsDescription, maxNumberOfConnectionsElderlyDescription, permissionsChangedDescription, personalInfoUpdatedDescription, sessionAcceptedDescription, sessionEndedDescription, sessionRejectedDescription, sessionRequestCanceledDescription, sessionRequestReceivedDescription, sessionRequestSentDescription, sessionVerifiedDescription } from './messages';
 
 /**
  * Copies the provided value to the clipboard and shows a flash message.
@@ -165,6 +165,26 @@ export function sessionRejectedFlash(from: string, byMe: boolean) {
     })
   } else {
     triggerNotifications(byMe ? FlashMessage.sessionRejected : FlashMessage.elderlyReject, sessionRejectedDescription(from), "")
+  }
+}
+
+/**
+ * Displays a flash message indicating that a session request has been canceled.
+ * @param elderlyEmail - The email of the elderly who canceled the session request.
+ */
+export function sessionRequestCanceledFlash(elderlyEmail: string, byMe: boolean) {
+  if (AppState.currentState === appActive) {
+    showMessage({
+      floating: true,
+      message: FlashMessage.sessionRequestCanceled,
+      description: sessionRequestCanceledDescription(elderlyEmail),
+      icon: props => <Image source={require("../../assets/images/cross.png")} {...props} />,
+      backgroundColor: lightRedBackground,
+      duration: durationQuickMessage,
+      color: "black",
+    });
+  } else {
+    triggerNotifications(FlashMessage.sessionRequestCanceled, sessionRequestCanceledDescription(elderlyEmail), "");
   }
 }
 

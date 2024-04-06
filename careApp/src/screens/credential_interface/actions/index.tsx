@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {View, Text, TouchableOpacity, TextInput} from 'react-native'
 import { stylesButtons } from '../../../assets/styles/main_style'
-import Navbar from '../../../navigation/actions'
+import {Navbar} from '../../../navigation/actions'
 import { credentials, logout, options } from '../styles/styles'
 import MainBox from '../../../components/MainBox'
 import { MaterialCommunityIcons } from '@expo/vector-icons'

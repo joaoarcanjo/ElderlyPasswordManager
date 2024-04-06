@@ -24,7 +24,7 @@ export async function insertCredentialToLocalDB(userId: string, credentialId: st
                         resolve()
                     },
                     (_, error) => {
-                        console.log("Error: "+ error.message)
+                        console.log("Error 9: "+ error.message)
                         reject(new ErrorInstance(Errors.ERROR_CREATING_CREDENTIAL))
                         return false
                     }
@@ -60,7 +60,7 @@ export async function getCredential(userId: string, credentialId: string): Promi
                         }
                     },
                     (_, error) => {
-                        console.log("Error: "+ error.message)
+                        console.log("Error 8: "+ error.message)
                         reject(Errors.ERROR_RETRIEVING_CREDENTIAL)
                         return false
                     }
@@ -92,7 +92,7 @@ export async function deleteCredentialFromLocalDB(userId: string, credentialId: 
                         resolve()
                     },
                     (_, error) => {
-                        console.log("Error: "+ error.message)
+                        console.log("Error 6: "+ error.message)
                         reject(Errors.ERROR_DELETING_CREDENTIAL)
                         return false
                     }
@@ -112,7 +112,7 @@ export async function deleteCredentialFromLocalDB(userId: string, credentialId: 
  * @param newRecord - The new record to be updated.
  * @returns A Promise that resolves when the credential is successfully updated, or rejects with an error.
  */
-export async function updateCredentialFromLocalDB(userId: string, credentialId: string, newRecord: string): Promise<void> {
+export async function updateCredentialOnLocalDB(userId: string, credentialId: string, newRecord: string): Promise<void> {
     console.log("===> updateCredentialCalled")
     return new Promise((resolve, reject) => {
         if (dbSQL != null) {
@@ -162,7 +162,7 @@ export async function getAllLocalCredentials(userId: string): Promise<Credential
                         resolve(credentials);
                     },
                     (_, error) => {
-                        console.log("Error: "+ error.message)
+                        console.log("Error : "+ error.message)
                         reject(Errors.ERROR_RETRIEVING_CREDENTIALS)
                         return false
                     }

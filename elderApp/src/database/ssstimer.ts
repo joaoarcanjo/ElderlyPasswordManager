@@ -15,7 +15,7 @@ export async function insertTimeoutToLocalDB(userId: string, timestamp: number):
                         resolve()
                     },
                     (_, error) => {
-                        console.log("Error: " + error.message)
+                        console.log("Error 5: " + error.message)
                         reject(new ErrorInstance(Errors.ERROR_CREATING_TIMEOUT))
                         return false
                     }
@@ -40,7 +40,7 @@ export async function updateTimeoutToLocalDB(userId: string, timestamp: number):
                         resolve()
                     },
                     (_, error) => {
-                        console.log("Error: " + error.message)
+                        console.log("Error 7: " + error.message)
                         reject(new ErrorInstance(Errors.ERROR_UPDATING_TIMEOUT))
                         return false
                     }
@@ -71,7 +71,7 @@ export async function getTimeoutFromLocalDB(userId: string): Promise<number | nu
                         }
                     },
                     (_, error) => {
-                        console.log("Error: " + error.message)
+                        console.log("Error 4: " + error.message)
                         reject(new ErrorInstance(Errors.ERROR_GETTING_TIMEOUT))
                         return false
                     }
