@@ -45,7 +45,6 @@ const decrypt = (messageWithNonce, key) => {
   const keyUint8Array = decodeBase64(key)
   const messageWithNonceAsUint8Array = decodeBase64(messageWithNonce)
   const nonce = messageWithNonceAsUint8Array.slice(0, secretbox.nonceLength)
-
   const message = messageWithNonceAsUint8Array.slice(
     secretbox.nonceLength,
     messageWithNonce.length
@@ -56,7 +55,6 @@ const decrypt = (messageWithNonce, key) => {
   //console.log("keyUint8Array", keyUint8Array)
 
   const decrypted = secretbox.open(message, nonce, keyUint8Array)
-
   if (!decrypted) {
     throw new ErrorInstance(Errors.ERROR_INVALID_MESSAGE_OR_KEY)
   }

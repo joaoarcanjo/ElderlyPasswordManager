@@ -14,9 +14,12 @@ import { sendSignalProtocolMessage } from "../messages/sendMessage"
  * @param recipient 
  */
 export async function startSession(recipient: string): Promise<void> {
-    //console.log("--> Start session!")
+    console.log("--> Start session!")
     const directory = directorySubject.value!
+    console.log("AHH")
     const keyBundle = await directory.getPreKeyBundle(recipient)
+    console.log("AHH")
+    console.log(keyBundle)
     const recipientAddress = new SignalProtocolAddress(recipient, 1)
     // Instantiate a SessionBuilder for a remote recipientId + deviceId tuple.
     const sessionBuilder = new SessionBuilder(signalStore, recipientAddress)

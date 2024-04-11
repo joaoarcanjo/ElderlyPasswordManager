@@ -1,8 +1,13 @@
 import { SignedPublicPreKeyType, DeviceType, PreKeyType } from '@privacyresearch/libsignal-protocol-typescript'
-
+import { encode as encodeBase64} from '@stablelib/base64';
+import { sign } from 'tweetnacl'
+import { decodeBase64, encodeUTF8 } from 'tweetnacl-util'
 import * as base64 from 'base64-js'
 import { apiPort, ipAddress } from '../../assets/constants'
 import { Errors } from '../../exceptions/types'
+import { ArrayBufferToHex, arrayBufferToString, hexToArrayBuffer, stringToArrayBuffer } from './signal-store';
+import { getKeychainValueFor, saveKeychainValue } from '../../keychain';
+import { signalPrivateKey, signalPublicKey } from '../../keychain/constants';
 
 export interface PublicDirectoryEntry {
     identityKey: ArrayBuffer
@@ -50,7 +55,37 @@ interface SerializedFullDirectoryEntry {
 export class SignalDirectory {
     constructor(private _url: string/*, private _apiKey: string*/) {}
 
-    async storeKeyBundle(username: string, bundle: FullDirectoryEntry): Promise<void> {
+    async storeKeyBundle(username: string, userId: string, bundle: FullDirectoryEntry): Promise<void> {
+
+        const serializedBundle = serializeKeyRegistrationBundle(username, bundle)
+        const bundleString = JSON.stringify({
+            "bundle": serializedBundle,
+            "username": username,
+            "timestamp": Date.now()
+        })
+
+        let privKey = decodeBase64(await getKeychainValueFor(signalPrivateKey(userId)))
+        let pubKey = decodeBase64(await getKeychainValueFor(signalPublicKey(userId)))
+
+        if(privKey.byteLength === 0 || pubKey.byteLength === 0) {
+            const boxKeyPair = sign.keyPair()
+            privKey = boxKeyPair.secretKey
+            pubKey = boxKeyPair.publicKey
+            await saveKeychainValue(signalPrivateKey(userId), encodeBase64(new Uint8Array(privKey)))
+            await saveKeychainValue(signalPublicKey(userId), encodeBase64(new Uint8Array(pubKey)))
+        }
+
+        const signed = sign(
+            new Uint8Array(stringToArrayBuffer(bundleString)),
+            new Uint8Array(privKey)
+        )
+        
+        const body = {
+            "publicKey": encodeBase64(new Uint8Array(pubKey)),
+            "bundle": encodeBase64(signed),
+            "username": username,
+        }
+
         return await fetch(`http://${ipAddress}:${apiPort}/addBundle`, {
             method: 'PUT',
             //headers: { 'x-api-key': this._apiKey },
@@ -59,7 +94,7 @@ export class SignalDirectory {
                 // Optionally include any other headers if needed
                 //'x-api-key': this._apiKey
             },
-            body: JSON.stringify(serializeKeyRegistrationBundle(username, bundle)),
+            body: JSON.stringify(body),
         })
         .then((res) => {
             return res.json()
@@ -73,11 +108,20 @@ export class SignalDirectory {
         //console.log("-> getPreKeyBundle: "+address)
         const res = await fetch(`http://${ipAddress}:${apiPort}/getBundle/${address}`/*, { headers: { 'x-api-key': this._apiKey } }*/)
         
-        const bundle = await res.json()
+        const bundle = await res.json() 
         if (!bundle) {
             return undefined
+        } else {
+            try {
+                const bundleString = JSON.stringify(bundle)
+                const bundleParsed = JSON.parse(bundleString.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F]/g, ''))
+                const { identityKey, signedPreKey, registrationId, preKey } = bundleParsed.bundle || {};
+                return deserializeKeyBundle({ identityKey, signedPreKey, preKey, registrationId })
+            }catch(e) { 
+                console.log("Erro: "+e)
+            }
         }
-        const { identityKey, signedPreKey, registrationId, preKey } = bundle
+        const { identityKey, signedPreKey, registrationId, preKey } = bundle || {};
         return deserializeKeyBundle({ identityKey, signedPreKey, preKey, registrationId })
     }
 

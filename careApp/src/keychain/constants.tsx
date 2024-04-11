@@ -6,6 +6,8 @@ export const caregiverPhone = (caregiverId: string) => `${caregiverId}-userPhone
 export const caregiverName = (caregiverId: string) => `${caregiverId}-userName`
 export const elderlySSSKey = (elderlyId: string) => `${elderlyId}-elderlySSSKey`
 export const localDBKey = (caregiverId: string) => `${caregiverId}-localDBKey`
+export const signalPublicKey = (caregiverId: string) => `${caregiverId}-signalPublicKey`
+export const signalPrivateKey = (caregiverId: string) => `${caregiverId}-signalPrivateKey`
 
 //Signal protocol
 export const registrationId = (elderlyId: string) => `${elderlyId}-registrationId`

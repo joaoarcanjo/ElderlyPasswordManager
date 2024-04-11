@@ -9,6 +9,8 @@ export const caregiver1SSSKey = (elderlyId: string) => `${elderlyId}-caregiver1`
 export const caregiver2SSSKey = (elderlyId: string) => `${elderlyId}-caregiver2`
 export const firestoreSSSKey = (elderlyId: string) => `${elderlyId}-firestoreSSSKey`
 export const localDBKey = (elderlyId: string) => `${elderlyId}-localDBKey`
+export const signalPublicKey = (elderlyId: string) => `${elderlyId}-signalPublicKey`
+export const signalPrivateKey = (elderlyId: string) => `${elderlyId}-signalPrivateKey`
 
 //Signal protocol
 export const registrationId = (elderlyId: string) => `${elderlyId}-registrationId`

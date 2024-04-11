@@ -15,9 +15,12 @@
     "ip": "^2.0.1",
     "nodemon": "^3.0.3",
     "rxjs": "^7.8.1",
+    "tweetnacl": "^1.0.3",
+    "tweetnacl-util": "^0.15.1",
     "ws": "^8.16.0"
   },
   "devDependencies": {
-    "@types/node": "^20.11.25"
+    "@types/node": "^20.11.25",
+    "typescript": "^5.4.5"
   }
 }

@@ -44,6 +44,7 @@
     "react-native-screens": "~3.22.0",
     "rxjs": "^7.8.1",
     "tweetnacl": "^1.0.3",
+    "tweetnacl-util": "^0.15.1",
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {

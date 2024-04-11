@@ -354,7 +354,7 @@ export function stringToArrayBuffer(str: string): ArrayBuffer {
     return buffer;
 }
 
-function ArrayBufferToHex(buffer: ArrayBuffer) { // buffer is an ArrayBuffer
+export function ArrayBufferToHex(buffer: ArrayBuffer) { // buffer is an ArrayBuffer
     return [...new Uint8Array(buffer)]
         .map(x => x.toString(16).padStart(2, '0'))
         .join('');

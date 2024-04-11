@@ -128,7 +128,7 @@ export async function createIdentity(userId: string, username: string): Promise<
     }
 
     //TODO: Enviar o bundle para o servidor, mas com mais que uma oneTimePreKeys.
-    directory.storeKeyBundle(username, {
+    directory.storeKeyBundle(username, userId, {
         registrationId,
         identityKey: identityKeyPair.pubKey,
         signedPreKey: publicSignedPreKey,
