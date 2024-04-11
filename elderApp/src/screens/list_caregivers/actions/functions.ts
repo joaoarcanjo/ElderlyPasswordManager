@@ -15,6 +15,7 @@ import { caregiver1SSSKey, caregiver2SSSKey } from "../../../keychain/constants"
 import { setCaregiverListUpdated } from "./state"
 
 export async function startSessionWithCaregiver(caregiverEmail: string, userId: string, userName: string, userEmail: string, userPhone: string) {
+    console.log("===> startSessionWithCaregiverCalled")
     try {
         await startSession(caregiverEmail)
         const session = sessionForRemoteUser(caregiverEmail)

@@ -3,9 +3,11 @@ import { acceptButtonBackground, acceptButtonBorder, blueBorder, cancelButtonBac
 
 const stylesMainBox = StyleSheet.create({
     pageInfoContainer: {
-        borderTopWidth: 1, 
-        borderBottomWidth: 1,
-        backgroundColor: whiteBackgroud
+        borderTopWidth: 2, 
+        borderBottomWidth: 2,
+        backgroundColor: whiteBackgroud,
+        borderBlockEndColor: greyBorder,
+        borderBlockStartColor: greyBorder,
     },
     pageInfoText: {
         marginHorizontal: '8%',

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {View, Text, TouchableOpacity, ScrollView, Linking} from 'react-native'
+import {View, Text, TouchableOpacity, ScrollView, Linking, TextInput} from 'react-native'
 import { stylesAddCredential, styleScroolView } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import  { Navbar } from "../../../navigation/actions";
@@ -11,8 +11,10 @@ import { useSessionInfo } from '../../../firebase/authentication/session'
 import { usePushNotifications } from '../../../notifications/usePushNotifications'
 import { sendPushNotification } from '../../../notifications/functionalities'
 import { credentialsListUpdated } from './state'
-import { getAllCredentialsAndValidate, getAllLocalCredentialsFormatted } from './functions'
-import { addCredentialsLabel, detailsLabel, navigateLabel, pageAddCredential, pageCredential, pageTitleCredentials } from '../../../assets/constants'
+import { getAllCredentialsAndValidate, getAllLocalCredentialsFormatted, getAllLocalCredentialsFormattedWithFilter } from './functions'
+import { addCredentialsLabel, detailsLabel, navigateLabel, pageAddCredential, pageCredential, pageTitleCredentials, searchLabel } from '../../../assets/constants'
+import { whiteBackgroud } from '../../../assets/styles/colors';
+import { MaterialIcons } from '@expo/vector-icons';
 
 function AddCredencial() {
 
@@ -115,6 +117,7 @@ function CredentialsList() {
   const { userId, localDBKey } = useSessionInfo()
 
   const [isFething, setIsFething] = useState(true)
+  const [searchValue, setSearchValue] = useState('')
 
   useEffect(() => {
     setIsFething(true)
@@ -123,8 +126,17 @@ function CredentialsList() {
 
   const refreshValue = async () => {
     setIsFething(true)
-   getAllCredentialsAndValidate(userId, localDBKey)
+    getAllCredentialsAndValidate(userId, localDBKey)
     await getAllLocalCredentialsFormatted(userId, localDBKey)
+    .then((credentials) => {   
+      setCredencials(credentials)
+      setIsFething(false)
+    })
+  }
+
+  const search = async (value: string) => {
+    setIsFething(true)
+    await getAllLocalCredentialsFormattedWithFilter(userId, localDBKey, value)
     .then((credentials) => {   
       setCredencials(credentials)
       setIsFething(false)
@@ -133,10 +145,21 @@ function CredentialsList() {
 
   return (
     <View style={{ flex: 0.70, flexDirection: 'row', justifyContent: 'space-around'}}>
-      <View style={[{ flex: 1, flexDirection: 'row', marginTop:'5%', marginHorizontal: '4%', justifyContent: 'space-around'}, styleScroolView.credencialsContainer]}>
+      <View style={[{ flex: 1, marginTop:'5%', marginHorizontal: '4%', justifyContent: 'space-around'}, styleScroolView.credencialsContainer]}>
+        <View style={[{margin: '2%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 1, backgroundColor: whiteBackgroud }]}>
+          <TextInput
+          placeholder={searchLabel}
+          value={searchValue}
+          style={{ flex: 1, fontSize: 22, padding: '2%', marginHorizontal: '1%' }}
+          onChangeText={(value) => {setSearchValue(value)}}
+          />
+          <TouchableOpacity style={[{flex: 0.2, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.navigateButton, stylesButtons.mainConfig]} onPress={() => search(searchValue)}>
+            <MaterialIcons style={{marginHorizontal: '1%'}} name={'search'} size={40} color="black"/> 
+          </TouchableOpacity>
+        </View>
         {isFething ?
         <Spinner/> :
-        <ScrollView style={[{margin: '3%'}]}>
+        <ScrollView>
           {credencials.map((value: Credential | undefined) => {
             if(value != undefined) {
               return <ScrollItemExample key={value.id} credential={value}/>

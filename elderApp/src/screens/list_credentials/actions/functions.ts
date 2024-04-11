@@ -1,5 +1,5 @@
 import { decrypt, encrypt } from "../../../algorithms/0thers/crypto";
-import { getCaregivers, deleteCaregiver } from "../../../database/caregivers";
+import { getCaregivers } from "../../../database/caregivers";
 import { CredentialLocalRecord, deleteCredentialFromLocalDB, getAllLocalCredentials, getCredential, insertCredentialToLocalDB, updateCredentialOnLocalDB } from "../../../database/credentials";
 import { Caregiver, CaregiverRequestStatus } from "../../../database/types";
 import { ErrorInstance } from "../../../exceptions/error";
@@ -113,8 +113,6 @@ const addMissingCredentialsToReturn = async (toReturn: (Credential | undefined)[
 export const getAllLocalCredentialsFormatted = async (userId: string, localDBKey: string): Promise<(Credential | undefined)[]> => {
     console.log("===> getAllLocalCredentialsFormattedCalled")
 
-    //const startTime = performance.now(); // Start measuring time
-
     const credentialsLocal = await getAllLocalCredentials(userId)
         .then(async (credentialsLocal: CredentialLocalRecord[]) => {
             return credentialsLocal.map(value => {
@@ -127,11 +125,28 @@ export const getAllLocalCredentialsFormatted = async (userId: string, localDBKey
             return []
         })
 
-    //const endTime = performance.now(); // Stop measuring time
-    //const executionTime = endTime - startTime; // Calculate execution time
-    //console.log(`Execution time: ${executionTime} milliseconds`);
-
     return credentialsLocal;
+}
+
+export const getAllLocalCredentialsFormattedWithFilter = async (userId: string, localDBKey: string, platformFilter: string): Promise<(Credential | undefined)[]> => {
+    console.log("===> getAllLocalCredentialsFormattedWithFilterCalled")
+
+    const credentialsLocal = await getAllLocalCredentials(userId)
+        .then(async (credentialsLocal: CredentialLocalRecord[]) => {
+            return credentialsLocal.map(value => {
+                const credential = JSON.parse(decrypt(value.record, localDBKey)) as CredentialData
+                if (credential.platform.toLowerCase().includes(platformFilter.toLowerCase())) {
+                    return { id: credential.id, data: credential }
+                }
+                return undefined
+            }).filter(Boolean)
+        })
+        .catch(() => {
+            console.log('#1 Error getting all local credentials')
+            return []
+        })
+
+    return credentialsLocal
 }
 
 export interface CaregiverPermission {

@@ -14,7 +14,6 @@ import { Errors } from "../../../exceptions/types"
 import { addCaregiverLabel, cancelLabel, linkLabel } from "../../../assets/constants"
 
 function AddCaregiverModal({visibility, concludeAction}: Readonly<{visibility: boolean, concludeAction: Function}>) {
-
   const [caregiverEmail, setCaregiverEmail] = useState('')
   const { userId, userEmail, userName, userPhone } = useSessionInfo()
 

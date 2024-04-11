@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
+import { View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native'
 import { elderlyName, stylesAddCredential, styleScroolView } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import {Navbar} from '../../../navigation/actions'
@@ -12,8 +12,10 @@ import { useSessionInfo } from '../../../firebase/authentication/session'
 import { deriveSecret } from '../../../algorithms/sss/sss'
 import { credentialsListUpdated } from './state'
 import { getKeychainValueFor } from '../../../keychain'
-import { elderlySSSKey } from '../../../keychain/constants'
-import { addCredentialsLabel, detailsLabel, navigateLabel, pageCredential, pageTitleCredentials } from '../../../assets/constants'
+import { elderlySSSKey, localDBKey } from '../../../keychain/constants'
+import { addCredentialsLabel, detailsLabel, navigateLabel, pageCredential, pageTitleCredentials, searchLabel } from '../../../assets/constants'
+import { MaterialIcons } from '@expo/vector-icons'
+import { whiteBackgroud } from '../../../assets/styles/colors'
 
 function AddCredencial({ elderlyId }: Readonly<{elderlyId: string}>) {
 
@@ -124,12 +126,13 @@ function ElderlyCredentialsList({ elderlyId }: Readonly<{elderlyId: string}>) {
   const [credencials, setCredencials] = useState<Credential[]>([])
   const isFocused = useIsFocused()
   const [isFething, setIsFething] = useState(true)
+  const [searchValue, setSearchValue] = useState('')
 
   const fetchCredencials = async () => {
     const cloudKey = await getKey(elderlyId)
     const sssKey = await getKeychainValueFor(elderlySSSKey(elderlyId))
     const encryptionKey = deriveSecret([cloudKey, sssKey])
-    listAllCredentialsFromFirestore(elderlyId, encryptionKey, true).then((credencials) => {
+    await listAllCredentialsFromFirestore(elderlyId, encryptionKey, true).then((credencials) => {
       let auxCredencials: Credential[] = [];
       credencials.forEach(value => {
         if(value.data.length != 0) {
@@ -137,6 +140,26 @@ function ElderlyCredentialsList({ elderlyId }: Readonly<{elderlyId: string}>) {
         }
       })
       setCredencials(auxCredencials)
+    })
+  }
+
+  const search = async (valueSearch: string) => {
+    setIsFething(true)
+
+    const cloudKey = await getKey(elderlyId)
+    const sssKey = await getKeychainValueFor(elderlySSSKey(elderlyId))
+    const encryptionKey = deriveSecret([cloudKey, sssKey])
+
+    await listAllCredentialsFromFirestore(elderlyId, encryptionKey, true).then((credencials) => {
+      let auxCredencials: Credential[] = [];
+      credencials.forEach(value => {
+        const credential = JSON.parse(value.data)
+        if(value.data.length != 0 && (credential.platform.toLowerCase().includes(valueSearch.toLowerCase()))) {
+          auxCredencials.push({id: value.id, data: credential})
+        }
+      })
+      setCredencials(auxCredencials)
+      setIsFething(false)
     })
   }
 
@@ -151,10 +174,21 @@ function ElderlyCredentialsList({ elderlyId }: Readonly<{elderlyId: string}>) {
 
   return (
     <View style={{ flex: 0.60, flexDirection: 'row', justifyContent: 'space-around'}}>
-      <View style={[{ flex: 1, flexDirection: 'row', marginTop:'5%', marginHorizontal: '4%', justifyContent: 'space-around'}, styleScroolView.credencialsContainer]}>
+      <View style={[{ flex: 1, marginTop:'5%', marginHorizontal: '4%', justifyContent: 'space-around'}, styleScroolView.credencialsContainer]}>
+        <View style={[{margin: '2%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 1, backgroundColor: whiteBackgroud }]}>
+          <TextInput
+          placeholder={searchLabel}
+          value={searchValue}
+          style={{ flex: 1, fontSize: 22, padding: '2%', marginHorizontal: '1%' }}
+          onChangeText={(value) => {setSearchValue(value)}}
+          />
+          <TouchableOpacity style={[{flex: 0.2, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.navigateButton, stylesButtons.mainConfig]} onPress={() => search(searchValue)}>
+            <MaterialIcons style={{marginHorizontal: '1%'}} name={'search'} size={40} color="black"/> 
+          </TouchableOpacity>
+        </View>
         {isFething ?
         <Spinner width={300} height={300}/> :
-        <ScrollView style={[{margin: '3%'}]}>
+        <ScrollView>
           {credencials.map((value, index) => <ScrollItemExample key={index} credential={value} elderlyId={elderlyId}/>)}
         </ScrollView>}
       </View>
@@ -167,7 +201,7 @@ export default function ElderlyCredentials({ route }: Readonly<{route: any}>) {
   return (
     <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
       <MainBox text={pageTitleCredentials}/>
-      <View style={[{flex: 0.1, justifyContent: 'center', alignItems: 'center'}, elderlyName.container]}>
+      <View style={[{flex: 0.06, justifyContent: 'center', alignItems: 'center'}, elderlyName.container]}>
           <Text style={elderlyName.text}>{route.params.elderlyName}</Text>
       </View>
       <AddCredencial elderlyId={route.params.elderlyId}/>

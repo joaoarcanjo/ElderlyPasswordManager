@@ -56,6 +56,7 @@ export const addCredentialsLabel = 'Adicionar Credenciais'
 export const detailsLabel = 'Detalhes'
 export const navigateLabel = 'Navegar'
 export const saveChangesLabel = 'Guardar Alterações?'
+export const searchLabel = 'Pesquise algo...'
 
 //Placeholders:
 export const namePlaceholder = 'Nome Completo'

@@ -60,6 +60,7 @@ export const detailsLabel = 'Detalhes'
 export const navigateLabel = 'Navegar'
 export const elderlyEmailLabel = 'Email do Idoso'
 export const saveChangesLabel = 'Guardar as alterações?'
+export const searchLabel = 'Pesquise algo...'
 
 //Placeholders:
 export const namePlaceholder = 'Nome Completo'
