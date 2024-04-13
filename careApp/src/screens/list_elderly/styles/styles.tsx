@@ -98,4 +98,17 @@ const decouplingOption = StyleSheet.create({
     }
 })
 
-export { decouplingOption, elderlyOptions, newElderlyOptions, stylesAddCaregiver, elderlyStyle, elderlyContactInfo }
+const elderlyName = StyleSheet.create({
+    container: {
+        borderTopWidth: 0,
+        borderBottomWidth: 1, // Largura do contorno
+        borderColor: greyBorder, // Cor do contorno
+        backgroundColor: greyBackgroud,
+        width: '100%',
+    },
+    text: {
+        fontSize: 30,
+    }
+})
+
+export { elderlyName, decouplingOption, elderlyOptions, newElderlyOptions, stylesAddCaregiver, elderlyStyle, elderlyContactInfo }

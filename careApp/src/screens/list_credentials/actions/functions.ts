@@ -3,35 +3,20 @@ import { CredentialLocalRecord, getAllLocalCredentials, getCredential, insertCre
 import { ErrorInstance } from "../../../exceptions/error";
 import { Errors } from "../../../exceptions/types";
 import { addCredencialToFirestore, listAllCredentialsFromFirestore, updateCredentialFromFirestore } from "../../../firebase/firestore/functionalities";
+import { CredentialType } from "./types";
 
-interface Credential {
-    id: string,
-    data: CredentialData
-}
 
-interface CredentialData {
-    id: string,
-    platform: string,
-    uri: string,
-    username: string,
-    password: string,
-    edited: {
-        updatedBy: string,
-        updatedAt: number
-    }
-}
-
-export const getAllCredentialsAndValidate = async (userId: string, key: string): Promise<(Credential | undefined)[]> => {
+export const getAllCredentialsAndValidate = async (userId: string, key: string): Promise<(CredentialType | undefined)[]> => {
     console.log("getAllCredentialsAndValidateCalled")
 
     const credentialsCloud = await listAllCredentialsFromFirestore(userId, key, false)
-    let toReturn: (Credential | undefined)[] = []
+    let toReturn: (CredentialType | undefined)[] = []
     try {
         toReturn = await Promise.all(credentialsCloud.map(async cloudCredential => {
             const localCredential = await getCredential(userId, cloudCredential.id)
             try {
-                if (cloudCredential.data.length != 0) {
-                    const credentialCloud = JSON.parse(decrypt(cloudCredential.data, key)) as CredentialData
+                if (cloudCredential.data) {
+                    const credentialCloud = JSON.parse(decrypt(cloudCredential.data, key))
 
                     if (credentialCloud.id !== cloudCredential.id) {
                         throw new ErrorInstance(Errors.ERROR_CREDENTIAL_INVALID_ID)
@@ -65,13 +50,13 @@ export const getAllCredentialsAndValidate = async (userId: string, key: string):
     return toReturn
 }
 
-export const getAllLocalCredentialsFormatted = async (userId: string, localDBKey: string): Promise<(Credential | undefined)[]> => {
+export const getAllLocalCredentialsFormatted = async (userId: string, localDBKey: string): Promise<(CredentialType | undefined)[]> => {
     console.log("===> getAllLocalCredentialsFormattedCalled")
 
     const credentialsLocal = await getAllLocalCredentials(userId)
         .then(async (credentialsLocal: CredentialLocalRecord[]) => {
             return credentialsLocal.map(value => {
-                const credential = JSON.parse(decrypt(value.record, localDBKey)) as CredentialData
+                const credential = JSON.parse(decrypt(value.record, localDBKey))
                 return { id: credential.id, data: credential }
             })
         })
@@ -80,16 +65,16 @@ export const getAllLocalCredentialsFormatted = async (userId: string, localDBKey
             return []
         })
 
-    return credentialsLocal;
+    return credentialsLocal
 }
 
-export const getAllLocalCredentialsFormattedWithFilter = async (userId: string, localDBKey: string, platformFilter: string): Promise<(Credential | undefined)[]> => {
+export const getAllLocalCredentialsFormattedWithFilter = async (userId: string, localDBKey: string, platformFilter: string): Promise<(CredentialType | undefined)[]> => {
     console.log("===> getAllLocalCredentialsFormattedWithFilterCalled")
 
     const credentialsLocal = await getAllLocalCredentials(userId)
         .then(async (credentialsLocal: CredentialLocalRecord[]) => {
             return credentialsLocal.map(value => {
-                const credential = JSON.parse(decrypt(value.record, localDBKey)) as CredentialData
+                const credential = JSON.parse(decrypt(value.record, localDBKey))
                 if (credential.platform.toLowerCase().includes(platformFilter.toLowerCase())) {
                     return { id: credential.id, data: credential }
                 }
@@ -113,9 +98,10 @@ const updateCredentialIfNeeded = async (userId: string, credentialId: string, cr
     }
 };
 
-const addMissingCredentialsToReturn = (credentialsLocal: any[], toReturn: (Credential | undefined)[], key: string, userId: string) => {
+const addMissingCredentialsToReturn = (credentialsLocal: any[], toReturn: (CredentialType | undefined)[], key: string, userId: string) => {
     
     credentialsLocal.forEach(value => {
+        if(!value) return
         if (!toReturn.find(credential => credential?.id === value.credentialId)) {
             const credentialLocal = JSON.parse(decrypt(value.record, key))
             toReturn.push({ id: value.credentialId, data: credentialLocal })

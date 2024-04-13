@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native'
-import { acceptButtonBackground, acceptButtonBorder, blueBorder, cancelButtonBackground, cancelButtonBorder, copyButtonBackground, copyButtonBorder, darkGreenBorder, greyBackgroud, greyBorder, lightGreenBackgroud, regenerateButtonBackgroud, regenerateButtonBorder, rejectButtonBackground, rejectButtonBorder, saveButtonBackground, saveButtonBorder, superlightBlueBackgroud, superlightGreenBackground, visibilityButtonBackground, visibilityButtonBorder, whiteBackgroud } from './colors'
+import { acceptButtonBackground, acceptButtonBorder, blueBorder, cancelButtonBackground, cancelButtonBorder, copyButtonBackground, copyButtonBorder, darkGreenBorder, greyBackgroud, greyBorder, lightGreenBackgroud, lightOrangeBackground, lightOrangeBorder, lightPurpleBackground, orangeBorder, purpleBackground, purpleBorder, regenerateButtonBackgroud, regenerateButtonBorder, rejectButtonBackground, rejectButtonBorder, saveButtonBackground, saveButtonBorder, superLightOrangeBackground, superlightBlueBackgroud, superlightGreenBackground, visibilityButtonBackground, visibilityButtonBorder, whiteBackgroud } from './colors'
 
 const stylesMainBox = StyleSheet.create({
     pageInfoContainer: {
@@ -21,6 +21,16 @@ const stylesButtons = StyleSheet.create({
         justifyContent: 'center', 
         alignItems: 'center',
         borderWidth: 3.5, // Largura da linha na margem
+        elevation: 3, // Android
+        shadowColor: 'rgba(0,0,0, .3)', // IOS
+        shadowOffset: { height: 1, width: 1 }, // IOS
+        shadowOpacity: 1, // IOS
+        shadowRadius: 1, //IOS
+    },
+    mainSlimConfig: {
+        justifyContent: 'center', 
+        alignItems: 'center',
+        borderWidth: 2.5, // Largura da linha na margem
         elevation: 3, // Android
         shadowColor: 'rgba(0,0,0, .3)', // IOS
         shadowOffset: { height: 1, width: 1 }, // IOS
@@ -82,6 +92,26 @@ const stylesButtons = StyleSheet.create({
         backgroundColor: greyBackgroud, // Cor de fundo
         borderColor: greyBorder
     },
+    purpleButton: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        backgroundColor: lightPurpleBackground, // Cor de fundo
+        borderColor: purpleBorder
+    },
+    orangeButton: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        backgroundColor: lightOrangeBackground, // Cor de fundo
+        borderColor: orangeBorder
+    },
+    lightOrangeButton: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        backgroundColor: superLightOrangeBackground, // Cor de fundo
+        borderColor: lightOrangeBorder
+    },
+    borderOrangeButton: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        backgroundColor: whiteBackgroud, // Cor de fundo
+        borderColor: lightOrangeBorder
+    }
 })
 
 export { stylesMainBox, stylesButtons }

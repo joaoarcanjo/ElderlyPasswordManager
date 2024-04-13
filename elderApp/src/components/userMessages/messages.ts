@@ -4,6 +4,10 @@ export const enum FlashMessage {
     uriCopied = 'URI COPIADO!!',
     usernameCopied = 'UTILIZADOR COPIADO!!',
     passwordCopied = 'PASSWORD COPIADA!!',
+    securityCodeCopied = 'CÓDIGO DE SEGURANÇA COPIADO!!',
+    verificationCodeCopied = 'CÓDIGO DE VERIFICAÇÃO COPIADO!!',
+    cardNumberCopied = 'NÚMERO DO CARTÃO COPIADO!!',
+    ownerNameCopied = 'NOME DO PROPRIETÁRIO COPIADO!!',
 
     //Messages to be used on editMode:
     editModeActive = 'MODO EDIÇÃO ATIVADO',
@@ -40,11 +44,15 @@ export const enum FlashMessage {
 export const copyPasswordDescription = `A password foi guardada no clipboard.`
 export const copyUsernameDescription = `O username foi guardado no clipboard.`
 export const copyURIDescription = `O URI foi guardado no clipboard.`
+export const copySecurityCodeDescription = `O código de segurança foi guardado no clipboard.`
+export const copyVerificationCodeDescription = `O código de verificação foi guardado no clipboard.`
+export const copyCardNumberDescription = `O número do cartão foi guardado no clipboard.`
+export const copyOwnerNameDescription = `O nome do proprietário foi guardado no clipboard.`
 
 /*Descriptions to be used on credentials operations*/
-export const credentialCreatedDescription = (platform: string) => `A credencial de ${platform} foi adicionada com sucesso! 🚀`
-export const credentialDeletedDescription = (platform: string) => `A credencial de ${platform} foi eliminada com sucesso! ❌`
-export const credentialUpdatedDescription = (platform: string) => `A credencial de ${platform} foi atualizada com sucesso! 🔧`
+export const credentialCreatedDescription = (platform: string) => `A credencial ${platform} foi adicionada com sucesso! 🚀`
+export const credentialDeletedDescription = (platform: string) => `A credencial ${platform} foi eliminada com sucesso! ❌`
+export const credentialUpdatedDescription = (platform: string) => `A credencial ${platform} foi atualizada com sucesso! 🔧`
 
 /*Descriptions to be used on editMode:*/
 export const editModeActiveDescription = `Pense bem antes de realizar qualquer alteração. 🤔`
@@ -68,10 +76,10 @@ export const maxNumberOfConnectionsDescription = (caregiverEmail: string) => `O 
 
 export const maxNumberOfConnectionsCaregiverDescription = (caregiverEmail: string) => `O número máximo de conexões foi atingido, o cuidador ${caregiverEmail} não pode aceitar mais conexões! 🚫`
 
-export const credentialUpdatedByCaregiver = (caregiverEmail: string, platform: string) => `O cuidador com o email ${caregiverEmail} atualizou a credencial ${platform}! 🔧`
+export const credentialUpdatedByCaregiver = (caregiverEmail: string, platform: string) => `O cuidador com o email ${caregiverEmail} atualizou os dados de ${platform}! 🔧`
 
-export const credentialCreatedByCaregiver = (caregiverEmail: string, platform: string) => `O cuidador com o email ${caregiverEmail} adicionou a credencial ${platform}! ⭐️`
+export const credentialCreatedByCaregiver = (caregiverEmail: string, platform: string) => `O cuidador com o email ${caregiverEmail} adicionou os dados de ${platform}! ⭐️`
 
-export const credentialDeletedByCaregiver = (caregiverEmail: string, platform: string) => `O cuidador com o email ${caregiverEmail} eliminou a credencial ${platform}! ❌`
+export const credentialDeletedByCaregiver = (caregiverEmail: string, platform: string) => `O cuidador com o email ${caregiverEmail} eliminou os dados de ${platform}! ❌`
 
 export const sessionRequestCanceledDescription = (caregiverEmail: string) => `O cuidador com o email ${caregiverEmail} cancelou o pedido de sessão! ❌`

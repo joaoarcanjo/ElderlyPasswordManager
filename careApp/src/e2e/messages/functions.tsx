@@ -12,9 +12,9 @@ import { getKeychainValueFor, saveKeychainValue } from "../../keychain"
 import { caregiverId, elderlySSSKey } from "../../keychain/constants"
 import { ElderlyRequestStatus } from "../../database/types"
 import { checkElderlyByEmail, checkElderlyByEmailWaitingForResponse, deleteElderly, getElderlyWithSpecificState, isMaxElderlyReached, saveElderly, updateElderly } from "../../database/elderlyFunctions"
-import { setCredentialsListUpdated } from "../../screens/list_elderly_credentials/actions/state"
 import { credentialCreatedFlash, credentialDeletedFlash, credentialUpdatedFlash, elderlyPersonalInfoUpdatedFlash, elderlySentFirstKey, sessionAcceptedFlash, sessionEndedFlash, sessionPermissionsFlash, sessionRejectMaxReachedFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionRequestCanceledFlash, sessionRequestReceivedFlash } from "../../components/userMessages/UserMessages"
 import { deleteSessionById } from "../../database/signalSessions"
+import { setCredentialsListUpdated } from "../../screens/list_credentials/actions/state"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3

@@ -4,7 +4,7 @@ import { View, StyleSheet, Modal, TouchableOpacity, Text } from 'react-native'
 import { stylesButtons } from "../assets/styles/main_style"
 import { modal, options } from "../screens/credential_interface/styles/styles"
 import { Spinner } from "./LoadingComponents"
-import { upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, modalIntensity } from "../assets/constants";
+import { upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, modalIntensity, cancelLabel, copyCardNumberLabel, copyPasswordLabel, copySecurityCodeLabel, copyUsernameLabel, copyVerificationCodeLabel, navigateLabel } from "../assets/constants";
 import { updateUpperCase, updateLowerCase, updateNumbers, updateSpecial } from "./passwordGenerator/functions";
 import { Requirement, RequirementLength } from "./passwordGenerator/Requirement";
 
@@ -81,6 +81,62 @@ export function PasswordOptionsModal({saveFunction, closeFunction, visibleFlag}:
             <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Fechar</Text>
           </TouchableOpacity>
         </View>
+      </View>
+    </ModalBox>
+  )
+}
+
+export function CredentialLoginOptionsModal({copyUsername, copyPassword, navigate, closeFunction, visibleFlag}: Readonly<{copyUsername: Function, copyPassword: Function, navigate: Function, closeFunction: Function, visibleFlag: boolean}>) {
+  return (
+    <ModalBox visibleFlag={visibleFlag}>
+      <View style={{flexDirection: 'row'}}>
+        <TouchableOpacity style={[{flex: 1, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.blueButton]} onPress={() => copyUsername()}>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }, options.permissionsButtonText]}>{copyUsernameLabel}</Text>
+        </TouchableOpacity>
+      </View> 
+      <View style={{flexDirection: 'row'}}>
+        <TouchableOpacity style={[{flex: 1, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.blueButton]} onPress={() => copyPassword()}>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }, options.permissionsButtonText]}>{copyPasswordLabel}</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={{flexDirection: 'row'}}>
+        <TouchableOpacity style={[{flex: 1, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.blueButton]} onPress={() => navigate()}>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>{navigateLabel}</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={{ borderBottomColor: 'black', borderWidth: StyleSheet.hairlineWidth, marginVertical: '5%' }}/>
+      <View style={{flexDirection: 'row'}}>
+        <TouchableOpacity style={[{flex: 1, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.cancelButton]} onPress={() => closeFunction()}>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>{cancelLabel}</Text>
+        </TouchableOpacity>
+      </View>
+    </ModalBox>
+  )
+}
+
+export function CredentialCardOptionsModal({copyCardNumber, copySecurityCode, copyVerificationCode, closeFunction, visibleFlag}: Readonly<{copyCardNumber: Function, copySecurityCode: Function, copyVerificationCode: Function, closeFunction: Function, visibleFlag: boolean}>) {
+  return (
+    <ModalBox visibleFlag={visibleFlag}>
+      <View style={{flexDirection: 'row'}}>
+        <TouchableOpacity style={[{flex: 1, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.blueButton]} onPress={() => copyCardNumber()}>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }, options.permissionsButtonText]}>{copyCardNumberLabel}</Text>
+        </TouchableOpacity>
+      </View> 
+      <View style={{flexDirection: 'row'}}>
+        <TouchableOpacity style={[{flex: 1, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.blueButton]} onPress={() => copySecurityCode()}>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }, options.permissionsButtonText]}>{copySecurityCodeLabel}</Text>
+        </TouchableOpacity>
+      </View> 
+      <View style={{flexDirection: 'row'}}>
+        <TouchableOpacity style={[{flex: 1, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.blueButton]} onPress={() => copyVerificationCode()}>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }, options.permissionsButtonText]}>{copyVerificationCodeLabel}</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={{ borderBottomColor: 'black', borderWidth: StyleSheet.hairlineWidth, marginVertical: '5%' }}/>
+      <View style={{flexDirection: 'row'}}>
+        <TouchableOpacity style={[{flex: 1, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.cancelButton]} onPress={() => closeFunction()}>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>{cancelLabel}</Text>
+        </TouchableOpacity>
       </View>
     </ModalBox>
   )

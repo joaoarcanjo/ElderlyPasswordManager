@@ -59,7 +59,7 @@ const CaregiversList = React.memo(function CaregiversList() {
 export const Caregivers = React.memo(function Caregivers() {
   return (
     <View    style = {{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-    <MainBox text  = {pageTitleCaregiversList}/>
+      <MainBox text  = {pageTitleCaregiversList}/>
       <CaregiversList/>
       <Navbar/>
     </View>

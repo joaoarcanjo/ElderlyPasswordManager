@@ -1,5 +1,6 @@
 import { decrypt, encrypt } from '../../algorithms/0thers/crypto';
 import { elderlyCollectionName, keyCollectionName, keyDocumentName, caregiverCollectionName, credencialsCollectionName, caregiversCollectionName, caregiversDocumentName } from '../../assets/constants';
+import { CredentialType } from '../../screens/list_credentials/actions/types';
 import { firebase } from '../FirebaseConfig';
 import { defaultCaregiver, defaultCredencials, updateDataCredencial } from './constants';
 
@@ -10,7 +11,6 @@ const firestore = firebase.firestore()
  */
 async function getKey(elderlyId: string): Promise<string> {
     console.log("===> getFirebaseKeyCalled")
-    console.log("elderlyId: ", elderlyId)
     return firestore.collection(elderlyCollectionName)
         .doc(elderlyId).collection(keyCollectionName).doc(keyDocumentName).get().then((doc: any) => {
             if(doc.exists) {
@@ -45,28 +45,22 @@ async function addCredencialToFirestore(userId: string, encryptionKey: string, n
         })
 }
 
-
-interface Credential {
-    id: string,
-    data: string
-}
-
 /**
  * Função para listar as credenciais de determinado utilizador
  * @param userId 
  */
-export async function listAllCredentialsFromFirestore(userId: string, encryptionKey: string, isElderlyCredentials: boolean): Promise<Credential[]> {
+export async function listAllCredentialsFromFirestore(userId: string, encryptionKey: string, isElderlyCredentials: boolean): Promise<CredentialType[]> {
 
     let collection = isElderlyCredentials? firestore.collection(elderlyCollectionName) : firestore.collection(caregiverCollectionName)
 
     return collection.doc(userId).collection(credencialsCollectionName).get().then((docs: any) => {
-        const values: Credential[] = []
+        const values: CredentialType[] = []
         docs.forEach((doc: any) => { 
             if(doc.data()) {
                 const decrypted = decrypt(doc.data().data, encryptionKey)
-                values.push({'id': doc.id, 'data': decrypted}) 
+                values.push({id: doc.id, data: JSON.parse(decrypted)}) 
             }
-        });
+        }); 
         return values
     }).catch((error: any) => {
         //alert('Erro ao obter as credenciais, tente novamente!')

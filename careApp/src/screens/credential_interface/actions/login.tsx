@@ -18,7 +18,7 @@ import { ChatMessageType } from '../../../e2e/messages/types'
 import { deleteCredentialFromLocalDB, updateCredentialFromLocalDB } from '../../../database/credentials'
 import { encrypt } from '../../../algorithms/0thers/crypto'
 import { regeneratePassword } from '../../../components/passwordGenerator/functions'
-import { copyLabel, deleteCredentialLabel, optionsLabel, regenerateLabel, saveChangesLabel, uriLabel, userLabel } from '../../../assets/constants'
+import { copyLabel, deleteCredentialCardLabel, deleteCredentialLoginLabel, optionsLabel, regenerateLabel, saveChangesLabel, uriLabel, userLabel } from '../../../assets/constants'
 import { copyValue, credentialUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
 import { FlashMessage, copyPasswordDescription, copyUsernameDescription } from '../../../components/userMessages/messages'
 
@@ -71,6 +71,7 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
       setLoading(true)
 
       const data = JSON.stringify({
+        type: 'login',
         id: id,
         platform: platform, 
         uri: uriEditted, 
@@ -265,6 +266,7 @@ function DeleteCredential({ownerId, id, platform, auxKey, isElderlyCredential}: 
 
     if(ownerId != userId) {
       const data = JSON.stringify({
+        type: 'login',
         id: id,
         platform: platform, 
         uri: '', 
@@ -289,13 +291,13 @@ function DeleteCredential({ownerId, id, platform, auxKey, isElderlyCredential}: 
     <View style= { { flex: 0.10, flexDirection: 'row', justifyContent: 'space-around', marginBottom: '2%'} }>
       <YesOrNoModal question={'Apagar a credencial?'} yesFunction={() => deleteCredentialAction()} noFunction={() => setModalVisible(false)} visibleFlag={modalVisible}/>
       <TouchableOpacity style={[{flex: 1, marginHorizontal: '20%', marginVertical: '3%'}, logout.logoutButton, stylesButtons.mainConfig]} onPress={setModalVisibleAux}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>{deleteCredentialLabel}</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>{deleteCredentialLoginLabel}</Text>
       </TouchableOpacity>
     </View>
   )
 }
 
-export default function CredencialPage({ route }: Readonly<{route: any}>) {
+export default function CredencialLoginPage({ route }: Readonly<{route: any}>) {
 
   return (
     <>

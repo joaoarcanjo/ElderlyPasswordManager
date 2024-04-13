@@ -1,30 +1,31 @@
 import React, { useEffect, useState } from 'react'
-import {View, Text, TouchableOpacity, ScrollView, Linking, TextInput} from 'react-native'
+import {View, Text, TouchableOpacity, ScrollView, TextInput} from 'react-native'
 import { stylesAddCredential, styleScroolView } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
-import  { Navbar } from "../../../navigation/actions";
+import {Navbar} from '../../../navigation/actions'
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import MainBox from '../../../components/MainBox'
 import { Spinner } from '../../../components/LoadingComponents'
 import { useSessionInfo } from '../../../firebase/authentication/session'
-import { usePushNotifications } from '../../../notifications/usePushNotifications'
-import { sendPushNotification } from '../../../notifications/functionalities'
-import { credentialsListUpdated } from './state'
-import { getAllCredentialsAndValidate, getAllLocalCredentialsFormatted, getAllLocalCredentialsFormattedWithFilter } from './functions'
-import { addCredentialsLabel, detailsLabel, pageAddCredential, pageCredentialCard, pageCredentialLogin, pageTitleCredentials, searchLabel } from '../../../assets/constants'
-import { whiteBackgroud } from '../../../assets/styles/colors';
-import { MaterialIcons } from '@expo/vector-icons';
-import { CredentialType } from './types';
-import { ScrollItem } from './credentialItem';
+import { getAllCredentialsAndValidate, getAllLocalCredentialsFormattedWithFilter } from './functions'
+import { addCredentialsLabel, pageTitleCredentials, searchLabel } from '../../../assets/constants'
+import { MaterialIcons } from '@expo/vector-icons'
+import { whiteBackgroud } from '../../../assets/styles/colors'
+import { CredentialType } from './types'
+import { ScrollItem } from './credentialItem'
 
 function AddCredencial() {
 
-  const navigation = useNavigation<StackNavigationProp<any>>();
-  
+  const { userId, localDBKey } = useSessionInfo()
+  const navigation = useNavigation<StackNavigationProp<any>>()
+
+  const navigateToAddCredential = async () => {
+    navigation.navigate('AddCredential', { userId: userId, key: localDBKey, isElderlyCredential: false })
+  }
   return (
     <View style= { { flex: 0.08, marginTop: '5%', flexDirection: 'row'} }>
-      <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '1%'}, stylesAddCredential.addCredentialButton, stylesButtons.mainConfig]} onPress={() => {navigation.push(pageAddCredential)}}>
+      <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '1%'}, stylesAddCredential.addCredentialButton, stylesButtons.mainConfig]} onPress={navigateToAddCredential}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{fontWeight: 'bold'}, stylesAddCredential.addCredentialButtonText]}>{addCredentialsLabel}</Text>
       </TouchableOpacity>
     </View>
@@ -36,30 +37,20 @@ function CredentialsList() {
   const [credencials, setCredencials] = useState<(CredentialType | undefined)[]>([])
   const isFocused = useIsFocused()
   const { userId, localDBKey } = useSessionInfo()
-
-  const [isFething, setIsFething] = useState(true)
   const [searchValue, setSearchValue] = useState('')
   const [searchType, setSearchType] = useState('')
 
-  useEffect(() => {
-    setIsFething(true)
-    credentialsListUpdated.subscribe(() => {refreshValue()})
-  }, [credentialsListUpdated, isFocused])
+  const [isFething, setIsFething] = useState(true)
 
-  const refreshValue = async () => {
-    setIsFething(true)
+  const fetchCredencials = async () => {
     getAllCredentialsAndValidate(userId, localDBKey)
-    await getAllLocalCredentialsFormatted(userId, localDBKey)
-    .then((credentials) => {   
-      setCredencials(credentials)
-      setIsFething(false)
-    })
+    await search()
   }
 
-  const search = async () => {
+  const search = ()=> {
     setIsFething(true)
-    await getAllLocalCredentialsFormattedWithFilter(userId, localDBKey, searchValue)
-    .then((credentialsAux) => {  
+    getAllLocalCredentialsFormattedWithFilter(userId, localDBKey, searchValue)
+    .then((credentialsAux) => {   
       let auxCredencials: CredentialType[] = [];
       credentialsAux.forEach(value => {
         if(value && value.data && (value.data.platform.toLowerCase().includes(searchValue.toLowerCase()))) {
@@ -72,32 +63,38 @@ function CredentialsList() {
           }
         }
       })
-      setCredencials(auxCredencials) 
+      setCredencials(auxCredencials)
       setIsFething(false)
     })
   }
 
-  useEffect(() => {search()}, [searchType])
+  useEffect(() => {
+    setIsFething(true)
+    fetchCredencials()
+    .then(() => setIsFething(false))
+  }, [isFocused])
+
+  useEffect(() => search(), [searchType])
 
   return (
     <View style={{ flex: 0.72, flexDirection: 'row', justifyContent: 'space-around'}}>
       <View style={[{ flex: 1, marginTop:'5%', marginHorizontal: '4%', justifyContent: 'space-around'}, styleScroolView.credencialsContainer]}>
-        <View style={{flexDirection: 'row'}}>
+        <View style={{flexDirection: 'row', width: '100%'}}>
           {searchType === 'login' &&
-              <TouchableOpacity style={[{flex: 0.2, marginLeft: '2%', marginVertical: '2%'}, stylesButtons.orangeButton, stylesButtons.mainSlimConfig]} onPress={() => setSearchType('card')}>
+              <TouchableOpacity style={[{flex: 0.2, marginLeft: '2%', marginVertical: '2%'}, stylesButtons.orangeButton, stylesButtons.mainConfig]} onPress={() => setSearchType('card')}>
                 <MaterialIcons style={{marginHorizontal: '1%'}} name={'person'} size={40} color="black"/> 
               </TouchableOpacity>
             }
             {searchType === 'card' &&
-              <TouchableOpacity style={[{flex: 0.2, marginLeft: '2%', marginVertical: '2%'}, stylesButtons.purpleButton, stylesButtons.mainSlimConfig]} onPress={() => setSearchType('')}>
+              <TouchableOpacity style={[{flex: 0.2, marginLeft: '2%', marginVertical: '2%'}, stylesButtons.purpleButton, stylesButtons.mainConfig]} onPress={() => setSearchType('')}>
                 <MaterialIcons style={{marginHorizontal: '1%'}} name={'credit-card'} size={40} color="black"/> 
               </TouchableOpacity>
             }
             {searchType === '' &&
-              <TouchableOpacity style={[{flex: 0.2, marginLeft: '2%', marginVertical: '2%'}, stylesButtons.greyButton, stylesButtons.mainSlimConfig]} onPress={() => setSearchType('login')}>
+              <TouchableOpacity style={[{flex: 0.2, marginLeft: '2%', marginVertical: '2%'}, stylesButtons.greyButton, stylesButtons.mainConfig]} onPress={() => setSearchType('login')}>
                 <MaterialIcons style={{marginHorizontal: '1%'}} name={'all-inclusive'} size={40} color="black"/> 
               </TouchableOpacity>
-            }       
+            }      
           <View style={[{flex: 1, margin: '2%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 1, backgroundColor: whiteBackgroud }]}>
             <TextInput
             placeholder={searchLabel}
@@ -105,18 +102,18 @@ function CredentialsList() {
             style={{ flex: 1, fontSize: 22, padding: '2%', marginHorizontal: '1%' }}
             onChangeText={(value) => {setSearchValue(value)}}
             />
-            <TouchableOpacity style={[{flex: 0.2, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.navigateButton, stylesButtons.mainConfig]} onPress={search}>
+            <TouchableOpacity style={[{flex: 0.2, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.navigateButton, stylesButtons.mainConfig]} onPress={fetchCredencials}>
               <MaterialIcons style={{marginHorizontal: '1%'}} name={'search'} size={40} color="black"/> 
             </TouchableOpacity>
-          </View>   
+          </View>
         </View>
         <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }}/>
         {isFething ?
-        <Spinner/> :
+        <Spinner width={300} height={300}/> :
         <ScrollView>
-          {credencials.map((value) => {
+          {credencials.map((value: CredentialType | undefined) => {
             if(value != undefined) {
-              return <ScrollItem key={value.id} credential={value}/>
+              return <ScrollItem key={value.id} credential={value} elderlyId={''}/>
             }
           })}
         </ScrollView>}

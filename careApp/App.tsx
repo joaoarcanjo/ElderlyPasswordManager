@@ -6,7 +6,6 @@ import MainMenu from './src/screens/main_menu/actions';
 import ElderlyListScreen from './src/screens/list_elderly/actions';
 import { initDb } from './src/database';
 import FlashMessage from "react-native-flash-message";
-import ElderlyCredentials from './src/screens/list_elderly_credentials/actions';
 import { AddCredencial } from './src/screens/add_credentials/actions';
 import { SessionProvider, useSessionInfo } from './src/firebase/authentication/session';
 import * as Notifications from "expo-notifications";
@@ -14,16 +13,18 @@ import { User, onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from './src/firebase/FirebaseConfig';
 import { initKeychain } from './src/keychain';
 import SignInPage from './src/screens/signin_interface/actions';
-import SignUpPage from './src/screens/signup_interface/actions';
-import CredencialPage from './src/screens/credential_interface/actions';
 import Settings from './src/screens/settings_interface/actions';
-import Credentials from './src/screens/list_credentials/actions';
+import Credentials from './src/screens/list_credentials/actions/personalCredentials';
 import { initFirestore } from './src/firebase/firestore/functionalities';
 import { createIdentity } from './src/e2e/identity/functions';
 import { flashTimeoutPromise } from './src/screens/splash_screen/actions/functions';
 import SplashScreen from './src/screens/splash_screen/actions';
 import * as SplashFunctions from 'expo-splash-screen';
-import { pageAddCredential, pageCredential, pageCredentials, pageElderlyCredentials, pageElderlyList, pageLogin, pageMainMenu, pageSettings, pageSignup } from './src/assets/constants';
+import { pageAddCredential, pageCredentialCard, pageCredentialLogin, pageCredentials, pageElderlyCredentials, pageElderlyList, pageLogin, pageMainMenu, pageSettings, pageSignup } from './src/assets/constants';
+import CredencialCardPage from './src/screens/credential_interface/actions/card';
+import CredencialLoginPage from './src/screens/credential_interface/actions/login';
+import SignUpPage from './src/screens/signup_interface/actions';
+import ElderlyCredentials from './src/screens/list_credentials/actions/elderlyCredentials';
 
 const Stack = createNativeStackNavigator()
 const InsideStack = createNativeStackNavigator()
@@ -49,7 +50,8 @@ function InsideLayout() {
       <InsideStack.Screen name={pageElderlyCredentials} component={ElderlyCredentials} options={{ title: "ElderlyCredencials", headerShown: false }} />
       <InsideStack.Screen name={pageAddCredential} component={AddCredencial} options={{ title: "AddCredential", headerShown: false }} />
       <InsideStack.Screen name={pageSettings} component={Settings} options={{ title: "Settings", headerShown: false }} />
-      <InsideStack.Screen name={pageCredential} component={CredencialPage} options={{ title: "CredencialPage", headerShown: false }} />
+      <InsideStack.Screen name={pageCredentialLogin} component={CredencialLoginPage} options={{ title: "CredencialLoginPage", headerShown: false }} />
+      <InsideStack.Screen name={pageCredentialCard} component={CredencialCardPage} options={{ title: "CredencialCardPage", headerShown: false }} />
     </InsideStack.Navigator>
   );
 }

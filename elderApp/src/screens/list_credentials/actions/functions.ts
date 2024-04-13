@@ -7,44 +7,28 @@ import { Errors } from "../../../exceptions/types";
 import { addCredencialToFirestore, deleteCredentialFromFiretore, getCaregiversArray, listAllElderlyCredencials, updateCredentialFromFiretore } from "../../../firebase/firestore/functionalities";
 import { getKeychainValueFor } from "../../../keychain";
 import { elderlyFireKey } from "../../../keychain/constants";
+import { CredentialType } from "./types";
 
-interface Credential {
-    id: string,
-    data: CredentialData
-}
-
-interface CredentialData {
-    id: string,
-    platform: string,
-    uri: string,
-    username: string,
-    password: string,
-    edited: {
-        updatedBy: string,
-        updatedAt: number
-    }
-}
-
-export const getAllCredentialsAndValidate = async (userId: string, localDbKey: string): Promise<(Credential | undefined)[]> => {
+export const getAllCredentialsAndValidate = async (userId: string, localDbKey: string): Promise<(CredentialType | undefined)[]> => {
     console.log("===> getAllCredentialsAndValidateCalled")
     const userKey = await getKeychainValueFor(elderlyFireKey(userId))
     const credentialsCloud = await listAllElderlyCredencials(userId)
-    let toReturn: (Credential | undefined)[] = []
+    let toReturn: (CredentialType | undefined)[] = []
     try {
-        const startTime = performance.now(); // Start measuring time
         toReturn = await Promise.all(credentialsCloud.map(async value => {
             let credentialInfo = undefined
             try {
                 credentialInfo = await getCredential(userId, value.id)
-                if (value.data.length != 0) { //Caso contrário não deve lançar exceção?
+                if (value.data.length != 0) {
                     let credentialCloud = undefined
                     const valueDecrypted = decrypt(value.data, userKey)
-                    credentialCloud = JSON.parse(valueDecrypted) as CredentialData
+                    credentialCloud = JSON.parse(valueDecrypted)
                     if (credentialCloud.id !== value.id) {
                         throw new ErrorInstance(Errors.ERROR_CREDENTIAL_INVALID_ID)
                     }
                     if (credentialInfo === '') {
-                        if (credentialCloud.password === '' || credentialCloud.username === '' || credentialCloud.uri === '') {
+                        if ((credentialCloud.type === 'login' && (credentialCloud.password === '' || credentialCloud.username === '' || credentialCloud.uri === '')) ||
+                            (credentialCloud.type === 'card' && (credentialCloud.cardNumber === '' || credentialCloud.ownerName === '' || credentialCloud.securityCode === ''))) {
                             await deleteCredentialFromLocalDB(userId, value.id)
                         } else {
                             await insertCredentialToLocalDB(userId, value.id, encrypt(JSON.stringify(credentialCloud), localDbKey))
@@ -78,10 +62,8 @@ export const getAllCredentialsAndValidate = async (userId: string, localDbKey: s
 
 const deleteCredentialIfNeeded = async (userId: string, credentialId: string, credentialCloud: any, credentialInfo: any, localDBKey: string) => {
     const credencialLocal = JSON.parse(decrypt(credentialInfo, localDBKey))
-    if (credentialCloud.uri == '' &&
-        credentialCloud.username == '' &&
-        credentialCloud.password == '' &&
-        credentialCloud.edited.updatedAt > credencialLocal.edited.updatedAt) {
+    if ((credentialCloud.type === 'login' && credentialCloud.password === '' && credentialCloud.username === '' && credentialCloud.uri === '' && credentialCloud.edited.updatedAt > credencialLocal.edited.updatedAt) ||
+        (credentialCloud.type === 'card' && credentialCloud.cardNumber === '' && credentialCloud.ownerName === '' && credentialCloud.securityCode === '' && credentialCloud.edited.updatedAt > credencialLocal.edited.updatedAt)) {
         await deleteCredentialFromLocalDB(userId, credentialId)
         await deleteCredentialFromFiretore(userId, credentialId)
         return undefined
@@ -97,26 +79,26 @@ const updateCredentialIfNeeded = async (userId: string, credentialId: string, cr
     }
 };
 
-const addMissingCredentialsToReturn = async (toReturn: (Credential | undefined)[], localDbKey: string, userId: string, userKey: string) => {
+const addMissingCredentialsToReturn = async (toReturn: (CredentialType | undefined)[], localDbKey: string, userId: string, userKey: string) => {
     console.log("===> addMissingCredentialsToReturnCalled")
     
     const credenciaisLocal = await getAllLocalCredentialsFormatted(userId, localDbKey)
     credenciaisLocal.forEach(async value => {
         if(!value) return
-        if (!toReturn.find(credential => credential?.id === value.id)) {
+        if (!toReturn.find(credential => credential?.data.id === value.id)) {
             toReturn.push(value)
-            await addCredencialToFirestore(userId, userKey, value.id)
+            await addCredencialToFirestore(userId, value.id, JSON.stringify(value.data))
         }
     })
 }
 
-export const getAllLocalCredentialsFormatted = async (userId: string, localDBKey: string): Promise<(Credential | undefined)[]> => {
+export const getAllLocalCredentialsFormatted = async (userId: string, localDBKey: string): Promise<(CredentialType | undefined)[]> => {
     console.log("===> getAllLocalCredentialsFormattedCalled")
 
     const credentialsLocal = await getAllLocalCredentials(userId)
         .then(async (credentialsLocal: CredentialLocalRecord[]) => {
             return credentialsLocal.map(value => {
-                const credential = JSON.parse(decrypt(value.record, localDBKey)) as CredentialData
+                const credential = JSON.parse(decrypt(value.record, localDBKey))
                 return { id: credential.id, data: credential }
             })
         })
@@ -128,13 +110,13 @@ export const getAllLocalCredentialsFormatted = async (userId: string, localDBKey
     return credentialsLocal;
 }
 
-export const getAllLocalCredentialsFormattedWithFilter = async (userId: string, localDBKey: string, platformFilter: string): Promise<(Credential | undefined)[]> => {
+export const getAllLocalCredentialsFormattedWithFilter = async (userId: string, localDBKey: string, platformFilter: string): Promise<(CredentialType | undefined)[]> => {
     console.log("===> getAllLocalCredentialsFormattedWithFilterCalled")
 
     const credentialsLocal = await getAllLocalCredentials(userId)
         .then(async (credentialsLocal: CredentialLocalRecord[]) => {
             return credentialsLocal.map(value => {
-                const credential = JSON.parse(decrypt(value.record, localDBKey)) as CredentialData
+                const credential = JSON.parse(decrypt(value.record, localDBKey))
                 if (credential.platform.toLowerCase().includes(platformFilter.toLowerCase())) {
                     return { id: credential.id, data: credential }
                 }

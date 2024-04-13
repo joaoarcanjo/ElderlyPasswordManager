@@ -12,6 +12,8 @@ export const lightBlueBackground = '#9FCFDD'
 export const lightRedBackground =  '#F197AC'
 export const darkRedBackground =   '#e35f5f'
 export const yellowBackground =    '#F5D274'
+export const lightOrangeBackground =    '#FFCA91'
+export const superLightOrangeBackground = '#ffebd6'
 export const lightYellowBackground = '#fcf4dc'
 
 //BORDER COLORS
@@ -23,6 +25,8 @@ export const darkGreenBorder =     '#449447'
 export const yellowBorder =        '#D09C11'
 export const lightRedBorder =      '#BC5E74'
 export const darkRedBorder =       '#a31f1f'
+export const orangeBorder =        '#FA9222'
+export const lightOrangeBorder =   '#FFCA91'
 
 //BUTTONS COLORS
 export const copyButtonBackground = yellowBackground

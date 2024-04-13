@@ -26,6 +26,13 @@ export const uriLabel = 'URI'
 export const usernameLabel = 'Username'
 export const passwordLabel = 'Password'
 export const passwordLabelBig = 'PASSWORD'
+export const platformLabel = 'Plataforma'
+export const cardNumberLabel = 'Número do Cartão'
+export const ownerNameLabel = 'Nome do Proprietário'
+export const securityCodeLabel = 'Código de Segurança'
+export const verificationCodeLabel = 'Código de Verificação'
+export const cardPlatformLabel = 'Nome do Cartão'
+
 
 export const optionsLabel = 'Opções'
 export const regenerateLabel = 'Regenerar'
@@ -51,16 +58,23 @@ export const accountInfoLabel = 'Informação da Conta'
 export const historyLabel = 'Histórico'
 export const heyLabel = 'Olá,'
 export const addElderlyLabel = 'Adicionar Idoso'
-export const deleteCredentialLabel = 'Apagar Credencial'
+export const deleteCredentialLoginLabel = 'Apagar Login'
+export const deleteCredentialCardLabel = 'Apagar Cartão'
 export const addLabel = 'Adicionar'
 export const moreAboutTheApp = 'Mais sobre a aplicação'
 export const leaveAccountLabel = 'Sair da conta'
-export const addCredentialsLabel = 'Adicionar Credenciais'
+export const addCredentialsLabel = 'Adicionar Credencial'
 export const detailsLabel = 'Detalhes'
 export const navigateLabel = 'Navegar'
+export const actionsLabel = 'Ações'
 export const elderlyEmailLabel = 'Email do Idoso'
 export const saveChangesLabel = 'Guardar as alterações?'
 export const searchLabel = 'Pesquise algo...'
+export const copyUsernameLabel = 'Copiar Username'
+export const copyPasswordLabel = 'Copiar Password'
+export const copyCardNumberLabel = 'Copiar Número do Cartão'
+export const copySecurityCodeLabel = 'Copiar Código de Segurança'
+export const copyVerificationCodeLabel = 'Copiar Código de Verificação'
 
 //Placeholders:
 export const namePlaceholder = 'Nome Completo'
@@ -71,6 +85,13 @@ export const placeholderPlatform = 'Insira a plataforma'
 export const placeholderURI = 'Insira o URI da plataforma'
 export const placeholderUsername = 'Insira o seu username'
 export const placeholderPassword = "Insira a password"
+export const placeholderSecurityCode = "Insira o código de segurança"
+export const placeholderVerificationCode = "Insira o código de verificação"
+export const placeholderCardNumber = "Insira o número do cartão"
+export const placeholderOwnerName = "Insira o nome do proprietário"
+export const placeholderCardPlatform = "Insira o nome do cartão"
+export const loginLabel = 'Login'
+export const cardLabel = 'Cartão'
 
 //SplashScreen:
 export const splashScreenDuration = 3000
@@ -119,7 +140,8 @@ export const pageFAQs = 'FrequentQuestions'
 export const pageMainMenu = 'MainMenu'
 export const pageElderlyList = 'ElderlyList'
 export const pageElderlyCredentials = 'ElderlyCredentials'
-export const pageCredential = 'CredentialPage'
+export const pageCredentialLogin = 'CredentialLogin'
+export const pageCredentialCard = 'CredentialCard'
 export const pageLogin = 'LoginPage'
 export const pageSignup = 'SignupPage'
 export const pageAddCredential = 'AddCredential'

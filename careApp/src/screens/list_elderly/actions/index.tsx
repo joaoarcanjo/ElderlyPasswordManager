@@ -25,7 +25,7 @@ function ElderlyList() {
 
   return (
     <View style={{ flex: 0.85, flexDirection: 'row', marginTop: '5%', justifyContent: 'space-around'}}>
-      <View style={[{ flex: 1, marginHorizontal: '4%', marginBottom: '3%', justifyContent: 'space-around'}]}>
+      <View style={[{ flex: 1, marginHorizontal: '4%', justifyContent: 'space-around'}]}>
         <AddElderly setRefresh={refreshValue}/>
         <ScrollView style={[{flex: 0.85, margin: '3%'}]}>
           {elderlyList.map((elderly, index) => 

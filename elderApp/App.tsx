@@ -11,11 +11,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { initDb } from './src/database';
 import FlashMessage from 'react-native-flash-message';
 import { Caregivers } from './src/screens/list_caregivers/actions';
-import { changeFirestoreKey, initFirestore } from './src/firebase/firestore/functionalities';
+import { initFirestore } from './src/firebase/firestore/functionalities';
 import { initKeychain } from './src/keychain';
 import { AddCredencial } from './src/screens/add_credentials/actions';
 import { initSSS } from './src/algorithms/sss/sss';
-import CredencialPage from './src/screens/credential_interface/actions';
 import SignInPage from './src/screens/signin_interface/actions';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from './src/firebase/FirebaseConfig';
@@ -28,7 +27,9 @@ import { createIdentity } from './src/e2e/identity/functions';
 import * as Notifications from "expo-notifications";
 import { executeKeyChangeIfTimeout } from './src/algorithms/sss/sssOperations';
 import { flashTimeoutPromise } from './src/screens/splash_screen/actions/functions';
-import { pageAddCredential, pageCaregivers, pageCredential, pageCredentials, pageFAQs, pageGenerator, pageLogin, pageMainMenu, pagePasswordHistory, pageSettings, pageSignup } from './src/assets/constants';
+import { pageAddCredential, pageCaregivers, pageCredentialCard, pageCredentialLogin, pageCredentials, pageFAQs, pageGenerator, pageLogin, pageMainMenu, pagePasswordHistory, pageSettings, pageSignup } from './src/assets/constants';
+import CredencialLoginPage from './src/screens/credential_interface/actions/login';
+import CredencialCardPage from './src/screens/credential_interface/actions/card';
 
 const Stack = createNativeStackNavigator()
 const InsideStack = createNativeStackNavigator()
@@ -70,7 +71,8 @@ function InsideLayout() {
       <InsideStack.Screen name={pagePasswordHistory} component={PasswordHistory} options={{ title: "Password history", headerShown: false }} />
       <InsideStack.Screen name={pageFAQs} component={FrequentQuestions} options={{ title: "Frequent Questions", headerShown: false }} />
       <InsideStack.Screen name={pageCaregivers} component={Caregivers} options={{ title: "Caregivers", headerShown: false }} />
-      <InsideStack.Screen name={pageCredential} component={CredencialPage} options={{ title: "CredencialPage", headerShown: false }} />
+      <InsideStack.Screen name={pageCredentialLogin} component={CredencialLoginPage} options={{ title: "CredencialLoginPage", headerShown: false }} />
+      <InsideStack.Screen name={pageCredentialCard} component={CredencialCardPage} options={{ title: "CredencialCardPage", headerShown: false }} />
       <InsideStack.Screen name={pageLogin} component={SignInPage} options={{title: "LoginPage", headerShown:false}}/>
       <InsideStack.Screen name={pageSignup} component={SignUpPage} options={{title: "SignupPage", headerShown:false}}/>
     </InsideStack.Navigator>

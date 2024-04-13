@@ -17,10 +17,11 @@ import { ChatMessageType } from '../../../e2e/messages/types'
 import { buildEditMessage, sendCaregiversCredentialInfoAction } from './functions'
 import { deleteCredentialFromLocalDB, updateCredentialOnLocalDB } from '../../../database/credentials'
 import { encrypt } from '../../../algorithms/0thers/crypto'
-import { cancelLabel, copyLabel, deleteCredentialLabel, editLabel, optionsLabel, passwordDefaultLengthGenerator, passwordLabel, regenerateLabel, saveChangesLabel, saveLabel, uriLabel, userLabel } from '../../../assets/constants'
+import { cancelLabel, copyLabel, deleteCredentialCardLabel, editLabel, optionsLabel, passwordDefaultLengthGenerator, passwordLabel, regenerateLabel, saveChangesLabel, saveLabel, uriLabel, userLabel } from '../../../assets/constants'
 import { copyValue, credentialDeletedFlash, credentialUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
 import { FlashMessage, copyURIDescription, copyUsernameDescription } from '../../../components/userMessages/messages'
 import { regeneratePassword } from '../../../components/passwordGenerator/functions'
+import { DeleteCredential } from './components'
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
@@ -65,6 +66,7 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
 
       const data = JSON.stringify({
         id: id,
+        type: 'login',
         platform: platform, 
         uri: uriEditted, 
         username: usernameEdited, 
@@ -229,41 +231,12 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
     <Options/>
     <PasswordOptionsModal saveFunction={setRequirements} closeFunction={() => {setPasswordOptionsModalVisible(false)}} visibleFlag={passwordOptionsModalVisible} loading={false}/>
     <YesOrNoSpinnerModal question={saveChangesLabel} yesFunction={saveCredentialUpdate} noFunction={dontSaveCredentialsUpdate} visibleFlag={modalVisible} loading={loading}/>
-    {editFlag && <DeleteCredential id={id} platform={platform} />}
+    {editFlag && <DeleteCredential id={id} platform={platform} type={'login'}/>}
     </>
   )
 }
 
-/**
- * Componente que representa o botão para apagar a credencial
- * @returns 
- */
-function DeleteCredential({id, platform}: Readonly<{id: string, platform: string}>) {
-  
-  const navigation = useNavigation<StackNavigationProp<any>>()
-  const [modalVisible, setModalVisible] = useState(false)
-  const { userId } = useSessionInfo()
-
-  const deleteCredentialAction = async () => {
-    await deleteCredentialFromFiretore(userId, id)
-    .then(() => deleteCredentialFromLocalDB(userId, id))
-    .then(async () => await sendCaregiversCredentialInfoAction(userId, '', platform, ChatMessageType.CREDENTIALS_DELETED))
-    .then(() => credentialDeletedFlash(userId, platform, true))
-    .then(() => navigation.goBack())
-    .catch(() => console.log('#1 Error deleting credential'))
-  }
-
-  return (
-    <View style= { { flex: 0.10, flexDirection: 'row', justifyContent: 'space-around', marginBottom: '2%'} }>
-      <YesOrNoModal question={'Apagar a credencial?'} yesFunction={() => deleteCredentialAction()} noFunction={() => setModalVisible(false)} visibleFlag={modalVisible}/>
-      <TouchableOpacity style={[{flex: 1, marginHorizontal: '20%', marginVertical: '3%'}, logout.logoutButton, stylesButtons.mainConfig]} onPress={() => setModalVisible(true)}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>{deleteCredentialLabel}</Text>
-      </TouchableOpacity>
-    </View>
-  )
-}
-
-export default function CredencialPage({ route }: Readonly<{route: any}>) {
+export default function CredencialLoginPage({ route }: Readonly<{route: any}>) {
   return (
     <>
       <KeyboardAvoidingWrapper>
