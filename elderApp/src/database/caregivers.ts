@@ -218,7 +218,6 @@ export const getCaregiversWithSpecificState = async (userId: string, state: Care
                 [userId, state], 
                 (_tx, results) => {
                     const data: string[] = [];
-                    console.log(results)
                     for (let i = 0; i < results.rows.length; i++) {
                         data.push(results.rows.item(i).email)
                     }

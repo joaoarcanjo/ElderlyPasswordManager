@@ -18,7 +18,7 @@ import { ChatMessageType } from '../../../e2e/messages/types'
 import { deleteCredentialFromLocalDB, updateCredentialFromLocalDB } from '../../../database/credentials'
 import { encrypt } from '../../../algorithms/0thers/crypto'
 import { regeneratePassword } from '../../../components/passwordGenerator/functions'
-import { copyLabel, deleteCredentialCardLabel, deleteCredentialLoginLabel, optionsLabel, regenerateLabel, saveChangesLabel, uriLabel, userLabel } from '../../../assets/constants'
+import { cancelLabel, copyLabel, deleteCredentialCardLabel, deleteCredentialLoginLabel, editLabel, optionsLabel, regenerateLabel, saveChangesLabel, saveLabel, uriLabel, userLabel } from '../../../assets/constants'
 import { copyValue, credentialUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
 import { FlashMessage, copyPasswordDescription, copyUsernameDescription } from '../../../components/userMessages/messages'
 
@@ -137,15 +137,15 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
         {editFlag ?
           <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
             <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.editButton]} onPress={toggleEditFlag}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>Editar</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>{editLabel}</Text>
             </TouchableOpacity>
           </View> :
           <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
             {credentialsModified && <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.saveButton]} onPress={() => setModalVisible(true)}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>Guardar</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>{saveLabel}</Text>
             </TouchableOpacity>}
             <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={cancelUpdate}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>Cancelar</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>{cancelLabel}</Text>
             </TouchableOpacity>
           </View>
         }

@@ -18,7 +18,7 @@ import { ChatMessageType } from '../../../e2e/messages/types'
 import { deleteCredentialFromLocalDB, updateCredentialFromLocalDB } from '../../../database/credentials'
 import { encrypt } from '../../../algorithms/0thers/crypto'
 import { regeneratePassword } from '../../../components/passwordGenerator/functions'
-import { cardNumberLabel, copyLabel, deleteCredentialCardLabel, optionsLabel, ownerNameLabel, regenerateLabel, saveChangesLabel, securityCodeLabel, uriLabel, userLabel, verificationCodeLabel } from '../../../assets/constants'
+import { cancelLabel, cardNumberLabel, copyLabel, deleteCredentialCardLabel, editLabel, optionsLabel, ownerNameLabel, regenerateLabel, saveChangesLabel, saveLabel, securityCodeLabel, uriLabel, userLabel, verificationCodeLabel } from '../../../assets/constants'
 import { copyValue, credentialUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
 import { FlashMessage, copyCardNumberDescription, copyOwnerNameDescription, copyPasswordDescription, copySecurityCodeDescription, copyURIDescription, copyUsernameDescription, copyVerificationCodeDescription } from '../../../components/userMessages/messages'
 
@@ -47,7 +47,7 @@ function CardInfo({ownerId, id, platform, cn, on, sc, vc, edited, auxKey, isElde
   const toggleShowSecurityCode = () => {setShowSecurityCode(!showSecurityCode)}
 
   const toggleEditFlag = async () => {
-    const canEdit = ( await verifyIfCanManipulateCredentials(userId, ownerId) && isElderlyCredential ) || !isElderlyCredential
+    const canEdit = ( !isElderlyCredential || await verifyIfCanManipulateCredentials(userId, ownerId) && isElderlyCredential )
     if(canEdit) {
       editValueFlash()
       setEditFlag(!editFlag)
@@ -142,15 +142,15 @@ function CardInfo({ownerId, id, platform, cn, on, sc, vc, edited, auxKey, isElde
         {editFlag ?
           <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
             <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.editButton]} onPress={toggleEditFlag}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>Editar</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>{editLabel}</Text>
             </TouchableOpacity>
           </View> :
           <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
             {credentialsModified && <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.saveButton]} onPress={() => setModalVisible(true)}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>Guardar</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>{saveLabel}</Text>
             </TouchableOpacity>}
             <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={cancelUpdate}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>Cancelar</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>{cancelLabel}</Text>
             </TouchableOpacity>
           </View>
         }

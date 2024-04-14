@@ -15,7 +15,7 @@ export function Navbar() {
     const goToFirstPage = () => navigation.push(pageMainMenu)
 
     return (
-        <View style={[{flex: 0.12, backgroundColor: 'red', flexDirection: 'row'}, navigationStyle.pageInfoContainer]}>
+        <View style={[{flex: 0.12, flexDirection: 'row'}, navigationStyle.pageInfoContainer]}>
             <TouchableOpacity style={[{flex: 0.5, marginLeft: '5%', marginRight: '2%', marginTop: '2%', marginBottom: '2%'}, navigationStyle.backButton, stylesButtons.mainConfig]} onPress={() => goBack()}>
                 {/*<Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontWeight: 'bold', fontSize: 22 }]}>Anterior</Text> */}
                 <Entypo name="back" size={40} color="black" />
@@ -34,7 +34,7 @@ export function NavbarJustBack() {
     const goBack = () => navigation.goBack()
 
     return (
-        <View style={[{flex: 0.12, backgroundColor: 'red', flexDirection: 'row', justifyContent: 'center'}, navigationStyle.pageInfoContainer]}>
+        <View style={[{flex: 0.12, flexDirection: 'row', justifyContent: 'center'}, navigationStyle.pageInfoContainer]}>
             <TouchableOpacity style={[{flex: 0.5, marginLeft: '5%', marginRight: '2%', marginTop: '2%', marginBottom: '2%'}, navigationStyle.backButton, stylesButtons.mainConfig]} onPress={() => goBack()}>
                 {/*<Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontWeight: 'bold', fontSize: 22 }]}>Anterior</Text> */}
                 <Entypo name="back" size={40} color="black" />

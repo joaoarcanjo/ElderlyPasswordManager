@@ -13,6 +13,8 @@ export const lightRedBackground =  '#F197AC'
 export const darkRedBackground =   '#e35f5f'
 export const yellowBackground =    '#F5D274'
 export const lightOrangeBackground =    '#FFCA91'
+export const orangeBackground =    '#FA9222'
+export const darkOrangeBackground = '#994f05'
 export const superLightOrangeBackground = '#ffebd6'
 export const lightYellowBackground = '#fcf4dc'
 

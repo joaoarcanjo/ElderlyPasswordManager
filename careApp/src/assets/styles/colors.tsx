@@ -27,6 +27,8 @@ export const lightRedBorder =      '#BC5E74'
 export const darkRedBorder =       '#a31f1f'
 export const orangeBorder =        '#FA9222'
 export const lightOrangeBorder =   '#FFCA91'
+export const orangeBackground =    '#FA9222'
+export const darkOrangeBackground = '#994f05'
 
 //BUTTONS COLORS
 export const copyButtonBackground = yellowBackground

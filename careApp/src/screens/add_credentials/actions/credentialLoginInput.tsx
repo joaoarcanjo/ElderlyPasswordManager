@@ -5,11 +5,11 @@ import { useState, useEffect } from "react"
 import { View, TextInput, TouchableOpacity, Text } from "react-native"
 import { getNewId, encrypt } from "../../../algorithms/0thers/crypto"
 import { getScore } from "../../../algorithms/zxcvbn/algorithm"
-import { placeholderPlatform, placeholderURI, placeholderUsername, placeholderPassword } from "../../../assets/constants"
-import { whiteBackgroud } from "../../../assets/styles/colors"
+import { placeholderPlatform, placeholderURI, placeholderUsername, placeholderPassword, addLabel } from "../../../assets/constants"
+import { darkOrangeBackground, whiteBackgroud } from "../../../assets/styles/colors"
 import { stylesButtons } from "../../../assets/styles/main_style"
 import AvaliationEmoji from "../../../components/EmojiAvaliation"
-import { PasswordOptionsModal } from "../../../components/Modal"
+import { PasswordOptionsModal, PlatformSelectionModal } from "../../../components/Modal"
 import { regeneratePassword } from "../../../components/passwordGenerator/functions"
 import { insertCredentialToLocalDB } from "../../../database/credentials"
 import { ChatMessageType } from "../../../e2e/messages/types"
@@ -28,6 +28,7 @@ export function CredentialsLoginInput({ ownerId, auxKey, isElderlyCredential }: 
     const [showPassword, setShowPassword] = useState(false)
     const navigation = useNavigation<StackNavigationProp<any>>()
     const [modalVisible, setModalVisible] = useState(false)
+    const [platformModal, setPlatformModal] = useState(false)
 
     const { userId, userEmail, localDBKey } = useSessionInfo()
 
@@ -78,6 +79,9 @@ export function CredentialsLoginInput({ ownerId, auxKey, isElderlyCredential }: 
                         style={{ flex: 1, fontSize: 22, padding: '2%', marginHorizontal: '1%' }}
                         onChangeText={text => setPlatform(text)}
                         />
+                        <TouchableOpacity style={[{flex: 0.15, marginHorizontal: '3%'}]} onPress={() => {setPlatformModal(true)}}>
+                            <MaterialCommunityIcons name='auto-fix' size={35} color={darkOrangeBackground}/>
+                        </TouchableOpacity>
                     </View>
                     <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: 20}]}>URI</Text>
                     <View style={[{margin: '4%', marginTop: '1%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 1, backgroundColor: whiteBackgroud }]}>
@@ -126,9 +130,10 @@ export function CredentialsLoginInput({ ownerId, auxKey, isElderlyCredential }: 
                 </View>
             </View>
             <TouchableOpacity style={[{flex: 0.1, marginHorizontal: '10%', marginVertical: '2%'}, stylesAddCredential.button, stylesButtons.mainConfig]} onPress={handleSave}>
-                <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCredential.buttonText]}>ADICIONAR</Text>
+                <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCredential.buttonText]}>{addLabel}</Text>
             </TouchableOpacity>
             <PasswordOptionsModal saveFunction={saveRequirements} closeFunction={() => {setModalVisible(false)}} visibleFlag={modalVisible} loading={false}/>
+            <PlatformSelectionModal closeFunction={() => { setPlatformModal(false) } } visibleFlag={platformModal} setPlatformName={setPlatform} setPlatformURI={setURI}/>
         </View>
     )
 }

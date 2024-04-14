@@ -44,7 +44,7 @@ function CredentialsList() {
 
   const fetchCredencials = async () => {
     getAllCredentialsAndValidate(userId, localDBKey)
-    await search()
+    search()
   }
 
   const search = ()=> {

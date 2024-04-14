@@ -1,12 +1,13 @@
 import { BlurView } from "expo-blur";
 import React, { ReactNode, useState } from "react";
-import { View, StyleSheet, Modal, TouchableOpacity, Text } from 'react-native'
+import { View, StyleSheet, Modal, TouchableOpacity, Text, ScrollView } from 'react-native'
 import { stylesButtons } from "../assets/styles/main_style"
 import { modal, options } from "../screens/credential_interface/styles/styles"
 import { Spinner } from "./LoadingComponents"
-import { upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, modalIntensity, cancelLabel, copyCardNumberLabel, copyPasswordLabel, copySecurityCodeLabel, copyUsernameLabel, copyVerificationCodeLabel, navigateLabel } from "../assets/constants";
+import { upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, modalIntensity, cancelLabel, copyCardNumberLabel, copyPasswordLabel, copySecurityCodeLabel, copyUsernameLabel, copyVerificationCodeLabel, navigateLabel, otherLabel } from "../assets/constants";
 import { updateUpperCase, updateLowerCase, updateNumbers, updateSpecial } from "./passwordGenerator/functions";
 import { Requirement, RequirementLength } from "./passwordGenerator/Requirement";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export function YesOrNoModal({question, yesFunction, noFunction, visibleFlag}: Readonly<{question: string, yesFunction: Function, noFunction: Function, visibleFlag: boolean}>) {
   return (
@@ -142,6 +143,41 @@ export function CredentialCardOptionsModal({copyCardNumber, copySecurityCode, co
   )
 }
 
+export function PlatformSelectionModal({setPlatformName, setPlatformURI, closeFunction, visibleFlag}: Readonly<{setPlatformName: Function, setPlatformURI: Function, closeFunction: Function, visibleFlag: boolean}>) {
+
+  interface Platform { platformName: any, platformURI: any, materialCommunityIcon: any, iconColor: any }
+
+  const jsonData = require('../assets/platforms.json')
+
+  const applySelection = (platform: Platform) => {
+    setPlatformName(platform.platformName)
+    setPlatformURI(platform.platformURI)
+    closeFunction()
+  }
+
+  return (
+    <ModalBox visibleFlag={visibleFlag}>
+      <View style={{flexDirection: 'row', maxHeight: '85%'}}>
+        <ScrollView style={{width: '100%'}}>
+          {jsonData.platforms.map((platform: Platform, index: string) => 
+            <View key={index} style={{flexDirection: 'row'}}>
+              <TouchableOpacity style={[{flex: 1, marginVertical: '3%', flexDirection: 'row'}, stylesButtons.mainConfig, stylesButtons.greyButton]} onPress={() => {applySelection(platform)}}>
+                <MaterialCommunityIcons name={platform.materialCommunityIcon} size={35} color={platform.iconColor}/>
+                <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }, options.permissionsButtonText]}>{platform.platformName}</Text>
+              </TouchableOpacity>
+            </View>  
+          )}
+        </ScrollView>
+      </View><View style={{ height: 1, backgroundColor: 'black', marginVertical: '3%' }}/>
+      <View style={{flexDirection: 'row', marginBottom: '2%'}}>
+        <TouchableOpacity style={[{flex: 1, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.orangeButton]} onPress={() => closeFunction()}>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>{otherLabel}</Text>
+        </TouchableOpacity>
+      </View>
+    </ModalBox>
+  )
+}
+
 export function ModalBox({children, visibleFlag}: Readonly<{children: ReactNode, visibleFlag: boolean}>) {
     return (
         <Modal
@@ -171,10 +207,11 @@ const styles = StyleSheet.create({
     marginTop: 22,
   },
   modalView: {
-    margin: 20,
+    maxHeight: '60%', // 90% of the screen height
+    margin: '8%',
     backgroundColor: 'white',
     borderRadius: 20,
-    padding: 35,
+    padding: '8%',
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {

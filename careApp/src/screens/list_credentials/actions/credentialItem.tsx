@@ -20,7 +20,7 @@ export function ScrollItem({credential, elderlyId}: Readonly<{credential: Creden
 
     const navigation = useNavigation<StackNavigationProp<any>>()
     const [modalVisible, setModalVisible] = useState(false)
-    const { localDBKey } = useSessionInfo()
+    const { localDBKey, userId } = useSessionInfo()
     //const { expoPushToken } = usePushNotifications()
   
     const OpenCredentialPage = async () => {
@@ -36,7 +36,7 @@ export function ScrollItem({credential, elderlyId}: Readonly<{credential: Creden
             navigation.navigate(pageCredentialLogin, 
             { 
                 id: credential.id, 
-                userId: elderlyId,
+                userId: elderlyId != '' ? elderlyId : userId,
                 platform: credential.data.platform, 
                 uri: credential.data.uri, 
                 edited: credential.data.edited,
@@ -49,7 +49,7 @@ export function ScrollItem({credential, elderlyId}: Readonly<{credential: Creden
             navigation.navigate(pageCredentialCard, 
             { 
                 id: credential.id, 
-                userId: elderlyId,
+                userId: elderlyId != '' ? elderlyId : userId,
                 platform: credential.data.platform, 
                 cardNumber: credential.data.cardNumber, 
                 ownerName: credential.data.ownerName, 

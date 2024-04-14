@@ -128,6 +128,8 @@ export async function getCaregiversArray(elderlyId: string, permission: string) 
 }
 
 export async function verifyIfCanManipulateCredentials(userId: string, elderlyId: string) {
+    console.log('userId: ', userId)
+    console.log('elderlyId: ', elderlyId)
     return await getCaregiversArray(elderlyId, 'writeCaregivers').then(result => {
         return result.includes(userId)
     })

@@ -45,7 +45,6 @@ export async function createIdentity(userId: string, username: string): Promise<
             throw new Error("Error generating registrationId")
         }
 
-
         //const identityKeyPair = await KeyHelper.generateIdentityKeyPair()
         let identityKeyPair = await signalStore.getIdentityKeyPair()
         if(identityKeyPair === undefined) {
