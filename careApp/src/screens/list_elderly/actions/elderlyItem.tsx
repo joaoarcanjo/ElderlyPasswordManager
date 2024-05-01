@@ -118,7 +118,7 @@ export function Elderly({ elderlyId, name, phone, email, setRefresh }: Readonly<
           <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }} />
           <View style={{flex: 1, marginVertical: '3%', marginRight: '5%', flexDirection: 'row'}}>
             <TouchableOpacity style={[{flex: 0.65, marginHorizontal: '1%', marginVertical: '1%'}, elderlyOptions.openCredentials, stylesButtons.mainConfig]} onPress={navigateToElderlyCredentials}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginVertical: '6%' }]}>{credentialsLabel}</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '4%' }]}>{credentialsLabel}</Text>
             </TouchableOpacity>
             <View style={{flex: 0.30, marginLeft: '8%'}}>
               {showInfo ? 

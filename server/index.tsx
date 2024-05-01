@@ -1,4 +1,21 @@
 // server.js
+const { getFirestore, collection, getDocs, updateDoc, doc } = require('@firebase/firestore');
+const { initializeApp } = require('firebase/app');
+
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCYjuZeshrZpZFLicjTag0YFjPAn2G6pYM",
+    authDomain: "thesis-pm-fa03e.firebaseapp.com",
+    projectId: "thesis-pm-fa03e",
+    storageBucket: "thesis-pm-fa03e.appspot.com",
+    messagingSenderId: "24842104175",
+    appId: "1:24842104175:web:e8bdd7b884c07854724c9a",
+    measurementId: "G-8QT7EZ5WM2"
+}
+
+const appFirebase = initializeApp(firebaseConfig);
+const db = getFirestore(appFirebase);
+
 const { Subject } = require('rxjs')
 const webSocket = require('ws')
 const express = require("express")
@@ -204,8 +221,11 @@ app.get("/getBundle/:username", (req, res) => {
     }
 })
 
-http.listen(PORT, () => {
+http.listen(PORT, async () => {
     console.log ( ip.address());
+    //db.collection("server").doc("server").set({ip: ip.address()})
+    
+    await updateDoc(await doc(db, 'Server', 'server'), { ip: ip.address() });
     console.log(`Server listening on ${PORT}`);
 })
 

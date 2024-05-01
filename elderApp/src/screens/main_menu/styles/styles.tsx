@@ -58,7 +58,7 @@ const stylesOptions = StyleSheet.create({
      borderWidth: 5
    },
    squareText: {
-     fontSize: 21,
+     fontSize: 19,
      fontWeight: 'bold'
    },
    squarePhoto: {

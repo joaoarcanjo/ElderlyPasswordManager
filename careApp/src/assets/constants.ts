@@ -1,5 +1,3 @@
-//export const ipAddress = "192.168.106.97";
-export const ipAddress = "192.168.1.68";
 export const port = "442";
 export const apiPort = "443";
 
@@ -129,6 +127,10 @@ export const keyDocumentName = 'Value'
 export const caregiversCollectionName = 'Caregivers'
 export const caregiverCollectionName = 'Caregiver'
 export const caregiversDocumentName = 'Value'
+
+//MainBox:
+export const fontSizeMainBox = 40
+export const fontSizeMainBoxKeyboard = 19
 
 //Credentials:
 export const credentialTimoutRefresh = 1000 * 60 * 5 // 5 minutes

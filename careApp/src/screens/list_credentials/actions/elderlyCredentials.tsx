@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native'
+import { View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, Dimensions, Keyboard } from 'react-native'
 import { stylesAddCredential, styleScroolView } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import {Navbar} from '../../../navigation/actions'
@@ -39,9 +39,9 @@ function AddCredencial({ elderlyId }: Readonly<{elderlyId: string}>) {
   }
 
   return (
-    <View style= { { flex: 0.08, marginTop: '5%', flexDirection: 'row'} }>
+    <View style= { { flex: 0.1, marginTop: '5%', flexDirection: 'row'} }>
       <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '1%'}, stylesAddCredential.addCredentialButton, stylesButtons.mainConfig]} onPress={navigateToAddCredential}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{fontWeight: 'bold'}, stylesAddCredential.addCredentialButtonText]}>{addCredentialsLabel}</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit={true} style={[{fontWeight: 'bold'}, stylesAddCredential.addCredentialButtonText]}>{addCredentialsLabel}</Text>
       </TouchableOpacity>
     </View>
   )
@@ -88,7 +88,7 @@ function ElderlyCredentialsList({ elderlyId }: Readonly<{elderlyId: string}>) {
   }, [isFocused, searchType])
 
   return (
-    <View style={{ flex: 0.62, flexDirection: 'row', justifyContent: 'space-around'}}>
+    <View style={{ flex: 0.72, flexDirection: 'row', justifyContent: 'space-around'}}>
       <View style={[{ flex: 1, marginTop:'5%', marginHorizontal: '4%', justifyContent: 'space-around'}, styleScroolView.credencialsContainer]}>
         <View style={{flexDirection: 'row'}}>
           {searchType === 'login' &&
@@ -130,16 +130,37 @@ function ElderlyCredentialsList({ elderlyId }: Readonly<{elderlyId: string}>) {
 }
 
 export default function ElderlyCredentials({ route }: Readonly<{route: any}>) {
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false)
+
+  const screenWidth = Dimensions.get('window').height
+  const fontSize = screenWidth * 0.03
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => setIsKeyboardOpen(true))
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => setIsKeyboardOpen(false))
+    return () => {
+      keyboardDidShowListener.remove()
+      keyboardDidHideListener.remove()
+    }
+  }, [])
 
   return (
-    <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-      <MainBox text={pageTitleCredentials}/>
-      <View style={[{flex: 0.06, justifyContent: 'center', alignItems: 'center'}, elderlyName.container]}>
-          <Text style={elderlyName.text}>{route.params.elderlyName}</Text>
-      </View>
-      <AddCredencial elderlyId={route.params.elderlyId}/>
-      <ElderlyCredentialsList elderlyId={route.params.elderlyId}/>
-      <Navbar/> 
-    </View>
+    <>
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === "ios" ? "padding" : "height"} 
+        style={{ flex: 1 }}
+      >
+        <View style={{ flex: 1, width: '100%'}}>
+          <MainBox text={pageTitleCredentials}/>
+          {!isKeyboardOpen && (
+          <View style={[{flex: 0.1, justifyContent: 'center', alignItems: 'center'}, elderlyName.container]}>
+            <Text style={{fontSize: fontSize}}>{route.params.elderlyName}</Text>
+          </View>  )}
+          <AddCredencial elderlyId={route.params.elderlyId}/>
+          <ElderlyCredentialsList elderlyId={route.params.elderlyId}/>
+        </View>
+      </KeyboardAvoidingView>
+      <Navbar/>
+    </>  
   )
 }

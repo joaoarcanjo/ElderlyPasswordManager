@@ -13,6 +13,7 @@ import { CaregiverRequestStatus } from "../../../database/types"
 import { acceptLabel, cancelLabel, refuseLabel, unlinkLabel } from "../../../assets/constants"
 import { cancelWaitingCaregiver } from "../../../e2e/messages/functions"
 import { encryptAndSendMessage } from "../../../e2e/messages/sendMessage"
+import { setCaregiverListUpdated } from "./state"
 
 const caregiverImage = '../../../assets/images/caregiver.png'
 const telephoneImage = '../../../assets/images/telephone.png'
@@ -133,6 +134,7 @@ export function Caregiver({name, phone, email, caregiverId, setRefresh, canWrite
           currentSessionSubject.next(session ?? null)
       }
       await encryptAndSendMessage(email, '', false, ChatMessageType.PERMISSION_DATA) 
+      await setCaregiverListUpdated(userId)
     }
   }
   

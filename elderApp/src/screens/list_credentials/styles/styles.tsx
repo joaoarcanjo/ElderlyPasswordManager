@@ -11,7 +11,7 @@ const stylesAddCredential = StyleSheet.create({
         borderColor: '#449447',
     },
     addCredentialButtonText: {
-        fontSize: 25,
+        fontSize: 20,
         color: '#f5f5f5'
     }
 })

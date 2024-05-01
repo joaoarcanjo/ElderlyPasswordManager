@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {View, Text, TouchableOpacity, ScrollView, Linking, TextInput} from 'react-native'
+import {View, Text, TouchableOpacity, ScrollView, Linking, TextInput, KeyboardAvoidingView, Platform} from 'react-native'
 import { stylesAddCredential, styleScroolView } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import  { Navbar } from "../../../navigation/actions";
@@ -8,11 +8,9 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import MainBox from '../../../components/MainBox'
 import { Spinner } from '../../../components/LoadingComponents'
 import { useSessionInfo } from '../../../firebase/authentication/session'
-import { usePushNotifications } from '../../../notifications/usePushNotifications'
-import { sendPushNotification } from '../../../notifications/functionalities'
 import { credentialsListUpdated } from './state'
 import { getAllCredentialsAndValidate, getAllLocalCredentialsFormatted, getAllLocalCredentialsFormattedWithFilter } from './functions'
-import { addCredentialsLabel, detailsLabel, pageAddCredential, pageCredentialCard, pageCredentialLogin, pageTitleCredentials, searchLabel } from '../../../assets/constants'
+import { addCredentialsLabel, pageAddCredential, pageTitleCredentials, searchLabel } from '../../../assets/constants'
 import { whiteBackgroud } from '../../../assets/styles/colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import { CredentialType } from './types';
@@ -23,7 +21,7 @@ function AddCredencial() {
   const navigation = useNavigation<StackNavigationProp<any>>();
   
   return (
-    <View style= { { flex: 0.08, marginTop: '5%', flexDirection: 'row'} }>
+    <View style= { { flex: 0.1, marginTop: '5%', flexDirection: 'row'} }>
       <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '1%'}, stylesAddCredential.addCredentialButton, stylesButtons.mainConfig]} onPress={() => {navigation.push(pageAddCredential)}}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{fontWeight: 'bold'}, stylesAddCredential.addCredentialButtonText]}>{addCredentialsLabel}</Text>
       </TouchableOpacity>
@@ -126,12 +124,19 @@ function CredentialsList() {
 }
 
 export default function Credentials() {
-  return (
-    <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-      <MainBox text={pageTitleCredentials}/>
-      <AddCredencial/>
-      <CredentialsList/>
-      <Navbar/>
-    </View>
+  return (    
+    <>
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === "ios" ? "padding" : "height"} 
+        style={{ flex: 1 }}
+      >
+        <View style={{ flex: 1, width: '100%'}}>
+          <MainBox text={pageTitleCredentials}/>
+          <AddCredencial/>
+          <CredentialsList/>
+        </View>
+      </KeyboardAvoidingView>
+        <Navbar/>
+    </>
   )
 }

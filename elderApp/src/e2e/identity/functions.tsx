@@ -5,7 +5,8 @@ import { subscribeWebsocket } from "../network/webSockets";
 import { SignalDirectory } from "../signal/signal-directory";
 import { directorySubject, usernameSubject, signalStore } from "./state";
 import { networkInfoSubject } from "../network/state";
-import { ipAddress, port } from "../../assets/constants";
+import { port } from "../../assets/constants";
+import { getServerIP } from "../../firebase/firestore/functionalities";
 //import { KeyHelper, PreKeyPairType, PreKeyType, SignedPreKeyPairType, SignedPublicPreKeyType } from "../../algorithms/signal";
 
 /**
@@ -14,11 +15,12 @@ import { ipAddress, port } from "../../assets/constants";
  */
 export async function createIdentity(userId: string, username: string): Promise<void> {
 
+
     if (usernameSubject.value === username) return
     console.log("Username: ", username)
     console.log("userId: ", userId)
 
-    //TODO: este url tem que ser obtido da firebase, porque o url do server pode alterar.
+    const ipAddress = await getServerIP()
     const url = `http://${ipAddress}:${port}`
     
     //Inicia a ligação ao servidor 

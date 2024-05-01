@@ -1,5 +1,5 @@
-import { StatusBar, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { Keyboard, StatusBar, View } from 'react-native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainMenu from './src/screens/main_menu/actions';
@@ -25,6 +25,7 @@ import CredencialCardPage from './src/screens/credential_interface/actions/card'
 import CredencialLoginPage from './src/screens/credential_interface/actions/login';
 import SignUpPage from './src/screens/signup_interface/actions';
 import ElderlyCredentials from './src/screens/list_credentials/actions/elderlyCredentials';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 const Stack = createNativeStackNavigator()
 const InsideStack = createNativeStackNavigator()
@@ -106,7 +107,7 @@ function Inicialization() {
 export default function App() {
   return (
     <SessionProvider>
-      <StatusBar hidden />
+      <StatusBar/>
       <Inicialization/>
     </SessionProvider>
   )

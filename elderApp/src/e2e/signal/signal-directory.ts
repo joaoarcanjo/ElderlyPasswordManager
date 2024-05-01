@@ -1,13 +1,14 @@
 import { SignedPublicPreKeyType, DeviceType, PreKeyType } from '@privacyresearch/libsignal-protocol-typescript'
 import { encode as encodeBase64} from '@stablelib/base64';
 import { sign } from 'tweetnacl'
-import { decodeBase64, encodeUTF8 } from 'tweetnacl-util'
+import { decodeBase64 } from 'tweetnacl-util'
 import * as base64 from 'base64-js'
-import { apiPort, ipAddress } from '../../assets/constants'
+import { apiPort } from '../../assets/constants'
 import { Errors } from '../../exceptions/types'
-import { ArrayBufferToHex, arrayBufferToString, hexToArrayBuffer, stringToArrayBuffer } from './signal-store';
+import { stringToArrayBuffer } from './signal-store';
 import { getKeychainValueFor, saveKeychainValue } from '../../keychain';
 import { signalPrivateKey, signalPublicKey } from '../../keychain/constants';
+import { getServerIP } from '../../firebase/firestore/functionalities';
 
 export interface PublicDirectoryEntry {
     identityKey: ArrayBuffer
@@ -86,6 +87,7 @@ export class SignalDirectory {
             "username": username,
         }
 
+        const ipAddress = await getServerIP()
         return await fetch(`http://${ipAddress}:${apiPort}/addBundle`, {
             method: 'PUT',
             //headers: { 'x-api-key': this._apiKey },
@@ -106,6 +108,7 @@ export class SignalDirectory {
 
     async getPreKeyBundle(address: string): Promise<DeviceType | undefined> {
         //console.log("-> getPreKeyBundle: "+address)
+        const ipAddress = await getServerIP()
         const res = await fetch(`http://${ipAddress}:${apiPort}/getBundle/${address}`/*, { headers: { 'x-api-key': this._apiKey } }*/)
         
         const bundle = await res.json() 

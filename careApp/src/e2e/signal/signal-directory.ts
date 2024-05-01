@@ -1,6 +1,6 @@
 import { SignedPublicPreKeyType, DeviceType, PreKeyType } from '@privacyresearch/libsignal-protocol-typescript'
 import * as base64 from 'base64-js'
-import { apiPort, ipAddress } from '../../assets/constants'
+import { apiPort } from '../../assets/constants'
 import { decodeBase64, encodeUTF8 } from 'tweetnacl-util'
 import { Errors } from '../../exceptions/types'
 import { sign } from 'tweetnacl'
@@ -8,6 +8,7 @@ import { stringToArrayBuffer } from './signal-store'
 import { encode as encodeBase64} from '@stablelib/base64';
 import { getKeychainValueFor, saveKeychainValue } from '../../keychain'
 import { signalPrivateKey, signalPublicKey } from '../../keychain/constants'
+import { getServerIP } from '../../firebase/firestore/functionalities'
 
 export interface PublicDirectoryEntry {
     identityKey: ArrayBuffer
@@ -56,7 +57,7 @@ export class SignalDirectory {
     constructor(private _url: string/*, private _apiKey: string*/) {}
 
     async storeKeyBundle(username: string, userId: string, bundle: FullDirectoryEntry): Promise<void> {
-
+        console.log("-> storeKeyBundle: "+username)
         const serializedBundle = serializeKeyRegistrationBundle(username, bundle)
         const bundleString = JSON.stringify({
             "bundle": serializedBundle,
@@ -86,6 +87,7 @@ export class SignalDirectory {
             "username": username,
         }
 
+        const ipAddress = await getServerIP()
         return await fetch(`http://${ipAddress}:${apiPort}/addBundle`, {
             method: 'PUT',
             //headers: { 'x-api-key': this._apiKey },
@@ -106,6 +108,7 @@ export class SignalDirectory {
 
     async getPreKeyBundle(address: string): Promise<DeviceType | undefined> {
         //console.log("-> getPreKeyBundle: "+address)
+        const ipAddress = await getServerIP()
         const res = await fetch(`http://${ipAddress}:${apiPort}/getBundle/${address}`/*, { headers: { 'x-api-key': this._apiKey } }*/)
         
         const bundle = await res.json() 

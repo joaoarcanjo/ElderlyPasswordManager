@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {View, Text, TouchableOpacity, ScrollView, TextInput} from 'react-native'
+import {View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, Keyboard} from 'react-native'
 import { stylesAddCredential, styleScroolView } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import {Navbar} from '../../../navigation/actions'
@@ -21,10 +21,12 @@ function AddCredencial() {
   const navigation = useNavigation<StackNavigationProp<any>>()
 
   const navigateToAddCredential = async () => {
+    Keyboard.dismiss()
+    console.log("KEYBOARD DISMISSED")
     navigation.navigate('AddCredential', { userId: userId, key: localDBKey, isElderlyCredential: false })
   }
   return (
-    <View style= { { flex: 0.08, marginTop: '5%', flexDirection: 'row'} }>
+    <View style= { { flex: 0.1, marginTop: '5%', flexDirection: 'row'} }>
       <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '1%'}, stylesAddCredential.addCredentialButton, stylesButtons.mainConfig]} onPress={navigateToAddCredential}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{fontWeight: 'bold'}, stylesAddCredential.addCredentialButtonText]}>{addCredentialsLabel}</Text>
       </TouchableOpacity>
@@ -124,11 +126,18 @@ function CredentialsList() {
 
 export default function Credentials() {
   return (
-    <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-      <MainBox text={pageTitleCredentials}/>
-      <AddCredencial/>
-      <CredentialsList/>
-      <Navbar/>
-    </View>
+    <>
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === "ios" ? "padding" : "height"} 
+        style={{ flex: 1 }}
+      >
+        <View style={{ flex: 1, width: '100%'}}>
+          <MainBox text={pageTitleCredentials}/>
+          <AddCredencial/>
+          <CredentialsList/>
+        </View>
+      </KeyboardAvoidingView>
+        <Navbar/>
+    </>
   )
 }

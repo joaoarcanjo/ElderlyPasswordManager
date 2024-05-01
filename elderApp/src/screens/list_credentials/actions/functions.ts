@@ -142,7 +142,6 @@ export interface CaregiverPermission {
     const caregivers = await getCaregivers(userId)
     const readCaregivers = await getCaregiversArray(userId, 'readCaregivers')
     const writeCaregivers = await getCaregiversArray(userId, 'writeCaregivers')
-  
     let caregiversPermissions: CaregiverPermission[] = []
     caregivers.forEach(async (caregiver) => {
       if(caregiver.requestStatus === CaregiverRequestStatus.ACCEPTED 

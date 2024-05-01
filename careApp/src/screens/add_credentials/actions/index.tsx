@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TouchableOpacity, View, Text, Image } from "react-native";
+import { TouchableOpacity, View, Text, Image, Keyboard } from "react-native";
 import { cardLabel, loginLabel, pageAddCredentialTitle } from "../../../assets/constants";
 import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
 import MainBox from "../../../components/MainBox";
@@ -16,7 +16,7 @@ function Input({ ownerId, auxKey, isElderlyCredential }: Readonly<{ownerId: stri
         <View style={{width: '100%'}}>
             <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: '5%', marginHorizontal: '10%'}}>
                 <TouchableOpacity style={[stylesButtons.mainConfig, stylesButtons.acceptButton, {flex: 0.25}]} onPress={() => setOption(false)}>
-                    <Text style={{color: 'white', fontWeight: 'bold', fontSize: 20, margin: '5%'}}>{loginLabel}</Text>
+                    <Text style={{color: 'white', fontWeight: 'bold', fontSize: 19, margin: '5%'}}>{loginLabel}</Text>
                 </TouchableOpacity>
                 <View style={{flex: 0.5}}>
                 {option ? 
@@ -28,7 +28,7 @@ function Input({ ownerId, auxKey, isElderlyCredential }: Readonly<{ownerId: stri
                     </View>}  
                 </View>
                 <TouchableOpacity style={[stylesButtons.mainConfig, stylesButtons.acceptButton, {flex: 0.25}]} onPress={() => setOption(true)}>
-                    <Text style={{color: 'white', fontWeight: 'bold', fontSize: 20, margin: '5%'}}>{cardLabel}</Text>
+                    <Text style={{color: 'white', fontWeight: 'bold', fontSize: 19, margin: '5%'}}>{cardLabel}</Text>
                 </TouchableOpacity>
             </View>
             {option ? <CredentialsCardInput auxKey={auxKey} ownerId={ownerId} isElderlyCredential={isElderlyCredential}/> : <CredentialsLoginInput auxKey={auxKey} ownerId={ownerId} isElderlyCredential={isElderlyCredential} />}

@@ -29,7 +29,7 @@ const CaregiversList = React.memo(function CaregiversList() {
     })
   }, [caregiverListUpdated])
 
-  useEffect(() => {setCaregiverListUpdated(userId)}, [])
+  useEffect(() => {refreshValue()}, [])
 
   return (
     <View style = {{ flex: 0.85, flexDirection: 'row', marginTop: '1%', justifyContent: 'space-around'}}>
@@ -44,7 +44,7 @@ const CaregiversList = React.memo(function CaregiversList() {
               phone={item.caregiver.phoneNumber} 
               email={item.caregiver.email} 
               setRefresh={refreshValue} 
-              canWrite={false} 
+              canWrite={item.canWrite} 
               status={item.caregiver.requestStatus}
             />
           )

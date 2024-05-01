@@ -202,7 +202,7 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
                   editable={!editFlag} 
                   value={editFlag ? password : passwordEdited}
                   secureTextEntry={!(!showPassword || !editFlag)}
-                  style={[{ flex: 1, fontSize: 17}]}
+                  style={[{ flex: 1, fontSize: 17, color: 'black'}]}
                   onChangeText={text => editFlag ? setPassword(text): setPasswordEdited(text)}
                 />
                 <AvaliationEmoji avaliation={avaliation}/>

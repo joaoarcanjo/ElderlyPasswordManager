@@ -105,9 +105,6 @@ const elderlyName = StyleSheet.create({
         borderColor: greyBorder, // Cor do contorno
         backgroundColor: greyBackgroud,
         width: '100%',
-    },
-    text: {
-        fontSize: 30,
     }
 })
 

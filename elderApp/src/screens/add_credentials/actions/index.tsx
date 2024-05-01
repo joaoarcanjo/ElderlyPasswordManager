@@ -16,7 +16,7 @@ function Input() {
         <View style={{width: '100%'}}>
             <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: '5%', marginHorizontal: '10%'}}>
                 <TouchableOpacity style={[stylesButtons.mainConfig, stylesButtons.acceptButton, {flex: 0.25}]} onPress={() => setOption(false)}>
-                    <Text style={{color: 'white', fontWeight: 'bold', fontSize: 20, margin: '5%'}}>{loginLabel}</Text>
+                    <Text style={{color: 'white', fontWeight: 'bold', fontSize: 19, margin: '5%'}}>{loginLabel}</Text>
                 </TouchableOpacity>
                 <View style={{flex: 0.5}}>
                 {option ? 
@@ -28,7 +28,7 @@ function Input() {
                     </View>}  
                 </View>
                 <TouchableOpacity style={[stylesButtons.mainConfig, stylesButtons.acceptButton, {flex: 0.25}]} onPress={() => setOption(true)}>
-                    <Text style={{color: 'white', fontWeight: 'bold', fontSize: 20, margin: '5%'}}>{cardLabel}</Text>
+                    <Text style={{color: 'white', fontWeight: 'bold', fontSize: 19, margin: '5%'}}>{cardLabel}</Text>
                 </TouchableOpacity>
             </View>
             {option ? <CredentialsCardInput/> : <CredentialsLoginInput />}

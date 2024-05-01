@@ -176,7 +176,7 @@ export const checkNumberOfCaregivers = async (userId: string): Promise<number> =
 }
 
 /**
- * Checks if a caregiver with the given email is not accepted for the specified user.
+ * Checks if the elderly is waiting for the caregiver to accept the request.
  * @param userId - The ID of the user.
  * @param email - The email of the caregiver.
  * @returns A Promise that resolves to a boolean indicating whether the caregiver is not accepted.

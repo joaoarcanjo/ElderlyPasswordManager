@@ -1,5 +1,5 @@
 //export const ipAddress = "192.168.106.97";
-export const ipAddress = "192.168.1.68";
+export const ipAddress = "192.168.234.97";
 export const port = "442";
 export const apiPort = "443";
 
@@ -112,7 +112,7 @@ export const durationQuickMessage = 6000
 export const durationSlowMessage = 10000
 
 //Caregivers:
-export const maxCaregiversCount = 1
+export const maxCaregiversCount = 2
 
 //Firestore:
 export const elderlyCollectionName = 'Elderly'
@@ -123,6 +123,10 @@ export const keyCollectionName = 'Key'
 export const keyDocumentName = 'Value'
 export const caregiversCollectionName = 'Caregivers'
 export const caregiversDocumentName = 'Value'
+
+//MainBox:
+export const fontSizeMainBox = 40
+export const fontSizeMainBoxKeyboard = 19
 
 //Credentials:
 export const credentialTimoutRefresh = 1000 * 60 * 5 // 5 minutes

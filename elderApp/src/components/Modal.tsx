@@ -1,6 +1,6 @@
 import { BlurView } from "expo-blur";
 import React, { ReactNode, useState } from "react";
-import { View, StyleSheet, Modal, TouchableOpacity, Text, ScrollView } from 'react-native'
+import { View, StyleSheet, Modal, TouchableOpacity, Text, ScrollView, Image } from 'react-native'
 import { stylesButtons } from "../assets/styles/main_style"
 import { modal, options } from "../screens/credential_interface/styles/styles"
 import { Spinner } from "./LoadingComponents"

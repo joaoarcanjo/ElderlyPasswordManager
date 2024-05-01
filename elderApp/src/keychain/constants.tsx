@@ -1,6 +1,7 @@
 export const elderlyId = 'userId'
 export const elderlyEmail = 'userEmail'
 export const elderlyPwd = 'userPwd'
+export const serverIP = 'serverIP'
 
 export const elderlyPhone = (elderlyId: string) => `${elderlyId}-userPhone`
 export const elderlyName = (elderlyId: string) => `${elderlyId}-userName`

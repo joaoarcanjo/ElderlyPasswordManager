@@ -109,7 +109,6 @@ export default function CredentialsCardInput() {
                             <TextInput
                             placeholder={placeholderVerificationCode}
                             value={verificationCode}
-                            keyboardType='numeric'
                             style={{ flex: 1, fontSize: 22, padding: '2%', marginHorizontal: '1%'}}
                             secureTextEntry={showSecurityCode}
                             onChangeText={text => setVerificationCode(text)}

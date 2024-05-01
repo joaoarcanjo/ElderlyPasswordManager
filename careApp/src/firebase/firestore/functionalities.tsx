@@ -178,4 +178,22 @@ export async function initFirestore(userId: string): Promise<boolean> {
     });
 }
 
-export { deleteCredential, getKey, addCredencialToFirestore, updateCredentialFromFirestore }
+async function getServerIP(): Promise<string> {
+    const serverDocRef = firestore
+        .collection("Server")
+        .doc("server")
+    
+    return serverDocRef.get().then((doc) => {
+        if (doc.exists) {
+            const serverData = doc.data()
+            if (serverData) return serverData.ip
+        }
+        return "";
+    }).catch((error) => {
+        alert('Erro ao obter o IP do servidor, tente novamente!');
+        //console.error('Error: ', error);
+        return ""
+    })
+}
+
+export { getServerIP, deleteCredential, getKey, addCredencialToFirestore, updateCredentialFromFirestore }
