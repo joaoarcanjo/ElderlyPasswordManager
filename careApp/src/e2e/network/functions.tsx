@@ -32,6 +32,7 @@ export function initializeSignalWebsocket(uri: string): Subscription {
             }
         },
         error: (err) => {
+            console.log(err)
            console.log(`#1 signal websocket error`, Errors.ERROR_SERVER_INTERNAL_ERROR)
         },
         complete: () => {

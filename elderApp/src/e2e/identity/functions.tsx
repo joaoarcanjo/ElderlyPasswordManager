@@ -21,7 +21,7 @@ export async function createIdentity(userId: string, username: string): Promise<
     console.log("userId: ", userId)
 
     const ipAddress = await getServerIP()
-    const url = `http://${ipAddress}:${port}`
+    const url = `ws://${ipAddress}:${port}`
     
     //Inicia a ligação ao servidor 
     initializeSignalWebsocket(url)

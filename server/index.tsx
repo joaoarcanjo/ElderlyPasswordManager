@@ -1,7 +1,6 @@
 // server.js
-const { getFirestore, collection, getDocs, updateDoc, doc } = require('@firebase/firestore');
-const { initializeApp } = require('firebase/app');
-
+const { getFirestore, collection, getDocs, updateDoc, doc } = require('@firebase/firestore')
+const { initializeApp } = require('firebase/app')
 
 const firebaseConfig = {
     apiKey: "AIzaSyCYjuZeshrZpZFLicjTag0YFjPAn2G6pYM",
@@ -13,8 +12,8 @@ const firebaseConfig = {
     measurementId: "G-8QT7EZ5WM2"
 }
 
-const appFirebase = initializeApp(firebaseConfig);
-const db = getFirestore(appFirebase);
+const appFirebase = initializeApp(firebaseConfig)
+const db = getFirestore(appFirebase)
 
 const { Subject } = require('rxjs')
 const webSocket = require('ws')
@@ -23,24 +22,23 @@ const fs = require("fs")
 const app = express()
 const PORT = 443;
 const cors = require("cors")
-const url = "http://192.168.1.68:443"
 const https = false
 
 const tweetnacl = require('tweetnacl')
 const tweetnaclUtil = require('tweetnacl-util')
 
 app.use(express.urlencoded({ extended: true }))
-app.use(express.json());
-app.use(cors());
+app.use(express.json())
+app.use(cors())
 
-let ip = require("ip");
+let ip = require("ip")
 
 // Create a WebSocket server instance
 const wss = new webSocket.Server({ port: 442 })
 
 const options = {
-    key: fs.readFileSync('./certificates/file.pem'),
-    cert: fs.readFileSync('./certificates/file.crt')
+    key: fs.readFileSync('./certificates/example.com+5-key.pem'),
+    cert: fs.readFileSync('./certificates/example.com+5.pem')
 };
 
 
@@ -138,6 +136,8 @@ wss.on('connection', function connection(ws) {
     })
 })
 
+app.set("wss", wss)
+
 app.get("/isAlive", (req, res) => {
     res.send("Hello World!")
 });
@@ -222,7 +222,7 @@ app.get("/getBundle/:username", (req, res) => {
 })
 
 http.listen(PORT, async () => {
-    console.log ( ip.address());
+    console.log (ip.address())
     //db.collection("server").doc("server").set({ip: ip.address()})
     
     await updateDoc(await doc(db, 'Server', 'server'), { ip: ip.address() });

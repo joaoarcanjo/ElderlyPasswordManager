@@ -1,7 +1,5 @@
-//export const ipAddress = "192.168.106.97";
-export const ipAddress = "192.168.234.97";
-export const port = "442";
-export const apiPort = "443";
+export const port = "442"
+export const apiPort = "443"
 
 export const gitHubUrl = 'https://github.com/joaoarcanjo/ThesisApps'
 

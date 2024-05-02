@@ -101,7 +101,8 @@ export class SignalDirectory {
         .then((res) => {
             return res.json()
         })
-        .catch((_error) => {
+        .catch((error) => {
+            console.log("Erro: "+error)
             alert(Errors.ERROR_SERVER_INTERNAL_ERROR)
         })
     }
