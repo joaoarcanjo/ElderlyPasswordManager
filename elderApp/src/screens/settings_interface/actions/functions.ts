@@ -1,3 +1,4 @@
+import { emptyValue } from "../../../assets/constants/constants";
 import { getCaregivers } from "../../../database/caregivers";
 import { encryptAndSendMessage } from "../../../e2e/messages/sendMessage";
 import { ChatMessageType, ElderlyDataBody } from "../../../e2e/messages/types";
@@ -16,11 +17,11 @@ export async function sendCaregiversNewInfo(userId: string, username: string, us
 
         const data: ElderlyDataBody = {
             userId: userId,
-            key: '',
+            key: emptyValue,
             name: username,
             email: userEmail,
             phone: userPhone,
-            photo: ''
+            photo: emptyValue
         }
         
         await encryptAndSendMessage(caregiver.email, JSON.stringify(data), false, ChatMessageType.PERSONAL_DATA) 

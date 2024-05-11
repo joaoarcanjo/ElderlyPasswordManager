@@ -1,13 +1,11 @@
 export interface WebSocketMessage {
-    action: 'sendMessage' | 'subscribe' | 'recent' | 'hey' | 'acknowledge' | 'sendBundle'
+    action: 'sendMessage' | 'subscribe' | 'recent' | 'sendBundle'
 }
 
 export enum WebSocketMessageType {
     SEND_MESSAGE = 'sendMessage',
     SUBSCRIBE = 'subscribe',
     RECENT = 'recent',
-    HEY = 'hey',
-    ACKNOWLEDGE = 'acknowledge',
 }
 
 export interface SendWebSocketMessage extends WebSocketMessage {
@@ -24,13 +22,6 @@ export interface SendBundleMessage extends WebSocketMessage {
     message: any
 }
 
-export interface SendAcknowledgeMessage extends WebSocketMessage {
-    action: 'acknowledge'
-    address: string
-    from: string
-    messageId: string
-}
-
 export interface SubscribeWebSocketMessage extends WebSocketMessage {
     action: 'subscribe'
     username: string
@@ -41,17 +32,8 @@ export interface RequestRecentWebsocketMessage extends WebSocketMessage {
     address: string
 }
 
-export interface HeyTestMessage extends WebSocketMessage {
-    action: 'hey'
-    message: string
-}
-
 export function isSendWebSocketMessage(wsm: WebSocketMessage): wsm is SendWebSocketMessage {
     return (wsm.action === 'sendMessage' && 'message' in wsm)
-}
-
-export function isAcknowledgeMessage(wsm: WebSocketMessage): wsm is SendWebSocketMessage {
-    return ( wsm.action === 'acknowledge')
 }
 
 export interface NetworkParams {

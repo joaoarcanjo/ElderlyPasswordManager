@@ -2,15 +2,15 @@ import React,{ useEffect, useState } from 'react'
 import {View, Text, TouchableOpacity, ScrollView } from 'react-native'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import { styleScroolView } from '../styles/styles'
-import formatTimestamp from '../../../algorithms/0thers/time';
+import formatTimestamp from '../../../components/time';
 import  { Navbar } from "../../../navigation/actions";
 import { getGeneratedPasswords } from '../../../database/passwords'
 import { Password } from '../../../database/types';
 import MainBox from '../../../components/MainBox';
 import { useSessionInfo } from '../../../firebase/authentication/session';
-import { FlashMessage, copyPasswordDescription } from '../../../components/userMessages/messages';
-import { copyValue } from '../../../components/userMessages/UserMessages';
-import { pageTitleHistory } from '../../../assets/constants';
+import { FlashMessage, copyPasswordDescription } from '../../../assets/constants/messages';
+import { copyValue } from '../../../components/UserMessages';
+import { pageTitleHistory } from '../../../assets/constants/constants';
 
 export default function PasswordHistory() {
 

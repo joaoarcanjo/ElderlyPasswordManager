@@ -10,7 +10,7 @@ import { useSessionInfo } from "../../../firebase/authentication/session"
 import { currentSessionSubject, sessionForRemoteUser } from "../../../e2e/session/state"
 import { startSession } from "../../../e2e/session/functions"
 import { CaregiverRequestStatus } from "../../../database/types"
-import { acceptLabel, cancelLabel, refuseLabel, unlinkLabel } from "../../../assets/constants"
+import { acceptLabel, cancelLabel, closeLabel, emptyValue, refuseLabel, unlinkLabel, writeCaregivers } from "../../../assets/constants/constants"
 import { cancelWaitingCaregiver } from "../../../e2e/messages/functions"
 import { encryptAndSendMessage } from "../../../e2e/messages/sendMessage"
 import { setCaregiverListUpdated } from "./state"
@@ -124,7 +124,7 @@ export function Caregiver({name, phone, email, caregiverId, setRefresh, canWrite
   }
 
   const writeFunction = async () => {
-    const result = !writePermission ? await addCaregiverToArray(userId, caregiverId, 'writeCaregivers') : await removeCaregiverFromArray(userId, caregiverId, 'writeCaregivers')
+    const result = !writePermission ? await addCaregiverToArray(userId, caregiverId, writeCaregivers) : await removeCaregiverFromArray(userId, caregiverId, writeCaregivers)
     if (result) {
       setWritePermission(!writePermission)
 
@@ -133,7 +133,7 @@ export function Caregiver({name, phone, email, caregiverId, setRefresh, canWrite
           const session = sessionForRemoteUser(email)
           currentSessionSubject.next(session ?? null)
       }
-      await encryptAndSendMessage(email, '', false, ChatMessageType.PERMISSION_DATA) 
+      await encryptAndSendMessage(email, emptyValue, false, ChatMessageType.PERMISSION_DATA) 
       await setCaregiverListUpdated(userId)
     }
   }
@@ -151,11 +151,11 @@ export function Caregiver({name, phone, email, caregiverId, setRefresh, canWrite
       </View>
       <View style={{flex: 1}}>
         <View style={{ borderBottomColor: 'black', borderBottomWidth: StyleSheet.hairlineWidth, margin: '3%' }}/>
-        <TouchableOpacity style={[{ flex: 0.33, marginTop:'2%', flexDirection: 'row', marginHorizontal: '4%'}, caregiverContactInfo.accountInfo, stylesButtons.mainConfig]} onPress={() => Linking.openURL(`tel:${966666666}`) }>
+        <TouchableOpacity style={[{ flex: 0.33, marginTop:'2%', flexDirection: 'row', marginHorizontal: '4%'}, caregiverContactInfo.accountInfo, stylesButtons.mainConfig]} onPress={() => Linking.openURL(`tel:${phone}`) }>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.8, marginLeft: '7%'}, caregiverContactInfo.accountInfoText]}>{phone}</Text>
           <Image source={require(telephoneImage)} style={[{flex: 0.2, height: '80%', marginRight: '5%', resizeMode: 'contain'}]}/>
         </TouchableOpacity>
-        <TouchableOpacity style={[{ flex: 0.33, marginTop:'2%', flexDirection: 'row', marginHorizontal: '4%'}, caregiverContactInfo.accountInfo, stylesButtons.mainConfig]}  onPress={() => Linking.openURL('mailto:support@example.com')}>
+        <TouchableOpacity style={[{ flex: 0.33, marginTop:'2%', flexDirection: 'row', marginHorizontal: '4%'}, caregiverContactInfo.accountInfo, stylesButtons.mainConfig]}  onPress={() => Linking.openURL(`mailto:${email}`)}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.8, marginLeft: '7%'}, caregiverContactInfo.accountInfoText]}>{email}</Text>
           <Image source={require(emailImage)} style={[{flex: 0.2, height: '80%', marginRight: '5%', resizeMode: 'contain'}]}/>
         </TouchableOpacity>

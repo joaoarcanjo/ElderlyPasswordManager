@@ -9,16 +9,16 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import MainBox from '../../../components/MainBox'
 import { Spinner } from '../../../components/LoadingComponents'
 import { useSessionInfo } from '../../../firebase/authentication/session'
-import { deriveSecret } from '../../../algorithms/sss/sss'
 import { getKeychainValueFor } from '../../../keychain'
 import { elderlySSSKey } from '../../../keychain/constants'
-import { addCredentialsLabel, pageTitleCredentials, searchLabel } from '../../../assets/constants'
+import { addCredentialsLabel, emptyValue, pageTitleCredentials, searchLabel } from '../../../assets/constants/constants'
 import { MaterialIcons } from '@expo/vector-icons'
 import { whiteBackgroud } from '../../../assets/styles/colors'
 import { CredentialType } from './types'
 import { elderlyName } from '../../list_elderly/styles/styles'
 import { credentialsListUpdated } from './state'
 import { ScrollItem } from './credentialItem'
+import { deriveSecret } from '../../../algorithms/shamirSecretSharing/sss'
 
 function AddCredencial({ elderlyId }: Readonly<{elderlyId: string}>) {
 
@@ -52,8 +52,8 @@ function ElderlyCredentialsList({ elderlyId }: Readonly<{elderlyId: string}>) {
   const [credencials, setCredencials] = useState<CredentialType[]>([])
   const isFocused = useIsFocused()
   const [isFething, setIsFething] = useState(true)
-  const [searchValue, setSearchValue] = useState('')
-  const [searchType, setSearchType] = useState('')
+  const [searchValue, setSearchValue] = useState(emptyValue)
+  const [searchType, setSearchType] = useState(emptyValue)
 
   const fetchCredencials = async () => {
     setIsFething(true)
@@ -68,7 +68,7 @@ function ElderlyCredentialsList({ elderlyId }: Readonly<{elderlyId: string}>) {
             auxCredencials.push({id: value.id, data: value.data})
           } else if (value.data.type === 'card' && searchType === 'card') {
             auxCredencials.push({id: value.id, data: value.data})
-          } else if (searchType === '') {
+          } else if (searchType === emptyValue) {
             auxCredencials.push({id: value.id, data: value.data})
           }
         }
@@ -97,11 +97,11 @@ function ElderlyCredentialsList({ elderlyId }: Readonly<{elderlyId: string}>) {
             </TouchableOpacity>
           }
           {searchType === 'card' &&
-            <TouchableOpacity style={[{flex: 0.2, marginLeft: '2%', marginVertical: '2%'}, stylesButtons.purpleButton, stylesButtons.mainConfig]} onPress={() => setSearchType('')}>
+            <TouchableOpacity style={[{flex: 0.2, marginLeft: '2%', marginVertical: '2%'}, stylesButtons.purpleButton, stylesButtons.mainConfig]} onPress={() => setSearchType(emptyValue)}>
               <MaterialIcons style={{marginHorizontal: '1%'}} name={'credit-card'} size={40} color="black"/> 
             </TouchableOpacity>
           }
-          {searchType === '' &&
+          {searchType === emptyValue &&
             <TouchableOpacity style={[{flex: 0.2, marginLeft: '2%', marginVertical: '2%'}, stylesButtons.greyButton, stylesButtons.mainConfig]} onPress={() => setSearchType('login')}>
               <MaterialIcons style={{marginHorizontal: '1%'}} name={'all-inclusive'} size={40} color="black"/> 
             </TouchableOpacity>

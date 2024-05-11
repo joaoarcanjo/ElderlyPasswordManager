@@ -6,6 +6,7 @@ import { sendSignalProtocolMessage } from "../messages/functions"
 import { stringToArrayBuffer } from "../signal/signal-store"
 import { ChatMessageType, ProcessedChatMessage } from "../messages/types"
 import { randomUUID } from 'expo-crypto'
+import { createDirectory } from "../identity/functions"
 
 /**
  * Para começar uma conversa com um destinatário.
@@ -14,7 +15,11 @@ import { randomUUID } from 'expo-crypto'
  */
 export async function startSession(recipient: string): Promise<void> {
     console.log("--> Start session!")
-    const directory = directorySubject.value!
+    let directory = directorySubject.value!
+    if(directory === null) {
+        directory = await createDirectory()
+    }
+    console.log("- Directory: ", directory)
     const keyBundle = await directory.getPreKeyBundle(recipient)
     const recipientAddress = new SignalProtocolAddress(recipient, 1)
     // Instantiate a SessionBuilder for a remote recipientId + deviceId tuple.

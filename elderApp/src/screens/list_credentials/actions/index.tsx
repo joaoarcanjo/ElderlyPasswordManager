@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {View, Text, TouchableOpacity, ScrollView, Linking, TextInput, KeyboardAvoidingView, Platform} from 'react-native'
+import {View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform} from 'react-native'
 import { stylesAddCredential, styleScroolView } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import  { Navbar } from "../../../navigation/actions";
@@ -10,7 +10,7 @@ import { Spinner } from '../../../components/LoadingComponents'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { credentialsListUpdated } from './state'
 import { getAllCredentialsAndValidate, getAllLocalCredentialsFormatted, getAllLocalCredentialsFormattedWithFilter } from './functions'
-import { addCredentialsLabel, pageAddCredential, pageTitleCredentials, searchLabel } from '../../../assets/constants'
+import { addCredentialsLabel, emptyValue, pageAddCredential, pageTitleCredentials, searchLabel } from '../../../assets/constants/constants'
 import { whiteBackgroud } from '../../../assets/styles/colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import { CredentialType } from './types';
@@ -36,8 +36,8 @@ function CredentialsList() {
   const { userId, localDBKey } = useSessionInfo()
 
   const [isFething, setIsFething] = useState(true)
-  const [searchValue, setSearchValue] = useState('')
-  const [searchType, setSearchType] = useState('')
+  const [searchValue, setSearchValue] = useState(emptyValue)
+  const [searchType, setSearchType] = useState(emptyValue)
 
   useEffect(() => {
     setIsFething(true)
@@ -65,7 +65,7 @@ function CredentialsList() {
             auxCredencials.push({id: value.id, data: value.data})
           } else if (value.data.type === 'card' && searchType === 'card') {
             auxCredencials.push({id: value.id, data: value.data})
-          } else if (searchType === '') {
+          } else if (searchType === emptyValue) {
             auxCredencials.push({id: value.id, data: value.data})
           }
         }
@@ -82,20 +82,20 @@ function CredentialsList() {
       <View style={[{ flex: 1, marginTop:'5%', marginHorizontal: '4%', justifyContent: 'space-around'}, styleScroolView.credencialsContainer]}>
         <View style={{flexDirection: 'row'}}>
           {searchType === 'login' &&
-              <TouchableOpacity style={[{flex: 0.2, marginLeft: '2%', marginVertical: '2%'}, stylesButtons.orangeButton, stylesButtons.mainSlimConfig]} onPress={() => setSearchType('card')}>
-                <MaterialIcons style={{marginHorizontal: '1%'}} name={'person'} size={40} color="black"/> 
-              </TouchableOpacity>
-            }
-            {searchType === 'card' &&
-              <TouchableOpacity style={[{flex: 0.2, marginLeft: '2%', marginVertical: '2%'}, stylesButtons.purpleButton, stylesButtons.mainSlimConfig]} onPress={() => setSearchType('')}>
-                <MaterialIcons style={{marginHorizontal: '1%'}} name={'credit-card'} size={40} color="black"/> 
-              </TouchableOpacity>
-            }
-            {searchType === '' &&
-              <TouchableOpacity style={[{flex: 0.2, marginLeft: '2%', marginVertical: '2%'}, stylesButtons.greyButton, stylesButtons.mainSlimConfig]} onPress={() => setSearchType('login')}>
-                <MaterialIcons style={{marginHorizontal: '1%'}} name={'all-inclusive'} size={40} color="black"/> 
-              </TouchableOpacity>
-            }       
+            <TouchableOpacity style={[{flex: 0.2, marginLeft: '2%', marginVertical: '2%'}, stylesButtons.orangeButton, stylesButtons.mainSlimConfig]} onPress={() => setSearchType('card')}>
+              <MaterialIcons style={{marginHorizontal: '1%'}} name={'person'} size={40} color="black"/> 
+            </TouchableOpacity>
+          }
+          {searchType === 'card' &&
+            <TouchableOpacity style={[{flex: 0.2, marginLeft: '2%', marginVertical: '2%'}, stylesButtons.purpleButton, stylesButtons.mainSlimConfig]} onPress={() => setSearchType(emptyValue)}>
+              <MaterialIcons style={{marginHorizontal: '1%'}} name={'credit-card'} size={40} color="black"/> 
+            </TouchableOpacity>
+          }
+          {searchType === emptyValue &&
+            <TouchableOpacity style={[{flex: 0.2, marginLeft: '2%', marginVertical: '2%'}, stylesButtons.greyButton, stylesButtons.mainSlimConfig]} onPress={() => setSearchType('login')}>
+              <MaterialIcons style={{marginHorizontal: '1%'}} name={'all-inclusive'} size={40} color="black"/> 
+            </TouchableOpacity>
+          }       
           <View style={[{flex: 1, margin: '2%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 1, backgroundColor: whiteBackgroud }]}>
             <TextInput
             placeholder={searchLabel}

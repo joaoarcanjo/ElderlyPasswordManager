@@ -47,3 +47,8 @@ export interface CredentialBody {
     credentialId: string,
     platform: string,
 }
+
+export enum ChatMessageDescription {
+    CANCEL_SESSION = 'cancelSession',
+    REJECT_SESSION = 'rejectSession',
+}

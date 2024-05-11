@@ -4,7 +4,7 @@ import { View, StyleSheet, Modal, TouchableOpacity, Text, ScrollView, Image } fr
 import { stylesButtons } from "../assets/styles/main_style"
 import { modal, options } from "../screens/credential_interface/styles/styles"
 import { Spinner } from "./LoadingComponents"
-import { upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, modalIntensity, cancelLabel, copyCardNumberLabel, copyPasswordLabel, copySecurityCodeLabel, copyUsernameLabel, copyVerificationCodeLabel, navigateLabel, otherLabel } from "../assets/constants";
+import { upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, modalIntensity, copyCardNumberLabel, copyPasswordLabel, copySecurityCodeLabel, copyUsernameLabel, copyVerificationCodeLabel, navigateLabel, otherLabel, closeLabel, saveLabel } from "../assets/constants/constants";
 import { updateUpperCase, updateLowerCase, updateNumbers, updateSpecial } from "./passwordGenerator/functions";
 import { Requirement, RequirementLength } from "./passwordGenerator/Requirement";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -76,10 +76,10 @@ export function PasswordOptionsModal({saveFunction, closeFunction, visibleFlag}:
         <View style={{ borderBottomColor: 'black', borderWidth: StyleSheet.hairlineWidth, marginVertical: '5%' }}/>
         <View style={{flexDirection: 'row'}}>
           <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.greenButton]} onPress={saveRequirements}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Guardar</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{saveLabel}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={() => closeFunction()}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Fechar</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{closeLabel}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -108,7 +108,7 @@ export function CredentialLoginOptionsModal({copyUsername, copyPassword, navigat
       <View style={{ borderBottomColor: 'black', borderWidth: StyleSheet.hairlineWidth, marginVertical: '5%' }}/>
       <View style={{flexDirection: 'row'}}>
         <TouchableOpacity style={[{flex: 1, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.cancelButton]} onPress={() => closeFunction()}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>{cancelLabel}</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>{closeLabel}</Text>
         </TouchableOpacity>
       </View>
     </ModalBox>
@@ -136,7 +136,7 @@ export function CredentialCardOptionsModal({copyCardNumber, copySecurityCode, co
       <View style={{ borderBottomColor: 'black', borderWidth: StyleSheet.hairlineWidth, marginVertical: '5%' }}/>
       <View style={{flexDirection: 'row'}}>
         <TouchableOpacity style={[{flex: 1, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.cancelButton]} onPress={() => closeFunction()}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>{cancelLabel}</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>{closeLabel}</Text>
         </TouchableOpacity>
       </View>
     </ModalBox>
@@ -147,7 +147,7 @@ export function PlatformSelectionModal({setPlatformName, setPlatformURI, closeFu
 
   interface Platform { platformName: any, platformURI: any, materialCommunityIcon: any, iconColor: any }
 
-  const jsonData = require('../assets/platforms.json')
+  const jsonData = require('../assets/json/platforms.json')
 
   const applySelection = (platform: Platform) => {
     setPlatformName(platform.platformName)

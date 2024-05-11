@@ -4,7 +4,7 @@ import { stylesButtons } from "../../../assets/styles/main_style";
 import  { Navbar } from "../../../navigation/actions";
 import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
 import MainBox from "../../../components/MainBox";
-import { cardLabel, loginLabel, pageAddCredentialTitle } from "../../../assets/constants";
+import { cardLabel, loginLabel, pageAddCredentialTitle } from "../../../assets/constants/constants";
 import CredentialsLoginInput from "./credentialLoginInput";
 import CredentialsCardInput from "./credentialCardInput";
 

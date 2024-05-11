@@ -26,6 +26,11 @@ export enum ChatMessageType {
     KEY_UPDATE
 }
 
+export enum ChatMessageDescription {
+    CANCEL_SESSION = 'cancelSession',
+    REJECT_SESSION = 'rejectSession',
+}
+
 export interface ElderlyDataBody {
     userId: string,
     key: string,

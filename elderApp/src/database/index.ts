@@ -1,84 +1,69 @@
-import * as SQLite from 'expo-sqlite'
-import { generateKey } from '../algorithms/0thers/crypto';
+import * as SQLite from 'expo-sqlite';
 import { getKeychainValueFor, saveKeychainValue } from '../keychain';
 import { localDBKey } from '../keychain/constants';
+import { generateKey } from '../algorithms/tweetNacl/crypto';
+import { emptyValue } from '../assets/constants/constants';
 
 export let dbSQL: SQLite.SQLiteDatabase | null = null;
 
 async function createLocalDBKey(userId: string) {
-  if(await getKeychainValueFor(localDBKey(userId)) == '') {
-    await saveKeychainValue(localDBKey(userId), generateKey()) 
-  }
-  return await getKeychainValueFor(localDBKey(userId))
+    console.log("===> createLocalDBKeyCalled")
+    if(await getKeychainValueFor(localDBKey(userId)) == emptyValue) {
+        await saveKeychainValue(localDBKey(userId), generateKey()) 
+    }
+    return await getKeychainValueFor(localDBKey(userId))
 }
 
 export async function initDb(userId: string) {
 
-    dbSQL = SQLite.openDatabase('elderly.db')
+    dbSQL = SQLite.openDatabaseSync('elderly.db')
+  
+/*
+    dbSQL.execAsync(`
+        DROP TABLE IF EXISTS passwords;
+        DROP TABLE IF EXISTS sessionsSignal;
+        DROP TABLE IF EXISTS credentials;
+    `)
+*/
+
+    dbSQL.execSync(`
+        CREATE TABLE IF NOT EXISTS passwords (
+            id TEXT PRIMARY KEY, 
+            userId TEXT, 
+            password TEXT, 
+            timestamp INTEGER
+        );
     
-    dbSQL.transaction(tx => {
-        /*tx.executeSql(
-            'DROP TABLE IF EXISTS caregivers;'
-        )
-        tx.executeSql(
-            'DROP TABLE IF EXISTS sessionsSignal;'
-        )
-        tx.executeSql(
-            'DROP TABLE IF EXISTS credentials;'
-        )*/
-    })
+        CREATE TABLE IF NOT EXISTS caregivers (
+            caregiverId TEXT, 
+            userId TEXT, 
+            name TEXT, 
+            email TEXT, 
+            phoneNumber TEXT, 
+            status INTEGER, 
+            PRIMARY KEY(userId, email, phoneNumber)
+        );
 
-    dbSQL.transaction(tx => {
-        //Esta tabela tem como intuito armazenar passwords geradas pelo gerador.
-        tx.executeSql(
-            `CREATE TABLE IF NOT EXISTS passwords (
-                id TEXT PRIMARY KEY, 
-                userId TEXT, 
-                password TEXT, 
-                timestamp INTEGER
-            );`
-        )
+        CREATE TABLE IF NOT EXISTS sessionsSignal (
+            id TEXT, userId TEXT, 
+            record TEXT, 
+            PRIMARY KEY (id, userId)
+        );
 
-        //Tabela para armazenar os dados dos cuidadores.
-        tx.executeSql(
-            `CREATE TABLE IF NOT EXISTS caregivers (
-                caregiverId TEXT, 
-                userId TEXT, 
-                name TEXT, 
-                email TEXT, 
-                phoneNumber TEXT, 
-                status INTEGER, 
-                PRIMARY KEY(userId, email, phoneNumber)
-            );`
-        )
+        CREATE TABLE IF NOT EXISTS credentials (
+            userId TEXT NOT NULL, 
+            credentialId TEXT NOT NULL, 
+            record TEXT NOT NULL, 
+            PRIMARY KEY (userId, credentialId)
+        );
 
-        //Tabela para armazenar as sessões com os outros utilizadores (protocolo signal)
-        tx.executeSql(
-            `CREATE TABLE IF NOT EXISTS sessionsSignal (
-                id TEXT, userId TEXT, 
-                record TEXT, 
-                PRIMARY KEY (id, userId)
-            );`
-        )
-
-        tx.executeSql(
-            `CREATE TABLE IF NOT EXISTS credentials (
-                userId TEXT NOT NULL, 
-                credentialId TEXT NOT NULL, 
-                record TEXT NOT NULL, 
-                PRIMARY KEY (userId, credentialId)
-            );`
-        )
-        
-        tx.executeSql(
-            `CREATE TABLE IF NOT EXISTS timeout (
-                userId TEXT NOT NULL,
-                timestamp INTEGER NOT NULL,
-                type INTEGER NOT NULL,
-                PRIMARY KEY (userId, type)
-            );`
-        )
-    })
+        CREATE TABLE IF NOT EXISTS timeout (
+            userId TEXT NOT NULL,
+            timestamp INTEGER NOT NULL,
+            type INTEGER NOT NULL,
+            PRIMARY KEY (userId, type)
+        );
+    `)
 
     return await createLocalDBKey(userId)
 }

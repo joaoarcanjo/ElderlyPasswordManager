@@ -10,7 +10,7 @@ import { useSessionInfo } from "../../../firebase/authentication/session";
 import { ElderlyRequestStatus } from "../../../database/types";
 import { getKeychainValueFor } from "../../../keychain";
 import { elderlySSSKey } from "../../../keychain/constants";
-import { acceptLabel, cancelLabel, credentialsLabel, pageElderlyCredentials, refuseLabel, unlinkLabel } from "../../../assets/constants";
+import { acceptLabel, cancelLabel, credentialsLabel, emptyValue, pageElderlyCredentials, refuseLabel, unlinkLabel } from "../../../assets/constants/constants";
 
 const caregiverImage = '../../../assets/images/elderly.png'
 const telephoneImage = '../../../assets/images/telephone.png'
@@ -101,7 +101,7 @@ export function Elderly({ elderlyId, name, phone, email, setRefresh }: Readonly<
   const navigateToElderlyCredentials = async () => {
     const sssKey = await getKeychainValueFor(elderlySSSKey(elderlyId))
 
-    if(sssKey == '') {
+    if(sssKey == emptyValue) {
       alert('O Idoso foi informado que você aceitou a conexão, por favor aguarde.')
       return
     }

@@ -1,12 +1,12 @@
 import { KeyHelper, SignedPublicPreKeyType, PreKeyType, SignedPreKeyPairType, PreKeyPairType } from "@privacyresearch/libsignal-protocol-typescript";
 
+import { getServerIP } from "../../firebase/firestore/functionalities";
+import { port } from "../../assets/constants/constants";
+import { networkInfoSubject } from "../network/state";
+import { SignalDirectory } from "../signal/signal-directory";
+import { usernameSubject, directorySubject, signalStore } from "./state";
 import { initializeSignalWebsocket } from "../network/functions";
 import { subscribeWebsocket } from "../network/webSockets";
-import { SignalDirectory } from "../signal/signal-directory";
-import { directorySubject, usernameSubject, signalStore } from "./state";
-import { networkInfoSubject } from "../network/state";
-import { port } from "../../assets/constants";
-import { getServerIP } from "../../firebase/firestore/functionalities";
 
 /**
  * Vai criar a identidade no servidor
@@ -18,17 +18,13 @@ export async function createIdentity(userId: string, username: string): Promise<
         console.log("Username: ", username)
         console.log("userId: ", userId)
 
-        
-        const ipAddress = await getServerIP()
-        const url = `ws://${ipAddress}:${port}`
-        
+        const url = await getUrl()
         //Inicia a ligação ao servidor 
         initializeSignalWebsocket(url)
         //Subscreve o servidor 
         subscribeWebsocket(username)
+        const directory = await createDirectory()
 
-        const directory = new SignalDirectory(url)
-        directorySubject.next(directory)
         usernameSubject.next(username)
         networkInfoSubject.next({ wssURI: url })
 
@@ -127,7 +123,6 @@ export async function createIdentity(userId: string, username: string): Promise<
             publicKey: preKey.keyPair.pubKey,
         }
 
-        //TODO: Enviar o bundle para o servidor, mas com mais que uma oneTimePreKeys.
         await directory.storeKeyBundle(username, userId, {
             registrationId,
             identityKey: identityKeyPair.pubKey,
@@ -137,4 +132,15 @@ export async function createIdentity(userId: string, username: string): Promise<
     } catch (error) {
         throw error 
     }
+}
+
+export const createDirectory = async (): Promise<SignalDirectory> => {
+    const directory = new SignalDirectory(await getUrl())
+    directorySubject.next(directory)
+    return directory
+}
+
+export const getUrl = async () => {
+    const ipAddr = await getServerIP()
+    return `ws://${ipAddr}:${port}`
 }

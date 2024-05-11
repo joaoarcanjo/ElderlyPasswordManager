@@ -1,7 +1,7 @@
 import React, { useEffect } from "react"
 import { View, Text, Keyboard } from "react-native"
 import { stylesMainBox } from "../assets/styles/main_style"
-import { fontSizeMainBox, fontSizeMainBoxKeyboard } from "../assets/constants"
+import { fontSizeMainBox, fontSizeMainBoxKeyboard } from "../assets/constants/constants"
 
 const MainBox = ({text}: {text: string})  => {
 

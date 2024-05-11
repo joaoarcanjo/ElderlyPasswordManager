@@ -1,5 +1,6 @@
 
-import { getAllElderly } from "../../../database/elderlyFunctions";
+import { emptyValue } from "../../../assets/constants/constants";
+import { getAllElderly } from "../../../database/elderly";
 import { encryptAndSendMessage } from "../../../e2e/messages/functions";
 import { ChatMessageType, CaregiverDataBody } from "../../../e2e/messages/types";
 import { startSession } from "../../../e2e/session/functions";
@@ -20,7 +21,7 @@ export async function sendElderlyNewInfo(userId: string, username: string, userE
             name: username,
             email: userEmail,
             phone: userPhone,
-            photo: ''
+            photo: emptyValue
         }
         
         await encryptAndSendMessage(elderly.email, JSON.stringify(data), false, ChatMessageType.PERSONAL_DATA) 

@@ -1,6 +1,7 @@
 import {setItemAsync, getItemAsync, deleteItemAsync} from 'expo-secure-store';
 import { caregiverEmail, caregiverId, localDBKey } from './constants';
-import { generateKey } from '../algorithms/0thers/crypto';
+import { generateKey } from '../algorithms/tweetNacl/crypto';
+import { emptyValue } from '../assets/constants/constants';
 
 /*
  * Função para armazenar o valor key-value.
@@ -15,7 +16,7 @@ export async function saveKeychainValue(key: string, value: string) {
   }
   do {
     await setItemAsync(auxKey, value)
-  } while(value != '' && await getKeychainValueFor(auxKey) == '')
+  } while(value != emptyValue && await getKeychainValueFor(auxKey) == emptyValue)
 }
 
 /**
@@ -28,7 +29,7 @@ export async function getKeychainValueFor(key: string): Promise<string> {
   if(key.indexOf('@') > -1) {
     auxKey = key.replace('@', '_')
   }
-  return await getItemAsync(auxKey).then((result) => result ?? '')
+  return await getItemAsync(auxKey).then((result) => result ?? emptyValue)
 }
 
 /**
@@ -42,7 +43,6 @@ export async function deleteKeychainValueFor(key: string): Promise<void> {
  * Função para apagar todos os valores armazenados na keychain do dispositivo.
  * Apenas utilizado para debug, para limpar tudo.
  */
-//TODO: Fazer delete de todos os outros valores que vou adicionar à keychain
 export async function cleanKeychain(id: string) {
   await deleteItemAsync(caregiverId)
 }
@@ -62,7 +62,7 @@ export async function initKeychain(userId: string, userEmail: string): Promise<s
       await saveKeychainValue(caregiverEmail, userEmail)
     })
   }
-  if(await getKeychainValueFor(localDBKey(userId)) == '') {
+  if(await getKeychainValueFor(localDBKey(userId)) == emptyValue) {
     await saveKeychainValue(localDBKey(userId), generateKey()) 
   }
   return await getKeychainValueFor(localDBKey(userId))

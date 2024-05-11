@@ -1,4 +1,5 @@
-import { decrypt, encrypt } from "../../../algorithms/0thers/crypto";
+import { decrypt, encrypt } from "../../../algorithms/tweetNacl/crypto";
+import { emptyValue, readCaregivers, writeCaregivers } from "../../../assets/constants/constants";
 import { getCaregivers } from "../../../database/caregivers";
 import { CredentialLocalRecord, deleteCredentialFromLocalDB, getAllLocalCredentials, getCredential, insertCredentialToLocalDB, updateCredentialOnLocalDB } from "../../../database/credentials";
 import { Caregiver, CaregiverRequestStatus } from "../../../database/types";
@@ -26,9 +27,9 @@ export const getAllCredentialsAndValidate = async (userId: string, localDbKey: s
                     if (credentialCloud.id !== value.id) {
                         throw new ErrorInstance(Errors.ERROR_CREDENTIAL_INVALID_ID)
                     }
-                    if (credentialInfo === '') {
-                        if ((credentialCloud.type === 'login' && (credentialCloud.password === '' || credentialCloud.username === '' || credentialCloud.uri === '')) ||
-                            (credentialCloud.type === 'card' && (credentialCloud.cardNumber === '' || credentialCloud.ownerName === '' || credentialCloud.securityCode === ''))) {
+                    if (credentialInfo === emptyValue) {
+                        if ((credentialCloud.type === 'login' && (credentialCloud.password === emptyValue || credentialCloud.username === emptyValue || credentialCloud.uri === emptyValue)) ||
+                            (credentialCloud.type === 'card' && (credentialCloud.cardNumber === emptyValue || credentialCloud.ownerName === emptyValue || credentialCloud.securityCode === emptyValue))) {
                             await deleteCredentialFromLocalDB(userId, value.id)
                         } else {
                             await insertCredentialToLocalDB(userId, value.id, encrypt(JSON.stringify(credentialCloud), localDbKey))
@@ -62,8 +63,8 @@ export const getAllCredentialsAndValidate = async (userId: string, localDbKey: s
 
 const deleteCredentialIfNeeded = async (userId: string, credentialId: string, credentialCloud: any, credentialInfo: any, localDBKey: string) => {
     const credencialLocal = JSON.parse(decrypt(credentialInfo, localDBKey))
-    if ((credentialCloud.type === 'login' && credentialCloud.password === '' && credentialCloud.username === '' && credentialCloud.uri === '' && credentialCloud.edited.updatedAt > credencialLocal.edited.updatedAt) ||
-        (credentialCloud.type === 'card' && credentialCloud.cardNumber === '' && credentialCloud.ownerName === '' && credentialCloud.securityCode === '' && credentialCloud.edited.updatedAt > credencialLocal.edited.updatedAt)) {
+    if ((credentialCloud.type === 'login' && credentialCloud.password === emptyValue && credentialCloud.username === emptyValue && credentialCloud.uri === emptyValue && credentialCloud.edited.updatedAt > credencialLocal.edited.updatedAt) ||
+        (credentialCloud.type === 'card' && credentialCloud.cardNumber === emptyValue && credentialCloud.ownerName === emptyValue && credentialCloud.securityCode === emptyValue && credentialCloud.edited.updatedAt > credencialLocal.edited.updatedAt)) {
         await deleteCredentialFromLocalDB(userId, credentialId)
         await deleteCredentialFromFiretore(userId, credentialId)
         return undefined
@@ -140,16 +141,16 @@ export interface CaregiverPermission {
   export async function getCaregiversPermissions(userId: string): Promise<CaregiverPermission[]> {
     console.log('===> getCaregiversPermissionsCalled')
     const caregivers = await getCaregivers(userId)
-    const readCaregivers = await getCaregiversArray(userId, 'readCaregivers')
-    const writeCaregivers = await getCaregiversArray(userId, 'writeCaregivers')
+    const readCaregiversList = await getCaregiversArray(userId, readCaregivers)
+    const writeCaregiversList = await getCaregiversArray(userId, writeCaregivers)
     let caregiversPermissions: CaregiverPermission[] = []
     caregivers.forEach(async (caregiver) => {
       if(caregiver.requestStatus === CaregiverRequestStatus.ACCEPTED 
         || caregiver.requestStatus === CaregiverRequestStatus.RECEIVED 
         || caregiver.requestStatus === CaregiverRequestStatus.WAITING) {
         caregiversPermissions.push({
-          canRead: readCaregivers.includes(caregiver.caregiverId),
-          canWrite: writeCaregivers.includes(caregiver.caregiverId),
+          canRead: readCaregiversList.includes(caregiver.caregiverId),
+          canWrite: writeCaregiversList.includes(caregiver.caregiverId),
           caregiver
         })
       }

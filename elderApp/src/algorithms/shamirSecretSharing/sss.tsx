@@ -1,7 +1,8 @@
 import { HEX_ENCODING } from "./algorithm/constants";
 import { saveKeychainValue, getKeychainValueFor } from './../../keychain/index'
 import { caregiver1SSSKey, caregiver2SSSKey, elderlyFireKey, firestoreSSSKey } from "../../keychain/constants";
-import { generateKey } from "../0thers/crypto";
+import { generateKey } from "../tweetNacl/crypto";
+import { emptyValue } from "../../assets/constants/constants";
 
 const { split } = require('./algorithm/split')
 const { combine } = require('./algorithm/combine')
@@ -35,7 +36,7 @@ export function deriveSecret(shares: string[]): string {
 
 /**
  * Esta função vai inicializar o algoritmo SSS caso este ainda não o tenha sido inicializado.
- * Por agora, apenas é utilizado na instalação da app do idoso.
+ * @param userId
  * @returns 
  */
 export async function initSSS(userId: string): Promise<string> {
@@ -43,14 +44,14 @@ export async function initSSS(userId: string): Promise<string> {
     let fireKey = await getKeychainValueFor(elderlyFireKey(userId))
     //console.log("InitSSS Shared:  " + shared + " userid: " + userId)
 
-    if(fireKey != '') return fireKey
+    if(fireKey != emptyValue) return fireKey
     const key = generateKey()
     const shares: string[] = generateShares(key, 3, 2)
     //console.log(shares)
     
-    await saveKeychainValue(firestoreSSSKey(userId), shares[2]+'')
-    await saveKeychainValue(caregiver2SSSKey(userId), shares[1]+'')
-    await saveKeychainValue(caregiver1SSSKey(userId), shares[0]+'')
+    await saveKeychainValue(firestoreSSSKey(userId), shares[2])
+    await saveKeychainValue(caregiver2SSSKey(userId), shares[1])
+    await saveKeychainValue(caregiver1SSSKey(userId), shares[0])
     await saveKeychainValue(elderlyFireKey(userId), key)      
 
     return key

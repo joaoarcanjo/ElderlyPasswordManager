@@ -9,7 +9,7 @@ import MainBox from '../../../components/MainBox'
 import { Spinner } from '../../../components/LoadingComponents'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { getAllCredentialsAndValidate, getAllLocalCredentialsFormattedWithFilter } from './functions'
-import { addCredentialsLabel, pageTitleCredentials, searchLabel } from '../../../assets/constants'
+import { addCredentialsLabel, emptyValue, pageTitleCredentials, searchLabel } from '../../../assets/constants/constants'
 import { MaterialIcons } from '@expo/vector-icons'
 import { whiteBackgroud } from '../../../assets/styles/colors'
 import { CredentialType } from './types'
@@ -22,7 +22,6 @@ function AddCredencial() {
 
   const navigateToAddCredential = async () => {
     Keyboard.dismiss()
-    console.log("KEYBOARD DISMISSED")
     navigation.navigate('AddCredential', { userId: userId, key: localDBKey, isElderlyCredential: false })
   }
   return (
@@ -39,8 +38,8 @@ function CredentialsList() {
   const [credencials, setCredencials] = useState<(CredentialType | undefined)[]>([])
   const isFocused = useIsFocused()
   const { userId, localDBKey } = useSessionInfo()
-  const [searchValue, setSearchValue] = useState('')
-  const [searchType, setSearchType] = useState('')
+  const [searchValue, setSearchValue] = useState(emptyValue)
+  const [searchType, setSearchType] = useState(emptyValue)
 
   const [isFething, setIsFething] = useState(true)
 
@@ -60,7 +59,7 @@ function CredentialsList() {
             auxCredencials.push({id: value.id, data: value.data})
           } else if (value.data.type === 'card' && searchType === 'card') {
             auxCredencials.push({id: value.id, data: value.data})
-          } else if (searchType === '') {
+          } else if (searchType === emptyValue) {
             auxCredencials.push({id: value.id, data: value.data})
           }
         }
@@ -88,11 +87,11 @@ function CredentialsList() {
               </TouchableOpacity>
             }
             {searchType === 'card' &&
-              <TouchableOpacity style={[{flex: 0.2, marginLeft: '2%', marginVertical: '2%'}, stylesButtons.purpleButton, stylesButtons.mainConfig]} onPress={() => setSearchType('')}>
+              <TouchableOpacity style={[{flex: 0.2, marginLeft: '2%', marginVertical: '2%'}, stylesButtons.purpleButton, stylesButtons.mainConfig]} onPress={() => setSearchType(emptyValue)}>
                 <MaterialIcons style={{marginHorizontal: '1%'}} name={'credit-card'} size={40} color="black"/> 
               </TouchableOpacity>
             }
-            {searchType === '' &&
+            {searchType === emptyValue &&
               <TouchableOpacity style={[{flex: 0.2, marginLeft: '2%', marginVertical: '2%'}, stylesButtons.greyButton, stylesButtons.mainConfig]} onPress={() => setSearchType('login')}>
                 <MaterialIcons style={{marginHorizontal: '1%'}} name={'all-inclusive'} size={40} color="black"/> 
               </TouchableOpacity>
@@ -115,7 +114,7 @@ function CredentialsList() {
         <ScrollView>
           {credencials.map((value: CredentialType | undefined) => {
             if(value != undefined) {
-              return <ScrollItem key={value.id} credential={value} elderlyId={''}/>
+              return <ScrollItem key={value.id} credential={value} elderlyId={emptyValue}/>
             }
           })}
         </ScrollView>}

@@ -6,7 +6,6 @@ import { stringToArrayBuffer } from "../signal/signal-store"
 import { ChatMessageType, ProcessedChatMessage } from "../messages/types"
 import { randomUUID } from 'expo-crypto'
 import { sendSignalProtocolMessage } from "../messages/sendMessage"
-//import { SessionBuilder, SessionCipher, SignalProtocolAddress } from "../../algorithms/signal"
 
 /**
  * Para começar uma conversa com um destinatário.

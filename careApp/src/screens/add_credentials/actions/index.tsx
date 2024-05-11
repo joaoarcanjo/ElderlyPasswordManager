@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { TouchableOpacity, View, Text, Image, Keyboard } from "react-native";
-import { cardLabel, loginLabel, pageAddCredentialTitle } from "../../../assets/constants";
+import { cardLabel, loginLabel, pageAddCredentialTitle } from "../../../assets/constants/constants";
 import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
 import MainBox from "../../../components/MainBox";
 import { Navbar } from "../../../navigation/actions";

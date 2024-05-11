@@ -1,5 +1,5 @@
-import FormatTimestamp from "../../../algorithms/0thers/time"
-import { getElderly } from "../../../database/elderlyFunctions"
+import FormatTimestamp from "../../../components/time"
+import { getElderly } from "../../../database/elderly"
 import { encryptAndSendMessage } from "../../../e2e/messages/functions"
 import { ChatMessageType, CredentialBody } from "../../../e2e/messages/types"
 import { startSession } from "../../../e2e/session/functions"

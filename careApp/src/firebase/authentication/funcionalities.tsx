@@ -2,7 +2,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, getAuth, up
 import { saveKeychainValue } from "../../keychain"
 import { caregiverEmail, caregiverPwd } from "../../keychain/constants"
 import { FIREBASE_AUTH } from "../FirebaseConfig"
-import { signinErrorResult, signupErrorResult } from "../FirebaseErrors"
+import { signinErrorResult, signupErrorResult } from "../../exceptions/FirebaseErrors"
 const auth = getAuth();
 
 export async function signInOperation(email: string, pwd: string): Promise<boolean> {

@@ -14,20 +14,11 @@ export async function insertTimeoutToLocalDB(userId: string, timestamp: number, 
     console.log("===> insertTimeoutCalled")
     return new Promise((resolve, reject) => {
         if (dbSQL != null) {
-            dbSQL.transaction(tx => {
-                tx.executeSql(
-                    'INSERT INTO timeout (userId, timestamp, type) VALUES (?, ?, ?);',
-                    [userId, timestamp, type],
-                    (_, result) => {
-                        //console.log(result.rowsAffected + " timeout inserted")
-                        resolve()
-                    },
-                    (_, error) => {
-                        console.log("Error 3: " + error.message)
-                        reject(new ErrorInstance(Errors.ERROR_CREATING_TIMEOUT))
-                        return false
-                    }
-                )
+            dbSQL.runAsync('INSERT INTO timeout (userId, timestamp, type) VALUES (?, ?, ?);', [userId, timestamp, type])
+            .then(() => { resolve() })
+            .catch((error) => {
+                console.log("Error 3: " + error.message)
+                reject(new ErrorInstance(Errors.ERROR_CREATING_TIMEOUT))
             })
         } else {
             reject(Errors.ERROR_DATABASE_NOT_INITIALIZED)
@@ -46,20 +37,14 @@ export async function updateTimeoutToLocalDB(userId: string, timestamp: number, 
     console.log("===> updateTimeoutCalled")
     return new Promise((resolve, reject) => {
         if (dbSQL != null) {
-            dbSQL.transaction(tx => {
-                tx.executeSql(
-                    'UPDATE timeout SET timestamp = ? WHERE userId = ? AND type = ?;',
-                    [timestamp, userId, type],
-                    (_, result) => {
-                        console.log(result.rowsAffected + " timeout updated")
-                        resolve()
-                    },
-                    (_, error) => {
-                        console.log("Error 2: " + error.message)
-                        reject(new ErrorInstance(Errors.ERROR_UPDATING_TIMEOUT))
-                        return false
-                    }
-                )
+            dbSQL.runAsync('UPDATE timeout SET timestamp = ? WHERE userId = ? AND type = ?;', [timestamp, userId, type])
+            .then((result) => {
+                console.log(result.changes + " timeout updated")
+                resolve()
+            })
+            .catch((error) => {
+                console.log("Error 2: " + error.message)
+                reject(new ErrorInstance(Errors.ERROR_UPDATING_TIMEOUT))
             })
         } else {
             reject(Errors.ERROR_DATABASE_NOT_INITIALIZED)
@@ -76,30 +61,32 @@ export async function updateTimeoutToLocalDB(userId: string, timestamp: number, 
  */
 export async function getTimeoutFromLocalDB(userId: string, type: TimeoutType): Promise<number | null> {
     console.log("===> getTimeoutCalled")
-    return new Promise((resolve, reject) => {
-        if (dbSQL != null) {
-            dbSQL.transaction(tx => {
-                tx.executeSql(
-                    'SELECT timestamp FROM timeout WHERE userId = ? AND type = ?;',
-                    [userId, type],
-                    (_, result) => {
-                        if (result.rows.length > 0) {
-                            const timestamp = result.rows.item(0).timestamp
-                            resolve(timestamp)
-                        } else {
-                            console.log("Timeout not found")
-                            resolve(null)
-                        }
-                    },
-                    (_, error) => {
-                        console.log("Error 1: " + error.message)
-                        reject(new ErrorInstance(Errors.ERROR_GETTING_TIMEOUT))
-                        return false
+        
+    try {
+        return new Promise(async (resolve, reject) => {
+            if (dbSQL != null) {
+                await dbSQL.getFirstAsync('SELECT timestamp FROM timeout WHERE userId = ? AND type = ?;', [userId, type]) 
+                .then((row) => {
+                    console.log("Timeout search: " + userId + " - " + type)
+                    const aux = row as any
+                    if (aux) {
+                        const timestamp = aux.timestamp
+                        console.log("Timeout found: " + timestamp)
+                        resolve(timestamp)
+                    } else {
+                        console.log("Timeout not found")
+                        resolve(null)
                     }
-                )
-            })
-        } else {
-            reject(Errors.ERROR_DATABASE_NOT_INITIALIZED)
-        }
-    })
+                })
+                .catch((error) => {
+                    console.log("Error 1: " + error.message)
+                    reject(new ErrorInstance(Errors.ERROR_GETTING_TIMEOUT))
+                })
+            } else {
+                reject(Errors.ERROR_DATABASE_NOT_INITIALIZED)
+            }
+        })
+    } catch (error) {
+        console.log("Error 5: " + error.message)
+    }
 }

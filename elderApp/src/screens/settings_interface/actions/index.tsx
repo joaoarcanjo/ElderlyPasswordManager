@@ -16,20 +16,20 @@ import { sendCaregiversNewInfo } from './functions'
 import { closeWebsocket } from '../../../e2e/network/webSockets'
 import { usernameSubject } from '../../../e2e/identity/state'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
-import { accountInfoLabel, cancelLabel, editLabel, gitHubUrl, leaveAccountLabel, moreAboutTheApp, pageTitleSettings, saveChangesLabel, saveLabel } from '../../../assets/constants'
-import { editCanceledFlash, editValueFlash, elderlyPersonalInfoUpdatedFlash } from '../../../components/userMessages/UserMessages'
+import { accountInfoLabel, cancelLabel, editLabel, emptyValue, gitHubUrl, leaveAccountLabel, moreAboutTheApp, pageTitleSettings, saveChangesLabel, saveLabel } from '../../../assets/constants/constants'
+import { editCanceledFlash, editValueFlash, elderlyPersonalInfoUpdatedFlash } from '../../../components/UserMessages'
 
 function AccountInfo() {
   
   const { userId, userEmail, userPhone, userName, setUserName, setUserPhone } = useSessionInfo()
 
   const [username, setUsername] = useState(userName)
-  const [userpassword, setUserpassword] = useState('')
+  const [userpassword, setUserpassword] = useState(emptyValue)
   const [userphone, setUserphone] = useState(userPhone)
   //const [password, setPassword] = useState(pw)
 
   const [usernameEdited, setUsernameEdited] = useState(userName)
-  const [userpasswordEdited, setUserpasswordEdited] = useState('')
+  const [userpasswordEdited, setUserpasswordEdited] = useState(emptyValue)
   const [userphoneEdited, setUserphoneEdited] = useState(userphone)
 
   const [showPassword, setShowPassword] = useState(true)
@@ -206,7 +206,7 @@ const onGitHub = () => Linking.canOpenURL(gitHubUrl).then(() => {
 function AppInfo() {
   return (
     <View style={{ flex: 0.10, flexDirection: 'row', marginVertical:'5%', justifyContent: 'center', alignItems: 'center'}}>
-      <TouchableOpacity style={[{ flex: 1, flexDirection: 'row', marginHorizontal: '4%'}, appInfo.appInfoButton, stylesButtons.mainConfig]} onPress={() => onGitHub()}>
+      <TouchableOpacity style={[{ flex: 0.9, flexDirection: 'row', marginHorizontal: '4%'}, appInfo.appInfoButton, stylesButtons.mainConfig]} onPress={() => onGitHub()}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 1, margin: '5%', textAlign: 'center'}, appInfo.appInfoText]}>{moreAboutTheApp}</Text>
         </TouchableOpacity>
     </View>
@@ -218,19 +218,19 @@ function Logout() {
   const { setUserId, setUserName, setUserPhone } = useSessionInfo()
 
   const signOut = () => {
-    setUserId('')
-    setUserName('')
-    setUserPhone('')
-    saveKeychainValue(elderlyPwd, '')
-    saveKeychainValue(elderlyId, '')
+    setUserId(emptyValue)
+    setUserName(emptyValue)
+    setUserPhone(emptyValue)
+    saveKeychainValue(elderlyPwd, emptyValue)
+    saveKeychainValue(elderlyId, emptyValue)
     closeWebsocket()
-    usernameSubject.next('')
+    usernameSubject.next(emptyValue)
     FIREBASE_AUTH.signOut()
   }
 
   return (
     <View style= { { flex: 0.10, flexDirection: 'row', justifyContent: 'space-around', marginBottom: '2%'} }>
-      <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, logout.logoutButton, stylesButtons.mainConfig]} onPress={signOut}>
+      <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginTop: '3%'}, logout.logoutButton, stylesButtons.mainConfig]} onPress={signOut}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>{leaveAccountLabel}</Text>
       </TouchableOpacity>
     </View>

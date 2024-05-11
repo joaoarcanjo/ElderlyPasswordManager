@@ -62,7 +62,7 @@ const appInfo = StyleSheet.create({
       borderColor: greyBorder
   },
   appInfoText: {
-    fontSize: 25,
+    fontSize: 19,
     color: 'black'
   }
 })

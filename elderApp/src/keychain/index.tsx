@@ -1,6 +1,6 @@
 import {setItemAsync, getItemAsync, deleteItemAsync} from 'expo-secure-store';
 import { caregiver1SSSKey, elderlyEmail, elderlyId, elderlyFireKey, firestoreSSSKey, localDBKey, caregiver2SSSKey } from './constants';
-import { generateKey } from '../algorithms/0thers/crypto';
+import { emptyValue } from '../assets/constants/constants';
 /**
  * Função para armazenar o valor key-value.
  * 
@@ -14,7 +14,7 @@ export async function saveKeychainValue(key: string, value: string) {
   }
   do {
     await setItemAsync(auxKey, value)
-  } while(value != '' && await getKeychainValueFor(auxKey) == '')
+  } while(value != emptyValue && await getKeychainValueFor(auxKey) == emptyValue)
 }
 
 /**
@@ -27,7 +27,7 @@ export async function getKeychainValueFor(key: string): Promise<string> {
   if(key.indexOf('@') > -1) {
     auxKey = key.replace('@', '_')
   }
-  return await getItemAsync(auxKey).then((result) => result ?? '')
+  return await getItemAsync(auxKey).then((result) => result ?? emptyValue)
 }
 
 /**

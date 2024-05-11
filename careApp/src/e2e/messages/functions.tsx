@@ -11,10 +11,10 @@ import { setElderlyListUpdated } from "../../screens/list_elderly/actions/state"
 import { getKeychainValueFor, saveKeychainValue } from "../../keychain"
 import { caregiverId, elderlySSSKey } from "../../keychain/constants"
 import { ElderlyRequestStatus } from "../../database/types"
-import { checkElderlyByEmail, checkElderlyByEmailWaitingForResponse, deleteElderly, getElderlyWithSpecificState, isMaxElderlyReached, saveElderly, updateElderly } from "../../database/elderlyFunctions"
 import { credentialCreatedFlash, credentialDeletedFlash, credentialUpdatedFlash, elderlyPersonalInfoUpdatedFlash, elderlySentFirstKey, sessionAcceptedFlash, sessionEndedFlash, sessionPermissionsFlash, sessionRejectMaxReachedFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionRequestCanceledFlash, sessionRequestReceivedFlash } from "../../components/userMessages/UserMessages"
 import { deleteSessionById } from "../../database/signalSessions"
 import { setCredentialsListUpdated } from "../../screens/list_credentials/actions/state"
+import { checkElderlyByEmail, updateElderly, checkElderlyByEmailWaitingForResponse, isMaxElderlyReached, saveElderly, getElderlyWithSpecificState, deleteElderly } from "../../database/elderly"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -233,7 +233,8 @@ export async function refuseElderlyMaxReached(currentUserId: string, cm: Process
     await encryptAndSendMessage(cm.from, 'rejectSession', true, ChatMessageType.MAX_REACHED_SESSION)
     .then(() => removeSession(cm.from))
     .then(() => deleteSessionById(currentUserId, cm.from))
-    .then(() => sessionRejectMaxReachedFlash(cm.from))    
+    .then(() => sessionRejectMaxReachedFlash(cm.from))  
+    .then(() => setElderlyListUpdated())  
 }
 
 export async function processCancelSession(currentUserId: string, cm: ProcessedChatMessage) {
@@ -250,6 +251,7 @@ async function processRejectMessage(currentUserId: string, cm: ProcessedChatMess
     await deleteElderly(currentUserId, cm.from)
     .then(() => sessionRejectedFlash(cm.from, false))
     .then(() => deleteSessionById(currentUserId, cm.from))
+    .then(() => setElderlyListUpdated())
     .catch(() => console.log('#1 Error deleting caregiver'))
 }
 
@@ -258,6 +260,7 @@ async function processMaxReachedMessage(currentUserId: string, cm: ProcessedChat
     await deleteElderly(currentUserId, cm.from)
     .then(() => deleteSessionById(currentUserId, cm.from))
     .then(() => sessionRejectedMaxReachedFlash(cm.from))
+    .then(() => setElderlyListUpdated())
     .catch(() => console.log('#1 Error deleting caregiver'))
 }
 

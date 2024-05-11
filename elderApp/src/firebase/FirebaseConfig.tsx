@@ -1,7 +1,7 @@
 import firebase from 'firebase/compat/app'
 import 'firebase/compat/auth'
 import 'firebase/compat/firestore'
-import 'firebase/compat/storage'  // Add this line
+import 'firebase/compat/storage'
 
 const firebaseConfig = {
   apiKey: "AIzaSyCYjuZeshrZpZFLicjTag0YFjPAn2G6pYM",
@@ -14,7 +14,7 @@ const firebaseConfig = {
 };
 
 if(!firebase.apps.length) {
-    const a = firebase.initializeApp(firebaseConfig)
+    const fire = firebase.initializeApp(firebaseConfig)
 }
 
 const FIREBASE_AUTH = firebase.auth()

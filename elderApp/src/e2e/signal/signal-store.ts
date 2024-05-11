@@ -11,6 +11,7 @@ import {
 import { deleteAllSessions, deleteSessionById, getSessionById, saveSignalSessions } from "../../database/signalSessions"
 import { deleteKeychainValueFor, getKeychainValueFor, saveKeychainValue } from "../../keychain"
 import { baseKeyIdK, elderlyId, identityIdPrivKey, identityIdPubKey, identityKeyK, keySignedPriv25519, keySignedPub25519, keypreKeyPriv25519, keypreKeyPub25519, localDBKey, signedKeySignature25519, signedPreKeyId } from "../../keychain/constants"
+import { emptyValue } from '../../assets/constants/constants'
 
 // Type guards
 export function isKeyPairType(kp: any): kp is KeyPairType {
@@ -44,8 +45,8 @@ export class SignalProtocolStore implements StorageType {
 
     constructor() {
         this._store = {}
-        this._userId = ''
-        this._dbKey = ''
+        this._userId = emptyValue
+        this._dbKey = emptyValue
     }
 
     //===============
@@ -86,7 +87,7 @@ export class SignalProtocolStore implements StorageType {
     }
     
     async getUserId(): Promise<string> {
-        if (this._userId === '') {
+        if (this._userId === emptyValue) {
             await this.setUserId(await getKeychainValueFor(elderlyId)) 
         }
         return this._userId
@@ -97,7 +98,7 @@ export class SignalProtocolStore implements StorageType {
     }
 
     async getDBKey(): Promise<string> {
-        if (this._dbKey === '') {
+        if (this._dbKey === emptyValue) {
             await this.setDBKey(await getKeychainValueFor(localDBKey(await this.getUserId()))) 
         }
         return this._dbKey
@@ -122,10 +123,10 @@ export class SignalProtocolStore implements StorageType {
     //==== SignedPreKey operations 
     async loadSignedPreKey(keyId: number | string): Promise<KeyPairType | undefined> {
         //console.log("===> loadSignedPreKeyCalled")
-        let kPub = await this.get(keySignedPub25519(await this.getUserId(), keyId), '')
-        let kPriv = await this.get(keySignedPriv25519(await this.getUserId(), keyId), '')
+        let kPub = await this.get(keySignedPub25519(await this.getUserId(), keyId), emptyValue)
+        let kPriv = await this.get(keySignedPriv25519(await this.getUserId(), keyId), emptyValue)
         
-        if(typeof kPub !== 'string' || typeof kPriv !== 'string' || kPub === '' || kPriv === '') return undefined
+        if(typeof kPub !== 'string' || typeof kPriv !== 'string' || kPub === emptyValue || kPriv === emptyValue) return undefined
 
         const preKey: KeyPairType = {
             pubKey: hexToArrayBuffer(kPub),
@@ -141,8 +142,8 @@ export class SignalProtocolStore implements StorageType {
     }
     async loadSignedSignature(keyId: number | string): Promise<ArrayBuffer | undefined> {
         //console.log("===> loadSignedSignatureCalled")
-        let signature = await this.get(signedKeySignature25519(await this.getUserId(), keyId), '')
-        if(typeof signature !== 'string' || signature === '') return undefined
+        let signature = await this.get(signedKeySignature25519(await this.getUserId(), keyId), emptyValue)
+        if(typeof signature !== 'string' || signature === emptyValue) return undefined
         return hexToArrayBuffer(signature)
     }
     async storeSignedPreKey(keyId: number | string, keyPair: KeyPairType): Promise<void> {
@@ -174,10 +175,10 @@ export class SignalProtocolStore implements StorageType {
     //==== Identity Key pair operations
     async getIdentityKeyPair(): Promise<KeyPairType | undefined> {
         //console.log("===> getIdentityKeyPairCalled")
-        const kPub = await this.get(identityIdPubKey(await this.getUserId()), '')
-        const kPriv = await this.get(identityIdPrivKey(await this.getUserId()), '')
+        const kPub = await this.get(identityIdPubKey(await this.getUserId()), emptyValue)
+        const kPriv = await this.get(identityIdPrivKey(await this.getUserId()), emptyValue)
 
-        if (typeof kPub !== 'string' || typeof kPriv !== 'string' || kPub === '' || kPriv === '') return undefined
+        if (typeof kPub !== 'string' || typeof kPriv !== 'string' || kPub === emptyValue || kPriv === emptyValue) return undefined
 
         const keyPair = {
             pubKey: hexToArrayBuffer(kPub),
@@ -200,7 +201,7 @@ export class SignalProtocolStore implements StorageType {
             throw new Error('Tried to get identity key for undefined/null key')
         }
 
-        const key = await this.get(identityKeyK(await this.getUserId(), identifier), '')
+        const key = await this.get(identityKeyK(await this.getUserId(), identifier), emptyValue)
 
         if(typeof key ==='string') {
             return hexToArrayBuffer(key)
@@ -220,8 +221,8 @@ export class SignalProtocolStore implements StorageType {
         if (identifier === null || identifier === undefined) {
             throw new Error('tried to check identity key for undefined/null key')
         }
-        const trusted = await this.get(identityKeyK(await this.getUserId(), identifier), '')
-        if (trusted === undefined || trusted === '') {
+        const trusted = await this.get(identityKeyK(await this.getUserId(), identifier), emptyValue)
+        if (trusted === undefined || trusted === emptyValue) {
             return Promise.resolve(true)
         }
         return Promise.resolve(ArrayBufferToHex(identityKey) === trusted)
@@ -233,7 +234,7 @@ export class SignalProtocolStore implements StorageType {
 
         const address = SignalProtocolAddress.fromString(identifier)
 
-        const existing = await this.get(identityKeyK(await this.getUserId(), address.getName()), '')
+        const existing = await this.get(identityKeyK(await this.getUserId(), address.getName()), emptyValue)
         const converted = hexToArrayBuffer(existing as string)
         await this.put(identityKeyK(await this.getUserId(), address.getName()), identityKey)
 
@@ -252,10 +253,10 @@ export class SignalProtocolStore implements StorageType {
     //==== PreKey operations
     async loadPreKey(keyId: string | number): Promise<KeyPairType | undefined> {
         //console.log("===> loadPreKeyCalled")
-        let pub = await this.get(keypreKeyPub25519(await this.getUserId(), keyId), '')
-        let priv = await this.get(keypreKeyPriv25519(await this.getUserId(), keyId), '')
+        let pub = await this.get(keypreKeyPub25519(await this.getUserId(), keyId), emptyValue)
+        let priv = await this.get(keypreKeyPriv25519(await this.getUserId(), keyId), emptyValue)
 
-        if (typeof pub !== 'string' || typeof priv !== 'string' || pub === '' || priv === '') return undefined
+        if (typeof pub !== 'string' || typeof priv !== 'string' || pub === emptyValue || priv === emptyValue) return undefined
 
         const preKey: KeyPairType = {
             pubKey: hexToArrayBuffer(pub),
@@ -292,6 +293,7 @@ export class SignalProtocolStore implements StorageType {
     //==-> obter do sql.
     async loadSession(identifier: string): Promise<SessionRecordType | undefined> {
         //console.log("===> LoadSessionCalled")
+        console.log('identifier:', identifier)
         return await getSessionById('session' + identifier, await this.getUserId(), await this.getDBKey())
         .then((rec) => {
             if (typeof rec === 'object') {
@@ -332,7 +334,7 @@ export function arrayBufferToString(b: ArrayBuffer): string {
 export function uint8ArrayToString(arr: Uint8Array): string {
     const end = arr.length
     let begin = 0
-    if (begin === end) return ''
+    if (begin === end) return emptyValue
     let chars: number[] = []
     const parts: string[] = []
     while (begin < end) {
@@ -342,7 +344,7 @@ export function uint8ArrayToString(arr: Uint8Array): string {
             chars = []
         }
     }
-    return parts.join('') + String.fromCharCode(...chars)
+    return parts.join(emptyValue) + String.fromCharCode(...chars)
 }
 
 export function stringToArrayBuffer(str: string): ArrayBuffer {
@@ -357,7 +359,7 @@ export function stringToArrayBuffer(str: string): ArrayBuffer {
 export function ArrayBufferToHex(buffer: ArrayBuffer) { // buffer is an ArrayBuffer
     return [...new Uint8Array(buffer)]
         .map(x => x.toString(16).padStart(2, '0'))
-        .join('');
+        .join(emptyValue);
 }
 
 export function hexToArrayBuffer(str: string): ArrayBuffer {

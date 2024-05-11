@@ -1,4 +1,4 @@
-import FormatTimestamp from "../../../algorithms/0thers/time"
+import FormatTimestamp from "../../../components/time"
 import { getCaregivers } from "../../../database/caregivers"
 import { encryptAndSendMessage } from "../../../e2e/messages/sendMessage"
 import { ChatMessageType, CredentialBody } from "../../../e2e/messages/types"

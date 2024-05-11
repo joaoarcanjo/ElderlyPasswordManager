@@ -4,13 +4,13 @@ import { stylesButtons } from '../../../assets/styles/main_style'
 import { historyStyle, passwordFirstHalf, passwordSecondHalf } from '../styles/styles'
 import {Navbar} from '../../../navigation/actions'
 import { savePasswordGenerated } from '../../../database/passwords'
-import Algorithm from '../../../algorithms/newPassword/algorithm'
 import MainBox from '../../../components/MainBox'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { decLength, incLength, updateUpperCase, updateLowerCase, updateNumbers, updateSpecial } from '../../../components/passwordGenerator/functions'
-import { lengthLabel, requirementLabel, upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, timeoutToSavePassword, historyLabel, copyLabel, regenerateLabel, pagePasswordHistory, pageTitleGenerator } from '../../../assets/constants'
-import { copyValue } from '../../../components/userMessages/UserMessages'
-import { FlashMessage, copyPasswordDescription } from '../../../components/userMessages/messages'
+import { lengthLabel, requirementLabel, upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, timeoutToSavePassword, historyLabel, copyLabel, regenerateLabel, pagePasswordHistory, pageTitleGenerator, emptyValue } from '../../../assets/constants/constants'
+import { copyValue } from '../../../components/UserMessages'
+import { FlashMessage, copyPasswordDescription } from '../../../assets/constants/messages'
+import Algorithm from '../../../algorithms/newPassword/newPass'
 
 const minusImage = "../../../assets/images/minus.png"
 const plusImage = "../../../assets/images/plus.png"
@@ -19,8 +19,8 @@ const checkImage = "../../../assets/images/check.png"
 
 export default function Generator({ navigation }: {readonly navigation: any}) {
 
-  const [passGenerated, setPassGenerated] = useState("")
-  const [password, setPassword] = useState("")
+  const [passGenerated, setPassGenerated] = useState(emptyValue)
+  const [password, setPassword] = useState(emptyValue)
   const [length, setLength] = useState(passwordDefaultLengthGenerator)
   const [uppercase, setUppercase] = useState(true)
   const [lowercase, setLowercase] = useState(true)
@@ -130,9 +130,9 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
   function Requirement({name, value, func}:Readonly<{name: string, value: boolean, func: Function}>) {
     return (
       <TouchableOpacity style={[{flex: 0.50, height: '90%', marginHorizontal: '3%', justifyContent: 'center',  alignItems: 'center' }, passwordSecondHalf.lengthContainer, stylesButtons.mainConfig]} onPress={() => func()}>
-        <Text numberOfLines={1} adjustsFontSizeToFit style={[passwordSecondHalf.requirementsText]}>{name}</Text>
-        <View style={{flex: 0.65, width: '100%', marginTop: '5%'}}>
-          {value ? 
+      <Text numberOfLines={1} adjustsFontSizeToFit style={[passwordSecondHalf.requirementsText, {textAlign: 'center'}]}>{name}</Text>
+      <View style={{flex: 0.65, width: '100%', marginTop: '5%'}}>
+        {value ? 
           <Image source={require(checkImage)} style={[{width: '100%', height: '100%', resizeMode: 'contain'}]}/>:
           <Image source={require(crossImage)} style={[{width: '100%', height: '100%', resizeMode: 'contain'}]}/>}
         </View>

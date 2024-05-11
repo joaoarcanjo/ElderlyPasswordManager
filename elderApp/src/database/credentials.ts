@@ -1,9 +1,8 @@
 import { dbSQL } from "."
+import { emptyValue } from "../assets/constants/constants"
 import { ErrorInstance } from "../exceptions/error"
 import { Errors } from "../exceptions/types"
 
-
-//TODO: chamado quando a inserção é bem sucedida na cloud.
 /**
  * Inserts a credential into the local database.
  * 
@@ -14,8 +13,15 @@ import { Errors } from "../exceptions/types"
  */
 export async function insertCredentialToLocalDB(userId: string, credentialId: string, record: string): Promise<void> {
     console.log("===> insertCredentialCalled")
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         if (dbSQL != null) {
+            await dbSQL.runAsync('INSERT INTO credentials (userId, credentialId, record) VALUES (?, ?, ?);', [userId, credentialId, record])
+            .then(() => { resolve() })
+            .catch((error) => {
+                console.log("Error 9: " + error.message)
+                reject(new ErrorInstance(Errors.ERROR_CREATING_CREDENTIAL))
+            })
+            /*
             dbSQL.transaction(tx => {
                 tx.executeSql(
                     'INSERT INTO credentials (userId, credentialId, record) VALUES (?, ?, ?);',
@@ -29,7 +35,7 @@ export async function insertCredentialToLocalDB(userId: string, credentialId: st
                         return false
                     }
                 )
-            })
+            })*/
         } else {
             reject(Errors.ERROR_DATABASE_NOT_INITIALIZED)
         }
@@ -45,10 +51,19 @@ export async function insertCredentialToLocalDB(userId: string, credentialId: st
  * @throws {Errors.ERROR_DATABASE_NOT_INITIALIZED} If the database is not initialized.
  */
 export async function getCredential(userId: string, credentialId: string): Promise<any> {
-    //console.log("===> getCredentialCalled")
-    return new Promise((resolve, reject) => {
+    console.log("===> getCredentialCalled")
+    return new Promise(async (resolve, reject) => {
         if (dbSQL != null) {
-            dbSQL.transaction(tx => {
+            await dbSQL.getFirstAsync('SELECT record FROM credentials WHERE userId = ? AND credentialId = ?;', [userId, credentialId])
+            .then((result) => {
+                if (result) {
+                    const credential = result as any
+                    resolve(credential.record)
+                } else {
+                    resolve(emptyValue)
+                }
+            })
+            /*dbSQL.transaction(tx => {
                 tx.executeSql(
                     'SELECT record FROM credentials WHERE userId = ? AND credentialId = ?;',
                     [userId, credentialId],
@@ -56,7 +71,7 @@ export async function getCredential(userId: string, credentialId: string): Promi
                         if (result.rows.length > 0) {
                             resolve(result.rows.item(0).record)
                         } else {
-                            resolve('')
+                            resolve(emptyValue)
                         }
                     },
                     (_, error) => {
@@ -65,7 +80,7 @@ export async function getCredential(userId: string, credentialId: string): Promi
                         return false
                     }
                 )
-            })
+            })*/
         } else {
             reject(Errors.ERROR_DATABASE_NOT_INITIALIZED)
         }
@@ -81,8 +96,15 @@ export async function getCredential(userId: string, credentialId: string): Promi
  */
 export async function deleteCredentialFromLocalDB(userId: string, credentialId: string): Promise<void> {
     console.log("===> deleteCredential called");
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         if (dbSQL != null) {
+            await dbSQL.runAsync('DELETE FROM credentials WHERE userId = ? AND credentialId = ?;', [userId, credentialId])
+            .then(() => { resolve() })
+            .catch((error) => {
+                console.log("Error 6: " + error.message)
+                reject(Errors.ERROR_DELETING_CREDENTIAL)
+            })
+            /*
             dbSQL.transaction(tx => {
                 tx.executeSql(
                     'DELETE FROM credentials WHERE userId = ? AND credentialId = ?;',
@@ -97,7 +119,7 @@ export async function deleteCredentialFromLocalDB(userId: string, credentialId: 
                         return false
                     }
                 )
-            })
+            })*/
         } else {
             reject(Errors.ERROR_DATABASE_NOT_INITIALIZED)
         }
@@ -114,8 +136,15 @@ export async function deleteCredentialFromLocalDB(userId: string, credentialId: 
  */
 export async function updateCredentialOnLocalDB(userId: string, credentialId: string, newRecord: string): Promise<void> {
     console.log("===> updateCredentialCalled")
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         if (dbSQL != null) {
+            await dbSQL.runAsync('UPDATE credentials SET record = ? WHERE userId = ? AND credentialId = ?;', [newRecord, userId, credentialId])
+            .then(() => { resolve() })
+            .catch((error) => {
+                console.log("Error 7: " + error.message)
+                reject(Errors.ERROR_UPDATING_CREDENTIAL)
+            })
+            /*
             dbSQL.transaction(tx => {
                 tx.executeSql(
                     'UPDATE credentials SET record = ? WHERE userId = ? AND credentialId = ?;',
@@ -128,7 +157,7 @@ export async function updateCredentialOnLocalDB(userId: string, credentialId: st
                         return false
                     }
                 )
-            })
+            })*/
         } else {
             reject(Errors.ERROR_DATABASE_NOT_INITIALIZED)
         }
@@ -150,7 +179,16 @@ export async function getAllLocalCredentials(userId: string): Promise<Credential
     console.log("===> getAllCredentialsCalled");
     return new Promise((resolve, reject) => {
         if (dbSQL != null) {
-            dbSQL.transaction(tx => {
+            dbSQL.getAllAsync('SELECT credentialId, record FROM credentials WHERE userId = ?;', [userId])
+            .then((result) => {
+                const credentialsReaded = result as any
+                const credentials: CredentialLocalRecord[] = []
+                for (let i = 0; i < credentialsReaded.length; i++) {
+                    credentials.push(credentialsReaded[i])
+                }
+                resolve(credentials)
+            })
+            /*dbSQL.transaction(tx => {
                 tx.executeSql(
                     'SELECT credentialId, record FROM credentials WHERE userId = ?;',
                     [userId],
@@ -167,7 +205,7 @@ export async function getAllLocalCredentials(userId: string): Promise<Credential
                         return false
                     }
                 )
-            })
+            })*/
         } else {
             reject(Errors.ERROR_DATABASE_NOT_INITIALIZED)
         }

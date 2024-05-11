@@ -1,11 +1,11 @@
-import { splashScreenDuration, timeoutToNewSplash } from "../../../assets/constants"
+import { emptyValue, splashScreenDuration, timeoutToNewSplash } from "../../../assets/constants/constants"
 import { dbSQL, initDb } from "../../../database"
 import { getTimeoutFromLocalDB, insertTimeoutToLocalDB, updateTimeoutToLocalDB } from "../../../database/timeout"
 import { TimeoutType } from "../../../database/types"
 
 export const flashTimeoutPromise = async (userId: string, setXd: Function) => {
     console.log("flashTimeoutPromise")
-    if(userId == '' || userId == null) return Promise.resolve()
+    if(userId == emptyValue || userId == null) return Promise.resolve()
     if(dbSQL == null) {
         initDb()
     }

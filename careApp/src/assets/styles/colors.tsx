@@ -16,6 +16,13 @@ export const lightOrangeBackground =    '#FFCA91'
 export const superLightOrangeBackground = '#ffebd6'
 export const lightYellowBackground = '#fcf4dc'
 
+//EMOJI EVALUATION COLORS
+export const emojiRed = '#FF0000'
+export const emojiOrange = '#FFA500'
+export const emojiYellow = '#FFD700'
+export const emojiGreen = '#008000'
+export const emojiDarkGreen = '#005000'
+
 //BORDER COLORS
 export const blackBorder =         '#000000'
 export const greyBorder =          '#8c8d8f'

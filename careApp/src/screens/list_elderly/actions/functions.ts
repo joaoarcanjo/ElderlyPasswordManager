@@ -1,11 +1,12 @@
+import { emptyValue } from "../../../assets/constants/constants"
 import { sessionAcceptedFlash, sessionRejectedFlash } from "../../../components/userMessages/UserMessages"
-import { acceptElderlyOnDatabase, deleteElderly, getElderlyWithSpecificState, isMaxElderlyReached } from "../../../database/elderlyFunctions"
+import { acceptElderlyOnDatabase, deleteElderly, getElderlyWithSpecificState, isMaxElderlyReached } from "../../../database/elderly"
 import { deleteSessionById } from "../../../database/signalSessions"
 import { ElderlyRequestStatus } from "../../../database/types"
 import { encryptAndSendMessage } from "../../../e2e/messages/functions"
-import { ChatMessageType, CaregiverDataBody } from "../../../e2e/messages/types"
+import { CaregiverDataBody, ChatMessageType, ChatMessageDescription } from "../../../e2e/messages/types"
 import { startSession } from "../../../e2e/session/functions"
-import { currentSessionSubject, removeSession, sessionForRemoteUser } from "../../../e2e/session/state"
+import { sessionForRemoteUser, currentSessionSubject, removeSession } from "../../../e2e/session/state"
 import { ErrorInstance } from "../../../exceptions/error"
 import { Errors } from "../../../exceptions/types"
 import { setElderlyListUpdated } from "./state"
@@ -56,7 +57,7 @@ export async function acceptElderly(userId: string, elderlyEmail: string, userNa
     await encryptAndSendMessage(elderlyEmail, JSON.stringify(data), true, ChatMessageType.PERSONAL_DATA)
     await acceptElderlyOnDatabase(userId, elderlyEmail)
     .then(() => cancelWaitingElderly(userId, elderlyEmail))
-    .then(() => sessionAcceptedFlash('', true))
+    .then(() => sessionAcceptedFlash(emptyValue, true))
     .then(() => setElderlyListUpdated())
     .then(() => refuseIfMaxReached(userId))
     
@@ -69,11 +70,11 @@ export async function acceptElderly(userId: string, elderlyEmail: string, userNa
  */
 export async function refuseElderly(userId: string, to: string) {
     await deleteElderly(userId, to)
-    .then(() => encryptAndSendMessage(to, 'rejectSession', true, ChatMessageType.REJECT_SESSION))
+    .then(() => encryptAndSendMessage(to, ChatMessageDescription.REJECT_SESSION, true, ChatMessageType.REJECT_SESSION))
     .then(() => removeSession(to))
     .then(() => deleteSessionById(userId, to))
     .then(() => setElderlyListUpdated())
-    .then(() => sessionRejectedFlash('', true))
+    .then(() => sessionRejectedFlash(emptyValue, true))
     .catch(() => console.log('#1 Error refusing elderly'))
 }
 
@@ -84,7 +85,7 @@ export async function refuseElderly(userId: string, to: string) {
 export async function cancelWaitingElderly(userId: string, to: string) {
     const elderlies = await getElderlyWithSpecificState(userId, ElderlyRequestStatus.WAITING.valueOf())
     elderlies.forEach(async email => {
-        await encryptAndSendMessage(email, 'rejectSession', true, ChatMessageType.CANCEL_SESSION)
+        await encryptAndSendMessage(email, ChatMessageDescription.REJECT_SESSION, true, ChatMessageType.CANCEL_SESSION)
         .then(() => removeSession(email))
         .then(() => deleteSessionById(userId, to))
         .then(() => deleteElderly(userId, email))
@@ -106,13 +107,12 @@ export async function decouplingElderly(userId: string, email: string) {
 }
 
 async function sendElderlyDecoupling(elderlyEmail: string) {
-    //TODO: Enviar notificação a informar do desligamento se ele estiver offline.
     if(!sessionForRemoteUser(elderlyEmail)) {
         await startSession(elderlyEmail)
         const session = sessionForRemoteUser(elderlyEmail)
         currentSessionSubject.next(session ?? null)
     }
-    await encryptAndSendMessage(elderlyEmail, '', false, ChatMessageType.DECOUPLING_SESSION) 
+    await encryptAndSendMessage(elderlyEmail, emptyValue, false, ChatMessageType.DECOUPLING_SESSION) 
 }
 
 export async function refuseIfMaxReached(userId: string) {
@@ -121,7 +121,7 @@ export async function refuseIfMaxReached(userId: string) {
         const waitingElderlyEmails = await getElderlyWithSpecificState(userId, ElderlyRequestStatus.RECEIVED.valueOf())
         console.log(waitingElderlyEmails)
         waitingElderlyEmails.forEach(async email => {
-            await encryptAndSendMessage(email, 'rejectSession', true, ChatMessageType.MAX_REACHED_SESSION)
+            await encryptAndSendMessage(email, ChatMessageDescription.REJECT_SESSION, true, ChatMessageType.MAX_REACHED_SESSION)
             .then(() => removeSession(email))
             .then(() => deleteElderly(userId, email))
             .then(() => setElderlyListUpdated())

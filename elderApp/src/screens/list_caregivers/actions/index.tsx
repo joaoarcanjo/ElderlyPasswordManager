@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { View } from 'react-native'
+import { Keyboard, View } from 'react-native'
 import {Navbar} from '../../../navigation/actions'
 import MainBox from '../../../components/MainBox'
-import AddCaregiver from './addCaregiver'
+import AddCaregiver, { AddCaregiverModal } from './addCaregiver'
 import {CaregiverItem} from './caregiverItem'
 import { caregiverListUpdated, setCaregiverListUpdated } from './state'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { CaregiverPermission } from '../../list_credentials/actions/functions'
-import { pageTitleCaregiversList } from '../../../assets/constants'
+import { pageTitleCaregiversList } from '../../../assets/constants/constants'
+import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
 
 
 const CaregiversList = React.memo(function CaregiversList() {
@@ -57,8 +58,9 @@ const CaregiversList = React.memo(function CaregiversList() {
 })
 
 export const Caregivers = React.memo(function Caregivers() {
+
   return (
-    <View    style = {{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
+    <View style = {{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
       <MainBox text  = {pageTitleCaregiversList}/>
       <CaregiversList/>
       <Navbar/>

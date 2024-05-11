@@ -100,7 +100,7 @@ wss.on('connection', function connection(ws) {
                 }
 
                 break;
-            }
+            }/*
             case('acknowledge'): {
                 console.log(`Client ${messageObj.from} sent an acknowledgement!`)
                 const to = messageObj.address
@@ -121,7 +121,7 @@ wss.on('connection', function connection(ws) {
                     socket.send(JSON.stringify(messageObj))
                 }
                 break;
-            }
+            }*/
         }
     });
 

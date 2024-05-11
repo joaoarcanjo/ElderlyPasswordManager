@@ -8,15 +8,15 @@ import { Spinner } from "../../../components/LoadingComponents";
 import { useSessionInfo } from "../../../firebase/authentication/session";
 import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
 import { signUpOperation } from "../../../firebase/authentication/funcionalities";
-import { appName, createAccountLabel, emailLabel, emailPlaceholder, mobileLabel, mobilePlaceholder, nameLabel, namePlaceholder, passwordLabelBig, passwordPlaceholder } from "../../../assets/constants";
+import { appName, createAccountLabel, emailLabel, emailPlaceholder, emptyValue, mobileLabel, mobilePlaceholder, nameLabel, namePlaceholder, passwordLabelBig, passwordPlaceholder } from "../../../assets/constants/constants";
 import  { NavbarJustBack } from "../../../navigation/actions";
 
 export function SignUp () {
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [name, setName] = useState('')
-    const [phoneNumber, setPhoneNumber] = useState('')
+    const [email, setEmail] = useState(emptyValue)
+    const [password, setPassword] = useState(emptyValue)
+    const [name, setName] = useState(emptyValue)
+    const [phoneNumber, setPhoneNumber] = useState(emptyValue)
 
     const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(true)

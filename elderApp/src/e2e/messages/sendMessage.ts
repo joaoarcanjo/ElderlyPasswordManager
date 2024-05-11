@@ -26,6 +26,7 @@ export async function encryptAndSendMessage(to: string, message: string, firstMe
         type: type,
     }
  
+    console.log("From: ", cm.from)
     const signalMessage = await cipher.encrypt(stringToArrayBuffer(JSON.stringify(cm)))
     sendSignalProtocolMessage(to, usernameSubject.value, signalMessage)
 }

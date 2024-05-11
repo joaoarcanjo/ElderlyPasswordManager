@@ -28,5 +28,18 @@ export enum Errors {
     ERROR_CREATING_SESSION = "Não foi possível criar a sessão.",
     ERROR_RETRIEVING_SESSION = "Não foi possível recuperar a sessão.",
 
+    ERROR_GETTING_GENERATED_PASSWORDS = "Não foi possível obter as passwords geradas.",
+    
     ERROR_SERVER_INTERNAL_ERROR = 'Erro interno, tente novamente mais tarde ou contacte o administrador. A comunicação com o idoso não está disponível \n#1',
+
+    ERROR_EMAIL_ALREADY_IN_USE = 'O email fornecido já está em uso.',
+    ERROR_EMAIL_INVALID = 'O email fornecido é inválido.',
+    ERROR_PASSWORD_MISSING = 'É necessário inserir a password.',
+    ERROR_PASSWORD_WEAK = 'A password necessita de pelo menos 6 caracteres.',
+    ERROR_USER_NOT_FOUND = 'Email não encontrado. Verifique suas credenciais.',
+    ERROR_WRONG_PASSWORD = 'Senha incorreta. Verifique suas credenciais.',
+    ERROR_NETWORK_REQUEST_FAILED = 'Não se encontra contectado à sua internet. Tente mais tarde.',
+    ERROR_LOGIN = 'Ocorreu um erro durante o login. Tente novamente.',
+    ERROR_SIGNUP = 'Ocorreu um erro durante o registo. Tente novamente.',
+    ERROR_EMAIL_NOT_FOUND = 'Email não encontrado. Verifique suas credenciais.',
 }

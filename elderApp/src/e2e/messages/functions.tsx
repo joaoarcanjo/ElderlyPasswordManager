@@ -1,23 +1,21 @@
 import { MessageType, SessionCipher, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript"
 import { currentSessionSubject, removeSession, sessionForRemoteUser, sessionListSubject } from "../session/state"
-import { SendAcknowledgeMessage } from "../network/types"
-import { signalStore, usernameSubject } from "../identity/state"
-import { signalWebsocket } from "../network/webSockets"
+import { signalStore } from "../identity/state"
 import { ChatSession } from "../session/types"
-import { ChatMessageType, CaregiverDataBody, ProcessedChatMessage, CredentialBody, ElderlyDataBody } from "./types"
+import { ChatMessageType, CaregiverDataBody, ProcessedChatMessage, CredentialBody, ElderlyDataBody, ChatMessageDescription } from "./types"
 import { setCaregiverListUpdated } from "../../screens/list_caregivers/actions/state"
 import { getKeychainValueFor } from "../../keychain"
 import { caregiver1SSSKey, caregiver2SSSKey, elderlyId, localDBKey } from "../../keychain/constants"
 import { addCaregiverToArray, removeCaregiverFromArray } from "../../firebase/firestore/functionalities"
-import { changeCaregiverStatusOnDatabase, checkCaregiverByEmailAccepted, checkCaregiverByEmailNotAccepted, checkNumberOfCaregivers, deleteCaregiver, getCaregiverId, getCaregivers, getCaregiversWithSpecificState, isMaxCaregiversReached, saveCaregiver, updateCaregiver } from "../../database/caregivers"
-//import { MessageType, SessionCipher, SignalProtocolAddress } from "../../algorithms/signal"
+import { checkCaregiverByEmailAccepted, checkCaregiverByEmailNotAccepted, checkNumberOfCaregivers, deleteCaregiver, getCaregiverId, getCaregivers, getCaregiversWithSpecificState, isMaxCaregiversReached, saveCaregiver, updateCaregiver } from "../../database/caregivers"
 import { CaregiverRequestStatus } from "../../database/types"
 import { setCredentialsListUpdated } from "../../screens/list_credentials/actions/state"
 import { getAllCredentialsAndValidate } from "../../screens/list_credentials/actions/functions"
-import { executeKeyExchange } from "../../algorithms/sss/sssOperations"
 import { encryptAndSendMessage } from "./sendMessage"
-import { caregiverPersonalInfoUpdatedFlash, credentialCreatedFlash, credentialDeletedFlash, credentialUpdatedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionRejectMaxReachedFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionRequestCanceledFlash, sessionRequestReceivedFlash } from "../../components/userMessages/UserMessages"
+import { caregiverPersonalInfoUpdatedFlash, credentialCreatedFlash, credentialDeletedFlash, credentialUpdatedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionRejectMaxReachedFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionRequestCanceledFlash, sessionRequestReceivedFlash } from "../../components/UserMessages"
 import { deleteSessionById } from "../../database/signalSessions"
+import { executeKeyExchange } from "../../algorithms/shamirSecretSharing/sssOperations"
+import { emptyValue, readCaregivers, writeCaregivers } from "../../assets/constants/constants"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -39,28 +37,12 @@ export async function processPreKeyMessage(address: string, message: MessageType
     
     let cm: ProcessedChatMessage | null = null
     try{
-        plaintext = plaintext.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F]/g, '')
+        plaintext = plaintext.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F]/g, emptyValue)
         cm = JSON.parse(plaintext) as ProcessedChatMessage
         addMessageToSession(address, cm, type)
     } catch (e) {
         //console.log(e) //TODO: Verificar se é necessário realizar algum alerta
     }
-}
-
-/**
- * Função para informar o remetente que a regularMessage foi recebida com sucesso.
- * @param address 
- * @param messageId Representa o id da mensagem que queremos informar ao remetente que foi recebida com sucesso. 
- * O remetente a receber um acknowledge de uma mensagem, não precisa da retransmitir.  
- */
-function sendAcknowledgement(address: string, id: string) {
-    const wsm: SendAcknowledgeMessage = {
-        action: 'acknowledge',
-        address: address,
-        from: usernameSubject.value,
-        messageId: id
-    }
-    signalWebsocket.next(wsm)
 }
 
 /**
@@ -70,28 +52,30 @@ function sendAcknowledgement(address: string, id: string) {
  */
 export async function processRegularMessage(address: string, message: string, type: number): Promise<void> {
     console.log('-> processRegularMessage')
-
-    const userSession = { ...sessionForRemoteUser(address)! }
-    if(!userSession.remoteUsername) {
-        const session : ChatSession= sessionForRemoteUser(address) || {
-            remoteUsername: address,
-            messages: [],
-        }
-        const sessionList = [...sessionListSubject.value]
-        sessionList.unshift(session)
-        sessionListSubject.next(sessionList)
+    try {
+        /*const userSession = { ...sessionForRemoteUser(address)! }
+        if(!userSession.remoteUsername) {
+            const session : ChatSession= sessionForRemoteUser(address) || {
+                remoteUsername: address,
+                messages: [],
+            }
+            const sessionList = [...sessionListSubject.value]
+            sessionList.unshift(session)
+            sessionListSubject.next(sessionList)
+        }*/
+        
+        const protocolAddress = new SignalProtocolAddress(address, 1)
+        const cipher = new SessionCipher(signalStore, protocolAddress)
+        
+        const plaintextBytes = await cipher.decryptWhisperMessage(message, 'binary')
+        
+        let plaintext = String.fromCharCode(...new Uint8Array(plaintextBytes))
+        plaintext = plaintext.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F]/g, emptyValue);
+        const cm: ProcessedChatMessage = JSON.parse(plaintext)
+        addMessageToSession(address, cm, type)
+    } catch (error) {
+        console.error('Error processing message:', error)
     }
-    
-    const protocolAddress = new SignalProtocolAddress(address, 1)
-    const cipher = new SessionCipher(signalStore, protocolAddress)
-    
-    const plaintextBytes = await cipher.decryptWhisperMessage(message, 'binary') //TODO: Se os dados forem inválidos, a aplicação crasha, temos q fazer um trycatch
-    
-    let plaintext = String.fromCharCode(...new Uint8Array(plaintextBytes))
-    plaintext = plaintext.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F]/g, '');
-    const cm: ProcessedChatMessage = JSON.parse(plaintext)
-    addMessageToSession(address, cm, type)
-    sendAcknowledgement(address, cm.id) //TODO: veriiicar se é necessário, possivelmente não
 }
 
 export async function addMessageToSession(address: string, cm: ProcessedChatMessage, type: number, itsMine?: boolean): Promise<void> {
@@ -128,8 +112,7 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
         setCredentialsListUpdated()
     } else if (cm.type === ChatMessageType.DECOUPLING_SESSION && !itsMine) {
         await processDecouplingMessage(currentUserId, cm)
-    }/* else if(type !== 3 && !cm.firstMessage) {
-    }*/
+    }
     
     const sessionList = sessionListSubject.value.filter((session) => session.remoteUsername !== address)
     sessionList.unshift(userSession)
@@ -153,7 +136,7 @@ async function processPersonalData(currentUserId: string, cm: ProcessedChatMessa
     //Se for uma relação que estamos à espera de resposta, o cuidador aceitou a relação.
     } else if(await checkCaregiverByEmailNotAccepted(currentUserId, cm.from)) {
         await updateCaregiver(data.userId, currentUserId, data.email, data.name, data.phone)
-        .then(() => addCaregiverToArray(currentUserId, data.userId, "readCaregivers"))
+        .then(() => addCaregiverToArray(currentUserId, data.userId, readCaregivers))
         .then(() => sessionAcceptedFlash(cm.from, false))
         .then(() => setCaregiverListUpdated(currentUserId))
         .then(() => sendCaregiverShare(currentUserId, cm.from))
@@ -177,7 +160,7 @@ async function processPersonalData(currentUserId: string, cm: ProcessedChatMessa
 }
 
 async function refuseCaregiverMaxReached(currentUserId: string, cm: ProcessedChatMessage) {
-    await encryptAndSendMessage(cm.from, 'rejectSession', true, ChatMessageType.MAX_REACHED_SESSION)
+    await encryptAndSendMessage(cm.from, ChatMessageDescription.REJECT_SESSION, true, ChatMessageType.MAX_REACHED_SESSION)
     .then(() => removeSession(cm.from))
     .then(() => deleteSessionById(currentUserId, cm.from))
     .then(() => sessionRejectMaxReachedFlash(cm.from))    
@@ -197,16 +180,16 @@ async function processRejectMessage(currentUserId: string, cm: ProcessedChatMess
     await deleteCaregiver(currentUserId, cm.from)
     .then(() => sessionRejectedFlash(cm.from, false))
     .then(() => deleteSessionById(currentUserId, cm.from))
+    .then(() => setCaregiverListUpdated(currentUserId))
     .catch(() => console.log('#1 Error deleting caregiver'))
 }
 
 async function processDecouplingMessage(currentUserId: string, cm: ProcessedChatMessage) {
     console.log("===> processDecouplingMessageCalled")
     const caregiverId = await getCaregiverId(cm.from, currentUserId)
-    
     await deleteCaregiver(currentUserId, cm.from)
-    .then(() => removeCaregiverFromArray(currentUserId, caregiverId, 'writeCaregivers'))
-    .then(() => removeCaregiverFromArray(currentUserId, caregiverId, 'readCaregivers'))
+    .then(() => removeCaregiverFromArray(currentUserId, caregiverId, writeCaregivers))
+    .then(() => removeCaregiverFromArray(currentUserId, caregiverId, readCaregivers))
     .then(() => setCaregiverListUpdated(currentUserId))
     .then(() => sessionEndedFlash(cm.from, false))
     .then(() => executeKeyExchange(currentUserId))
@@ -219,6 +202,7 @@ async function processMaxReachedMessage(currentUserId: string, cm: ProcessedChat
     await deleteCaregiver(currentUserId, cm.from)
     .then(() => sessionRejectedMaxReachedFlash(cm.from))
     .then(() => deleteSessionById(currentUserId, cm.from))
+    .then(() => setCaregiverListUpdated(currentUserId))
     .catch(() => console.log('#1 Error deleting caregiver'))
 }
 
@@ -227,7 +211,7 @@ export async function cancelWaitingCaregivers(userId: string) {
     console.log(await getCaregivers(userId))
     const elderlies = await getCaregiversWithSpecificState(userId, CaregiverRequestStatus.WAITING)
     elderlies.forEach(async email => {
-        await encryptAndSendMessage(email, 'cancelSession', true, ChatMessageType.CANCEL_SESSION)
+        await encryptAndSendMessage(email, ChatMessageDescription.CANCEL_SESSION, true, ChatMessageType.CANCEL_SESSION)
         .then(() => removeSession(email))
         .then(() => deleteCaregiver(userId, email))
         .then(() => setCaregiverListUpdated(userId))
@@ -236,7 +220,7 @@ export async function cancelWaitingCaregivers(userId: string) {
 
 export async function cancelWaitingCaregiver(userId: string, caregiverEmail: string) {
     console.log("===> cancelWaitingCaregiverCalled")
-    await encryptAndSendMessage(caregiverEmail, 'cancelSession', true, ChatMessageType.CANCEL_SESSION)
+    await encryptAndSendMessage(caregiverEmail, ChatMessageDescription.CANCEL_SESSION, true, ChatMessageType.CANCEL_SESSION)
     .then(() => removeSession(caregiverEmail))
     .then(() => deleteCaregiver(userId, caregiverEmail))
     .then(() => setCaregiverListUpdated(userId))
@@ -251,10 +235,10 @@ async function sendCaregiverShare(currentUserId: string, to: string) {
     const data: ElderlyDataBody = {
         userId: currentUserId,
         key: valueKey,
-        name: '',
-        email: '',
-        phone: '',
-        photo: ''
+        name: emptyValue,
+        email: emptyValue,
+        phone: emptyValue,
+        photo: emptyValue
     }
     await encryptAndSendMessage(to, JSON.stringify(data), false, ChatMessageType.KEY_UPDATE)
 }

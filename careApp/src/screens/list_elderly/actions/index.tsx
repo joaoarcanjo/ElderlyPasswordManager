@@ -7,8 +7,8 @@ import { Elderly } from '../../../database/types'
 import { elderlyListUpdated } from './state'
 import AddElderly from './addItem'
 import { useSessionInfo } from '../../../firebase/authentication/session'
-import { getAllElderly } from '../../../database/elderlyFunctions'
-import { pageTitleElderlyList } from '../../../assets/constants'
+import { getAllElderly } from '../../../database/elderly'
+import { pageTitleElderlyList } from '../../../assets/constants/constants'
 
 function ElderlyList() {
 
@@ -35,7 +35,7 @@ function ElderlyList() {
               name={elderly.name}
               phone={elderly.phoneNumber}
               email={elderly.email}
-              setRefresh={refreshValue} 
+              setRefresh={refreshValue}
               status={elderly.status}/>
           )}
           <ElderlyItemMockup name={'Elisabeth'} phone={'966666666'} email={'elisabeth@gmail.com'} setRefresh={refreshValue} elderlyId={'BO37mI4ZkaQIk2glsufoSVkHgGf2'}/>

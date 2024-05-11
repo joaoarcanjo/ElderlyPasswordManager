@@ -1,30 +1,30 @@
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons"
+import { MaterialCommunityIcons } from "@expo/vector-icons"
 import { useNavigation } from "@react-navigation/native"
 import { StackNavigationProp } from "@react-navigation/stack"
 import { useState, useEffect } from "react"
 import { View, TextInput, TouchableOpacity, Text } from "react-native"
-import { getNewId, encrypt } from "../../../algorithms/0thers/crypto"
 import { getScore } from "../../../algorithms/zxcvbn/algorithm"
-import { passwordDefaultLengthGenerator, placeholderPlatform, placeholderURI, usernameLabel, placeholderUsername, passwordLabel, placeholderPassword, optionsLabel, regenerateLabel, addLabel, platformLabel, uriLabel } from "../../../assets/constants"
-import { darkOrangeBackground, orangeBackground, whiteBackgroud } from "../../../assets/styles/colors"
+import { passwordDefaultLengthGenerator, placeholderPlatform, placeholderURI, usernameLabel, placeholderUsername, passwordLabel, placeholderPassword, optionsLabel, regenerateLabel, addLabel, platformLabel, uriLabel, emptyValue } from "../../../assets/constants/constants"
+import { darkOrangeBackground, whiteBackgroud } from "../../../assets/styles/colors"
 import { stylesButtons } from "../../../assets/styles/main_style"
 import AvaliationEmoji from "../../../components/EmojiAvaliation"
 import { PasswordOptionsModal, PlatformSelectionModal } from "../../../components/Modal"
 import { regeneratePassword } from "../../../components/passwordGenerator/functions"
-import { credentialCreatedFlash } from "../../../components/userMessages/UserMessages"
+import { credentialCreatedFlash } from "../../../components/UserMessages"
 import { insertCredentialToLocalDB } from "../../../database/credentials"
 import { ChatMessageType } from "../../../e2e/messages/types"
 import { useSessionInfo } from "../../../firebase/authentication/session"
 import { addCredencialToFirestore } from "../../../firebase/firestore/functionalities"
 import { sendCaregiversCredentialInfoAction } from "../../credential_interface/actions/functions"
 import { stylesInputsCredencials, stylesAddCredential } from "../styles/styles"
+import { encrypt, getNewId } from "../../../algorithms/tweetNacl/crypto"
 
 export default function CredentialsLoginInput() {
 
-    const [platform, setPlatform] = useState('')
-    const [uri, setURI] = useState('')
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
+    const [platform, setPlatform] = useState(emptyValue)
+    const [uri, setURI] = useState(emptyValue)
+    const [username, setUsername] = useState(emptyValue)
+    const [password, setPassword] = useState(emptyValue)
     const [avaliation, setAvaliation] = useState<number>(0)
     const [requirements, setRequirements] = useState<Object>({length: passwordDefaultLengthGenerator, strict: true, symbols: false, uppercase: true, lowercase: true, numbers: true})
     const [showPassword, setShowPassword] = useState(false)
@@ -39,7 +39,7 @@ export default function CredentialsLoginInput() {
   
     const handleSave = async () => {
         try {
-            if(platform != '' && uri != '' && username != '' && password != '') {
+            if(platform != emptyValue && uri != emptyValue && username != emptyValue && password != emptyValue) {
                 const uuid = getNewId()
                 const jsonValue = JSON.stringify({
                     id: uuid,
@@ -55,7 +55,7 @@ export default function CredentialsLoginInput() {
                 })
                 await addCredencialToFirestore(userId, uuid, jsonValue)
                 await insertCredentialToLocalDB(userId, uuid, encrypt(jsonValue, localDBKey))
-                await sendCaregiversCredentialInfoAction(userId, '', platform, ChatMessageType.CREDENTIALS_CREATED)
+                await sendCaregiversCredentialInfoAction(userId, emptyValue, platform, ChatMessageType.CREDENTIALS_CREATED)
                 credentialCreatedFlash(userEmail, platform, true)
                 navigation.goBack()
             }
@@ -81,7 +81,7 @@ export default function CredentialsLoginInput() {
                         placeholder={placeholderPlatform}
                         value={platform}
                         autoFocus={true}
-                        style={{ flex: 1, fontSize: 22, padding: '2%', marginHorizontal: '1%' }}
+                        style={{ flex: 1, fontSize: 20, padding: '2%', marginHorizontal: '1%' }}
                         onChangeText={text => setPlatform(text)}
                         />
                         <TouchableOpacity style={[{flex: 0.15, marginHorizontal: '3%'}]} onPress={() => {setPlatformModal(true)}}>
@@ -94,7 +94,7 @@ export default function CredentialsLoginInput() {
                         placeholder={placeholderURI}
                         value={uri}
                         autoCapitalize='none'
-                        style={{ flex: 1, fontSize: 22, padding: '2%', marginHorizontal: '1%' }}
+                        style={{ flex: 1, fontSize: 20, padding: '2%', marginHorizontal: '1%' }}
                         onChangeText={text => setURI(text)}
                         />
                     </View>
@@ -104,7 +104,7 @@ export default function CredentialsLoginInput() {
                         placeholder={placeholderUsername}
                         value={username}
                         autoCapitalize='none'
-                        style={{ flex: 1, fontSize: 22, padding: '2%', marginHorizontal: '1%' }}
+                        style={{ flex: 1, fontSize: 20, padding: '2%', marginHorizontal: '1%' }}
                         onChangeText={text => setUsername(text)}
                         />
                     </View>

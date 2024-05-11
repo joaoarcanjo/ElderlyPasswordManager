@@ -1,5 +1,6 @@
 import { ReactNode, createContext, useContext, useState } from "react"
 import React from 'react';
+import { emptyValue } from "../../assets/constants/constants";
 
 interface LoginContextProps {
     children: ReactNode;
@@ -24,13 +25,13 @@ interface LoginContextProps {
   
   const SessionProvider: React.FC<LoginContextProps> = ({ children }) => {
 
-    const [userEmail, setUserEmail] = useState('')
-    const [userPhone, setUserPhone] = useState('')
-    const [userName, setUserName] = useState('')
-    const [userId, setUserId] = useState('')
-    const [localDBKey, setLocalDBKey] = useState('')
-    const [usernameCopied, setUsernameCopied] = useState('')
-    const [passwordCopied, setPasswordCopied] = useState('')
+    const [userEmail, setUserEmail] = useState(emptyValue)
+    const [userPhone, setUserPhone] = useState(emptyValue)
+    const [userName, setUserName] = useState(emptyValue)
+    const [userId, setUserId] = useState(emptyValue)
+    const [localDBKey, setLocalDBKey] = useState(emptyValue)
+    const [usernameCopied, setUsernameCopied] = useState(emptyValue)
+    const [passwordCopied, setPasswordCopied] = useState(emptyValue)
   
     return (
       <LoginContext.Provider 

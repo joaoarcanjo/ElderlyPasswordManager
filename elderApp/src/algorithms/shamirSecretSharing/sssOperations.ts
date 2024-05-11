@@ -1,15 +1,14 @@
-import { keyRefreshTimeout, numberOfShares, threshold } from "../../assets/constants"
+import { emptyValue, keyRefreshTimeout, numberOfShares, threshold } from "../../assets/constants/constants"
 import { getTimeoutFromLocalDB, insertTimeoutToLocalDB, updateTimeoutToLocalDB } from "../../database/timeout"
 import { TimeoutType } from "../../database/types"
 import { changeFirestoreKey, listAllElderlyCredencials, updateCredentialFromFiretore } from "../../firebase/firestore/functionalities"
 import { getKeychainValueFor, saveKeychainValue } from "../../keychain"
 import { caregiver1SSSKey, caregiver2SSSKey, firestoreSSSKey, elderlyFireKey } from "../../keychain/constants"
-import { decrypt, generateKey } from "../0thers/crypto"
+import { decrypt, generateKey } from "../tweetNacl/crypto"
 import { sendShares } from "./sendShares"
 import { generateShares } from "./sss"
 
 /**
- * Changes the shared secret for a user.
  * Vai gerar os novos shares, vai enviar para todos os cuidadores (2 max) o seu novo share, e vai atualizar o share na cloud.
  * @param userId - The user ID.
  * @returns The new shared secret.
@@ -21,9 +20,9 @@ export async function changeKey(userId: string): Promise<string> {
     const shares: string[] = generateShares(key, numberOfShares, threshold)
     //console.log(shares)
    
-    const caregiver1Key = shares[2]+''
-    const caregiver2Key = shares[1]+''
-    const firestoreKey = shares[0]+''
+    const caregiver1Key = shares[2]
+    const caregiver2Key = shares[1]
+    const firestoreKey = shares[0]
     await saveKeychainValue(caregiver1SSSKey(userId), caregiver1Key)
     await saveKeychainValue(caregiver2SSSKey(userId), caregiver2Key)
     await saveKeychainValue(firestoreSSSKey(userId), firestoreKey)
@@ -34,13 +33,18 @@ export async function changeKey(userId: string): Promise<string> {
     return key
 }
 
+/**
+ * Esta função vai verificar se o tempo de timeout já passou, e se sim, vai executar a troca de chave.
+ * @param userId 
+ * @returns 
+ */
 export async function executeKeyChangeIfTimeout(userId: string): Promise<string> {
     console.log("===> executeKeyChangeIfTimeoutCalled")
     const timer = await getTimeoutFromLocalDB(userId, TimeoutType.SSS)
     if(timer == null) {
         await insertTimeoutToLocalDB(userId, new Date().getTime(), TimeoutType.SSS)
         .catch(() => console.log("#1 Error inserting timeout"))
-        return ''
+        return emptyValue
     }
 
     const currentDate = new Date().getTime()
@@ -49,12 +53,17 @@ export async function executeKeyChangeIfTimeout(userId: string): Promise<string>
         .then(() => {return executeKeyExchange(userId) })
         .catch(() => {
             console.log("#1 Error inserting timeout")
-            return ''
+            return emptyValue
         })
     }
-    return ''
+    return emptyValue
 }
 
+/**
+ * Esta função vai executar a troca de chave, e vai atualizar todas as credenciais na cloud.
+ * @param userId 
+ * @returns 
+ */
 export async function executeKeyExchange(userId: string): Promise<string> {
     console.log("===> executeKeyExchangeCalled")
     const oldkey = await getKeychainValueFor(elderlyFireKey(userId))

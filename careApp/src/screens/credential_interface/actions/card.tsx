@@ -1,26 +1,23 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {View, Text, TouchableOpacity, TextInput} from 'react-native'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import {Navbar} from '../../../navigation/actions'
 import { credentials, logout, options } from '../styles/styles'
 import MainBox from '../../../components/MainBox'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
-import AvaliationEmoji from '../../../components/EmojiAvaliation'
-import { getScore } from '../../../algorithms/zxcvbn/algorithm'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
 import { deleteCredential, updateCredentialFromFirestore, verifyIfCanManipulateCredentials } from '../../../firebase/firestore/functionalities'
-import { PasswordOptionsModal, YesOrNoModal, YesOrNoSpinnerModal } from '../../../components/Modal'
+import { YesOrNoModal, YesOrNoSpinnerModal } from '../../../components/Modal'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { buildEditMessage, sendElderlyCredentialInfoAction } from './functions'
 import { ChatMessageType } from '../../../e2e/messages/types'
 import { deleteCredentialFromLocalDB, updateCredentialFromLocalDB } from '../../../database/credentials'
-import { encrypt } from '../../../algorithms/0thers/crypto'
-import { regeneratePassword } from '../../../components/passwordGenerator/functions'
-import { cancelLabel, cardNumberLabel, copyLabel, deleteCredentialCardLabel, editLabel, optionsLabel, ownerNameLabel, regenerateLabel, saveChangesLabel, saveLabel, securityCodeLabel, uriLabel, userLabel, verificationCodeLabel } from '../../../assets/constants'
+import { cancelLabel, cardNumberLabel, copyLabel, deleteCredentialCardLabel, editLabel, emptyValue, ownerNameLabel, saveChangesLabel, saveLabel, securityCodeLabel, verificationCodeLabel } from '../../../assets/constants/constants'
 import { copyValue, credentialUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
-import { FlashMessage, copyCardNumberDescription, copyOwnerNameDescription, copyPasswordDescription, copySecurityCodeDescription, copyURIDescription, copyUsernameDescription, copyVerificationCodeDescription } from '../../../components/userMessages/messages'
+import { FlashMessage, copyCardNumberDescription, copyOwnerNameDescription, copySecurityCodeDescription, copyVerificationCodeDescription } from '../../../components/userMessages/messages'
+import { encrypt } from '../../../algorithms/tweetNacl/crypto'
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
@@ -86,7 +83,7 @@ function CardInfo({ownerId, id, platform, cn, on, sc, vc, edited, auxKey, isElde
       .then(async (updated) => {
         setEditFlag(!editFlag)
         if(updated) {
-          credentialUpdatedFlash('', platform, true)      
+          credentialUpdatedFlash(emptyValue, platform, true)      
           if(ownerId != userId) {
             await sendElderlyCredentialInfoAction(userId, ownerId, id, platform, ChatMessageType.CREDENTIALS_UPDATED)
           } else {
@@ -193,6 +190,7 @@ function CardInfo({ownerId, id, platform, cn, on, sc, vc, edited, auxKey, isElde
               <View style={{margin: '2%', flexDirection: 'row'}}>
                 <TextInput 
                   editable={!editFlag} 
+                  keyboardType='numeric'
                   value={editFlag ? cardNumber : cardNumberEdited}
                   style={[{ flex: 1, fontSize: 22}, credentials.credentialInfoText]}
                   onChangeText={text => editFlag ? setCardNumber(text): setCardNumberEdited(text)}
@@ -212,6 +210,7 @@ function CardInfo({ownerId, id, platform, cn, on, sc, vc, edited, auxKey, isElde
               <View style={{margin: '2%', flexDirection: 'row'}}>
                 <TextInput 
                   editable={!editFlag} 
+                  keyboardType='numeric'
                   value={editFlag ? securityCode : securityCodeEditted}
                   style={[{ flex: 1, fontSize: 22}, credentials.credentialInfoText]}
                   onChangeText={text => editFlag ? setSecurityCode(text): setSecurityCodeEditted(text)}
@@ -281,17 +280,17 @@ function DeleteCredential({ownerId, id, platform, auxKey, isElderlyCredential}: 
         id: id,
         type: 'card',
         platform: platform, 
-        ownerName: '', 
-        cardNumber: '', 
-        securityCode: '',
-        verificationCode: '', 
+        ownerName: emptyValue, 
+        cardNumber: emptyValue, 
+        securityCode: emptyValue,
+        verificationCode: emptyValue, 
         edited: {
           updatedBy: userEmail,
           updatedAt: Date.now()
         }
       })
       await updateCredentialFromFirestore(ownerId, id, auxKey, data, isElderlyCredential)
-        .then(() => sendElderlyCredentialInfoAction(userId, ownerId, '', platform, ChatMessageType.CREDENTIALS_DELETED))
+        .then(() => sendElderlyCredentialInfoAction(userId, ownerId, emptyValue, platform, ChatMessageType.CREDENTIALS_DELETED))
         .then(() => navigation.goBack())
     } else {
       await deleteCredential(ownerId, id)

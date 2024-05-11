@@ -1,5 +1,6 @@
 import { FirebaseAuthTypes } from "@react-native-firebase/auth"
 import { Alert } from "react-native";
+import { Errors } from "./types";
 
 interface SignError extends FirebaseAuthTypes.NativeFirebaseAuthError {
   code: any;
@@ -12,46 +13,43 @@ function signinErrorResult(error: any) {
     
     switch (firebaseError.code) {
         case 'auth/user-not-found':
-          Alert.alert('Erro', 'Email não encontrado. Verifique suas credenciais.')
+          Alert.alert('Erro', Errors.ERROR_EMAIL_NOT_FOUND)
           break
         case 'auth/invalid-email':
-          Alert.alert('Erro', 'O email fornecido é inválido.')
+          Alert.alert('Erro', Errors.ERROR_EMAIL_INVALID)
           break
         case 'auth/missing-password':
-          Alert.alert('Erro', 'É necessário inserir a password.')
+          Alert.alert('Erro', Errors.ERROR_PASSWORD_MISSING)
           break
         case 'auth/wrong-password':
-          Alert.alert('Erro', 'Senha incorreta. Verifique suas credenciais.')
+          Alert.alert('Erro', Errors.ERROR_WRONG_PASSWORD)
           break
         case 'auth/network-request-failed':
-          Alert.alert('Erro', 'Não se encontra contectado à sua internet. Tente mais tarde.')
+          Alert.alert('Erro', Errors.ERROR_NETWORK_REQUEST_FAILED)
           break
         default:
-          Alert.alert('Erro', 'Ocorreu um erro durante o login. Tente novamente.')
+          Alert.alert('Erro', Errors.ERROR_LOGIN)
           break
     }
 }
 
 function signupErrorResult(error: any) {
-
     const firebaseError = error as SignError
-    //console.log("-> Firebase signup error code: "+firebaseError.code)
-
     switch (firebaseError.code) {
         case 'auth/email-already-in-use':
-          Alert.alert('Erro', 'O email fornecido já está em uso.')
+          Alert.alert('Erro', Errors.ERROR_EMAIL_ALREADY_IN_USE)
           break
         case 'auth/invalid-email':
-          Alert.alert('Erro', 'O email fornecido é inválido.')
+          Alert.alert('Erro', Errors.ERROR_EMAIL_INVALID)
           break
         case 'auth/missing-password':
-          Alert.alert('Erro', 'É necessário inserir a password.')
+          Alert.alert('Erro', Errors.ERROR_PASSWORD_MISSING)
           break
         case 'auth/weak-password':
-          Alert.alert('Erro', 'A password necessita de pelo menos 6 caracteres.')
+          Alert.alert('Erro', Errors.ERROR_PASSWORD_WEAK)
           break
         default:
-          Alert.alert('Erro', 'Ocorreu um erro na operação. Tente novamente.')
+          Alert.alert('Erro', Errors.ERROR_SIGNUP)
           break
     }
 }

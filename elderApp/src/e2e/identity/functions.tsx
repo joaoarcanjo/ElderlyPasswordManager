@@ -1,13 +1,11 @@
 import { KeyHelper, SignedPublicPreKeyType, PreKeyType, SignedPreKeyPairType, PreKeyPairType } from "@privacyresearch/libsignal-protocol-typescript";
-
 import { initializeSignalWebsocket } from "../network/functions";
 import { subscribeWebsocket } from "../network/webSockets";
 import { SignalDirectory } from "../signal/signal-directory";
 import { directorySubject, usernameSubject, signalStore } from "./state";
 import { networkInfoSubject } from "../network/state";
-import { port } from "../../assets/constants";
+import { port } from "../../assets/constants/constants";
 import { getServerIP } from "../../firebase/firestore/functionalities";
-//import { KeyHelper, PreKeyPairType, PreKeyType, SignedPreKeyPairType, SignedPublicPreKeyType } from "../../algorithms/signal";
 
 /**
  * Vai criar a identidade no servidor

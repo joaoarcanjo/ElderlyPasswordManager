@@ -1,5 +1,5 @@
-import { encrypt } from '../../algorithms/0thers/crypto';
-import { elderlyCollectionName, keyCollectionName, keyDocumentName, caregiversCollectionName, caregiversDocumentName, credencialsCollectionName } from '../../assets/constants';
+import { encrypt } from '../../algorithms/tweetNacl/crypto';
+import { elderlyCollectionName, keyCollectionName, keyDocumentName, caregiversCollectionName, caregiversDocumentName, credencialsCollectionName, emptyValue } from '../../assets/constants/constants';
 import { getKeychainValueFor } from '../../keychain';
 import { elderlyFireKey, firestoreSSSKey } from '../../keychain/constants';
 import { firebase } from '../FirebaseConfig';
@@ -41,7 +41,7 @@ async function getKey(userId: string): Promise<string> {
         .catch((error) => {
             alert('Erro ao tentar obter a chave, tente novamente!')
             //console.log('Error: ', error)
-            return ''
+            return emptyValue
         })
 }
 
@@ -204,7 +204,6 @@ async function listAllElderly(): Promise<string[]> {
         return values
     }).catch((error) => {
         alert('Erro ao obter os idosos, tente novamente!')
-        //console.error('Error: ', error)
         return []
     });
 }
@@ -228,27 +227,9 @@ async function listAllElderlyCredencials(userId: string): Promise<Credential[]> 
         });
         return values
     }).catch((error) => {
-        //alert('Erro ao obter as credenciais, tente novamente!')
         console.log('Error: ', error.message)
         return []
     });
-}
-
-/**
- * Função para listar as propriedades de uma credencial específica
- * @param userId 
- * @param credencialId 
- */
-async function listCredencialProperties(userId: string, credencialId: string) {
-
-    firestore.collection(elderlyCollectionName)
-        .doc(userId)
-        .collection(credencialsCollectionName)
-        .doc(credencialId).get()
-        .catch((error) => {
-            //alert('Erro ao obter a credencial , tente novamente!')
-            //console.log('Error: ', error)
-        })
 }
 
 /**
@@ -290,7 +271,7 @@ async function updateCredentialFromFiretore(userId: string, credencialId: string
 
 async function initFirestore(userId: string): Promise<boolean> {
     console.log("===> initFirestoreCalled")
-    if(userId === '') return false
+    if(userId === emptyValue) return false
     //throw new Error("Erro ao iniciar a firestore, tente novamente!")
     return elderlyExists(userId).then(async (result) => {
         if (!result) { //se não existir
@@ -315,11 +296,11 @@ async function getServerIP(): Promise<string> {
             const serverData = doc.data()
             if (serverData) return serverData.ip
         }
-        return "";
+        return emptyValue
     }).catch((error) => {
         alert('Erro ao obter o IP do servidor, tente novamente!');
         //console.error('Error: ', error);
-        return ""
+        return emptyValue
     })
 }
 

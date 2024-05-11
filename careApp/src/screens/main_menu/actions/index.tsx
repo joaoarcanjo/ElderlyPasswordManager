@@ -8,14 +8,14 @@ import { useSessionInfo } from '../../../firebase/authentication/session'
 import { getKeychainValueFor, saveKeychainValue } from '../../../keychain'
 import { caregiverName, caregiverPhone } from '../../../keychain/constants'
 import { createIdentity } from '../../../e2e/identity/functions'
-import { credentialTimoutRefresh, credentialsLabel, elderlyLabel, generatorLabel, pageCredentials, pageElderlyList, pageFAQs, pageGenerator, pageSettings, questionsLabel, settingsLabel } from '../../../assets/constants'
+import { credentialTimoutRefresh, credentialsLabel, elderlyLabel, emptyValue, generatorLabel, heyLabel, pageCredentials, pageElderlyList, pageFAQs, pageGenerator, pageSettings, questionsLabel, settingsLabel } from '../../../assets/constants/constants'
 import { getAllCredentialsAndValidate } from '../../list_credentials/actions/functions'
 
-const credentialsImage = '../images/credenciais.png'
-const generatorImage = '../images/gerador.png'
-const settingsImage = '../images/definições.png'
-const questionsImage = '../images/perguntas.png'
-const elderlyImage = '../images/elderly.png'
+const credentialsImage = '../../../assets/images/credenciais.png'
+const generatorImage = '../../../assets/images/gerador.png'
+const settingsImage = '../../../assets/images/definições.png'
+const questionsImage = '../../../assets/images/perguntas.png'
+const caregiverImage = '../../../assets/images/caregiver.png'
 
 
 function CaregiverInfoBox() {
@@ -26,14 +26,14 @@ function CaregiverInfoBox() {
         <View style={[{ flex: 0.2, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginHorizontal: '5%', marginTop: '2%' }, stylesFirstHalf.caregiverContainer]}>
             <View style={{flex: 0.55}}>
                 <View style={{flex: 0.50, justifyContent: 'center'}}>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={{fontSize: 25, fontWeight: 'bold', marginLeft: '10%'}}>Olá,</Text>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={{fontSize: 25, fontWeight: 'bold', marginLeft: '10%'}}>{heyLabel}</Text>
                 </View>
                 <View style={{flex: 0.50, marginLeft: '10%'}}>
                     <Text numberOfLines={1} adjustsFontSizeToFit  style={{fontSize: 35, fontWeight: 'bold'}}>{userName}</Text>
                 </View>
             </View>
             <View style={{flex: 0.45, justifyContent: 'center', alignItems: 'center'}}>
-                <Image source={require(elderlyImage)} style={{ width: '80%', height: '80%', resizeMode: 'contain'}}/>
+                <Image source={require(caregiverImage)} style={{ width: '80%', height: '80%', resizeMode: 'contain'}}/>
             </View>
         </View>
     )
@@ -103,7 +103,7 @@ export default function MainMenu() {
     //const { expoPushToken } = usePushNotifications()
 
     useEffect(() => {
-        if(userId == '' || localDBKey == '') return
+        if(userId == emptyValue || localDBKey == emptyValue) return
         
         const interval = setInterval(async () => {
             await getAllCredentialsAndValidate(userId, localDBKey)
@@ -118,21 +118,21 @@ export default function MainMenu() {
     , []})
 
     const savePhoneAndName = async () => {
-        if(userPhone == '' && userName == '' && userId != '') {
+        if(userPhone == emptyValue && userName == emptyValue && userId != emptyValue) {
           const userNameAux = await getKeychainValueFor(caregiverName(userId))
           const userPhoneAux = await getKeychainValueFor(caregiverPhone(userId))
-          if(userNameAux != '' && userPhoneAux != '') {
+          if(userNameAux != emptyValue && userPhoneAux != emptyValue) {
             setUserName(userNameAux)
             setUserPhone(userPhoneAux)
           }
-        } else if (userId != '') {
+        } else if (userId != emptyValue) {
           await saveKeychainValue(caregiverName(userId), userName)
           await saveKeychainValue(caregiverPhone(userId), userPhone)
         }
     }
     
     const identityCreation = async () => {
-        if(userPhone == '' && userName == '' && userId != '') {
+        if(userPhone == emptyValue && userName == emptyValue && userId != emptyValue) {
             await createIdentity(userId, userEmail)
         }
     }

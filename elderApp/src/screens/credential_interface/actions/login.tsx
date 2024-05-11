@@ -7,21 +7,19 @@ import MainBox from '../../../components/MainBox'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import AvaliationEmoji from '../../../components/EmojiAvaliation'
 import { getScore } from '../../../algorithms/zxcvbn/algorithm'
-import { StackNavigationProp } from '@react-navigation/stack'
-import { useNavigation } from '@react-navigation/native'
-import { deleteCredentialFromFiretore, updateCredentialFromFiretore } from '../../../firebase/firestore/functionalities'
-import { PasswordOptionsModal, YesOrNoModal, YesOrNoSpinnerModal } from '../../../components/Modal'
+import { updateCredentialFromFiretore } from '../../../firebase/firestore/functionalities'
+import { PasswordOptionsModal, YesOrNoSpinnerModal } from '../../../components/Modal'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
 import { ChatMessageType } from '../../../e2e/messages/types'
 import { buildEditMessage, sendCaregiversCredentialInfoAction } from './functions'
-import { deleteCredentialFromLocalDB, updateCredentialOnLocalDB } from '../../../database/credentials'
-import { encrypt } from '../../../algorithms/0thers/crypto'
-import { cancelLabel, copyLabel, deleteCredentialCardLabel, editLabel, optionsLabel, passwordDefaultLengthGenerator, passwordLabel, regenerateLabel, saveChangesLabel, saveLabel, uriLabel, userLabel } from '../../../assets/constants'
-import { copyValue, credentialDeletedFlash, credentialUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
-import { FlashMessage, copyURIDescription, copyUsernameDescription } from '../../../components/userMessages/messages'
+import { updateCredentialOnLocalDB } from '../../../database/credentials'
+import { cancelLabel, copyLabel, editLabel, emptyValue, optionsLabel, passwordDefaultLengthGenerator, passwordLabelBig, regenerateLabel, saveChangesLabel, saveLabel, uriLabel, userLabel } from '../../../assets/constants/constants'
+import { copyValue, credentialUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/UserMessages'
+import { FlashMessage, copyURIDescription, copyUsernameDescription } from '../../../assets/constants/messages'
 import { regeneratePassword } from '../../../components/passwordGenerator/functions'
 import { DeleteCredential } from './components'
+import { encrypt } from '../../../algorithms/tweetNacl/crypto'
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
@@ -85,8 +83,8 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
           setURI(uriEditted)
           setUsername(usernameEdited)
           setPassword(passwordEdited)
-          await sendCaregiversCredentialInfoAction(userId, '', platform, ChatMessageType.CREDENTIALS_UPDATED)
-          credentialUpdatedFlash('', platform, true)
+          await sendCaregiversCredentialInfoAction(userId, emptyValue, platform, ChatMessageType.CREDENTIALS_UPDATED)
+          credentialUpdatedFlash(emptyValue, platform, true)
         } else {
           setUriEditted(currUri)
           setUsernameEdited(username)
@@ -190,7 +188,7 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
           </View>
           <View style={{flex: 0.40}}>
             <View style={{flex: 0.6, flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '4%'}}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>{passwordLabel}</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>{passwordLabelBig}</Text>
               {editFlag && 
               <TouchableOpacity style={[{flex: 0.4, marginTop:'3%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(password, FlashMessage.passwordCopied, copyUsernameDescription)}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>Copiar</Text>

@@ -12,11 +12,11 @@ import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper
 import { ChatMessageType } from '../../../e2e/messages/types'
 import { buildEditMessage, sendCaregiversCredentialInfoAction } from './functions'
 import { updateCredentialOnLocalDB } from '../../../database/credentials'
-import { encrypt } from '../../../algorithms/0thers/crypto'
-import { cancelLabel, cardNumberLabel, copyLabel, editLabel, ownerNameLabel, passwordDefaultLengthGenerator, saveChangesLabel, saveLabel, securityCodeLabel, verificationCodeLabel } from '../../../assets/constants'
-import { copyValue, credentialUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
-import { FlashMessage, copyURIDescription, copyUsernameDescription } from '../../../components/userMessages/messages'
+import { cardNumberLabel, copyLabel, editLabel, emptyValue, ownerNameLabel, saveChangesLabel, saveLabel, securityCodeLabel, verificationCodeLabel } from '../../../assets/constants/constants'
+import { copyValue, credentialUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/UserMessages'
+import { FlashMessage, copyURIDescription, copyUsernameDescription } from '../../../assets/constants/messages'
 import { DeleteCredential } from './components'
+import { encrypt } from '../../../algorithms/tweetNacl/crypto'
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
@@ -78,8 +78,8 @@ function CardInfo({id, platform, cn, on, sc, vc, edited }: Readonly<{id: string,
           setOwnerName(ownerNameEdited)
           setSecurityCode(securityCodeEditted)
           setVerificationCode(verificationCodeEdited)
-          await sendCaregiversCredentialInfoAction(userId, '', platform, ChatMessageType.CREDENTIALS_UPDATED)
-          credentialUpdatedFlash('', platform, true)
+          await sendCaregiversCredentialInfoAction(userId, emptyValue, platform, ChatMessageType.CREDENTIALS_UPDATED)
+          credentialUpdatedFlash(emptyValue, platform, true)
         } else {
           setCardNumberEdited(cardNumber)
           setOwnerNameEdited(ownerName)
@@ -135,7 +135,7 @@ function CardInfo({id, platform, cn, on, sc, vc, edited }: Readonly<{id: string,
               <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>{saveLabel}</Text>
             </TouchableOpacity>}
             <TouchableOpacity style={[{flex: 0.5, margin: '2%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={cancelUpdate}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>{cancelLabel}</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>{}</Text>
             </TouchableOpacity>
           </View>
         }

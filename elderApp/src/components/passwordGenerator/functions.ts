@@ -1,5 +1,5 @@
-import Algorithm from "../../algorithms/newPassword/algorithm"
-import { passwordMaxLengthGenerator, passwordMinLengthGenerator } from "../../assets/constants"
+import Algorithm from "../../algorithms/newPassword/newPass"
+import { passwordMaxLengthGenerator, passwordMinLengthGenerator } from "../../assets/constants/constants"
 import { Requirements } from "./constants"
 
 /**

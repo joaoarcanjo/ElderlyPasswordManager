@@ -16,11 +16,11 @@ import { useSessionInfo } from '../../../firebase/authentication/session'
 import { buildEditMessage, sendElderlyCredentialInfoAction } from './functions'
 import { ChatMessageType } from '../../../e2e/messages/types'
 import { deleteCredentialFromLocalDB, updateCredentialFromLocalDB } from '../../../database/credentials'
-import { encrypt } from '../../../algorithms/0thers/crypto'
 import { regeneratePassword } from '../../../components/passwordGenerator/functions'
-import { cancelLabel, copyLabel, deleteCredentialCardLabel, deleteCredentialLoginLabel, editLabel, optionsLabel, regenerateLabel, saveChangesLabel, saveLabel, uriLabel, userLabel } from '../../../assets/constants'
+import { cancelLabel, copyLabel, deleteCredentialLoginLabel, editLabel, emptyValue, optionsLabel, passwordLabelBig, regenerateLabel, saveChangesLabel, saveLabel, uriLabel, userLabel } from '../../../assets/constants/constants'
 import { copyValue, credentialUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
 import { FlashMessage, copyPasswordDescription, copyUsernameDescription } from '../../../components/userMessages/messages'
+import { encrypt } from '../../../algorithms/tweetNacl/crypto'
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
@@ -29,6 +29,7 @@ import { FlashMessage, copyPasswordDescription, copyUsernameDescription } from '
 function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyCredential}
   : Readonly<{ownerId: string, id: string, platform: string, uri: string, un: string, pw: string, edited: any, auxKey: string, isElderlyCredential: boolean}>) {
 
+  console.log('ownerId: ', ownerId)
   const [username, setUsername] = useState(un)
   const [currUri, setCurrUri] = useState(uri)
   const [password, setPassword] = useState(pw)
@@ -86,7 +87,7 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
       .then(async (updated) => {
         setEditFlag(!editFlag)
         if(updated) {
-          credentialUpdatedFlash('', platform, true)      
+          credentialUpdatedFlash(emptyValue, platform, true)      
           if(ownerId != userId) {
             await sendElderlyCredentialInfoAction(userId, ownerId, id, platform, ChatMessageType.CREDENTIALS_UPDATED)
           } else {
@@ -197,7 +198,7 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
           </View>
           <View style={{flex: 0.40}}>
             <View style={{flex: 0.6, flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '4%'}}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>{password}</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>{passwordLabelBig}</Text>
               {editFlag && 
               <TouchableOpacity style={[{flex: 0.4, marginTop:'3%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(password, FlashMessage.passwordCopied, copyPasswordDescription)}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>{copyLabel}</Text>
@@ -269,16 +270,16 @@ function DeleteCredential({ownerId, id, platform, auxKey, isElderlyCredential}: 
         type: 'login',
         id: id,
         platform: platform, 
-        uri: '', 
-        username: '', 
-        password: '', 
+        uri: emptyValue, 
+        username: emptyValue, 
+        password: emptyValue, 
         edited: {
           updatedBy: userEmail,
           updatedAt: Date.now()
         }
       })
       await updateCredentialFromFirestore(ownerId, id, auxKey, data, isElderlyCredential)
-        .then(() => sendElderlyCredentialInfoAction(userId, ownerId, '', platform, ChatMessageType.CREDENTIALS_DELETED))
+        .then(() => sendElderlyCredentialInfoAction(userId, ownerId, emptyValue, platform, ChatMessageType.CREDENTIALS_DELETED))
         .then(() => navigation.goBack())
     } else {
       await deleteCredential(ownerId, id)

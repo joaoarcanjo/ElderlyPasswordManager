@@ -9,12 +9,12 @@ import { getKeychainValueFor, saveKeychainValue } from '../../../keychain';
 import { elderlyName, elderlyPhone } from '../../../keychain/constants';
 import { createIdentity } from '../../../e2e/identity/functions';
 import { getAllCredentialsAndValidate } from '../../list_credentials/actions/functions';
-import { credentialTimoutRefresh, credentialsLabel, cuidadoresLabel, generatorLabel, heyLabel, pageCaregivers, pageCredentials, pageFAQs, pageGenerator, pageSettings, questionsLabel, settingsLabel } from '../../../assets/constants';
+import { credentialTimoutRefresh, credentialsLabel, cuidadoresLabel, emptyValue, generatorLabel, heyLabel, pageCaregivers, pageCredentials, pageFAQs, pageGenerator, pageSettings, questionsLabel, settingsLabel } from '../../../assets/constants/constants';
 
-const credentialsImage = '../images/credenciais.png'
-const generatorImage = '../images/gerador.png'
-const settingsImage = '../images/definições.png'
-const questionsImage = '../images/perguntas.png'
+const credentialsImage = '../../../assets/images/credenciais.png'
+const generatorImage = '../../../assets/images/gerador.png'
+const settingsImage = '../../../assets/images/definições.png'
+const questionsImage = '../../../assets/images/perguntas.png'
 const elderlyImage = '../../../assets/images/elderly.png'
 
 
@@ -103,7 +103,7 @@ export default function MainMenu() {
     //const { expoPushToken } = usePushNotifications()
     
     useEffect(() => {
-        if(userId == '' || localDBKey == '') return
+        if(userId == emptyValue || localDBKey == emptyValue) return
         
         const interval = setInterval(async () => {
             await getAllCredentialsAndValidate(userId, localDBKey)
@@ -118,15 +118,15 @@ export default function MainMenu() {
     }, [])
     
     const savePhoneAndName = async () => {
-        if(userPhone == '' && userName == '' && userId != '') {
+        if(userPhone == emptyValue && userName == emptyValue && userId != emptyValue) {
             const userNameAux = await getKeychainValueFor(elderlyName(userId))
             const userPhoneAux = await getKeychainValueFor(elderlyPhone(userId))
 
-            if(userNameAux != '' && userPhoneAux != '') {
+            if(userNameAux != emptyValue && userPhoneAux != emptyValue) {
                 setUserName(userNameAux)
                 setUserPhone(userPhoneAux)
             }
-        } else if (userId != '') {
+        } else if (userId != emptyValue) {
             await saveKeychainValue(elderlyName(userId), userName)
             await saveKeychainValue(elderlyPhone(userId), userPhone)
         }

@@ -2,10 +2,10 @@ import { useNavigation } from "@react-navigation/native"
 import { StackNavigationProp } from "@react-navigation/stack"
 import { useState } from "react"
 import { View, TouchableOpacity, Text } from "react-native"
-import { deleteCredentialCardLabel, deleteCredentialLoginLabel } from "../../../assets/constants"
+import { deleteCredentialCardLabel, deleteCredentialLoginLabel, emptyValue } from "../../../assets/constants/constants"
 import { stylesButtons } from "../../../assets/styles/main_style"
 import { YesOrNoModal } from "../../../components/Modal"
-import { credentialDeletedFlash } from "../../../components/userMessages/UserMessages"
+import { credentialDeletedFlash } from "../../../components/UserMessages"
 import { deleteCredentialFromLocalDB } from "../../../database/credentials"
 import { ChatMessageType } from "../../../e2e/messages/types"
 import { useSessionInfo } from "../../../firebase/authentication/session"
@@ -26,7 +26,7 @@ export function DeleteCredential({id, platform, type}: Readonly<{id: string, pla
     const deleteCredentialAction = async () => {
       await deleteCredentialFromFiretore(userId, id)
       .then(() => deleteCredentialFromLocalDB(userId, id))
-      .then(async () => await sendCaregiversCredentialInfoAction(userId, '', platform, ChatMessageType.CREDENTIALS_DELETED))
+      .then(async () => await sendCaregiversCredentialInfoAction(userId, emptyValue, platform, ChatMessageType.CREDENTIALS_DELETED))
       .then(() => credentialDeletedFlash(userId, platform, true))
       .then(() => navigation.goBack())
       .catch(() => console.log('#1 Error deleting credential'))

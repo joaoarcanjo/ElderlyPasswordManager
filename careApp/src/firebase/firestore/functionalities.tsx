@@ -1,5 +1,5 @@
-import { decrypt, encrypt } from '../../algorithms/0thers/crypto';
-import { elderlyCollectionName, keyCollectionName, keyDocumentName, caregiverCollectionName, credencialsCollectionName, caregiversCollectionName, caregiversDocumentName } from '../../assets/constants';
+import { encrypt, decrypt } from '../../algorithms/tweetNacl/crypto';
+import { elderlyCollectionName, keyCollectionName, keyDocumentName, caregiverCollectionName, credencialsCollectionName, caregiversCollectionName, caregiversDocumentName, emptyValue } from '../../assets/constants/constants';
 import { CredentialType } from '../../screens/list_credentials/actions/types';
 import { firebase } from '../FirebaseConfig';
 import { defaultCaregiver, defaultCredencials, updateDataCredencial } from './constants';
@@ -20,7 +20,7 @@ async function getKey(elderlyId: string): Promise<string> {
         .catch((error: any) => {
             alert('Erro ao tentar obter a chave, tente novamente!')
             console.log('Error: ', error)
-            return ''
+            return emptyValue
         })
 }
 
@@ -179,6 +179,7 @@ export async function initFirestore(userId: string): Promise<boolean> {
 }
 
 async function getServerIP(): Promise<string> {
+    console.log("===> getServerIPCalled")
     const serverDocRef = firestore
         .collection("Server")
         .doc("server")

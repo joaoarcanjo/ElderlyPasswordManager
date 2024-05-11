@@ -3,8 +3,7 @@ import { useNavigation } from "@react-navigation/native"
 import { StackNavigationProp } from "@react-navigation/stack"
 import { useState } from "react"
 import { View, TextInput, TouchableOpacity, Text } from "react-native"
-import { getNewId, encrypt } from "../../../algorithms/0thers/crypto"
-import { addLabel, cardNumberLabel, cardPlatformLabel, ownerNameLabel, placeholderCardNumber, placeholderCardPlatform, placeholderOwnerName, placeholderSecurityCode, placeholderVerificationCode, securityCodeLabel, verificationCodeLabel } from "../../../assets/constants"
+import { addLabel, cardNumberLabel, cardPlatformLabel, emptyValue, ownerNameLabel, placeholderCardNumber, placeholderCardPlatform, placeholderOwnerName, placeholderSecurityCode, placeholderVerificationCode, securityCodeLabel, verificationCodeLabel } from "../../../assets/constants/constants"
 import { whiteBackgroud } from "../../../assets/styles/colors"
 import { stylesButtons } from "../../../assets/styles/main_style"
 import { insertCredentialToLocalDB } from "../../../database/credentials"
@@ -13,20 +12,21 @@ import { useSessionInfo } from "../../../firebase/authentication/session"
 import { addCredencialToFirestore } from "../../../firebase/firestore/functionalities"
 import { sendElderlyCredentialInfoAction } from "../../credential_interface/actions/functions"
 import { stylesInputsCredencials, stylesAddCredential } from "../styles/styles"
+import { getNewId, encrypt } from "../../../algorithms/tweetNacl/crypto"
 
 export function CredentialsCardInput({ ownerId, auxKey, isElderlyCredential }: Readonly<{ownerId: string, auxKey: string, isElderlyCredential: boolean }>) {
-    const [platform, setPlatform] = useState('')
-    const [ownerName, setOwnerName] = useState('')
-    const [cardNumber, setCardNumber] = useState('')
-    const [securityCode, setSecurityCode] = useState('')
-    const [verificationCode, setVerificationCode] = useState('')
+    const [platform, setPlatform] = useState(emptyValue)
+    const [ownerName, setOwnerName] = useState(emptyValue)
+    const [cardNumber, setCardNumber] = useState(emptyValue)
+    const [securityCode, setSecurityCode] = useState(emptyValue)
+    const [verificationCode, setVerificationCode] = useState(emptyValue)
     const [showSecurityCode, setShowSecurityCode] = useState(false)
     const navigation = useNavigation<StackNavigationProp<any>>()
     const { userId, userEmail, localDBKey } = useSessionInfo()
 
   
     const handleSave = async () => {
-        if(platform != '' && ownerName != '' && cardNumber != '' && securityCode != '' && verificationCode != '') {
+        if(platform != emptyValue && ownerName != emptyValue && cardNumber != emptyValue && securityCode != emptyValue && verificationCode != emptyValue) {
             const uuid = getNewId()
             const jsonValue = JSON.stringify({
                 id: uuid,
@@ -44,7 +44,7 @@ export function CredentialsCardInput({ ownerId, auxKey, isElderlyCredential }: R
             await addCredencialToFirestore(ownerId, auxKey, uuid, jsonValue, isElderlyCredential)
             await insertCredentialToLocalDB(userId, uuid, encrypt(jsonValue, localDBKey))
             
-            if(ownerId != userId) await sendElderlyCredentialInfoAction(userId, ownerId, '', platform, ChatMessageType.CREDENTIALS_CREATED)
+            if(ownerId != userId) await sendElderlyCredentialInfoAction(userId, ownerId, emptyValue, platform, ChatMessageType.CREDENTIALS_CREATED)
             navigation.goBack()
         }
     }
@@ -61,7 +61,7 @@ export function CredentialsCardInput({ ownerId, auxKey, isElderlyCredential }: R
                         placeholder={placeholderCardPlatform}
                         value={platform}
                         autoFocus={true}
-                        style={{ flex: 1, fontSize: 22, padding: '2%', marginHorizontal: '1%' }}
+                        style={{ flex: 1, fontSize: 19, padding: '2%', marginHorizontal: '1%' }}
                         onChangeText={text => setPlatform(text)}
                         />
                     </View>
@@ -71,7 +71,7 @@ export function CredentialsCardInput({ ownerId, auxKey, isElderlyCredential }: R
                         placeholder={placeholderOwnerName}
                         value={ownerName}
                         autoCapitalize='none'
-                        style={{ flex: 1, fontSize: 22, padding: '2%', marginHorizontal: '1%' }}
+                        style={{ flex: 1, fontSize: 19, padding: '2%', marginHorizontal: '1%' }}
                         onChangeText={text => setOwnerName(text)}
                         />
                     </View>
@@ -81,7 +81,7 @@ export function CredentialsCardInput({ ownerId, auxKey, isElderlyCredential }: R
                         placeholder={placeholderCardNumber}
                         value={cardNumber}
                         keyboardType='numeric'
-                        style={{ flex: 1, fontSize: 22, padding: '2%', marginHorizontal: '1%' }}
+                        style={{ flex: 1, fontSize: 19, padding: '2%', marginHorizontal: '1%' }}
                         onChangeText={text => setCardNumber(text)}
                         />
                     </View>
@@ -92,7 +92,7 @@ export function CredentialsCardInput({ ownerId, auxKey, isElderlyCredential }: R
                             placeholder={placeholderSecurityCode}
                             value={securityCode}
                             keyboardType='numeric'
-                            style={{ flex: 1, fontSize: 22, padding: '2%', marginHorizontal: '1%'}}
+                            style={{ flex: 1, fontSize: 19, padding: '2%', marginHorizontal: '1%'}}
                             secureTextEntry={showSecurityCode}
                             onChangeText={text => setSecurityCode(text)}
                             />
@@ -104,8 +104,7 @@ export function CredentialsCardInput({ ownerId, auxKey, isElderlyCredential }: R
                             <TextInput
                             placeholder={placeholderVerificationCode}
                             value={verificationCode}
-                            keyboardType='numeric'
-                            style={{ flex: 1, fontSize: 22, padding: '2%', marginHorizontal: '1%'}}
+                            style={{ flex: 1, fontSize: 19, padding: '2%', marginHorizontal: '1%'}}
                             secureTextEntry={showSecurityCode}
                             onChangeText={text => setVerificationCode(text)}
                             />

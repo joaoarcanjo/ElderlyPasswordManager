@@ -1,4 +1,5 @@
-import { decrypt, encrypt } from "../../../algorithms/0thers/crypto";
+import { decrypt, encrypt } from "../../../algorithms/tweetNacl/crypto";
+import { emptyValue } from "../../../assets/constants/constants";
 import { CredentialLocalRecord, getAllLocalCredentials, getCredential, insertCredentialToLocalDB, updateCredentialFromLocalDB } from "../../../database/credentials";
 import { ErrorInstance } from "../../../exceptions/error";
 import { Errors } from "../../../exceptions/types";
@@ -21,7 +22,7 @@ export const getAllCredentialsAndValidate = async (userId: string, key: string):
                     if (credentialCloud.id !== cloudCredential.id) {
                         throw new ErrorInstance(Errors.ERROR_CREDENTIAL_INVALID_ID)
                     }
-                    if (localCredential === '') {
+                    if (localCredential === emptyValue) {
                         await insertCredentialToLocalDB(userId, cloudCredential.id, encrypt(JSON.stringify(credentialCloud), key))
                     } else {
                         await updateCredentialIfNeeded(userId, cloudCredential.id, credentialCloud, key)

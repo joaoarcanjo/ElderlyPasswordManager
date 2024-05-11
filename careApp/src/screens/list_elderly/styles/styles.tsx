@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native'
-import { addElderlyButtonBackgroud, addElderlyButtonBorder, greyBackgroud, greyBorder, whiteBackgroud, acceptButtonBackground, acceptButtonBorder, rejectButtonBorder, rejectButtonBackground, superlightBlueBackgroud, blueBorder, desvinculateButtonBackgroud, desvinculateButtonBorder } from '../../../assets/styles/colors'
+import { addElderlyButtonBackgroud, addElderlyButtonBorder, greyBackgroud, greyBorder, whiteBackgroud, superlightBlueBackgroud, blueBorder, desvinculateButtonBackgroud, desvinculateButtonBorder } from '../../../assets/styles/colors'
 
 /**
  * Estilos da view para adicionar uma nova credencial

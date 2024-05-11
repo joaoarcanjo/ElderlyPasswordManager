@@ -3,7 +3,7 @@ import { encode as encodeBase64} from '@stablelib/base64';
 import { sign } from 'tweetnacl'
 import { decodeBase64 } from 'tweetnacl-util'
 import * as base64 from 'base64-js'
-import { apiPort } from '../../assets/constants'
+import { apiPort, emptyValue } from '../../assets/constants/constants'
 import { Errors } from '../../exceptions/types'
 import { stringToArrayBuffer } from './signal-store';
 import { getKeychainValueFor, saveKeychainValue } from '../../keychain';
@@ -51,10 +51,8 @@ interface SerializedFullDirectoryEntry {
     }
 }
 
-//TODO: Adicionar a X-API-KEY no header, é importante!!
-//TODO: De momento as One-time prekeys não estão a ser atualizadas!! Quando a pre-key é utilizada numa sessão, tem que ser descartada.
 export class SignalDirectory {
-    constructor(private _url: string/*, private _apiKey: string*/) {}
+    constructor(private _url: string) {}
 
     async storeKeyBundle(username: string, userId: string, bundle: FullDirectoryEntry): Promise<void> {
 
@@ -117,7 +115,7 @@ export class SignalDirectory {
         } else {
             try {
                 const bundleString = JSON.stringify(bundle)
-                const bundleParsed = JSON.parse(bundleString.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F]/g, ''))
+                const bundleParsed = JSON.parse(bundleString.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F]/g, emptyValue))
                 const { identityKey, signedPreKey, registrationId, preKey } = bundleParsed.bundle || {};
                 return deserializeKeyBundle({ identityKey, signedPreKey, preKey, registrationId })
             }catch(e) { 

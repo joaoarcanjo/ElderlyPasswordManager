@@ -4,7 +4,7 @@ import {View, StyleSheet, Modal, TouchableOpacity, Text, ScrollView} from 'react
 import { stylesButtons } from "../assets/styles/main_style"
 import { modal, options } from "../screens/credential_interface/styles/styles"
 import { Spinner } from "./LoadingComponents"
-import { upperLabel, lowerLabel, numbersLabel, specialLabel, copyUsernameLabel, copyPasswordLabel, navigateLabel, copyCardNumberLabel, copySecurityCodeLabel, copyVerificationCodeLabel, cancelLabel, otherLabel } from "../assets/constants";
+import { upperLabel, lowerLabel, numbersLabel, specialLabel, copyUsernameLabel, copyPasswordLabel, navigateLabel, copyCardNumberLabel, copySecurityCodeLabel, copyVerificationCodeLabel, cancelLabel, otherLabel, saveLabel, closelabel, modalIntentity } from "../assets/constants/constants";
 import { RequirementLength, Requirement } from "./passwordGenerator/Requirement";
 import { updateUpperCase, updateLowerCase, updateNumbers, updateSpecial } from "./passwordGenerator/functions";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -76,10 +76,10 @@ export function PasswordOptionsModal({saveFunction, closeFunction, visibleFlag}:
         <View style={{ borderBottomColor: 'black', borderWidth: StyleSheet.hairlineWidth, marginVertical: '5%' }}/>
         <View style={{flexDirection: 'row'}}>
           <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.greenButton]} onPress={saveRequirements}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Guardar</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{saveLabel}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={() => closeFunction()}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Fechar</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{closelabel}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -147,7 +147,7 @@ export function PlatformSelectionModal({setPlatformName, setPlatformURI, closeFu
 
   interface Platform { platformName: any, platformURI: any, materialCommunityIcon: any, iconColor: any }
 
-  const jsonData = require('../assets/platforms.json');
+  const jsonData = require('../assets/json/platforms.json');
 
   const applySelection = (platform: Platform) => {
     setPlatformName(platform.platformName)
@@ -187,7 +187,7 @@ function ModalBox({children, visibleFlag}: Readonly<{children: ReactNode, visibl
       >
         <BlurView
           style={{ flex: 1 }}
-          intensity={60} // You can adjust the intensity of the blur
+          intensity={modalIntentity} // You can adjust the intensity of the blur
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>

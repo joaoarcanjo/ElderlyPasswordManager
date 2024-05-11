@@ -3,11 +3,11 @@ import {View, Text, TouchableOpacity, Image } from 'react-native'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import { historyStyle, passwordFirstHalf, passwordSecondHalf } from '../styles/styles'
 import {Navbar} from '../../../navigation/actions'
-import { savePasswordGenerated } from '../../../database/'
+import { savePasswordGenerated } from '../../../database/passwords'
 import Algorithm from './algorithm'
 import MainBox from '../../../components/MainBox'
 import { useSessionInfo } from '../../../firebase/authentication/session'
-import { lengthLabel, lowerLabel, numbersLabel, pageTitleGenerator, passwordDefaultLengthGenerator, requirementLabel, specialLabel, timeoutToSavePassword, upperLabel } from '../../../assets/constants'
+import { emptyValue, lengthLabel, lowerLabel, numbersLabel, pageTitleGenerator, passwordDefaultLengthGenerator, requirementLabel, specialLabel, timeoutToSavePassword, upperLabel } from '../../../assets/constants/constants'
 import { Requirements } from '../../../components/passwordGenerator/constants'
 import { copyValue } from '../../../components/userMessages/UserMessages'
 import { FlashMessage, copyPasswordDescription } from '../../../components/userMessages/messages'
@@ -19,8 +19,8 @@ const checkImage = "../../../assets/images/check.png"
 
 export default function Generator({ navigation }: {readonly navigation: any}) {
 
-  const [passGenerated, setPassGenerated] = useState('')
-  const [password, setPassword] = useState('')
+  const [passGenerated, setPassGenerated] = useState(emptyValue)
+  const [password, setPassword] = useState(emptyValue)
   const [length, setLength] = useState(passwordDefaultLengthGenerator)
   const [uppercase, setUppercase] = useState(true)
   const [lowercase, setLowercase] = useState(true)

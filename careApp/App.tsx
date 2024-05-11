@@ -20,12 +20,14 @@ import { createIdentity } from './src/e2e/identity/functions';
 import { flashTimeoutPromise } from './src/screens/splash_screen/actions/functions';
 import SplashScreen from './src/screens/splash_screen/actions';
 import * as SplashFunctions from 'expo-splash-screen';
-import { pageAddCredential, pageCredentialCard, pageCredentialLogin, pageCredentials, pageElderlyCredentials, pageElderlyList, pageLogin, pageMainMenu, pageSettings, pageSignup } from './src/assets/constants';
+import { emptyValue, pageAddCredential, pageCredentialCard, pageCredentialLogin, pageCredentials, pageElderlyCredentials, pageElderlyList, pageFAQs, pageGenerator, pageLogin, pageMainMenu, pagePasswordHistory, pageSettings, pageSignup } from './src/assets/constants/constants';
 import CredencialCardPage from './src/screens/credential_interface/actions/card';
 import CredencialLoginPage from './src/screens/credential_interface/actions/login';
 import SignUpPage from './src/screens/signup_interface/actions';
 import ElderlyCredentials from './src/screens/list_credentials/actions/elderlyCredentials';
-import { StackNavigationProp } from '@react-navigation/stack';
+import FrequentQuestions from './src/screens/list_questions/actions';
+import Generator from './src/screens/password_generator/actions';
+import PasswordHistory from './src/screens/password_history/actions';
 
 const Stack = createNativeStackNavigator()
 const InsideStack = createNativeStackNavigator()
@@ -42,7 +44,7 @@ function InsideLayout() {
 
   const onLayoutRootView = useCallback(async () => { if (!appIsReady) await SplashFunctions.hideAsync() }, [appIsReady]);
 
-  if (!appIsReady) return <SplashScreen test={onLayoutRootView} />
+  if (!appIsReady) return <SplashScreen layout={onLayoutRootView} />
   return (
     <InsideStack.Navigator initialRouteName={pageMainMenu}>
       <InsideStack.Screen name={pageMainMenu} component={MainMenu} options={{ title: "MainMenu", headerShown: false }} />
@@ -53,8 +55,11 @@ function InsideLayout() {
       <InsideStack.Screen name={pageSettings} component={Settings} options={{ title: "Settings", headerShown: false }} />
       <InsideStack.Screen name={pageCredentialLogin} component={CredencialLoginPage} options={{ title: "CredencialLoginPage", headerShown: false }} />
       <InsideStack.Screen name={pageCredentialCard} component={CredencialCardPage} options={{ title: "CredencialCardPage", headerShown: false }} />
+      <InsideStack.Screen name={pageGenerator} component={Generator} options={{ title: "Generator", headerShown: false }} />
+      <InsideStack.Screen name={pagePasswordHistory} component={PasswordHistory} options={{ title: "Password history", headerShown: false }} />
+      <InsideStack.Screen name={pageFAQs} component={FrequentQuestions} options={{ title: "Frequent Questions", headerShown: false }} />
     </InsideStack.Navigator>
-  );
+  )
 }
 
 
@@ -82,7 +87,7 @@ function Inicialization() {
 
       let { status } = await Notifications.requestPermissionsAsync()
       if (status !== 'granted') {
-        //TODO: do an alert
+        alert('É necessário habilitar as notificações para usar esta aplicação.')
       }
     })
   }, [user])
@@ -91,7 +96,7 @@ function Inicialization() {
       <NavigationContainer>
         <View style={{flex: 0.06}}/>
         <Stack.Navigator initialRouteName={pageLogin}>
-          {user != null && userId != null && userId != '' ?
+          {user != null && userId != null && userId != emptyValue ?
           <Stack.Screen name="InsideLayout" component={InsideLayout} options={{title: "InsideLayout", headerShown:false}}/>:
           <>
             <Stack.Screen name={pageLogin} component={SignInPage} options={{title: "LoginPage", headerShown:false}}/>

@@ -64,6 +64,10 @@ const decrypt = (messageWithNonce, key) => {
   //return JSON.parse(base64DecryptedMessage)
 }
 
+/**
+ * Função para gerar um novo id
+ * @returns 
+ */
 const getNewId = () => randomUUID()
 
 export { generateKey, encrypt, decrypt, getNewId }

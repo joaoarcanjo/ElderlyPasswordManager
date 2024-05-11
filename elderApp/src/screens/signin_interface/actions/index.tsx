@@ -12,12 +12,12 @@ import { stylesButtons } from "../../../assets/styles/main_style";
 import { Spinner } from "../../../components/LoadingComponents";
 import { useSessionInfo } from "../../../firebase/authentication/session";
 import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
-import { appName, createAccountLabel, doesNotHaveAccountLabel, emailLabel, emailPlaceholder, enterLabel, pageSignup, passwordLabel, passwordLabelBig, passwordPlaceholder } from "../../../assets/constants";
+import { appName, createAccountLabel, doesNotHaveAccountLabel, emailLabel, emailPlaceholder, emptyValue, enterLabel, pageSignup, passwordLabel, passwordLabelBig, passwordPlaceholder } from "../../../assets/constants/constants";
 
 const SignInPage = () => {
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState(emptyValue)
+    const [password, setPassword] = useState(emptyValue)
     const [loading, setLoading] = useState(false)
     const [loadingPersistent, setLoadingPersistent] = useState(false)
     const [showPassword, setShowPassword] = useState(true)
@@ -36,7 +36,7 @@ const SignInPage = () => {
         const pwdSaved = await getKeychainValueFor(elderlyPwd)
         const emailSaved = await getKeychainValueFor(elderlyEmail)
 
-        if(emailSaved != '' && pwdSaved != '') {
+        if(emailSaved != emptyValue && pwdSaved != emptyValue) {
             signInOperation(emailSaved, pwdSaved).then(async (loginResult) => {
                 if(loginResult) {
                     setLoadingPersistent(false)
@@ -44,13 +44,13 @@ const SignInPage = () => {
                     //navigation.push('InsideLayout')
                 } else {
                     setEmail(emailSaved)
-                    setPassword('')
+                    setPassword(emptyValue)
                     setLoadingPersistent(false)
                 }
             })
         } else {
             setLoadingPersistent(false)
-            if(emailSaved != '') {
+            if(emailSaved != emptyValue) {
                 setEmail(emailSaved)
             }
         }

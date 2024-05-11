@@ -1,6 +1,8 @@
+import { lowerLabel, numbersLabel, specialLabel, upperLabel } from "../../assets/constants/constants";
+
 export const enum Requirements {
-    Upper = 'upper',
-    Lower = 'lower',
-    Special = 'special',
-    Numbers = 'numbers'
-  }
+  Upper = upperLabel,
+  Lower = lowerLabel,
+  Special = specialLabel,
+  Numbers = numbersLabel
+}

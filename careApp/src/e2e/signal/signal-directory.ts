@@ -1,6 +1,5 @@
 import { SignedPublicPreKeyType, DeviceType, PreKeyType } from '@privacyresearch/libsignal-protocol-typescript'
 import * as base64 from 'base64-js'
-import { apiPort } from '../../assets/constants'
 import { decodeBase64, encodeUTF8 } from 'tweetnacl-util'
 import { Errors } from '../../exceptions/types'
 import { sign } from 'tweetnacl'
@@ -9,6 +8,7 @@ import { encode as encodeBase64} from '@stablelib/base64';
 import { getKeychainValueFor, saveKeychainValue } from '../../keychain'
 import { signalPrivateKey, signalPublicKey } from '../../keychain/constants'
 import { getServerIP } from '../../firebase/firestore/functionalities'
+import { apiPort } from '../../assets/constants/constants'
 
 export interface PublicDirectoryEntry {
     identityKey: ArrayBuffer

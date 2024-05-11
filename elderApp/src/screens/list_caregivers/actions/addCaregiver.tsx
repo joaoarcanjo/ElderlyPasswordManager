@@ -6,22 +6,22 @@ import { ModalBox } from "../../../components/Modal"
 import { modal, options } from "../../credential_interface/styles/styles"
 import { startSessionWithCaregiver } from "./functions"
 import { useSessionInfo } from "../../../firebase/authentication/session"
-import { sessionRequestSent } from "../../../components/userMessages/UserMessages"
+import { sessionRequestSent } from "../../../components/UserMessages"
 import { deleteCaregiver, saveCaregiver } from "../../../database/caregivers"
 import { CaregiverRequestStatus } from "../../../database/types"
 import { ErrorInstance } from "../../../exceptions/error"
 import { Errors } from "../../../exceptions/types"
-import { addCaregiverLabel, cancelLabel, linkLabel } from "../../../assets/constants"
+import { addCaregiverLabel, closeLabel, emptyValue, linkLabel } from "../../../assets/constants/constants"
 
-function AddCaregiverModal({visibility, concludeAction}: Readonly<{visibility: boolean, concludeAction: Function}>) {
-  const [caregiverEmail, setCaregiverEmail] = useState('')
+export function AddCaregiverModal({visibility, concludeAction}: Readonly<{visibility: boolean, concludeAction: Function}>) {
+  const [caregiverEmail, setCaregiverEmail] = useState(emptyValue)
   const { userId, userEmail, userName, userPhone } = useSessionInfo()
 
   const addCaregiver = async (email: string) => {
     if(email == userEmail) {
       alert(Errors.ERROR_USER_EMAIL)
     } else {
-      await saveCaregiver(userId, '', '', email, '', CaregiverRequestStatus.WAITING)
+      await saveCaregiver(userId, emptyValue, emptyValue, email, emptyValue, CaregiverRequestStatus.WAITING)
       .then(() =>  startSessionWithCaregiver(email, userId, userName, userEmail, userPhone))
       .then(() => sessionRequestSent(email))
       .then(() => concludeAction())
@@ -51,11 +51,11 @@ function AddCaregiverModal({visibility, concludeAction}: Readonly<{visibility: b
         </View> 
         <View style={{ borderBottomColor: 'black', borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: '3%' }}/>
         <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
-          {(caregiverEmail != '') && <TouchableOpacity style={[{flex: 0.5, marginVertical: '3%', marginRight: '3%'}, stylesButtons.mainConfig, options.saveButton]} onPress={() => addCaregiver(caregiverEmail)}>
+          {(caregiverEmail != emptyValue) && <TouchableOpacity style={[{flex: 0.5, marginVertical: '3%', marginRight: '3%'}, stylesButtons.mainConfig, options.saveButton]} onPress={() => addCaregiver(caregiverEmail)}>
             <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{linkLabel}</Text>
           </TouchableOpacity> }
-          <TouchableOpacity style={[{flex: 0.5, marginVertical: '3%', marginLeft: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={() => {setCaregiverEmail(''); concludeAction()}}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{cancelLabel}</Text>
+          <TouchableOpacity style={[{flex: 0.5, marginVertical: '3%', marginLeft: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={() => {setCaregiverEmail(emptyValue); concludeAction()}}>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{closeLabel}</Text>
           </TouchableOpacity>
         </View>
     </ModalBox>

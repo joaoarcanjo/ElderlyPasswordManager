@@ -18,13 +18,20 @@
       "supportsTablet": true
     },
     "android": {
+      "compileSdkVersion": 30,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.joaoarcanjo.elderApp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e12b4b78-db9d-497a-85f3-1c0df8cffc8a"
+      }
     }
   }
 }
