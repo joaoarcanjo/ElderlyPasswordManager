@@ -16,7 +16,7 @@ async function createLocalDBKey(userId: string) {
 
 export async function initDb(userId: string) {
 
-    dbSQL = SQLite.openDatabaseSync('elderly.db')
+    dbSQL = await SQLite.openDatabaseAsync('elderly.db')
   
 /*
     dbSQL.execAsync(`
@@ -45,7 +45,8 @@ export async function initDb(userId: string) {
         );
 
         CREATE TABLE IF NOT EXISTS sessionsSignal (
-            id TEXT, userId TEXT, 
+            id TEXT, 
+            userId TEXT, 
             record TEXT, 
             PRIMARY KEY (id, userId)
         );

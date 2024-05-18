@@ -1,6 +1,6 @@
 import {View, Text, Image, TouchableOpacity} from 'react-native'
 import { stylesOptions, stylesFirstHalf } from '../styles/styles'
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import type { StackNavigationProp } from '@react-navigation/stack';
 import { stylesButtons } from '../../../assets/styles/main_style';
@@ -10,6 +10,9 @@ import { elderlyName, elderlyPhone } from '../../../keychain/constants';
 import { createIdentity } from '../../../e2e/identity/functions';
 import { getAllCredentialsAndValidate } from '../../list_credentials/actions/functions';
 import { credentialTimoutRefresh, credentialsLabel, cuidadoresLabel, emptyValue, generatorLabel, heyLabel, pageCaregivers, pageCredentials, pageFAQs, pageGenerator, pageSettings, questionsLabel, settingsLabel } from '../../../assets/constants/constants';
+import { flashTimeoutPromise } from '../../splash_screen/actions/functions';
+import SplashScreen from '../../splash_screen/actions';
+import * as SplashFunctions from 'expo-splash-screen';
 
 const credentialsImage = '../../../assets/images/credenciais.png'
 const generatorImage = '../../../assets/images/gerador.png'
@@ -72,11 +75,11 @@ function Functionalities() {
            <View style={{flex: 0.5, flexDirection: 'row', justifyContent: 'space-around' }}>
                 <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareCredentials, stylesButtons.mainConfig]} onPress={() => CredencialsNavigation()}>
                     <Image source={require(credentialsImage)} style={[stylesOptions.squarePhoto]}/>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>{credentialsLabel}</Text>
+                    <Text numberOfLines={2} adjustsFontSizeToFit style={[stylesOptions.squareText]}>{credentialsLabel}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareGenerator, stylesButtons.mainConfig]} onPress={() => GeneratorsNavigation()}>
                     <Image source={require(generatorImage)} style={[stylesOptions.squarePhoto]}/>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '0%'}, stylesOptions.squareText]}>{generatorLabel}</Text>
+                    <Text numberOfLines={2} adjustsFontSizeToFit style={[stylesOptions.squareText]}>{generatorLabel}</Text>
                 </TouchableOpacity>
            </View>
            <View style={{flex: 0.5, flexDirection: 'row', justifyContent: 'space-around' }}>
@@ -100,6 +103,7 @@ function Functionalities() {
 export default function MainMenu() {
 
     const { userId, setUserName, setUserPhone, userPhone, userName, userEmail, localDBKey } = useSessionInfo()
+    const [appIsReady, setAppIsReady] = useState(true)
     //const { expoPushToken } = usePushNotifications()
     
     useEffect(() => {
@@ -107,7 +111,7 @@ export default function MainMenu() {
         
         const interval = setInterval(async () => {
             await getAllCredentialsAndValidate(userId, localDBKey)
-        }, credentialTimoutRefresh) //12 em 12 segundos
+        }, credentialTimoutRefresh)
 
         return () => clearInterval(interval)
     }, [])
@@ -115,6 +119,9 @@ export default function MainMenu() {
     useEffect(() => {
         savePhoneAndName()
         identityCreation()
+
+        flashTimeoutPromise(userId, setAppIsReady)
+        .then(() => setAppIsReady(true))
     }, [])
     
     const savePhoneAndName = async () => {
@@ -138,6 +145,9 @@ export default function MainMenu() {
 
     savePhoneAndName()
 
+    const onLayoutRootView = useCallback(async () => { if (!appIsReady) await SplashFunctions.hideAsync() }, [appIsReady])
+
+    if (!appIsReady) return <SplashScreen layout={onLayoutRootView} />
     return (
         <View style={{ flex: 1, flexDirection: 'column', marginTop: '5%'}}>
             <ElderlyInfoBox/>

@@ -29,7 +29,7 @@ export const saveCaregiver = async (userId: string, caregiverId: string, name: s
         if (dbSQL != null) {
             await dbSQL.runAsync('INSERT INTO caregivers (caregiverId, userId, name, email, phoneNumber, status) VALUES (?,?,?,?,?,?)', [caregiverId, userId, name, email, phoneNumber, requestStatus.valueOf()])
                 .then((result) => {
-                    if(result.changes) {
+                    if(result.changes > 0) {
                         console.log('- Cuidador armazenado com sucesso.')
                         return resolve()
                     } else {
@@ -40,24 +40,6 @@ export const saveCaregiver = async (userId: string, caregiverId: string, name: s
                 .catch(() => {
                     return reject(new ErrorInstance(Errors.ERROR_SAVING_SESSION))
                 })
-            /*dbSQL.transaction(async tx => {
-                tx.executeSql(
-                    'INSERT INTO caregivers (caregiverId, userId, name, email, phoneNumber, status) VALUES (?,?,?,?,?,?)',
-                    [caregiverId, userId, name, email, phoneNumber, requestStatus.valueOf()],
-                    (_, result) => {
-                        if (result.rowsAffected > 0) {
-                            console.log('- Cuidador armazenado com sucesso.')
-                            return resolve()
-                        } else {
-                            console.log('- Cuidador não armazenado.')
-                            return reject(new ErrorInstance(Errors.ERROR_SAVING_SESSION))
-                        }
-                    },
-                    (_, _error) => {
-                        return false
-                    }
-                )
-            })*/
         } else {
             return reject(new ErrorInstance(Errors.ERROR_SAVING_SESSION))
         }
@@ -91,25 +73,6 @@ export const updateCaregiver = async (caregiverId: string, userId: string, email
             .catch(() => {
                 return Promise.reject(new ErrorInstance(Errors.ERROR_UPDATING_CAREGIVER))
             })
-        /*return dbSQL.transaction(tx => {
-            tx.executeSql(
-                'UPDATE caregivers SET caregiverId = ?, name = ?, phoneNumber = ?, status = ? WHERE email = ? AND userId = ?',
-                [caregiverId, newName, newPhoneNumber, CaregiverRequestStatus.ACCEPTED.valueOf(), email, userId],
-                (_, result) => {
-                      // Verifique se houve alguma linha afetada para confirmar se a atualização foi bem-sucedida.
-                    if (result.rowsAffected > 0) {
-                        console.log('--- Cuidador atualizado com sucesso.')
-                    } else {
-                        console.log('--- Nenhum cuidador foi atualizado. Verifique o email fornecido.')
-                        Promise.reject(new ErrorInstance(Errors.ERROR_UPDATING_CAREGIVER))
-                    }
-                },
-                (_, _error) => {
-                    Promise.reject(new ErrorInstance(Errors.ERROR_UPDATING_CAREGIVER))
-                    return false
-                }
-            )
-        })*/
     }
 }
 
@@ -136,24 +99,6 @@ export const deleteCaregiver = async (userId: string, email: string): Promise<vo
             .catch(() => {
                 return Promise.reject(new ErrorInstance(Errors.ERROR_DELETING_CAREGIVER))
             })
-        /*return dbSQL.transaction(tx => {
-            tx.executeSql(
-                'DELETE FROM caregivers WHERE email = ? AND userId = ?;',
-                [email, userId],
-                (_, result) => {
-                    if (result.rowsAffected > 0) {
-                        console.log('--- Cuidador apagado com sucesso.');
-                        return Promise.resolve()
-                    }
-                    return Promise.resolve()
-                },
-                (error) => {
-                    console.log('-> Error deleting caregiver from database', error)
-                    Promise.reject(new ErrorInstance(Errors.ERROR_DELETING_CAREGIVER))
-                    return false
-                }
-            )
-        })*/
     } else {
         return Promise.reject(new ErrorInstance(Errors.ERROR_DATABASE_NOT_INITIALIZED))
     }
@@ -176,19 +121,6 @@ export const checkCaregiverByEmailAccepted = async (userId: string, email: strin
                 .catch(() => {
                     return false
                 })
-            /*dbSQL.transaction(tx => {
-                tx.executeSql(
-                    'SELECT COUNT(*) AS count FROM caregivers WHERE email = ? AND userId = ? AND status = ?',
-                    [email, userId, CaregiverRequestStatus.ACCEPTED],
-                    (_, result) => {
-                        const count = result.rows.item(0).count
-                        resolve(count > 0)
-                    },
-                    (_, _error) => {
-                     return false
-                    }
-                )
-            })*/
         } else {
             return false
         }
@@ -213,18 +145,6 @@ export const checkNumberOfCaregivers = async (userId: string): Promise<number> =
                 .catch(() => {
                     return false
                 })
-            /*dbSQL.transaction(tx => {
-                tx.executeSql(
-                    'SELECT COUNT(*) AS count FROM caregivers WHERE userId = ? AND status = ?',
-                    [userId, CaregiverRequestStatus.ACCEPTED.valueOf()],
-                    (_, result) => {
-                        resolve(result.rows.item(0).count); 
-                    },
-                    (_, _error) => {
-                     return false
-                    }
-                )
-            })*/
         } else {
             return false
         }
@@ -239,9 +159,9 @@ export const checkNumberOfCaregivers = async (userId: string): Promise<number> =
  */
 export const checkCaregiverByEmailNotAccepted = async (userId: string, email: string): Promise<boolean> => {
     console.log("===> checkCaregiverByEmailNotAccepted")
-    return new Promise((resolve,) => {
+    return new Promise(async (resolve,) => {
         if (dbSQL != null) {
-            dbSQL.getFirstAsync('SELECT COUNT(*) AS count FROM caregivers WHERE email = ? AND userId = ? AND status = ?', [email, userId, CaregiverRequestStatus.WAITING])
+            await dbSQL.getFirstAsync('SELECT COUNT(*) AS count FROM caregivers WHERE email = ? AND userId = ? AND status = ?', [email, userId, CaregiverRequestStatus.WAITING])
                 .then((result) => {
                     const count = result as any
                     return resolve(count.count > 0)
@@ -250,21 +170,6 @@ export const checkCaregiverByEmailNotAccepted = async (userId: string, email: st
                     console.log("Error 11: "+ error.message)
                     return false
                 })
-            /*
-            dbSQL.transaction(tx => {
-                tx.executeSql(
-                    'SELECT COUNT(*) AS count FROM caregivers WHERE email = ? AND userId = ? AND status = ?;',
-                    [email, userId, CaregiverRequestStatus.WAITING.valueOf()],
-                    (_, result) => {
-                        const count = result.rows.item(0).count;
-                        return resolve(count > 0); 
-                    },
-                    (_, error) => {
-                        console.log("Error 11: "+ error.message)
-                        return false
-                    }
-                )
-            })*/
         } else {
             return false
         }
@@ -277,9 +182,9 @@ export const checkCaregiverByEmailNotAccepted = async (userId: string, email: st
  * @returns A promise that resolves to an array of caregiver emails.
  */
 export const getCaregiversWithSpecificState = async (userId: string, state: CaregiverRequestStatus): Promise<string[]> => {
-    return new Promise((resolve,) => {
+    return new Promise(async (resolve,) => {
         if (dbSQL != null) {
-            dbSQL.getAllAsync('SELECT email FROM caregivers WHERE userId = ? AND status = ?', [userId, state])
+            await dbSQL.getAllAsync('SELECT email FROM caregivers WHERE userId = ? AND status = ?', [userId, state])
                 .then((result) => {
                     const caregivers = result as any
                     const data: string[] = [];
@@ -292,22 +197,6 @@ export const getCaregiversWithSpecificState = async (userId: string, state: Care
                     resolve([])
                     return false
                 })
-            /*dbSQL.transaction((tx) => {
-                tx.executeSql('SELECT email FROM caregivers WHERE userId = ? AND status = ?;', 
-                [userId, state], 
-                (_tx, results) => {
-                    const data: string[] = [];
-                    for (let i = 0; i < results.rows.length; i++) {
-                        data.push(results.rows.item(i).email)
-                    }
-                    return resolve(data)
-                },
-                (_, _error) => {
-                    resolve([])
-                    return false
-                }
-                )
-            })*/
         } else {
             resolve([])
         }         
@@ -336,21 +225,6 @@ export const changeCaregiverStatusOnDatabase = async (userId: string, email: str
             .catch(() => {
                 return Promise.reject(new ErrorInstance(Errors.ERROR_UPDATING_CAREGIVER))
             })
-            /*
-        dbSQL.transaction(tx => {
-            tx.executeSql(
-                'UPDATE caregivers SET status = ? WHERE email = ? AND userId = ?',
-                [status, email, userId],
-                (_, result) => {
-                    // Verifique se houve alguma linha afetada para confirmar se a atualização foi bem-sucedida.
-                    if (result.rowsAffected > 0) {
-                        //console.log('--- Cuidador aceite.')
-                    } else {
-                        console.log('--- Cuidador não aceite, erro.')
-                    }
-                }
-            )
-        })*/
     }
 }
 
@@ -383,28 +257,6 @@ export const getCaregivers = (userId: string): Promise<Caregiver[]> => {
                         resolve([])
                         return false
                     })
-                /*
-                dbSQL.transaction((tx) => {
-                    tx.executeSql('SELECT caregiverId, name, email, phoneNumber, status FROM caregivers WHERE userId = ?', 
-                    [userId], (_tx, results) => {
-                        for (let i = 0; i < results.rows.length; i++) { 
-                            data.push({
-                                caregiverId  : results.rows.item(i).caregiverId,
-                                name         : results.rows.item(i).name,
-                                email        : results.rows.item(i).email,
-                                phoneNumber  : results.rows.item(i).phoneNumber,
-                                requestStatus: results.rows.item(i).status
-                            });
-                        }
-                        resolve(data)
-                        },
-                        (_, error) => {
-                            console.log("Error 12: "+ error.message)
-                            resolve([])
-                            return false
-                        }
-                    )
-                })*/
             } else {
                 throw (new Error("Database is not connected."))
             }
@@ -433,20 +285,6 @@ export async function getCaregiverId(caregiverEmail: string, userId: string): Pr
                 .catch(() => {
                     return false
                 })
-            /*
-            dbSQL.transaction(tx => {
-                tx.executeSql(
-                    'SELECT caregiverId FROM caregivers WHERE email = ? AND userId = ?;',
-                    [caregiverEmail, userId],
-                    (_, result) => {
-                        return resolve(result.rows.item(0).caregiverId);
-                    },
-                    (_, error) => {
-                        console.log("Error 10: "+ error.message)
-                        return false
-                    }
-                )
-            })*/
         } else {
             reject(new ErrorInstance(Errors.ERROR_DATABASE_NOT_INITIALIZED))
         }
@@ -470,19 +308,6 @@ export const isMaxCaregiversReached = async (userId: string): Promise<boolean> =
                 .catch(() => {
                     return false
                 })
-            /*dbSQL.transaction(tx => {
-                tx.executeSql(
-                    'SELECT COUNT(*) AS count FROM caregivers WHERE userId = ? AND status = ?;',
-                    [userId, CaregiverRequestStatus.ACCEPTED.valueOf()],
-                    (_, result) => {
-                        const count = result.rows.item(0).count
-                        resolve(count >= maxCaregiversCount)
-                    },
-                    (_, _error) => {
-                        return false
-                    }
-                )
-            })*/
         } else {
             reject(new ErrorInstance(Errors.ERROR_DATABASE_NOT_INITIALIZED))
         }
@@ -496,9 +321,9 @@ export const isMaxCaregiversReached = async (userId: string): Promise<boolean> =
  * @returns A Promise that resolves to a boolean indicating whether the caregiver exists or not.
  */
 export const checkCaregiverByEmail = async (userId: string, email: string): Promise<boolean> => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         if (dbSQL != null) {
-            dbSQL.getFirstAsync('SELECT COUNT(*) AS count FROM caregivers WHERE email = ? AND userId = ? AND status = ?', [email, userId, CaregiverRequestStatus.ACCEPTED])
+            await dbSQL.getFirstAsync('SELECT COUNT(*) AS count FROM caregivers WHERE email = ? AND userId = ? AND status = ?', [email, userId, CaregiverRequestStatus.ACCEPTED])
                 .then((result) => {
                     const count = result as any
                     return resolve(count.count > 0)
@@ -506,16 +331,6 @@ export const checkCaregiverByEmail = async (userId: string, email: string): Prom
                 .catch(() => {
                     return false
                 })
-            /*dbSQL.transaction(tx => {
-                tx.executeSql(
-                    'SELECT COUNT(*) AS count FROM caregivers WHERE email = ? AND userId = ? AND status = ?;',
-                    [email, userId, CaregiverRequestStatus.ACCEPTED],
-                    (_, result) => {
-                        const count = result.rows.item(0).count
-                        return resolve(count > 0);
-                    }
-                )
-            })*/
         } else {
             reject(new Error('Database not initialized.'))
         }

@@ -17,7 +17,7 @@ import { buildEditMessage, sendElderlyCredentialInfoAction } from './functions'
 import { ChatMessageType } from '../../../e2e/messages/types'
 import { deleteCredentialFromLocalDB, updateCredentialFromLocalDB } from '../../../database/credentials'
 import { regeneratePassword } from '../../../components/passwordGenerator/functions'
-import { cancelLabel, copyLabel, deleteCredentialLoginLabel, editLabel, emptyValue, optionsLabel, passwordLabelBig, regenerateLabel, saveChangesLabel, saveLabel, uriLabel, userLabel } from '../../../assets/constants/constants'
+import { cancelLabel, copyLabel, deleteCredentialLabel, editLabel, emptyValue, optionsLabel, passwordLabelBig, regenerateLabel, saveChangesLabel, saveLabel, uriLabel, userLabel } from '../../../assets/constants/constants'
 import { copyValue, credentialUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
 import { FlashMessage, copyPasswordDescription, copyUsernameDescription } from '../../../components/userMessages/messages'
 import { encrypt } from '../../../algorithms/tweetNacl/crypto'
@@ -29,7 +29,6 @@ import { encrypt } from '../../../algorithms/tweetNacl/crypto'
 function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyCredential}
   : Readonly<{ownerId: string, id: string, platform: string, uri: string, un: string, pw: string, edited: any, auxKey: string, isElderlyCredential: boolean}>) {
 
-  console.log('ownerId: ', ownerId)
   const [username, setUsername] = useState(un)
   const [currUri, setCurrUri] = useState(uri)
   const [password, setPassword] = useState(pw)
@@ -220,7 +219,7 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
           {editFlag ?
           <View style={{ flex: 0.14, flexDirection: 'row', justifyContent: 'space-between', marginBottom: '5%' }}>
             <TouchableOpacity style={[{marginLeft:'5%', marginTop: '0%'}, stylesButtons.mainConfig, stylesButtons.copyButton]}  onPress={toggleShowPassword} >
-              <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={!showPassword ? 'eye' : 'eye-off'} size={40} color="black"/> 
+              <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={showPassword ? 'eye' : 'eye-off'} size={40} color="black"/> 
             </TouchableOpacity>
           </View>
           :
@@ -292,7 +291,7 @@ function DeleteCredential({ownerId, id, platform, auxKey, isElderlyCredential}: 
     <View style= { { flex: 0.10, flexDirection: 'row', justifyContent: 'space-around', marginBottom: '2%'} }>
       <YesOrNoModal question={'Apagar a credencial?'} yesFunction={() => deleteCredentialAction()} noFunction={() => setModalVisible(false)} visibleFlag={modalVisible}/>
       <TouchableOpacity style={[{flex: 1, marginHorizontal: '20%', marginVertical: '3%'}, logout.logoutButton, stylesButtons.mainConfig]} onPress={setModalVisibleAux}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>{deleteCredentialLoginLabel}</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>{deleteCredentialLabel}</Text>
       </TouchableOpacity>
     </View>
   )

@@ -11,12 +11,12 @@ import { useSessionInfo } from '../../../firebase/authentication/session'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
 import { ChatMessageType } from '../../../e2e/messages/types'
 import { buildEditMessage, sendCaregiversCredentialInfoAction } from './functions'
-import { updateCredentialOnLocalDB } from '../../../database/credentials'
-import { cardNumberLabel, copyLabel, editLabel, emptyValue, ownerNameLabel, saveChangesLabel, saveLabel, securityCodeLabel, verificationCodeLabel } from '../../../assets/constants/constants'
+import { cancelLabel, cardNumberLabel, copyLabel, editLabel, emptyValue, ownerNameLabel, saveChangesLabel, saveLabel, securityCodeLabel, verificationCodeLabel } from '../../../assets/constants/constants'
 import { copyValue, credentialUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/UserMessages'
 import { FlashMessage, copyURIDescription, copyUsernameDescription } from '../../../assets/constants/messages'
 import { DeleteCredential } from './components'
 import { encrypt } from '../../../algorithms/tweetNacl/crypto'
+import { updateCredentialOnLocalDB } from '../../../database/credentials'
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
@@ -135,7 +135,7 @@ function CardInfo({id, platform, cn, on, sc, vc, edited }: Readonly<{id: string,
               <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>{saveLabel}</Text>
             </TouchableOpacity>}
             <TouchableOpacity style={[{flex: 0.5, margin: '2%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={cancelUpdate}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>{}</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>{cancelLabel}</Text>
             </TouchableOpacity>
           </View>
         }
@@ -226,7 +226,7 @@ function CardInfo({id, platform, cn, on, sc, vc, edited }: Readonly<{id: string,
           {editFlag ?
           <View style={{ flex: 0.14, flexDirection: 'row', justifyContent: 'space-between', marginBottom: '5%' }}>
             <TouchableOpacity style={[{marginLeft:'5%', marginTop: '0%'}, stylesButtons.mainConfig, stylesButtons.copyButton]}  onPress={toggleShowSecurityCode} >
-              <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={!showSecurityCode ? 'eye' : 'eye-off'} size={40} color="black"/> 
+              <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={showSecurityCode ? 'eye' : 'eye-off'} size={40} color="black"/> 
             </TouchableOpacity>
           </View>
           : <></>}
@@ -235,7 +235,7 @@ function CardInfo({id, platform, cn, on, sc, vc, edited }: Readonly<{id: string,
       </View>
     <Options/>
     <YesOrNoSpinnerModal question={saveChangesLabel} yesFunction={saveCredentialUpdate} noFunction={dontSaveCredentialsUpdate} visibleFlag={modalVisible} loading={loading}/>
-    {editFlag && <DeleteCredential id={id} platform={platform} type={'card'} />}
+    {editFlag && <DeleteCredential id={id} platform={platform} />}
     </>
   )
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform} from 'react-native'
+import {View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, Image} from 'react-native'
 import { stylesAddCredential, styleScroolView } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import  { Navbar } from "../../../navigation/actions";
@@ -10,7 +10,7 @@ import { Spinner } from '../../../components/LoadingComponents'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { credentialsListUpdated } from './state'
 import { getAllCredentialsAndValidate, getAllLocalCredentialsFormatted, getAllLocalCredentialsFormattedWithFilter } from './functions'
-import { addCredentialsLabel, emptyValue, pageAddCredential, pageTitleCredentials, searchLabel } from '../../../assets/constants/constants'
+import { addCredentialsLabel, allLabel, cardsLabel, emptyValue, loginLabel, pageAddCredential, pageTitleCredentials, passosLabel, perguntasLabel, searchLabel, sugestoesLabel } from '../../../assets/constants/constants'
 import { whiteBackgroud } from '../../../assets/styles/colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import { CredentialType } from './types';
@@ -38,6 +38,8 @@ function CredentialsList() {
   const [isFething, setIsFething] = useState(true)
   const [searchValue, setSearchValue] = useState(emptyValue)
   const [searchType, setSearchType] = useState(emptyValue)
+  const [buttonSelected, setButtonSelected] = useState(0)
+  const [showFilter, setShowFilter] = useState(false)
 
   useEffect(() => {
     setIsFething(true)
@@ -77,25 +79,20 @@ function CredentialsList() {
 
   useEffect(() => {search()}, [searchType])
 
+  const allSelected = buttonSelected === 0 ? stylesButtons.blueButton : stylesButtons.whiteButton
+  const cardsSelected = buttonSelected === 1 ? stylesButtons.blueButton : stylesButtons.whiteButton
+  const loginsSelected = buttonSelected === 2 ? stylesButtons.blueButton : stylesButtons.whiteButton
+
   return (
     <View style={{ flex: 0.72, flexDirection: 'row', justifyContent: 'space-around'}}>
       <View style={[{ flex: 1, marginTop:'5%', marginHorizontal: '4%', justifyContent: 'space-around'}, styleScroolView.credencialsContainer]}>
         <View style={{flexDirection: 'row'}}>
-          {searchType === 'login' &&
-            <TouchableOpacity style={[{flex: 0.2, marginLeft: '2%', marginVertical: '2%'}, stylesButtons.orangeButton, stylesButtons.mainSlimConfig]} onPress={() => setSearchType('card')}>
-              <MaterialIcons style={{marginHorizontal: '1%'}} name={'person'} size={40} color="black"/> 
+          <View style={{flex: 0.25, marginLeft: '2%', marginVertical: '2%'}}>
+            <TouchableOpacity style={[{flex: 1, justifyContent: 'center',  alignItems: 'center'}, stylesButtons.whiteButton, stylesButtons.mainSlimConfig]} onPress={() => {setShowFilter(!showFilter)}}>
+              {!showFilter ? <Image source={require('../../../assets/images/down-arrow.png')} style={[{width: '70%', height: '70%', resizeMode: 'contain'}]}/> 
+              : <Image source={require('../../../assets/images/up-arrow.png')} style={[{width: '70%', height: '70%', resizeMode: 'contain'}]}/>}
             </TouchableOpacity>
-          }
-          {searchType === 'card' &&
-            <TouchableOpacity style={[{flex: 0.2, marginLeft: '2%', marginVertical: '2%'}, stylesButtons.purpleButton, stylesButtons.mainSlimConfig]} onPress={() => setSearchType(emptyValue)}>
-              <MaterialIcons style={{marginHorizontal: '1%'}} name={'credit-card'} size={40} color="black"/> 
-            </TouchableOpacity>
-          }
-          {searchType === emptyValue &&
-            <TouchableOpacity style={[{flex: 0.2, marginLeft: '2%', marginVertical: '2%'}, stylesButtons.greyButton, stylesButtons.mainSlimConfig]} onPress={() => setSearchType('login')}>
-              <MaterialIcons style={{marginHorizontal: '1%'}} name={'all-inclusive'} size={40} color="black"/> 
-            </TouchableOpacity>
-          }       
+          </View>     
           <View style={[{flex: 1, margin: '2%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 1, backgroundColor: whiteBackgroud }]}>
             <TextInput
             placeholder={searchLabel}
@@ -108,7 +105,23 @@ function CredentialsList() {
             </TouchableOpacity>
           </View>   
         </View>
-        <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }}/>
+        {showFilter ? 
+        <View style={{flexDirection: 'row', marginVertical: '2%'}}>
+          <TouchableOpacity style={[{flex: 0.33, marginHorizontal: '2%'}, stylesButtons.mainConfig, allSelected]} onPress={() => {setSearchType(emptyValue); setButtonSelected(0)}}>
+            <Text style={{fontSize: 17, color: 'black', fontWeight: 'bold', marginTop: '5%'}}>{allLabel}</Text>
+            <MaterialIcons style={{marginHorizontal: '1%'}} name={'all-inclusive'} size={40} color="black"/> 
+          </TouchableOpacity>
+          <TouchableOpacity style={[{flex: 0.33, marginHorizontal: '2%'}, stylesButtons.mainConfig, cardsSelected]} onPress={() => {setSearchType('card'); setButtonSelected(1)}}>
+            <Text style={{fontSize: 17, color: 'black', fontWeight: 'bold', marginTop: '5%'}}>{cardsLabel}</Text>
+            <MaterialIcons style={{marginHorizontal: '1%'}} name={'credit-card'} size={40} color="purple"/> 
+          </TouchableOpacity>
+          <TouchableOpacity style={[{flex: 0.33, marginHorizontal: '2%'}, stylesButtons.mainConfig, loginsSelected]} onPress={() => {setSearchType('login'); setButtonSelected(2)}}>
+            <Text style={{fontSize: 17, color: 'black', fontWeight: 'bold', marginTop: '5%'}}>{loginLabel}</Text>
+            <MaterialIcons style={{marginHorizontal: '1%'}} name={'person'} size={40} color="orange"/> 
+          </TouchableOpacity>
+        </View> : <></>}
+        <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '1%' }}/>
+        <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '1%' }}/>
         {isFething ?
         <Spinner/> :
         <ScrollView>

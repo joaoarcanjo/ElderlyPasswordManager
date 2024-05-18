@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native"
 import { StackNavigationProp } from "@react-navigation/stack"
 import { useState } from "react"
 import { View, TouchableOpacity, Text } from "react-native"
-import { deleteCredentialCardLabel, deleteCredentialLoginLabel, emptyValue } from "../../../assets/constants/constants"
+import { deleteCredentialLabel, emptyValue } from "../../../assets/constants/constants"
 import { stylesButtons } from "../../../assets/styles/main_style"
 import { YesOrNoModal } from "../../../components/Modal"
 import { credentialDeletedFlash } from "../../../components/UserMessages"
@@ -17,7 +17,7 @@ import { sendCaregiversCredentialInfoAction } from "./functions"
  * Componente que representa o botão para apagar a credencial
  * @returns 
  */
-export function DeleteCredential({id, platform, type}: Readonly<{id: string, platform: string, type: string}>) {
+export function DeleteCredential({id, platform}: Readonly<{id: string, platform: string}>) {
   
     const navigation = useNavigation<StackNavigationProp<any>>()
     const [modalVisible, setModalVisible] = useState(false)
@@ -31,14 +31,12 @@ export function DeleteCredential({id, platform, type}: Readonly<{id: string, pla
       .then(() => navigation.goBack())
       .catch(() => console.log('#1 Error deleting credential'))
     }
-
-    const deleteButtonLabel = type === 'login' ? deleteCredentialLoginLabel : deleteCredentialCardLabel
   
     return (
       <View style= { { flex: 0.10, flexDirection: 'row', justifyContent: 'space-around', marginBottom: '2%'} }>
         <YesOrNoModal question={'Apagar a credencial?'} yesFunction={() => deleteCredentialAction()} noFunction={() => setModalVisible(false)} visibleFlag={modalVisible}/>
         <TouchableOpacity style={[{flex: 1, marginHorizontal: '20%', marginVertical: '3%'}, logout.logoutButton, stylesButtons.mainConfig]} onPress={() => setModalVisible(true)}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>{deleteButtonLabel}</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>{deleteCredentialLabel}</Text>
         </TouchableOpacity>
       </View>
     )

@@ -14,17 +14,20 @@ import { sendSignalProtocolMessage } from "../messages/sendMessage"
  */
 export async function startSession(recipient: string): Promise<void> {
     console.log("--> Start session!")
-    const directory = directorySubject.value!
+    let directory = directorySubject.value!
+    console.log("- Directory: ", directory)
     const keyBundle = await directory.getPreKeyBundle(recipient)
     const recipientAddress = new SignalProtocolAddress(recipient, 1)
     // Instantiate a SessionBuilder for a remote recipientId + deviceId tuple.
     const sessionBuilder = new SessionBuilder(signalStore, recipientAddress)
 
-    // Process a prekey fetched from the server. Returns a promise that resolves
-    // once a session is created and saved in the store, or rejects if the
-    // identityKey differs from a previously seen identity for this address.
+    try {
+        console.log("- KeyBundle: ", keyBundle)
+        const session = await sessionBuilder.processPreKey(keyBundle!)
+    } catch (e) {
+        console.log("Error: ", e)
+    }
 
-    const session = await sessionBuilder.processPreKey(keyBundle!)
     const cm: ProcessedChatMessage = {
         id: randomUUID(),
         address: recipient,
@@ -39,13 +42,13 @@ export async function startSession(recipient: string): Promise<void> {
     const sessionCipher = new SessionCipher(signalStore, recipientAddress)
     const ciphertext = await sessionCipher.encrypt(stringToArrayBuffer(JSON.stringify(cm)))
 
+    console.log("- RemoteRecipient: ", recipient)
     sendSignalProtocolMessage(recipient, usernameSubject.value, ciphertext)
 
     const newSession: ChatSession = {
         remoteUsername: recipient,
         messages: [],
     }
-    //console.log(`Starting session with ${recipient}`, { ciphertext })
     const sessionList = [...sessionListSubject.value]
     sessionList.unshift(newSession)
     sessionListSubject.next(sessionList)

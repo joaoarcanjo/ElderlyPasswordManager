@@ -1,6 +1,6 @@
-import { Keyboard, StatusBar, View } from 'react-native';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
-import React, { useCallback, useEffect, useState } from 'react';
+import { StatusBar, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainMenu from './src/screens/main_menu/actions';
 import ElderlyListScreen from './src/screens/list_elderly/actions';
@@ -17,15 +17,12 @@ import Settings from './src/screens/settings_interface/actions';
 import Credentials from './src/screens/list_credentials/actions/personalCredentials';
 import { initFirestore } from './src/firebase/firestore/functionalities';
 import { createIdentity } from './src/e2e/identity/functions';
-import { flashTimeoutPromise } from './src/screens/splash_screen/actions/functions';
-import SplashScreen from './src/screens/splash_screen/actions';
-import * as SplashFunctions from 'expo-splash-screen';
 import { emptyValue, pageAddCredential, pageCredentialCard, pageCredentialLogin, pageCredentials, pageElderlyCredentials, pageElderlyList, pageFAQs, pageGenerator, pageLogin, pageMainMenu, pagePasswordHistory, pageSettings, pageSignup } from './src/assets/constants/constants';
 import CredencialCardPage from './src/screens/credential_interface/actions/card';
 import CredencialLoginPage from './src/screens/credential_interface/actions/login';
 import SignUpPage from './src/screens/signup_interface/actions';
 import ElderlyCredentials from './src/screens/list_credentials/actions/elderlyCredentials';
-import FrequentQuestions from './src/screens/list_questions/actions';
+import FrequentQuestions from './src/screens/list_faqs/actions';
 import Generator from './src/screens/password_generator/actions';
 import PasswordHistory from './src/screens/password_history/actions';
 
@@ -34,17 +31,6 @@ const InsideStack = createNativeStackNavigator()
 
 function InsideLayout() {
 
-  const { userId } = useSessionInfo()
-  const [appIsReady, setAppIsReady] = useState(true)
-
-  useEffect(() => {
-      flashTimeoutPromise(userId, setAppIsReady)
-      .then(() => setAppIsReady(true))
-  }, [])
-
-  const onLayoutRootView = useCallback(async () => { if (!appIsReady) await SplashFunctions.hideAsync() }, [appIsReady]);
-
-  if (!appIsReady) return <SplashScreen layout={onLayoutRootView} />
   return (
     <InsideStack.Navigator initialRouteName={pageMainMenu}>
       <InsideStack.Screen name={pageMainMenu} component={MainMenu} options={{ title: "MainMenu", headerShown: false }} />

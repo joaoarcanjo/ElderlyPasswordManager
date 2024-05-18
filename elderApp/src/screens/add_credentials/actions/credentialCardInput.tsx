@@ -117,7 +117,7 @@ export default function CredentialsCardInput() {
                     </View>
                     <View style={{flexDirection: 'row', marginTop: '2%', marginBottom: '5%', marginHorizontal: '3%'}}>
                         <TouchableOpacity style={[{flex: 0.20, marginHorizontal: '3%', flexDirection: 'row'}, stylesButtons.visibilityButton, stylesButtons.mainConfig]}  onPress={toggleShowSecurityCode} >
-                            <MaterialCommunityIcons name={showSecurityCode ? 'eye-off' : 'eye'} size={35} color="black"/> 
+                            <MaterialCommunityIcons name={showSecurityCode ? 'eye' : 'eye-off'} size={35} color="black"/> 
                         </TouchableOpacity>
                     </View>
                 </View>

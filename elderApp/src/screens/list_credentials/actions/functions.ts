@@ -74,7 +74,7 @@ const deleteCredentialIfNeeded = async (userId: string, credentialId: string, cr
 const updateCredentialIfNeeded = async (userId: string, credentialId: string, credentialCloud: any, credentialInfo: any, localDBKey: string) => {
     const credencialLocal = JSON.parse(decrypt(credentialInfo, localDBKey))
     if (credentialCloud.edited.updatedAt > credencialLocal.edited.updatedAt) {
-        updateCredentialOnLocalDB(userId, credentialId, encrypt(JSON.stringify(credentialCloud), localDBKey))
+        await updateCredentialOnLocalDB(userId, credentialId, encrypt(JSON.stringify(credentialCloud), localDBKey))
     } else if (credencialLocal.edited.updatedAt > credentialCloud.edited.updatedAt) {
         throw new ErrorInstance(Errors.ERROR_CREDENTIAL_ON_CLOUD_OUTDATED)
     }

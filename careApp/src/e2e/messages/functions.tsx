@@ -1,6 +1,6 @@
 import { MessageType, SessionCipher, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript"
 import { currentSessionSubject, removeSession, sessionForRemoteUser, sessionListSubject } from "../session/state"
-import { SendAcknowledgeMessage, SendWebSocketMessage } from "../network/types"
+import { SendWebSocketMessage } from "../network/types"
 import { signalStore, usernameSubject } from "../identity/state"
 import { stringToArrayBuffer } from "../signal/signal-store"
 import { signalWebsocket } from "../network/webSockets"
@@ -48,22 +48,6 @@ export async function processPreKeyMessage(address: string, message: MessageType
 }
 
 /**
- * Função para informar o remetente que a regularMessage foi recebida com sucesso.
- * @param address 
- * @param messageId Representa o id da mensagem que queremos informar ao remetente que foi recebida com sucesso. 
- * O remetente a receber um acknowledge de uma mensagem, não precisa da retransmitir.  
- */
-function sendAcknowledgement(address: string, id: string) {
-    const wsm: SendAcknowledgeMessage = {
-        action: 'acknowledge',
-        address: address,
-        from: usernameSubject.value,
-        messageId: id
-    }
-    signalWebsocket.next(wsm)
-}
-
-/**
  * Função para processar uma mensagem recebida de tipo 1
  * @param address Representa o identificador de quem enviou a mensagem.
  * @param message Conteúdo da mensagem enviada.
@@ -81,7 +65,6 @@ export async function processRegularMessage(address: string, message: string, ty
     const cm: ProcessedChatMessage = JSON.parse(plaintext)
 
     addMessageToSession(address, cm, type)
-    sendAcknowledgement(address, cm.id)
 }
 
 /**
@@ -102,8 +85,6 @@ export async function encryptAndSendMessage(to: string, message: string, firstMe
         body: message,
         type: type,
     }
-
-    addMessageToSession(to, cm, 1, true)  
     const signalMessage = await cipher.encrypt(stringToArrayBuffer(JSON.stringify(cm)))
     sendSignalProtocolMessage(to, usernameSubject.value, signalMessage)
 }
@@ -127,7 +108,7 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
     console.log('===> addMessageToSessionCalled')
     const userSession = { ...sessionForRemoteUser(address)! }
     const currentUserId = await getKeychainValueFor(caregiverId)
-
+ 
     //Se for uma mensagem de dados do idoso e não for uma mensagem nossa (tipo 0)
     if(cm.type === ChatMessageType.PERSONAL_DATA && !itsMine) {
         await processPersonalData(currentUserId, cm)

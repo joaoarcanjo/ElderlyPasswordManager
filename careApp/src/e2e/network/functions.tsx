@@ -1,7 +1,7 @@
 import { Subscription } from "rxjs"
 import { setSignalWebsocket, setWebsocketSubscription, signalWebsocket } from "./webSockets"
 import { webSocket } from "rxjs/webSocket"
-import { SendWebSocketMessage, WebSocketMessage, isSendWebSocketMessage, isAcknowledgeMessage } from "./types"
+import { SendWebSocketMessage, WebSocketMessage, isSendWebSocketMessage } from "./types"
 import { MessageType } from "@privacyresearch/libsignal-protocol-typescript"
 import { processRegularMessage, processPreKeyMessage } from "../messages/functions"
 import { Errors } from "../../exceptions/types"
@@ -25,8 +25,6 @@ export function initializeSignalWebsocket(uri: string): Subscription {
                 processWebsocketMessage(msg).catch((e) => {
                     console.warn(`error accepting signal message`, { e })
                 })
-            } else if (isAcknowledgeMessage(msg)) {
-                console.log(`- Acknowledge received`)
             } else {
                 console.error('Message on wss is not recognized', { msg })
             }

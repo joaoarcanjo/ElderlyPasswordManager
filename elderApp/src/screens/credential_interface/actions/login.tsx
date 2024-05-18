@@ -13,13 +13,13 @@ import { useSessionInfo } from '../../../firebase/authentication/session'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
 import { ChatMessageType } from '../../../e2e/messages/types'
 import { buildEditMessage, sendCaregiversCredentialInfoAction } from './functions'
-import { updateCredentialOnLocalDB } from '../../../database/credentials'
 import { cancelLabel, copyLabel, editLabel, emptyValue, optionsLabel, passwordDefaultLengthGenerator, passwordLabelBig, regenerateLabel, saveChangesLabel, saveLabel, uriLabel, userLabel } from '../../../assets/constants/constants'
 import { copyValue, credentialUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/UserMessages'
 import { FlashMessage, copyURIDescription, copyUsernameDescription } from '../../../assets/constants/messages'
 import { regeneratePassword } from '../../../components/passwordGenerator/functions'
 import { DeleteCredential } from './components'
 import { encrypt } from '../../../algorithms/tweetNacl/crypto'
+import { updateCredentialOnLocalDB } from '../../../database/credentials'
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
@@ -93,7 +93,11 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
         setLoading(false)
         setModalVisible(false)
       })
-      .catch(() => console.log('#1 Error updating credential'))
+      .catch((erro) => {
+        setLoading(false)
+        console.log(erro)
+        console.log('#1 Error updating credential')
+      })
     }
   }
 
@@ -210,7 +214,7 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
           {editFlag ?
           <View style={{ flex: 0.14, flexDirection: 'row', justifyContent: 'space-between', marginBottom: '5%' }}>
             <TouchableOpacity style={[{marginLeft:'5%', marginTop: '0%'}, stylesButtons.mainConfig, stylesButtons.copyButton]}  onPress={toggleShowPassword} >
-              <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={!showPassword ? 'eye' : 'eye-off'} size={40} color="black"/> 
+              <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={showPassword ? 'eye' : 'eye-off'} size={40} color="black"/> 
             </TouchableOpacity>
           </View>
           :
@@ -229,7 +233,7 @@ function AppInfo({id, platform, uri, un, pw, edited }: Readonly<{id: string, pla
     <Options/>
     <PasswordOptionsModal saveFunction={setRequirements} closeFunction={() => {setPasswordOptionsModalVisible(false)}} visibleFlag={passwordOptionsModalVisible} loading={false}/>
     <YesOrNoSpinnerModal question={saveChangesLabel} yesFunction={saveCredentialUpdate} noFunction={dontSaveCredentialsUpdate} visibleFlag={modalVisible} loading={loading}/>
-    {editFlag && <DeleteCredential id={id} platform={platform} type={'login'}/>}
+    {editFlag && <DeleteCredential id={id} platform={platform}/>}
     </>
   )
 }

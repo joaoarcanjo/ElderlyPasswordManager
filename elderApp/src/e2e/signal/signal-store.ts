@@ -292,8 +292,7 @@ export class SignalProtocolStore implements StorageType {
     //==== Session operations 
     //==-> obter do sql.
     async loadSession(identifier: string): Promise<SessionRecordType | undefined> {
-        //console.log("===> LoadSessionCalled")
-        console.log('identifier:', identifier)
+        console.log("===> LoadSessionCalled")
         return await getSessionById('session' + identifier, await this.getUserId(), await this.getDBKey())
         .then((rec) => {
             if (typeof rec === 'object') {
@@ -309,7 +308,7 @@ export class SignalProtocolStore implements StorageType {
         })
     }
     async storeSession(identifier: string, record: SessionRecordType): Promise<void> {
-        //console.log("===> StoreSessionCalled")
+        console.log("===> StoreSessionCalled")
         await saveSignalSessions(await this.getUserId(), 'session' + identifier, record, await this.getDBKey())
         .catch(() => console.log('#1 Error storing session'))
     }

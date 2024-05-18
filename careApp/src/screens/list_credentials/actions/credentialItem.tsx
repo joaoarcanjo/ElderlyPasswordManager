@@ -1,13 +1,11 @@
 import { useNavigation } from "@react-navigation/native"
 import { StackNavigationProp } from "@react-navigation/stack"
 import { useState } from "react"
-import { Linking, TouchableOpacity, View, Text} from "react-native"
-import { pageCredentialLogin, pageCredentialCard, actionsLabel } from "../../../assets/constants/constants"
+import { Linking, TouchableOpacity, View, Text, Image} from "react-native"
+import { pageCredentialLogin, pageCredentialCard, copyCardNumberLabel, copyPasswordLabel, copySecurityCodeLabel, copyUsernameLabel, copyVerificationCodeLabel, navigateLabel } from "../../../assets/constants/constants"
 import { stylesButtons } from "../../../assets/styles/main_style"
-import { CredentialLoginOptionsModal, CredentialCardOptionsModal } from "../../../components/Modal"
 import { copyValue } from "../../../components/userMessages/UserMessages"
 import { copyUsernameDescription, copyPasswordDescription, copyCardNumberDescription, FlashMessage } from "../../../components/userMessages/messages"
-import { styleScroolView } from "../styles/styles"
 import { CredentialType } from "./types"
 import { MaterialIcons } from "@expo/vector-icons"
 import { useSessionInfo } from "../../../firebase/authentication/session"
@@ -16,11 +14,22 @@ import { getKey } from "../../../firebase/firestore/functionalities"
 import { getKeychainValueFor } from "../../../keychain"
 import { elderlySSSKey } from "../../../keychain/constants"
 
+function ActionItem({text, func} : {text: string, func: Function}) {
+
+  const color = text.includes('Copiar') ? stylesButtons.copyButton : stylesButtons.blueButton
+
+  return (
+    <TouchableOpacity style={[{flex: 1, marginTop: '3%'}, stylesButtons.mainConfig, color]} onPress={() => func()}>
+      <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '1%' }]}>{text}</Text>
+    </TouchableOpacity>
+  )
+}
+
 export function ScrollItem({credential, elderlyId}: Readonly<{credential: CredentialType, elderlyId: string}>) {
 
     const navigation = useNavigation<StackNavigationProp<any>>()
-    const [modalVisible, setModalVisible] = useState(false)
     const { localDBKey, userId } = useSessionInfo()
+    const [showFilter, setShowFilter] = useState(false)
   
     const OpenCredentialPage = async () => {
       
@@ -115,28 +124,51 @@ export function ScrollItem({credential, elderlyId}: Readonly<{credential: Creden
       return (
         <>
         <View style={{flexDirection: 'row',  marginHorizontal: '2%'}}>
-          <TouchableOpacity style={[{flex: 0.7, marginHorizontal: '1%', marginVertical: '2%'}, stylesButtons.mainConfig, stylesButtons.greyButton]} onPress={OpenCredentialPage}>
-            <View style={{flexDirection: 'row', marginHorizontal: '1%'}}>
-              <View style={{marginVertical: '1%'}}>
-                <MaterialIcons name={icone} size={40} color={color}/> 
+          <TouchableOpacity style={[{flex: 1, marginHorizontal: '1%', marginVertical: '2%'}, stylesButtons.greyButton, stylesButtons.mainSlimConfigNotCenter]} onPress={OpenCredentialPage}>
+            <View style={{flex: 0.3, flexDirection: 'row', justifyContent: 'space-between', margin: '2%'}}>
+              <View style={{flex: 0.7}}>
+                <View style={{flexDirection: 'row', marginHorizontal: '1%'}}>
+                  <View style={{marginVertical: '1%'}}>
+                    <MaterialIcons name={icone} size={40} color={color}/> 
+                  </View>
+                  <View style={{marginVertical: '3%', marginHorizontal: '2%', flexDirection: 'row', alignItems: 'center'}}>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 25, fontWeight: 'bold' }]}>{credential.data.platform}</Text>
+                  </View>
+                </View>
+                <View style={{flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '1%', marginVertical: '2%'}}>
+                  <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 15, marginLeft: '5%' }]}>{username}</Text>
+                </View>
               </View>
-              <View style={{marginVertical: '3%', marginHorizontal: '2%', flexDirection: 'row', alignItems: 'center'}}>
-                <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 25, fontWeight: 'bold' }]}>{credential.data.platform}</Text>
+              <View style={{flex: 0.21}}>
+                <TouchableOpacity style={[stylesButtons.whiteButton, stylesButtons.mainSlimConfig, {height: '85%'}]} onPress={() => {setShowFilter(!showFilter)}}>
+                  {!showFilter ? <Image source={require('../../../assets/images/down-arrow.png')} style={[{width: '70%', height: '70%', resizeMode: 'contain'}]}/> 
+                  : <Image source={require('../../../assets/images/up-arrow.png')} style={[{width: '70%', height: '70%', resizeMode: 'contain'}]}/>}
+                </TouchableOpacity>
               </View>
             </View>
-            <View style={{flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '1%', marginVertical: '2%'}}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 15, marginLeft: '5%' }]}>{username}</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={[{flex: 0.3, marginVertical: '2%'}, styleScroolView.navigateButton, stylesButtons.mainConfig]} onPress={() => {setModalVisible(true)}}>
-        <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%', fontWeight: 'bold', textAlign: 'right' }]}>{actionsLabel}</Text>
+            {showFilter ?
+              <View style={{flex: 0.7, margin: '3%'}}>
+                <View style={{ height: 1, backgroundColor: '#ccc' }} />
+                <View style={{ height: 1, backgroundColor: '#ccc' }} />
+                <View style={{marginTop: '4%', marginHorizontal: '2%'}}>
+                  {'uri' in credential.data ? 
+                    <>
+                      <ActionItem text={copyUsernameLabel} func={copyUsername}/>
+                      <ActionItem text={copyPasswordLabel} func={copyPassword}/>
+                      <ActionItem text={navigateLabel} func={NavigateToApp}/>
+                    </>
+                    : <></>}
+                  {'cardNumber' in credential.data ?
+                    <>
+                      <ActionItem text={copyCardNumberLabel} func={copyCardNumber}/>
+                      <ActionItem text={copySecurityCodeLabel} func={copySecurityCode}/>
+                      <ActionItem text={copyVerificationCodeLabel} func={copyVerificationCode}/>
+                    </>
+                    : <></>}
+                </View>
+              </View> : <></>}
           </TouchableOpacity>
         </View>
-        { credential.data.type === 'login' ?
-            <CredentialLoginOptionsModal visibleFlag={modalVisible} copyUsername={copyUsername} copyPassword={copyPassword} navigate={NavigateToApp} closeFunction={() => setModalVisible(false)}/>
-          :
-            <CredentialCardOptionsModal visibleFlag={modalVisible} copyCardNumber={copyCardNumber} copySecurityCode={copySecurityCode} copyVerificationCode={copyVerificationCode} closeFunction={() => setModalVisible(false)} />
-        }
         </>
       )
     }

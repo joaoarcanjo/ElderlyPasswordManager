@@ -35,6 +35,22 @@ const stylesButtons = StyleSheet.create({
         shadowOpacity: 1, // IOS
         shadowRadius: 1, //IOS
     },
+    mainConfigNotCenter: {
+        borderWidth: 2.5, // Largura da linha na margem
+        elevation: 3, // Android
+        shadowColor: 'rgba(0,0,0, .3)', // IOS
+        shadowOffset: { height: 1, width: 1 }, // IOS
+        shadowOpacity: 1, // IOS
+        shadowRadius: 1, //IOS
+    },
+    mainSlimConfigNotCenter: {
+        borderWidth: 2, // Largura da linha na margem
+        elevation: 3, // Android
+        shadowColor: 'rgba(0,0,0, .3)', // IOS
+        shadowOffset: { height: 1, width: 1 }, // IOS
+        shadowOpacity: 1, // IOS
+        shadowRadius: 1, //IOS
+    },
     acceptButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         backgroundColor: acceptButtonBackground,
@@ -88,6 +104,11 @@ const stylesButtons = StyleSheet.create({
     greyButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         backgroundColor: greyBackgroud, // Cor de fundo
+        borderColor: greyBorder
+    },
+    whiteButton: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        backgroundColor: whiteBackgroud, // Cor de fundo
         borderColor: greyBorder
     },
     purpleButton: {

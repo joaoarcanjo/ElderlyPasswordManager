@@ -117,17 +117,14 @@ export function Elderly({ elderlyId, name, phone, email, setRefresh }: Readonly<
           <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 5 }}>{name}</Text>
           <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }} />
           <View style={{flex: 1, marginVertical: '3%', marginRight: '5%', flexDirection: 'row'}}>
-            <TouchableOpacity style={[{flex: 0.65, marginHorizontal: '1%', marginVertical: '1%'}, elderlyOptions.openCredentials, stylesButtons.mainConfig]} onPress={navigateToElderlyCredentials}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '4%' }]}>{credentialsLabel}</Text>
+            <TouchableOpacity style={[{flex: 0.7, marginHorizontal: '1%', marginVertical: '1%'}, elderlyOptions.openCredentials, stylesButtons.mainConfig]} onPress={navigateToElderlyCredentials}>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginHorizontal: '2%', marginVertical: '4%' }]}>{credentialsLabel}</Text>
             </TouchableOpacity>
             <View style={{flex: 0.30, marginLeft: '8%'}}>
-              {showInfo ? 
-                <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%', justifyContent: 'center',  alignItems: 'center'}]} onPress={() => changeInfoState()}>
-                  <Image source={require('../../../assets/images/plus.png')} style={[{width: '70%', height: '70%', marginRight: '5%', resizeMode: 'contain'}]}/>
-                </TouchableOpacity> :
-                <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%', justifyContent: 'center',  alignItems: 'center'}]} onPress={() => changeInfoState()}>
-                  <Image source={require('../../../assets/images/minus.png')} style={[{width: '70%', height: '70%', marginRight: '5%', resizeMode: 'contain'}]}/>
-              </TouchableOpacity>}  
+              <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%', justifyContent: 'center',  alignItems: 'center'}, stylesButtons.whiteButton, stylesButtons.mainSlimConfig]} onPress={() => changeInfoState()}>
+                {showInfo ? <Image source={require('../../../assets/images/down-arrow.png')} style={[{width: '80%', height: '80%', marginRight: '5%', resizeMode: 'contain'}]}/> :
+                <Image source={require('../../../assets/images/up-arrow.png')} style={[{width: '80%', height: '80%', marginRight: '5%', resizeMode: 'contain'}]}/>}
+              </TouchableOpacity>
             </View>
           </View>
         </View>

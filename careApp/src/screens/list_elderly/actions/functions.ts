@@ -45,7 +45,6 @@ export async function acceptElderly(userId: string, elderlyEmail: string, userNa
 
     const session = sessionForRemoteUser(elderlyEmail)
     currentSessionSubject.next(session || null)
-
     const data: CaregiverDataBody = {
         userId: userId,
         name: userName,
@@ -119,7 +118,6 @@ export async function refuseIfMaxReached(userId: string) {
     const isMaxReached = await isMaxElderlyReached(userId)
     if(isMaxReached) {
         const waitingElderlyEmails = await getElderlyWithSpecificState(userId, ElderlyRequestStatus.RECEIVED.valueOf())
-        console.log(waitingElderlyEmails)
         waitingElderlyEmails.forEach(async email => {
             await encryptAndSendMessage(email, ChatMessageDescription.REJECT_SESSION, true, ChatMessageType.MAX_REACHED_SESSION)
             .then(() => removeSession(email))

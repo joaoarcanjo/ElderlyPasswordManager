@@ -160,7 +160,7 @@ function AccountInfo() {
         {editFlag ?
           <View style={{ flex: 0.2, flexDirection: 'row', justifyContent: 'space-between', marginTop: '1%' }}>
             <TouchableOpacity style={[{marginLeft:'5%', marginTop: '0%'}, stylesButtons.mainConfig, stylesButtons.copyButton]}  onPress={toggleShowPassword} >
-              <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={!showPassword ? 'eye' : 'eye-off'} size={40} color="black"/> 
+              <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={showPassword ? 'eye' : 'eye-off'} size={40} color="black"/> 
             </TouchableOpacity>
           </View>
           :

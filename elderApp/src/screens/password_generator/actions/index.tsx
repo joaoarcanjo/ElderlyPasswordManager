@@ -26,7 +26,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
   const [lowercase, setLowercase] = useState(true)
   const [numbers, setNumbers] = useState(true)
   const [special, setSpecial] = useState(true)
-  const { localDBKey } = useSessionInfo()
+  const { localDBKey, userId } = useSessionInfo()
 
   //UseEffects: ---
   useEffect(() => { 
@@ -46,7 +46,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
     if(passGenerated != password) {
       // You can use the 'result' object to get information about the password strength
       setPassword(passGenerated)
-      savePasswordGenerated(passGenerated, localDBKey)
+      savePasswordGenerated(passGenerated, userId, localDBKey)
     }
   }
 

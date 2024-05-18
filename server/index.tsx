@@ -221,7 +221,7 @@ app.get("/getBundle/:username", (req, res) => {
     }
 })
 
-http.listen(PORT, async () => {
+http.listen({host: '0.0.0.0', port: PORT}, async () => {
     console.log (ip.address())
     //db.collection("server").doc("server").set({ip: ip.address()})
     

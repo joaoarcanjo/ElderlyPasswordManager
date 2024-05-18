@@ -105,14 +105,14 @@ const permission = StyleSheet.create({
         borderColor: permissionsNoButtonBorder
     },
     yesButtonText: {
-      fontSize: 25,
-      fontWeight: 'bold',
-      color: 'white'
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: 'white'
     },
-    nButtonText: {
-      fontSize: 25,
-      fontWeight: 'bold',
-      color: 'white'
+    noButtonText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: 'white'
     },
 })
 

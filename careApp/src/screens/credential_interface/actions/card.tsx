@@ -14,7 +14,7 @@ import { useSessionInfo } from '../../../firebase/authentication/session'
 import { buildEditMessage, sendElderlyCredentialInfoAction } from './functions'
 import { ChatMessageType } from '../../../e2e/messages/types'
 import { deleteCredentialFromLocalDB, updateCredentialFromLocalDB } from '../../../database/credentials'
-import { cancelLabel, cardNumberLabel, copyLabel, deleteCredentialCardLabel, editLabel, emptyValue, ownerNameLabel, saveChangesLabel, saveLabel, securityCodeLabel, verificationCodeLabel } from '../../../assets/constants/constants'
+import { cancelLabel, cardNumberLabel, copyLabel, deleteCredentialLabel, editLabel, emptyValue, ownerNameLabel, saveChangesLabel, saveLabel, securityCodeLabel, verificationCodeLabel } from '../../../assets/constants/constants'
 import { copyValue, credentialUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
 import { FlashMessage, copyCardNumberDescription, copyOwnerNameDescription, copySecurityCodeDescription, copyVerificationCodeDescription } from '../../../components/userMessages/messages'
 import { encrypt } from '../../../algorithms/tweetNacl/crypto'
@@ -240,7 +240,7 @@ function CardInfo({ownerId, id, platform, cn, on, sc, vc, edited, auxKey, isElde
           {editFlag ?
           <View style={{ flex: 0.14, flexDirection: 'row', justifyContent: 'space-between', marginBottom: '5%' }}>
             <TouchableOpacity style={[{marginLeft:'5%', marginTop: '0%'}, stylesButtons.mainConfig, stylesButtons.copyButton]}  onPress={toggleShowSecurityCode} >
-              <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={!showSecurityCode ? 'eye' : 'eye-off'} size={40} color="black"/> 
+              <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={showSecurityCode ? 'eye' : 'eye-off'} size={40} color="black"/> 
             </TouchableOpacity>
           </View>
           : <></>}
@@ -303,7 +303,7 @@ function DeleteCredential({ownerId, id, platform, auxKey, isElderlyCredential}: 
     <View style= { { flex: 0.10, flexDirection: 'row', justifyContent: 'space-around', marginBottom: '2%'} }>
       <YesOrNoModal question={'Apagar a credencial?'} yesFunction={() => deleteCredentialAction()} noFunction={() => setModalVisible(false)} visibleFlag={modalVisible}/>
       <TouchableOpacity style={[{flex: 1, marginHorizontal: '20%', marginVertical: '3%'}, logout.logoutButton, stylesButtons.mainConfig]} onPress={setModalVisibleAux}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>{deleteCredentialCardLabel}</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>{deleteCredentialLabel}</Text>
       </TouchableOpacity>
     </View>
   )

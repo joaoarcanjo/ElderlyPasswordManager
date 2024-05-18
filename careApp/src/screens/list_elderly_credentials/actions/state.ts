@@ -1,10 +1,10 @@
 import { BehaviorSubject } from "rxjs";
-import { deriveSecret } from "../../../algorithms/sss/sss";
 import { getKey, listAllCredentialsFromFirestore } from "../../../firebase/firestore/functionalities";
 import { getKeychainValueFor } from "../../../keychain";
 import { elderlySSSKey } from "../../../keychain/constants";
-import { getElderlyId } from "../../../database/elderlyFunctions";
 import { CredentialType } from "../../list_credentials/actions/types";
+import { getElderlyId } from "../../../database/elderly";
+import { deriveSecret } from "../../../algorithms/shamirSecretSharing/sss";
 
 export const credentialsListUpdated = new BehaviorSubject<CredentialType[]>([])
 

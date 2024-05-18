@@ -18,10 +18,12 @@ import { SessionSignal } from "./types";
 export const saveSignalSessions = async (userId: string, otherId: string, record: string, localDBKey: string) => {
     console.log("===> saveSignalSessionsCalled")
     const encrypted = encrypt(record, localDBKey)
+
     if(dbSQL != null) {
-        await dbSQL.getFirstAsync('SELECT * FROM sessionsSignal WHERE id = ? AND userId = ?', [otherId, userId])
+        await dbSQL.getAllAsync('SELECT id FROM sessionsSignal WHERE id = ? AND userId = ?', [otherId, userId])
             .then(async (result) => {
-                if (result) {
+                if (result.length > 0) {
+                    console.log("Session exists")
                     // Row with given id and userId exists, perform UPDATE
                     if (dbSQL != null) {
                         await dbSQL.runAsync('UPDATE sessionsSignal SET record = ? WHERE id = ? AND userId = ?', [encrypted, otherId, userId])
@@ -29,16 +31,20 @@ export const saveSignalSessions = async (userId: string, otherId: string, record
                                 return Promise.resolve()
                             })
                             .catch(() => {
-                                Promise.reject(Errors.ERROR_DELETING_SESSION)
+                                Promise.reject(Errors.ERROR_UPDATING_SESSION)
                                 return false
                             })
                     } else {
                         Promise.reject(Errors.ERROR_DATABASE_NOT_INITIALIZED)
                     }
                 } else {
+                    console.log("Session not exists")
                     if (dbSQL != null) {
-                    await dbSQL.runAsync('INSERT INTO sessionsSignal (id, userId, record) VALUES (?,?,?)', [otherId, userId, encrypted])
+                        console.log("===> saveSignalSessionsCalled")
+                        // Row with given id and userId does not exist, perform INSERT
+                        await dbSQL.runAsync('INSERT INTO sessionsSignal (id, userId, record) VALUES (?,?,?)', [otherId, userId, encrypted])
                         .then(() => {
+                            console.log('- Sessão salva com sucesso.')
                             return Promise.resolve()
                         })
                         .catch(() => {
@@ -50,51 +56,10 @@ export const saveSignalSessions = async (userId: string, otherId: string, record
                     }
                 }
             })
-            .catch(() => {
+            .catch((error) => {
                 Promise.reject(Errors.ERROR_RETRIEVING_SESSION)
                 return false
             })
-        /*return dbSQL.transaction(async tx => {
-            tx.executeSql(
-                'SELECT * FROM sessionsSignal WHERE id = ? AND userId = ?',
-                [otherId, userId],
-                (_, result) => {
-                    if (result.rows.length > 0) {
-                        // Row with given id and userId exists, perform UPDATE
-                        tx.executeSql(
-                            'UPDATE sessionsSignal SET record = ? WHERE id = ? AND userId = ?',
-                            [encrypted, otherId, userId],
-                            () => {
-                                //console.log('- Sessão atualizada com sucesso.')
-                                return Promise.resolve()
-                            },
-                            (_, _error) => {
-                                Promise.reject(Errors.ERROR_DELETING_SESSION)
-                                return false
-                            }
-                        )
-                    } else {
-                        // No row with given id and userId exists, perform INSERT
-                        tx.executeSql(
-                            'INSERT INTO sessionsSignal (id, userId, record) VALUES (?,?,?)',
-                            [otherId, userId, encrypted],
-                            () => {
-                                console.log('- Sessão salva com sucesso.')
-                                return Promise.resolve();
-                            },
-                            (_, _error) => {
-                                Promise.reject(Errors.ERROR_CREATING_SESSION)
-                                return false
-                            }
-                        )
-                    }
-                },
-                (_, _error) => {
-                    Promise.reject(Errors.ERROR_RETRIEVING_SESSION)
-                    return false
-                }
-            );
-        });*/
     } else {
         Promise.reject(Errors.ERROR_DATABASE_NOT_INITIALIZED)
     }
@@ -111,42 +76,23 @@ export const saveSignalSessions = async (userId: string, otherId: string, record
  */
 export const getSessionById = async (otherId: string, userId: string, localDBKey: string): Promise<SessionSignal | undefined> => {
     console.log("===> getSessionByIdCalled")
+
     return new Promise(async (resolve, reject) => {
         if(dbSQL != null) {
-            console.log("OtherId:", otherId, "UserId:", userId)
-            console.log(otherId, userId)
-            await dbSQL.getFirstAsync('SELECT (record) FROM sessionsSignal WHERE id = ? AND userId = ?', [otherId, userId])
-                .then((result) => {
-                    const session = result as any
-                    if (session) {
-                        resolve({ record: decrypt(session.record, localDBKey) })
+            await dbSQL.getAllAsync('SELECT record FROM sessionsSignal WHERE id = ? AND userId = ?', [otherId, userId])
+                .then(async (result) => { 
+                    if (result.length > 0) {
+                        const record = (result[0] as any).record
+                        resolve({ record: decrypt(record, localDBKey) })
                     } else {
                         resolve(undefined)
                     }
                 })
                 .catch((error) => {
+                    console.log("Error: " + error.message)
                     reject(Errors.ERROR_RETRIEVING_SESSION)
                     return false
                 })
-            /*dbSQL.transaction(async tx => {
-                tx.executeSql(
-                    'SELECT (record) FROM sessionsSignal WHERE id = ? AND userId = ?',
-                    [otherId, userId],
-                    (_, result) => {
-                        if (result.rows.length > 0) {
-                            resolve({
-                                record: decrypt(result.rows.item(0).record, localDBKey),
-                            })
-                        } else {
-                            reject(Errors.ERROR_RETRIEVING_SESSION)
-                        }
-                    },
-                    (_, _error) => {
-                        reject(Errors.ERROR_RETRIEVING_SESSION)
-                        return false
-                    }
-                )
-            })*/
         } else {
             reject(Errors.ERROR_DATABASE_NOT_INITIALIZED)
         }
@@ -163,28 +109,18 @@ export const getSessionById = async (otherId: string, userId: string, localDBKey
  * @throws {Errors.ERROR_DATABASE_NOT_INITIALIZED} If the database is not initialized.
  */
 export const deleteSessionById = async (userId: string, otherId: string) => {
+    console.log("===> deleteSessionByIdCalled")
+    
+    const otherIdAux = 'session'+otherId+'.1'
     if(dbSQL != null) {
-        return await dbSQL.runAsync('DELETE FROM sessionsSignal WHERE userId = ? AND id = ?', [userId, otherId])
-            .then(() => {
-                return Promise.resolve()
+        return await dbSQL.runAsync('DELETE FROM sessionsSignal WHERE userId = ? AND id = ?', [userId, otherIdAux])
+            .then(async (result) => {
+                return Promise.resolve(result.changes > 0)
             })
             .catch(() => {
                 Promise.reject(Errors.ERROR_DELETING_SESSION)
                 return false
             })
-        /*dbSQL.transaction(async tx => {
-            tx.executeSql(
-                'DELETE FROM sessionsSignal WHERE userId = ? AND id = ?;',
-                [userId, otherId],
-                (_, result) => {
-                    return Promise.resolve(result.rowsAffected > 0)
-                },
-                (_, _error) => {
-                    Promise.reject(Errors.ERROR_DELETING_SESSION)
-                    return false
-                }
-            )
-        })*/
     } else {
         Promise.reject(Errors.ERROR_DATABASE_NOT_INITIALIZED)
     }
@@ -199,27 +135,13 @@ export const deleteSessionById = async (userId: string, otherId: string) => {
  export const deleteAllSessions = async (userId: string) => {
     if(dbSQL != null) {
         return await dbSQL.runAsync('DELETE FROM sessionsSignal WHERE userId = ?', [userId])
-            .then(() => {
-                return Promise.resolve()
+            .then((result) => {
+                return Promise.resolve(result.changes > 0)
             })
             .catch(() => {
                 Promise.reject(Errors.ERROR_DELETING_SESSION)
                 return false
             })
-        /*
-        dbSQL.transaction(async tx => {
-            tx.executeSql(
-                'DELETE FROM table_name WHERE userId = ?',
-                [userId],
-                (_, result) => {
-                    return Promise.resolve(result.rowsAffected > 0)
-                },
-                (_, _error) => {
-                    Promise.reject(Errors.ERROR_DELETING_SESSION)
-                    return false
-                }
-            )
-        })*/
     } else {
         Promise.reject(Errors.ERROR_DATABASE_NOT_INITIALIZED)
     }

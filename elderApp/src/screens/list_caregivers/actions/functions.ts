@@ -18,6 +18,7 @@ import { setCaregiverListUpdated } from "./state"
 export async function startSessionWithCaregiver(caregiverEmail: string, userId: string, userName: string, userEmail: string, userPhone: string) {
     console.log("===> startSessionWithCaregiverCalled")
     try {
+        console.log(caregiverEmail)
         await startSession(caregiverEmail)
         const session = sessionForRemoteUser(caregiverEmail)
         currentSessionSubject.next(session ?? null)
@@ -32,6 +33,7 @@ export async function startSessionWithCaregiver(caregiverEmail: string, userId: 
         }
         await encryptAndSendMessage(caregiverEmail, JSON.stringify(data), true, ChatMessageType.PERSONAL_DATA) 
     } catch (error) {
+        console.log(error)
         return Promise.reject(new ErrorInstance(Errors.ERROR_STARTING_SESSION))
         //FAZER UM ALERT PARA ISTO?
     }

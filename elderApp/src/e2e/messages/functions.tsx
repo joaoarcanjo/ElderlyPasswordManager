@@ -1,6 +1,6 @@
 import { MessageType, SessionCipher, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript"
 import { currentSessionSubject, removeSession, sessionForRemoteUser, sessionListSubject } from "../session/state"
-import { signalStore } from "../identity/state"
+import { signalStore, usernameSubject } from "../identity/state"
 import { ChatSession } from "../session/types"
 import { ChatMessageType, CaregiverDataBody, ProcessedChatMessage, CredentialBody, ElderlyDataBody, ChatMessageDescription } from "./types"
 import { setCaregiverListUpdated } from "../../screens/list_caregivers/actions/state"
@@ -223,6 +223,7 @@ export async function cancelWaitingCaregiver(userId: string, caregiverEmail: str
     await encryptAndSendMessage(caregiverEmail, ChatMessageDescription.CANCEL_SESSION, true, ChatMessageType.CANCEL_SESSION)
     .then(() => removeSession(caregiverEmail))
     .then(() => deleteCaregiver(userId, caregiverEmail))
+    .then(() => deleteSessionById(userId, caregiverEmail))
     .then(() => setCaregiverListUpdated(userId))
 }
 

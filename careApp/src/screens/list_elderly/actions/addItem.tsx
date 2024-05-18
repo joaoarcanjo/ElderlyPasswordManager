@@ -22,7 +22,6 @@ export function AddElderlyModal({visibility, concludeAction}: Readonly<{visibili
     if(email == userEmail) {
       alert(Errors.ERROR_USER_EMAIL) 
     } else {
-      console.log("Email: ", email)
       await saveElderly(userId, '0', '0', email, '0', ElderlyRequestStatus.WAITING)
       .then(() => startSessionWithElderly(email, userId, userName, userEmail, userPhone))
       .then(() => sessionRequestSent(elderlyEmail))

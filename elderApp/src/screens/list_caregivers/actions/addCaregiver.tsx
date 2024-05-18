@@ -62,11 +62,11 @@ export function AddCaregiverModal({visibility, concludeAction}: Readonly<{visibi
   )
 }
 
-export default function AddCaregiver({number, setRefresh}: Readonly<{number: number, setRefresh: Function}>) {
+export default function AddCaregiver({setRefresh}: Readonly<{setRefresh: Function}>) {
 
   const [modalVisible, setModalVisible] = useState(false)
   
-  const buttonName = `${addCaregiverLabel} ` + number
+  const buttonName = `${addCaregiverLabel} ` 
 
   const concludeAction = () => {
     setRefresh()

@@ -27,8 +27,7 @@ const stylesFirstHalf = StyleSheet.create({
         borderColor: elderlyButtonBorder
     },
     caregiversButtonText: {
-        fontSize: 30,
-        fontWeight: 'bold'
+        fontSize: 33,
     }
 })
 
@@ -58,8 +57,8 @@ const stylesOptions = StyleSheet.create({
      borderWidth: 5
    },
    squareText: {
-     fontSize: 21,
-     fontWeight: 'bold'
+     fontSize: 23,
+     textAlign: 'center'
    },
    squarePhoto: {
      margin: '5%',

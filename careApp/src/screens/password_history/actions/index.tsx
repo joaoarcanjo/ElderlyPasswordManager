@@ -34,10 +34,10 @@ export default function PasswordHistory() {
   function PasswordsList() {
 
     const [passwords, setPasswords] = useState<Password[]>([]);
-    const { localDBKey } = useSessionInfo();
+    const { localDBKey, userId } = useSessionInfo();
 
     useEffect(() => {
-      getGeneratedPasswords(localDBKey).then(value => setPasswords(value))
+      getGeneratedPasswords(localDBKey, userId).then(value => setPasswords(value))
     }, [])
     
     return (

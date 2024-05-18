@@ -7,7 +7,7 @@ import { savePasswordGenerated } from '../../../database/passwords'
 import Algorithm from './algorithm'
 import MainBox from '../../../components/MainBox'
 import { useSessionInfo } from '../../../firebase/authentication/session'
-import { emptyValue, lengthLabel, lowerLabel, numbersLabel, pageTitleGenerator, passwordDefaultLengthGenerator, requirementLabel, specialLabel, timeoutToSavePassword, upperLabel } from '../../../assets/constants/constants'
+import { copyLabel, emptyValue, lengthLabel, lowerLabel, numbersLabel, pageTitleGenerator, passwordDefaultLengthGenerator, regenerateLabel, requirementLabel, specialLabel, timeoutToSavePassword, upperLabel } from '../../../assets/constants/constants'
 import { Requirements } from '../../../components/passwordGenerator/constants'
 import { copyValue } from '../../../components/userMessages/UserMessages'
 import { FlashMessage, copyPasswordDescription } from '../../../components/userMessages/messages'
@@ -26,7 +26,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
   const [lowercase, setLowercase] = useState(true)
   const [numbers, setNumbers] = useState(true)
   const [special, setSpecial] = useState(true)
-  const { localDBKey } = useSessionInfo()
+  const { localDBKey, userId } = useSessionInfo()
 
   const incLength = () => {if(length < 40)setLength(length + 1)}
   const decLength = () => {if(length > 8)setLength(length - 1)}
@@ -69,7 +69,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
     if(passGenerated != password) {
       // You can use the 'result' object to get information about the password strength
       setPassword(passGenerated)
-      savePasswordGenerated(passGenerated, localDBKey)
+      savePasswordGenerated(passGenerated, userId, localDBKey)
     }
   }
 
@@ -118,10 +118,10 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
               {/* Botões para copiar a password e para gerar uma nova */}
               <View style={{flexDirection: 'row', margin: '3%', marginBottom: '5%'}}>
                 <TouchableOpacity style={[{flex: 0.5, marginRight: '2%'}, passwordFirstHalf.copyButton, stylesButtons.mainConfig]} onPress={() => saveOnClickBoard() }>
-                  <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Copiar</Text>
+                  <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>{copyLabel}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[{flex: 0.5, marginLeft: '2%'}, passwordFirstHalf.regenerateButton, stylesButtons.mainConfig]} onPress={() => generatePassword() }>
-                  <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>Regenerar</Text>
+                  <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>{regenerateLabel}</Text>
                 </TouchableOpacity>
               </View>
           </View>

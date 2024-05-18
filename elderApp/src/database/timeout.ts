@@ -12,9 +12,10 @@ import { TimeoutType } from "./types";
  */
 export async function insertTimeoutToLocalDB(userId: string, timestamp: number, type: TimeoutType): Promise<void> {
     console.log("===> insertTimeoutCalled")
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+        console.log(dbSQL)
         if (dbSQL != null) {
-            dbSQL.runAsync('INSERT INTO timeout (userId, timestamp, type) VALUES (?, ?, ?);', [userId, timestamp, type])
+            await dbSQL.runAsync('INSERT INTO timeout (userId, timestamp, type) VALUES (?, ?, ?);', [userId, timestamp, type])
             .then(() => { resolve() })
             .catch((error) => {
                 console.log("Error 3: " + error.message)
@@ -35,9 +36,9 @@ export async function insertTimeoutToLocalDB(userId: string, timestamp: number, 
  */
 export async function updateTimeoutToLocalDB(userId: string, timestamp: number, type: TimeoutType): Promise<void> {
     console.log("===> updateTimeoutCalled")
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         if (dbSQL != null) {
-            dbSQL.runAsync('UPDATE timeout SET timestamp = ? WHERE userId = ? AND type = ?;', [timestamp, userId, type])
+            await dbSQL.runAsync('UPDATE timeout SET timestamp = ? WHERE userId = ? AND type = ?;', [timestamp, userId, type])
             .then((result) => {
                 console.log(result.changes + " timeout updated")
                 resolve()
@@ -67,7 +68,6 @@ export async function getTimeoutFromLocalDB(userId: string, type: TimeoutType): 
             if (dbSQL != null) {
                 await dbSQL.getFirstAsync('SELECT timestamp FROM timeout WHERE userId = ? AND type = ?;', [userId, type]) 
                 .then((row) => {
-                    console.log("Timeout search: " + userId + " - " + type)
                     const aux = row as any
                     if (aux) {
                         const timestamp = aux.timestamp
@@ -87,6 +87,8 @@ export async function getTimeoutFromLocalDB(userId: string, type: TimeoutType): 
             }
         })
     } catch (error) {
-        console.log("Error 5: " + error.message)
+        console.log("Error 5: " + (error as Error).message)
     }
+
+    return null
 }

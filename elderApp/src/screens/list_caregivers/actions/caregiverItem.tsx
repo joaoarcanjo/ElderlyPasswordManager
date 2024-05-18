@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { TouchableOpacity, View, Text, Image, StyleSheet, Linking } from "react-native"
+import { Switch } from 'react-native-switch'
 import { stylesButtons } from "../../../assets/styles/main_style"
 import { caregiverContactInfo, caregiverStyle, decouplingOption, newCaregiverContainer, permission } from "../styles/styles"
 import { acceptCaregiver, decouplingCaregiver, refuseCaregiver } from "./functions"
@@ -10,34 +11,39 @@ import { useSessionInfo } from "../../../firebase/authentication/session"
 import { currentSessionSubject, sessionForRemoteUser } from "../../../e2e/session/state"
 import { startSession } from "../../../e2e/session/functions"
 import { CaregiverRequestStatus } from "../../../database/types"
-import { acceptLabel, cancelLabel, closeLabel, emptyValue, refuseLabel, unlinkLabel, writeCaregivers } from "../../../assets/constants/constants"
+import { acceptLabel, cancelLabel, emptyValue, noOption, refuseLabel, unlinkLabel, writeCaregivers, yesOption } from "../../../assets/constants/constants"
 import { cancelWaitingCaregiver } from "../../../e2e/messages/functions"
 import { encryptAndSendMessage } from "../../../e2e/messages/sendMessage"
 import { setCaregiverListUpdated } from "./state"
+import { darkGreenBackgroud, darkRedBackground, lightGreenBackgroud, lightRedBackground } from "../../../assets/styles/colors"
 
 const caregiverImage = '../../../assets/images/caregiver.png'
 const telephoneImage = '../../../assets/images/telephone.png'
 const emailImage = '../../../assets/images/email.png'
-const yesOption = 'Sim'
-const noOption = 'Não'
-
-const PermissionOptionButton = ({option, func}: {option: string, func: Function}) => {
-
-  const optionColor = option == noOption ? permission.noButton : permission.yesButton
-  return (
-    <TouchableOpacity style={[{flex: 0.3, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}, stylesButtons.mainConfig, optionColor]} onPress={() => func()}>
-      <Text adjustsFontSizeToFit style={[permission.nButtonText]}>{option}</Text>
-    </TouchableOpacity> 
-  )
-}
 
 function Requirement({name, value, func}:Readonly<{name: string, value: boolean, func: Function}>) {
+  const [aux, setAux] = useState(value)
+
   return (
     <View style={[{flex: 0.33, flexDirection: 'row', alignItems: 'center', marginHorizontal: '5%', marginTop: '4%', marginBottom: '2%'}]}>
-      <View style={{flex: 0.7, marginRight: '5%', justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{flex: 0.6, marginRight: '5%', justifyContent: 'center', alignItems: 'center'}}>
         <Text numberOfLines={1} adjustsFontSizeToFit style={[permission.questionText]}>{name}</Text>
       </View>
-      {value ? <PermissionOptionButton option={yesOption} func={func}/> : <PermissionOptionButton option={noOption} func={func}/>}
+      <View style={[{flex: 0.3, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}]}>
+        <Switch
+          value={aux}
+          onValueChange={(val) => {setAux(val); func()}}
+          disabled={false}
+          activeText={yesOption}
+          inActiveText={noOption}
+          circleSize={37}
+          backgroundActive={lightGreenBackgroud}
+          backgroundInactive={lightRedBackground}
+          circleActiveColor={darkGreenBackgroud}
+          activeTextStyle={permission.yesButtonText}
+          inactiveTextStyle={permission.noButtonText}
+          circleInActiveColor={darkRedBackground}/>
+        </View>
     </View>
   )
 }

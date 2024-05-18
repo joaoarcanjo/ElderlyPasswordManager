@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { Keyboard, View } from 'react-native'
+import { View } from 'react-native'
 import {Navbar} from '../../../navigation/actions'
 import MainBox from '../../../components/MainBox'
-import AddCaregiver, { AddCaregiverModal } from './addCaregiver'
+import AddCaregiver from './addCaregiver'
 import {CaregiverItem} from './caregiverItem'
 import { caregiverListUpdated, setCaregiverListUpdated } from './state'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { CaregiverPermission } from '../../list_credentials/actions/functions'
 import { pageTitleCaregiversList } from '../../../assets/constants/constants'
-import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
 
 
 const CaregiversList = React.memo(function CaregiversList() {
@@ -50,8 +49,7 @@ const CaregiversList = React.memo(function CaregiversList() {
             />
           )
         })}
-        {caregivers.length === 0 && <AddCaregiver number={1} setRefresh={refreshValue} />}
-        {caregivers.length < 2 && <AddCaregiver number={2} setRefresh={refreshValue} />}
+        {caregivers.length < 2 && <AddCaregiver setRefresh={refreshValue} />}
       </View>
     </View>
   )

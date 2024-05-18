@@ -126,7 +126,7 @@ export default function CredentialsLoginInput() {
                             <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>{optionsLabel}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[{flex: 0.20, marginHorizontal: '3%', flexDirection: 'row'}, stylesButtons.visibilityButton, stylesButtons.mainConfig]}  onPress={toggleShowPassword} >
-                            <MaterialCommunityIcons name={showPassword ? 'eye-off' : 'eye'} size={35} color="black"/> 
+                            <MaterialCommunityIcons name={showPassword ? 'eye' : 'eye-off'} size={35} color="black"/> 
                         </TouchableOpacity>
                         <TouchableOpacity style={[{flex: 0.40}, stylesButtons.regenerateButton, stylesButtons.mainConfig]} onPress={() => regeneratePassword(requirements, setPassword)}>
                             <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>{regenerateLabel}</Text>

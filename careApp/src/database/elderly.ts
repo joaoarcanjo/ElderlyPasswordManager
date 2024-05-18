@@ -24,34 +24,20 @@ export const saveElderly = async (userId: string, elderlyId: string, elderlyName
         }
     } 
 
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         if(dbSQL != null) {
-            dbSQL.runAsync('INSERT INTO elderly (elderlyId, userId, name, email, phoneNumber, status) VALUES (?,?,?,?,?,?);', [elderlyId, userId, elderlyName, elderlyEmail, elderlyphoneNumber, requestStatus])
+            await dbSQL.runAsync('INSERT INTO elderly (elderlyId, userId, name, email, phoneNumber, status) VALUES (?,?,?,?,?,?);', [elderlyId, userId, elderlyName, elderlyEmail, elderlyphoneNumber, requestStatus])
             .then((result) => {
-                if (result.changes) {
+                if (result.changes > 0) {
                     return resolve()
                 } else {
                     return reject(new ErrorInstance(Errors.ERROR_SAVING_SESSION))
                 }
             })
-            /*
-            dbSQL.transaction(async tx => {
-                tx.executeSql(
-                    'INSERT INTO elderly (elderlyId, userId, name, email, phoneNumber, status) VALUES (?,?,?,?,?,?);',
-                    [elderlyId, userId, elderlyName, elderlyEmail, elderlyphoneNumber, requestStatus],
-                    (_, result) => {
-                        if (result.rowsAffected > 0) {
-                            return resolve()
-                        } else {
-                            return reject(new ErrorInstance(Errors.ERROR_SAVING_SESSION))
-                        }
-                    },
-                    (_, _error) => {
-                        alert("Unexpected error.")
-                        return false
-                    }
-                )
-            })*/
+            .catch((error) => {
+                alert("Unexpected error.")
+                return false
+            })  
         } else {
             return reject(new ErrorInstance(Errors.ERROR_SAVING_SESSION))
         }
@@ -71,7 +57,7 @@ export const updateElderly = async (userId: string, elderlyId: string, elderlyEm
         return await dbSQL.runAsync('UPDATE elderly SET elderlyId = ?, name = ?, phoneNumber = ?, status = ? WHERE email = ? AND userId = ?;',
          [elderlyId, elderlyNewName, elderlyNewPhoneNumber, ElderlyRequestStatus.ACCEPTED, elderlyEmail, userId])
         .then((result) => {
-            if (result.changes) {
+            if (result.changes > 0) {
                 console.log('-> Idoso atualizado com sucesso.')
             } else {
                 console.log('-> Nenhum idoso foi atualizado. Verifique o email fornecido.')
@@ -80,25 +66,6 @@ export const updateElderly = async (userId: string, elderlyId: string, elderlyEm
         .catch((error) => {
             return false
         })
-        /*dbSQL.transaction(tx => {
-            tx.executeSql(
-                'UPDATE elderly SET elderlyId = ?, name = ?, phoneNumber = ?, status = ? WHERE email = ? AND userId = ?;',
-                [elderlyId, elderlyNewName, elderlyNewPhoneNumber, ElderlyRequestStatus.ACCEPTED.valueOf(), elderlyEmail, userId],
-                (_, result) => {
-                    // Verifique se houve alguma linha afetada para confirmar se a atualização foi bem-sucedida.
-                    if (result.rowsAffected > 0) {
-                        console.log('-> Idoso atualizado com sucesso.')
-                    } else {
-                        console.log('-> Nenhum idoso foi atualizado. Verifique o email fornecido.')
-                    }
-                },
-                (_, _error) => {
-                    return false
-                }
-            )
-        })*/
-    } else {
-        return 
     }
 }
 
@@ -112,7 +79,7 @@ export const acceptElderlyOnDatabase = async (userId: string, emailEmail: string
     if (dbSQL != null) {
         return await dbSQL.runAsync('UPDATE elderly SET status = ? WHERE email = ? AND userId = ?;', [ElderlyRequestStatus.ACCEPTED, emailEmail, userId])
         .then((result) => {
-            if (result.changes) {
+            if (result.changes > 0) {
                 console.log('-> Idoso aceite.')
             } else {
                 console.log('-> Idoso não aceite, erro.')
@@ -121,23 +88,6 @@ export const acceptElderlyOnDatabase = async (userId: string, emailEmail: string
         .catch((error) => {
             return false
         })
-        /*dbSQL.transaction(tx => {
-            tx.executeSql(
-                'UPDATE elderly SET status = ? WHERE email = ? AND userId = ?;',
-                [ElderlyRequestStatus.ACCEPTED.valueOf(), emailEmail, userId],
-                (_, result) => {
-                    // Verifique se houve alguma linha afetada para confirmar se a atualização foi bem-sucedida.
-                    if (result.rowsAffected > 0) {
-                        console.log('-> Idoso aceite.')
-                    } else {
-                        console.log('-> Idoso não aceite, erro.')
-                    }
-                },
-                (_, _error) => {
-                    return false
-                }
-            )
-        })*/
     } else {
         return 
     }
@@ -150,10 +100,13 @@ export const acceptElderlyOnDatabase = async (userId: string, emailEmail: string
  * @returns 
  */
 export const deleteElderly = async (userId: string, elderlyEmail: string): Promise<boolean> => {
+    console.log("===> deleteElderlyCalled")
+    console.log("userId: "+ userId)
+    console.log("elderlyEmail: "+ elderlyEmail)
     if(dbSQL != null) {
         return await dbSQL.runAsync('DELETE FROM elderly WHERE email = ? AND userId = ?;', [elderlyEmail, userId])
         .then((result) => {
-            if (result.changes) {
+            if (result.changes > 0) {
                 console.log("-> Idoso apagado da base de dados.")
                 return true
             } else {
@@ -161,27 +114,10 @@ export const deleteElderly = async (userId: string, elderlyEmail: string): Promi
                 return false
             }
         })
-
-
-        /*dbSQL.transaction((tx) => {
-            tx.executeSql(
-              'DELETE FROM elderly WHERE email = ? AND userId = ?;',
-              [elderlyEmail, userId],
-              (_, result) => {
-                if (result.rowsAffected > 0) {
-                    console.log("-> Idoso apagado da base de dados.")
-                    return true
-                } else {
-                    console.log('-> Idoso não apagado, verifique o email fornecido.')
-                    return false
-                }
-              },
-              (error) => {
-               console.log('-> Error deleting elderly from database', error)
-               return false
-              }
-            )
-        })*/
+        .catch((error) => {
+            console.log('-> Error deleting elderly from database', error)
+            return false
+        })
     }
     return false
 }
@@ -205,21 +141,6 @@ export const checkElderlyByEmailWaitingForResponse = async (userId: string, emai
                 console.log("Error: "+ error.message)
                 return false
             })
-            /*
-            dbSQL.transaction(tx => {
-                tx.executeSql(
-                    'SELECT COUNT(*) AS count FROM elderly WHERE email = ? AND userId = ? AND status = ?;',
-                    [email, userId, ElderlyRequestStatus.WAITING.valueOf()],
-                    (_, result) => {
-                        const count = result.rows.item(0).count
-                        return resolve(count > 0);
-                    },
-                    (_, error) => {
-                        console.log(error)
-                        return false
-                    }
-                )
-            })*/
         } else {
             reject(new Error('Database not initialized.')); 
         }
@@ -244,26 +165,9 @@ export const getElderlyWithSpecificState = async (userId: string, state: Elderly
                 return resolve(data)
             })
             .catch((error) => {
+                resolve([])
                 console.log("Error: "+ error.message)
-                return false
-            }
-            )
-            /*dbSQL.transaction((tx) => {
-                tx.executeSql('SELECT email FROM elderly WHERE userId = ? AND status = ?;', 
-                [userId, state.valueOf()], 
-                (_tx, results) => {
-                    const data: string[] = [];
-                    for (let i = 0; i < results.rows.length; i++) {
-                        data.push(results.rows.item(i).email)
-                    }
-                    return resolve(data)
-                },
-                (_, _error) => {
-                    resolve([])
-                    return false
-                }
-                )
-            })*/
+            })
         } else {
             resolve([])
         }         
@@ -295,27 +199,10 @@ export const getAllElderly = (userId: string): Promise<Elderly[]> => {
                     }
                     return resolve(data)
                 })
-                /*
-                dbSQL.transaction((tx) => {
-                    tx.executeSql('SELECT elderlyId, name, email, phoneNumber, status FROM elderly WHERE userId = ?;', 
-                    [userId], 
-                    (_tx, results) => {
-                        for (let i = 0; i < results.rows.length; i++) {                        
-                            data.push({
-                                elderlyId: results.rows.item(i).elderlyId,
-                                name: results.rows.item(i).name,
-                                email: results.rows.item(i).email,
-                                phoneNumber: results.rows.item(i).phoneNumber,
-                                status: results.rows.item(i).status
-                            });
-                        }
-                        return resolve(data)
-                    },
-                    (_, _error) => {
-                        return false
-                    }
-                    )
-                })*/
+                .catch((error) => {
+                    console.log("Error: "+ error.message)
+                    return false
+                })
             } else {
                 alert("Problema ao tentar obter os idosos, tente novamente.")
             }            
@@ -351,27 +238,6 @@ export const getElderly = (userId: string, elderlyId: string): Promise<Elderly> 
                     console.log("Error: "+ error.message)
                     return false
                 })
-                /*
-                dbSQL.transaction((tx) => {
-                    tx.executeSql('SELECT elderlyId, name, email, phoneNumber, status FROM elderly WHERE userId = ? AND elderlyId = ?;', 
-                    [userId, elderlyId], 
-                    (_tx, results) => {
-                        if(results.rows.length > 0) {
-                            const elderly = results.rows.item(0)
-                            return resolve({
-                                elderlyId: elderly.elderlyId,
-                                name: elderly.name,
-                                email: elderly.email,
-                                phoneNumber: elderly.phoneNumber,
-                                status: elderly.status
-                            })
-                        }
-                    },
-                    (_, _error) => {
-                        return false
-                    }
-                    )
-                })*/
             } else {
                 alert("Problema ao tentar obter o idoso, tente novamente.")
             }            
@@ -394,16 +260,6 @@ export const checkElderlyByEmail = async (userId: string, email: string): Promis
                 console.log("Error: "+ error.message)
                 return false
             })
-            /*dbSQL.transaction(tx => {
-                tx.executeSql(
-                    'SELECT COUNT(*) AS count FROM elderly WHERE email = ? AND userId = ? AND status = ?;',
-                    [email, userId, ElderlyRequestStatus.ACCEPTED.valueOf()],
-                    (_, result) => {
-                        const count = result.rows.item(0).count;
-                        return resolve(count > 0); 
-                    }
-                );
-            });*/
         } else {
             reject(new Error('Database not initialized.')); 
         }
@@ -423,20 +279,6 @@ export const isMaxElderlyReached = async (userId: string): Promise<boolean> => {
                 console.log("Error: "+ error.message)
                 return false
             })
-            /*
-            dbSQL.transaction(tx => {
-                tx.executeSql(
-                    'SELECT COUNT(*) AS count FROM elderly WHERE userId = ? AND status = ?;',
-                    [userId, ElderlyRequestStatus.ACCEPTED.valueOf()],
-                    (_, result) => {
-                        const count = result.rows.item(0).count
-                        resolve(count >= maxElderlyCount)
-                    },
-                    (_, _error) => {
-                        return false
-                    }
-                )
-            })*/
         } else {
             reject(new Error('Database not initialized.'))
         }
@@ -462,19 +304,6 @@ export async function getElderlyId(elderlyEmail: string, userId: string): Promis
                 console.log("Error: "+ error.message)
                 return false
             })
-            /*dbSQL.transaction(tx => {
-                tx.executeSql(
-                    'SELECT elderlyId FROM elderly WHERE email = ? AND userId = ?;',
-                    [elderlyEmail, userId],
-                    (_, result) => {
-                        return resolve(result.rows.item(0).elderlyId);
-                    },
-                    (_, error) => {
-                        console.log("Error: "+ error.message)
-                        return false
-                    }
-                )
-            })*/
         } else {
             reject(new ErrorInstance(Errors.ERROR_DATABASE_NOT_INITIALIZED))
         }

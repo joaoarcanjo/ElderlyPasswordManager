@@ -4,10 +4,10 @@ import Credentials from './src/screens/list_credentials/actions';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Settings from './src/screens/settings_interface/actions';
-import FrequentQuestions from './src/screens/list_questions/actions';
+import FrequentQuestions from './src/screens/list_faqs/actions';
 import Generator from './src/screens/password_generator/actions';
 import PasswordHistory from './src/screens/password_history/actions';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { initDb } from './src/database';
 import FlashMessage from 'react-native-flash-message';
 import { Caregivers } from './src/screens/list_caregivers/actions';
@@ -20,11 +20,8 @@ import { FIREBASE_AUTH } from './src/firebase/FirebaseConfig';
 import { SessionProvider, useSessionInfo } from './src/firebase/authentication/session';
 import SignUpPage from './src/screens/signup_interface/actions';
 import { StatusBar } from 'expo-status-bar';
-import SplashScreen from './src/screens/splash_screen/actions';
-import * as SplashFunctions from 'expo-splash-screen';
 import { createIdentity } from './src/e2e/identity/functions';
 import * as Notifications from "expo-notifications";
-import { flashTimeoutPromise } from './src/screens/splash_screen/actions/functions';
 import { emptyValue, pageAddCredential, pageCaregivers, pageCredentialCard, pageCredentialLogin, pageCredentials, pageFAQs, pageGenerator, pageLogin, pageMainMenu, pagePasswordHistory, pageSettings, pageSignup } from './src/assets/constants/constants';
 import CredencialLoginPage from './src/screens/credential_interface/actions/login';
 import CredencialCardPage from './src/screens/credential_interface/actions/card';
@@ -33,7 +30,6 @@ import { executeKeyChangeIfTimeout } from './src/algorithms/shamirSecretSharing/
 
 const Stack = createNativeStackNavigator()
 const InsideStack = createNativeStackNavigator()
-//SplashFunctions.preventAutoHideAsync()
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -45,22 +41,14 @@ Notifications.setNotificationHandler({
 
 function InsideLayout() {
   const { userId } = useSessionInfo()
-  const [appIsReady, setAppIsReady] = useState(true)
 
   const keyVerification = async () => {
     if (!userId ||  userId === emptyValue) return
     await executeKeyChangeIfTimeout(userId)
   }
 
-  useEffect(() => {
-      flashTimeoutPromise(userId, setAppIsReady)
-      .then(() => setAppIsReady(true))
-      .then(() => keyVerification())
-  }, [])
+  useEffect(() => {keyVerification()}, [])
 
-  const onLayoutRootView = useCallback(async () => { if (!appIsReady) await SplashFunctions.hideAsync() }, [appIsReady]);
-
-  if (!appIsReady) return <SplashScreen layout={onLayoutRootView} />
   return (
     <InsideStack.Navigator initialRouteName={pageMainMenu}>
       <InsideStack.Screen name={pageMainMenu} component={MainMenu} options={{ title: "MainMenu", headerShown: false }} />

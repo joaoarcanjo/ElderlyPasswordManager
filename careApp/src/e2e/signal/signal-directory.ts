@@ -1,14 +1,14 @@
 import { SignedPublicPreKeyType, DeviceType, PreKeyType } from '@privacyresearch/libsignal-protocol-typescript'
-import * as base64 from 'base64-js'
-import { decodeBase64, encodeUTF8 } from 'tweetnacl-util'
-import { Errors } from '../../exceptions/types'
-import { sign } from 'tweetnacl'
-import { stringToArrayBuffer } from './signal-store'
 import { encode as encodeBase64} from '@stablelib/base64';
-import { getKeychainValueFor, saveKeychainValue } from '../../keychain'
-import { signalPrivateKey, signalPublicKey } from '../../keychain/constants'
-import { getServerIP } from '../../firebase/firestore/functionalities'
-import { apiPort } from '../../assets/constants/constants'
+import { sign } from 'tweetnacl'
+import { decodeBase64 } from 'tweetnacl-util'
+import * as base64 from 'base64-js'
+import { apiPort, emptyValue } from '../../assets/constants/constants'
+import { Errors } from '../../exceptions/types'
+import { stringToArrayBuffer } from './signal-store';
+import { getKeychainValueFor, saveKeychainValue } from '../../keychain';
+import { signalPrivateKey, signalPublicKey } from '../../keychain/constants';
+import { getServerIP } from '../../firebase/firestore/functionalities';
 
 export interface PublicDirectoryEntry {
     identityKey: ArrayBuffer
@@ -51,13 +51,11 @@ interface SerializedFullDirectoryEntry {
     }
 }
 
-//TODO: Adicionar a X-API-KEY no header, é importante!!
-//TODO: De momento as One-time prekeys não estão a ser atualizadas!! Quando a pre-key é utilizada numa sessão, tem que ser descartada.
 export class SignalDirectory {
-    constructor(private _url: string/*, private _apiKey: string*/) {}
+    constructor(private _url: string) {}
 
     async storeKeyBundle(username: string, userId: string, bundle: FullDirectoryEntry): Promise<void> {
-        console.log("-> storeKeyBundle: "+username)
+
         const serializedBundle = serializeKeyRegistrationBundle(username, bundle)
         const bundleString = JSON.stringify({
             "bundle": serializedBundle,
@@ -101,8 +99,7 @@ export class SignalDirectory {
         .then((res) => {
             return res.json()
         })
-        .catch((error) => {
-            console.log("Erro: "+error)
+        .catch((_error) => {
             alert(Errors.ERROR_SERVER_INTERNAL_ERROR)
         })
     }
@@ -118,7 +115,7 @@ export class SignalDirectory {
         } else {
             try {
                 const bundleString = JSON.stringify(bundle)
-                const bundleParsed = JSON.parse(bundleString.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F]/g, ''))
+                const bundleParsed = JSON.parse(bundleString.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F]/g, emptyValue))
                 const { identityKey, signedPreKey, registrationId, preKey } = bundleParsed.bundle || {};
                 return deserializeKeyBundle({ identityKey, signedPreKey, preKey, registrationId })
             }catch(e) { 
@@ -128,6 +125,14 @@ export class SignalDirectory {
         const { identityKey, signedPreKey, registrationId, preKey } = bundle || {};
         return deserializeKeyBundle({ identityKey, signedPreKey, preKey, registrationId })
     }
+
+    get url(): string {
+        return this._url
+    }
+    /*
+    get apiKey(): string {
+        return this._apiKey
+    }*/
 }
 
 export function serializeKeyRegistrationBundle(username: string, dv: FullDirectoryEntry): SerializedFullDirectoryEntry {
@@ -149,7 +154,7 @@ export function serializeKeyRegistrationBundle(username: string, dv: FullDirecto
             identityKey,
             signedPreKey,
             oneTimePreKeys,
-            registrationId: dv.registrationId!,
+            registrationId: dv.registrationId,
         }
     }
 }
