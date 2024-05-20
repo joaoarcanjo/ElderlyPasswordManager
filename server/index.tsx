@@ -1,19 +1,13 @@
 // server.js
-const { getFirestore, collection, getDocs, updateDoc, doc } = require('@firebase/firestore')
-const { initializeApp } = require('firebase/app')
+var admin = require("firebase-admin");
 
-const firebaseConfig = {
-    apiKey: "AIzaSyCYjuZeshrZpZFLicjTag0YFjPAn2G6pYM",
-    authDomain: "thesis-pm-fa03e.firebaseapp.com",
-    projectId: "thesis-pm-fa03e",
-    storageBucket: "thesis-pm-fa03e.appspot.com",
-    messagingSenderId: "24842104175",
-    appId: "1:24842104175:web:e8bdd7b884c07854724c9a",
-    measurementId: "G-8QT7EZ5WM2"
-}
+var serviceAccount = require("./admin/thesis-pm-fa03e-firebase-adminsdk-9.json");
 
-const appFirebase = initializeApp(firebaseConfig)
-const db = getFirestore(appFirebase)
+const appFirebase = admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+});
+
+const db = admin.firestore();
 
 const { Subject } = require('rxjs')
 const webSocket = require('ws')
@@ -98,30 +92,8 @@ wss.on('connection', function connection(ws) {
                     console.log('=> Message sent to ', to)
                     socket.send(JSON.stringify(messageObj))
                 }
-
                 break;
-            }/*
-            case('acknowledge'): {
-                console.log(`Client ${messageObj.from} sent an acknowledgement!`)
-                const to = messageObj.address
-
-                const socket = clientSockets.get(to)
-
-                if(!socket) {
-                    const list = clientMessagesWaiting.get(to)
-                    if(!list) {
-                        clientMessagesWaiting.set(to, [messageObj])
-                    } else {
-                        list.push(messageObj)
-                    }
-                    console.log('=> Message added to waiting list for ', to)
-
-                } else {
-                    console.log('=> Message sent to ', to)
-                    socket.send(JSON.stringify(messageObj))
-                }
-                break;
-            }*/
+            }
         }
     });
 
@@ -221,11 +193,10 @@ app.get("/getBundle/:username", (req, res) => {
     }
 })
 
-http.listen({host: '0.0.0.0', port: PORT}, async () => {
+http.listen({port: PORT}, async () => {
     console.log (ip.address())
-    //db.collection("server").doc("server").set({ip: ip.address()})
+    db.collection("Server").doc("server").set({ip: `${http ? 'https://' : 'http://'}${ip.address()}`})
     
-    await updateDoc(await doc(db, 'Server', 'server'), { ip: ip.address() });
     console.log(`Server listening on ${PORT}`);
 })
 

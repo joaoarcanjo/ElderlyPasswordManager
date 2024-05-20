@@ -11,7 +11,6 @@ interface LoginContextProps {
     userName: string
     userPhone: string
     userId: string
-    userShared: string
     localDBKey: string
     usernameCopied: string
     passwordCopied: string
@@ -19,7 +18,6 @@ interface LoginContextProps {
     setUserEmail: (payload: string) => void
     setUserName: (payload: string) => void
     setUserId: (payload: string) => void
-    setShared: (payload: string) => void
     setLocalDBKey: (payload: string) => void
     setPasswordCopied: (payload: string) => void
     setUsernameCopied: (payload: string) => void
@@ -31,7 +29,6 @@ interface LoginContextProps {
     const [userPhone, setUserPhone] = useState(emptyValue)
     const [userName, setUserName] = useState(emptyValue)
     const [userId, setUserId] = useState(emptyValue)
-    const [userShared, setShared] = useState(emptyValue)
     const [localDBKey, setLocalDBKey] = useState(emptyValue)
     const [usernameCopied, setUsernameCopied] = useState(emptyValue)
     const [passwordCopied, setPasswordCopied] = useState(emptyValue)
@@ -43,15 +40,13 @@ interface LoginContextProps {
             userName, 
             userPhone, 
             userId, 
-            userShared, 
             localDBKey, 
             usernameCopied,
             passwordCopied,
             setUserPhone, 
             setUserEmail, 
             setUserName, 
-            setUserId, 
-            setShared, 
+            setUserId,
             setLocalDBKey,
             setUsernameCopied,
             setPasswordCopied

@@ -86,7 +86,7 @@ export class SignalDirectory {
         }
 
         const ipAddress = await getServerIP()
-        return await fetch(`http://${ipAddress}:${apiPort}/addBundle`, {
+        return await fetch(`${ipAddress}:${apiPort}/addBundle`, {
             method: 'PUT',
             //headers: { 'x-api-key': this._apiKey },
             headers: {
@@ -107,7 +107,7 @@ export class SignalDirectory {
     async getPreKeyBundle(address: string): Promise<DeviceType | undefined> {
         //console.log("-> getPreKeyBundle: "+address)
         const ipAddress = await getServerIP()
-        const res = await fetch(`http://${ipAddress}:${apiPort}/getBundle/${address}`/*, { headers: { 'x-api-key': this._apiKey } }*/)
+        const res = await fetch(`${ipAddress}:${apiPort}/getBundle/${address}`/*, { headers: { 'x-api-key': this._apiKey } }*/)
         
         const bundle = await res.json() 
         if (!bundle) {

@@ -1,5 +1,5 @@
 import React,{useEffect, useRef, useState} from 'react'
-import {View, Text, TouchableOpacity, Image, ScrollView, StyleSheet} from 'react-native'
+import {View, Text, TouchableOpacity, Image, ScrollView, StyleSheet, Platform} from 'react-native'
 import {Navbar} from '../../../navigation/actions'
 import { styleScroolView, stylesVideo } from '../styles/styles'
 import MainBox from '../../../components/MainBox';
@@ -19,16 +19,16 @@ function ScrollItemExample({faq, buttonSelected}: Readonly<{faq: FAQs, buttonSel
   const ref = useRef(null)
   const [isPlaying, setIsPlaying] = useState(false)
   
-  const player = useVideoPlayer(faq.video)
+  //const player = useVideoPlayer(faq.video)
 
   const changeInfoState = () => setShowInfo(!showInfo)
 
   useEffect(() => {setShowInfo(true)}, [buttonSelected])
-
+/*
   useEffect(() => {
     const subscription = player.addListener('playingChange', (isPlaying) => setIsPlaying(isPlaying))
     return () => subscription.remove()
-  }, [player])
+  }, [player])*/
 
   const flex = faq.description.length > 0 ? 0.75 : 1
   const numberOfLines = faq.description.length > 0 ? 2 : 5
@@ -57,6 +57,7 @@ function ScrollItemExample({faq, buttonSelected}: Readonly<{faq: FAQs, buttonSel
         <>
         <View style={{ borderBottomColor: 'black', borderBottomWidth: StyleSheet.hairlineWidth, margin: '4%' }}/>
         <View style={stylesVideo.contentContainer}>
+            {/*
             <VideoView ref={ref} style={stylesVideo.video} player={player} allowsFullscreen allowsPictureInPicture/>
             <View style={stylesVideo.controlsContainer}>
               <TouchableOpacity onPress={() => {
@@ -66,6 +67,7 @@ function ScrollItemExample({faq, buttonSelected}: Readonly<{faq: FAQs, buttonSel
                 <Text style={{margin: '5%'}}>{isPlaying ? ' Parar vídeo ⏸️' : 'Reproduzir vídeo ▶️'}</Text>
               </TouchableOpacity>
             </View>
+            */}
           </View>
         </> : <></>  
         }
