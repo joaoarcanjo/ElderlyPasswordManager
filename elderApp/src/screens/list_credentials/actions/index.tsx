@@ -10,11 +10,12 @@ import { Spinner } from '../../../components/LoadingComponents'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { credentialsListUpdated } from './state'
 import { getAllCredentialsAndValidate, getAllLocalCredentialsFormatted, getAllLocalCredentialsFormattedWithFilter } from './functions'
-import { addCredentialsLabel, allLabel, cardsLabel, emptyValue, loginLabel, pageAddCredential, pageTitleCredentials, passosLabel, perguntasLabel, searchLabel, sugestoesLabel } from '../../../assets/constants/constants'
-import { whiteBackgroud } from '../../../assets/styles/colors';
-import { MaterialIcons } from '@expo/vector-icons';
+import { addCredentialsLabel, allLabel, cardsLabel, closeLabel, detailsLabel, emptyValue, loginLabel, optionsLabel, pageAddCredential, pageTitleCredentials, passosLabel, perguntasLabel, searchLabel, seeMoreLabel, sugestoesLabel } from '../../../assets/constants/constants'
+import { darkBlueBackground, whiteBackgroud } from '../../../assets/styles/colors';
+import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { CredentialType } from './types';
 import { ScrollItem } from './credentialItem';
+import { options } from '../../credential_interface/styles/styles';
 
 function AddCredencial() {
 
@@ -87,13 +88,21 @@ function CredentialsList() {
     <View style={{ flex: 0.72, flexDirection: 'row', justifyContent: 'space-around'}}>
       <View style={[{ flex: 1, marginTop:'5%', marginHorizontal: '4%', justifyContent: 'space-around'}, styleScroolView.credencialsContainer]}>
         <View style={{flexDirection: 'row'}}>
-          <View style={{flex: 0.25, marginLeft: '2%', marginVertical: '2%'}}>
+          <View style={{flex: 0.25, marginLeft: '2%', marginVertical: '1%'}}>
             <TouchableOpacity style={[{flex: 1, justifyContent: 'center',  alignItems: 'center'}, stylesButtons.whiteButton, stylesButtons.mainSlimConfig]} onPress={() => {setShowFilter(!showFilter)}}>
-              {!showFilter ? <Image source={require('../../../assets/images/down-arrow.png')} style={[{width: '70%', height: '70%', resizeMode: 'contain'}]}/> 
-              : <Image source={require('../../../assets/images/up-arrow.png')} style={[{width: '70%', height: '70%', resizeMode: 'contain'}]}/>}
+              {!showFilter ? 
+              <View style={{marginVertical: '5%', alignContent: 'center', alignItems: 'center'}}>
+                <FontAwesome name="arrow-circle-down" size={34} color={darkBlueBackground} />
+                <Text>{seeMoreLabel}</Text>
+              </View>
+              :
+              <View style={{marginVertical: '5%', alignContent: 'center', alignItems: 'center'}}>
+                <FontAwesome name="arrow-circle-up" size={34} color={darkBlueBackground} />
+                <Text>{closeLabel}</Text>
+              </View>}
             </TouchableOpacity>
           </View>     
-          <View style={[{flex: 1, margin: '2%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 1, backgroundColor: whiteBackgroud }]}>
+          <View style={[{flex: 1, margin: '1%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 1, backgroundColor: whiteBackgroud }]}>
             <TextInput
             placeholder={searchLabel}
             value={searchValue}
@@ -109,7 +118,11 @@ function CredentialsList() {
         <View style={{flexDirection: 'row', marginVertical: '2%'}}>
           <TouchableOpacity style={[{flex: 0.33, marginHorizontal: '2%'}, stylesButtons.mainConfig, allSelected]} onPress={() => {setSearchType(emptyValue); setButtonSelected(0)}}>
             <Text style={{fontSize: 17, color: 'black', fontWeight: 'bold', marginTop: '5%'}}>{allLabel}</Text>
-            <MaterialIcons style={{marginHorizontal: '1%'}} name={'all-inclusive'} size={40} color="black"/> 
+            <View style={{flexDirection: 'row', alignContent: 'center', alignItems: 'center', marginTop: '5%'}}>
+              <MaterialIcons style={{marginHorizontal: '1%'}} name={'credit-card'} size={35} color="purple"/> 
+              <Text style={{fontSize: 25}}>+</Text>
+              <MaterialIcons style={{marginHorizontal: '1%'}} name={'person'} size={35} color="orange"/> 
+            </View>
           </TouchableOpacity>
           <TouchableOpacity style={[{flex: 0.33, marginHorizontal: '2%'}, stylesButtons.mainConfig, cardsSelected]} onPress={() => {setSearchType('card'); setButtonSelected(1)}}>
             <Text style={{fontSize: 17, color: 'black', fontWeight: 'bold', marginTop: '5%'}}>{cardsLabel}</Text>

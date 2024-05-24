@@ -15,18 +15,12 @@ import { sendSignalProtocolMessage } from "../messages/sendMessage"
 export async function startSession(recipient: string): Promise<void> {
     console.log("--> Start session!")
     let directory = directorySubject.value!
-    console.log("- Directory: ", directory)
     const keyBundle = await directory.getPreKeyBundle(recipient)
     const recipientAddress = new SignalProtocolAddress(recipient, 1)
     // Instantiate a SessionBuilder for a remote recipientId + deviceId tuple.
     const sessionBuilder = new SessionBuilder(signalStore, recipientAddress)
 
-    try {
-        console.log("- KeyBundle: ", keyBundle)
-        const session = await sessionBuilder.processPreKey(keyBundle!)
-    } catch (e) {
-        console.log("Error: ", e)
-    }
+    const session = await sessionBuilder.processPreKey(keyBundle!)
 
     const cm: ProcessedChatMessage = {
         id: randomUUID(),

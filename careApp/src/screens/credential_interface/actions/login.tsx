@@ -17,10 +17,15 @@ import { buildEditMessage, sendElderlyCredentialInfoAction } from './functions'
 import { ChatMessageType } from '../../../e2e/messages/types'
 import { deleteCredentialFromLocalDB, updateCredentialFromLocalDB } from '../../../database/credentials'
 import { regeneratePassword } from '../../../components/passwordGenerator/functions'
-import { cancelLabel, copyLabel, deleteCredentialLabel, editLabel, emptyValue, optionsLabel, passwordLabelBig, regenerateLabel, saveChangesLabel, saveLabel, uriLabel, userLabel } from '../../../assets/constants/constants'
+import { cancelLabel, copyLabel, deleteCredentialLabel, editLabel, emptyValue, optionsLabel, passosLabel, passwordLabel, regenerateLabel, saveChangesLabel, saveLabel, uriLabel, usernameLabel } from '../../../assets/constants/constants'
 import { copyValue, credentialUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
 import { FlashMessage, copyPasswordDescription, copyUsernameDescription } from '../../../components/userMessages/messages'
 import { encrypt } from '../../../algorithms/tweetNacl/crypto'
+import { Platform } from '../../../assets/json/interfaces'
+import { getSpecificUsernameAndPassword } from '../../../components/SpecificUsername&Password'
+import { darkBlueBackground } from '../../../assets/styles/colors'
+
+const jsonData = require('../../../assets/json/platforms.json')
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
@@ -43,9 +48,23 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
   const [loading, setLoading] = useState(false)
   const [editFlag, setEditFlag] = useState(true)
   const { userId, userEmail, localDBKey } = useSessionInfo()
-  
+
+  const [usernameLabelToPresent, setUsernameLabelToPresent] = useState(emptyValue)
+  const [passwordLabelToPresent, setPasswordLabelToPresent] = useState(emptyValue)
+
   useEffect(() => setAvaliation(getScore(passwordEdited)), [passwordEdited])
 
+  useEffect(() => {
+    const usenameAndPasswordLabel: Platform = getSpecificUsernameAndPassword(platform, jsonData)
+    if(usenameAndPasswordLabel != null) {
+      setUsernameLabelToPresent(usenameAndPasswordLabel.platformUsernameLabel)
+      setPasswordLabelToPresent(usenameAndPasswordLabel.platformPasswordLabel)
+    } else {
+      setUsernameLabelToPresent(emptyValue)
+      setPasswordLabelToPresent(emptyValue)
+    }
+  }, [])
+  
   const toggleShowPassword = () => {setShowPassword(!showPassword);}
 
   const toggleEditFlag = async () => {
@@ -178,7 +197,10 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
           </View>
           <View style={{flex: 0.40}}>
             <View style={{flex: 0.6, flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '4%'}}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>{userLabel}</Text>
+              <View style={{flex: 0.5}}>
+                <Text numberOfLines={2} adjustsFontSizeToFit style={[{marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>{usernameLabel}</Text>
+                {usernameLabelToPresent != emptyValue && <Text numberOfLines={2} adjustsFontSizeToFit style={[{fontSize: 15, color: darkBlueBackground}]}>{usernameLabelToPresent}</Text>}
+              </View>
               {editFlag && 
               <TouchableOpacity style={[{flex: 0.4, marginTop:'3%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(username, FlashMessage.usernameCopied, copyUsernameDescription)}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>{copyLabel}</Text>
@@ -197,7 +219,10 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
           </View>
           <View style={{flex: 0.40}}>
             <View style={{flex: 0.6, flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '4%'}}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.5, marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>{passwordLabelBig}</Text>
+              <View style={{flex: 0.5}}>
+                <Text numberOfLines={2} adjustsFontSizeToFit style={[{marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>{passwordLabel}</Text>
+                {passwordLabelToPresent != emptyValue && <Text numberOfLines={2} adjustsFontSizeToFit style={[{fontSize: 15, color: darkBlueBackground}]}>{passwordLabelToPresent}</Text>}
+              </View>
               {editFlag && 
               <TouchableOpacity style={[{flex: 0.4, marginTop:'3%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(password, FlashMessage.passwordCopied, copyPasswordDescription)}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>{copyLabel}</Text>
@@ -223,13 +248,13 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
             </TouchableOpacity>
           </View>
           :
-          <View style={{ flex: 0.14, flexDirection: 'row', justifyContent: 'flex-end', marginBottom: '5%', marginHorizontal: '5%' }}>
+          <View style={{ flex: 0.14, flexDirection: 'row', justifyContent: 'flex-end', marginVertical: '5%', marginHorizontal: '5%' }}>
             <TouchableOpacity style={[{flex: 0.50}, stylesButtons.blueButton, stylesButtons.mainConfig]} onPress={() => {setPasswordOptionsModalVisible(true)}}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>{optionsLabel}</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 24, margin: '5%' }]}>{optionsLabel}</Text>
             </TouchableOpacity>
             <View style={{margin: '1%'}}/>
             <TouchableOpacity style={[{flex: 0.50}, credentials.regenerateButton, stylesButtons.mainConfig]} onPress={() => {regeneratePassword(requirements, setPasswordEdited)} }>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>{regenerateLabel}</Text>
+              <Text numberOfLines={2} adjustsFontSizeToFit style={[{ fontSize: 24, margin: '5%', textAlign: 'center' }]}>{regenerateLabel}</Text>
             </TouchableOpacity>
           </View>}
           <Text numberOfLines={2} adjustsFontSizeToFit style={[{marginLeft: '6%', marginBottom: '2%',fontSize: 13}, {opacity: editFlag ? 100 : 0}]}>{buildEditMessage(edited.updatedBy, edited.updatedAt)}</Text> 

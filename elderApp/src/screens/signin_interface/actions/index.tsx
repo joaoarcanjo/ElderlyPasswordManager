@@ -12,7 +12,7 @@ import { stylesButtons } from "../../../assets/styles/main_style";
 import { Spinner } from "../../../components/LoadingComponents";
 import { useSessionInfo } from "../../../firebase/authentication/session";
 import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
-import { appName, createAccountLabel, doesNotHaveAccountLabel, emailLabel, emailPlaceholder, emptyValue, enterLabel, pageSignup, passwordLabel, passwordLabelBig, passwordPlaceholder } from "../../../assets/constants/constants";
+import { appName, createAccountLabel, doesNotHaveAccountLabel, emailLabel, emailPlaceholder, emptyValue, enterLabel, pageSignup, passwordLabel, passwordPlaceholder } from "../../../assets/constants/constants";
 
 const SignInPage = () => {
 
@@ -92,7 +92,7 @@ const SignInPage = () => {
                                 onChangeText={setEmail}
                                 />
                             </View> 
-                            <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginTop: '3%', marginLeft: '5%', justifyContent: 'center', fontSize: 20}]}>{passwordLabelBig}</Text>
+                            <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginTop: '3%', marginLeft: '5%', justifyContent: 'center', fontSize: 20}]}>{passwordLabel}</Text>
                             <View style={[{marginTop: '4%', marginHorizontal: '4%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 2, backgroundColor: whiteBackgroud }]}>
                                 <TextInput
                                 placeholder={passwordPlaceholder}

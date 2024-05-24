@@ -11,9 +11,9 @@ import { Spinner } from '../../../components/LoadingComponents'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { getKeychainValueFor } from '../../../keychain'
 import { elderlySSSKey } from '../../../keychain/constants'
-import { addCredentialsLabel, allLabel, cardsLabel, emptyValue, loginLabel, pageTitleCredentials, searchLabel } from '../../../assets/constants/constants'
-import { MaterialIcons } from '@expo/vector-icons'
-import { whiteBackgroud } from '../../../assets/styles/colors'
+import { addCredentialsLabel, allLabel, cardsLabel, closeLabel, emptyValue, loginLabel, optionsLabel, pageTitleCredentials, searchLabel, seeMoreLabel } from '../../../assets/constants/constants'
+import { FontAwesome, MaterialIcons } from '@expo/vector-icons'
+import { darkBlueBackground, whiteBackgroud } from '../../../assets/styles/colors'
 import { CredentialType } from './types'
 import { elderlyName } from '../../list_elderly/styles/styles'
 import { credentialsListUpdated } from './state'
@@ -99,8 +99,16 @@ function ElderlyCredentialsList({ elderlyId }: Readonly<{elderlyId: string}>) {
         <View style={{flexDirection: 'row'}}>
           <View style={{flex: 0.25, marginLeft: '2%', marginVertical: '2%'}}>
             <TouchableOpacity style={[{flex: 1, justifyContent: 'center',  alignItems: 'center'}, stylesButtons.whiteButton, stylesButtons.mainSlimConfig]} onPress={() => {setShowFilter(!showFilter)}}>
-              {!showFilter ? <Image source={require('../../../assets/images/down-arrow.png')} style={[{width: '70%', height: '70%', resizeMode: 'contain'}]}/> 
-              : <Image source={require('../../../assets/images/up-arrow.png')} style={[{width: '70%', height: '70%', resizeMode: 'contain'}]}/>}
+              {!showFilter ? 
+              <View style={{marginVertical: '5%', alignContent: 'center', alignItems: 'center'}}>
+                <FontAwesome name="arrow-circle-down" size={34} color={darkBlueBackground} />
+                <Text>{seeMoreLabel}</Text>
+              </View>
+              :
+              <View style={{marginVertical: '5%', alignContent: 'center', alignItems: 'center'}}>
+                <FontAwesome name="arrow-circle-up" size={34} color={darkBlueBackground} />
+                <Text>{closeLabel}</Text>
+              </View>}
             </TouchableOpacity>
           </View>           
           <View style={[{flex: 1, margin: '2%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 1, backgroundColor: whiteBackgroud }]}>
@@ -119,7 +127,11 @@ function ElderlyCredentialsList({ elderlyId }: Readonly<{elderlyId: string}>) {
         <View style={{flexDirection: 'row', marginVertical: '2%'}}>
           <TouchableOpacity style={[{flex: 0.33, marginHorizontal: '2%'}, stylesButtons.mainConfig, allSelected]} onPress={() => {setSearchType(emptyValue); setButtonSelected(0)}}>
             <Text style={{fontSize: 17, color: 'black', fontWeight: 'bold', marginTop: '5%'}}>{allLabel}</Text>
-            <MaterialIcons style={{marginHorizontal: '1%'}} name={'all-inclusive'} size={40} color="black"/> 
+            <View style={{flexDirection: 'row', alignContent: 'center', alignItems: 'center', marginTop: '5%'}}>
+              <MaterialIcons style={{marginHorizontal: '1%'}} name={'credit-card'} size={35} color="purple"/> 
+              <Text style={{fontSize: 25}}>+</Text>
+              <MaterialIcons style={{marginHorizontal: '1%'}} name={'person'} size={35} color="orange"/> 
+            </View>
           </TouchableOpacity>
           <TouchableOpacity style={[{flex: 0.33, marginHorizontal: '2%'}, stylesButtons.mainConfig, cardsSelected]} onPress={() => {setSearchType('card'); setButtonSelected(1)}}>
             <Text style={{fontSize: 17, color: 'black', fontWeight: 'bold', marginTop: '5%'}}>{cardsLabel}</Text>

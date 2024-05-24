@@ -4,10 +4,11 @@ import { View, StyleSheet, Modal, TouchableOpacity, Text, ScrollView, Image } fr
 import { stylesButtons } from "../assets/styles/main_style"
 import { modal, options } from "../screens/credential_interface/styles/styles"
 import { Spinner } from "./LoadingComponents"
-import { upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, modalIntensity, copyCardNumberLabel, copyPasswordLabel, copySecurityCodeLabel, copyUsernameLabel, copyVerificationCodeLabel, navigateLabel, otherLabel, closeLabel, saveLabel, loginLabel, cardLabel, cancelLabel } from "../assets/constants/constants";
+import { upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, modalIntensity, copyCardNumberLabel, copyPasswordLabel, copySecurityCodeLabel, copyUsernameLabel, copyVerificationCodeLabel, navigateLabel, otherLabel, saveLabel, loginLabel, cardLabel, cancelLabel } from "../assets/constants/constants";
 import { updateUpperCase, updateLowerCase, updateNumbers, updateSpecial } from "./passwordGenerator/functions";
 import { Requirement, RequirementLength } from "./passwordGenerator/Requirement";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Platform } from "../assets/json/interfaces";
 
 export function YesOrNoModal({question, yesFunction, noFunction, visibleFlag}: Readonly<{question: string, yesFunction: Function, noFunction: Function, visibleFlag: boolean}>) {
   return (
@@ -95,7 +96,7 @@ export function PasswordOptionsModal({saveFunction, closeFunction, visibleFlag}:
             <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{saveLabel}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={() => closeFunction()}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{closeLabel}</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{cancelLabel}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -104,8 +105,6 @@ export function PasswordOptionsModal({saveFunction, closeFunction, visibleFlag}:
 }
 
 export function PlatformSelectionModal({setPlatformName, setPlatformURI, closeFunction, visibleFlag}: Readonly<{setPlatformName: Function, setPlatformURI: Function, closeFunction: Function, visibleFlag: boolean}>) {
-
-  interface Platform { platformName: any, platformURI: any, materialCommunityIcon: any, iconColor: any }
 
   const jsonData = require('../assets/json/platforms.json')
 

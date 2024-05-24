@@ -16,7 +16,7 @@ import { sendCaregiversNewInfo } from './functions'
 import { closeWebsocket } from '../../../e2e/network/webSockets'
 import { usernameSubject } from '../../../e2e/identity/state'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
-import { accountInfoLabel, cancelLabel, editLabel, emptyValue, gitHubUrl, leaveAccountLabel, moreAboutTheApp, pageTitleSettings, saveChangesLabel, saveLabel } from '../../../assets/constants/constants'
+import { accountInfoLabel, cancelLabel, editLabel, emptyValue, gitHubUrl, leaveAccountLabel, logoutAlertLabel, moreAboutTheApp, pageTitleSettings, saveChangesLabel, saveLabel } from '../../../assets/constants/constants'
 import { editCanceledFlash, editValueFlash, elderlyPersonalInfoUpdatedFlash } from '../../../components/UserMessages'
 
 function AccountInfo() {
@@ -199,38 +199,33 @@ function AccountInfo() {
   }
 }
 
-const onGitHub = () => Linking.canOpenURL(gitHubUrl).then(() => {
-  Linking.openURL(gitHubUrl)
-})
-
-function AppInfo() {
-  return (
-    <View style={{ flex: 0.10, flexDirection: 'row', marginVertical:'5%', justifyContent: 'center', alignItems: 'center'}}>
-      <TouchableOpacity style={[{ flex: 0.9, flexDirection: 'row', marginHorizontal: '4%'}, appInfo.appInfoButton, stylesButtons.mainConfig]} onPress={() => onGitHub()}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 1, margin: '5%', textAlign: 'center'}, appInfo.appInfoText]}>{moreAboutTheApp}</Text>
-        </TouchableOpacity>
-    </View>
-  )
-}
-
 function Logout() {
 
   const { setUserId, setUserName, setUserPhone } = useSessionInfo()
+  const [modalVisible, setModalVisible] = useState(false)
+  const [decision, setDecision] = useState(false)
 
-  const signOut = () => {
-    setUserId(emptyValue)
-    setUserName(emptyValue)
-    setUserPhone(emptyValue)
-    saveKeychainValue(elderlyPwd, emptyValue)
-    saveKeychainValue(elderlyId, emptyValue)
-    closeWebsocket()
-    usernameSubject.next(emptyValue)
-    FIREBASE_AUTH.signOut()
-  }
+  useEffect(() => {
+    if(decision) {
+      setUserId(emptyValue)
+      setUserName(emptyValue)
+      setUserPhone(emptyValue)
+      saveKeychainValue(elderlyPwd, emptyValue)
+      saveKeychainValue(elderlyId, emptyValue)
+      closeWebsocket()
+      usernameSubject.next(emptyValue)
+      FIREBASE_AUTH.signOut()
+    }
+
+  }, [decision])
+
+  const yesFunction = () => { setModalVisible(false); setDecision(true) }
+  const noFunction = () => { setModalVisible(false) }
 
   return (
-    <View style= { { flex: 0.10, flexDirection: 'row', justifyContent: 'space-around', marginBottom: '2%'} }>
-      <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginTop: '3%'}, logout.logoutButton, stylesButtons.mainConfig]} onPress={signOut}>
+    <View style= { { flex: 0.10, flexDirection: 'row', justifyContent: 'space-around', marginBottom: '2%', marginTop: '5%'} }>
+      <YesOrNoSpinnerModal question={logoutAlertLabel} yesFunction={() => yesFunction()} noFunction={() => noFunction()} visibleFlag={modalVisible} loading={false}/>
+      <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, logout.logoutButton, stylesButtons.mainConfig]} onPress={() => setModalVisible(true)}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>{leaveAccountLabel}</Text>
       </TouchableOpacity>
     </View>
@@ -245,7 +240,6 @@ export default function Settings() {
         <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
           <MainBox text={pageTitleSettings}/>
           <AccountInfo/>
-          <AppInfo/>
           <Logout/>
         </View>
       </KeyboardAvoidingWrapper>

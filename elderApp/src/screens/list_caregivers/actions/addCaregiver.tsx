@@ -11,7 +11,7 @@ import { deleteCaregiver, saveCaregiver } from "../../../database/caregivers"
 import { CaregiverRequestStatus } from "../../../database/types"
 import { ErrorInstance } from "../../../exceptions/error"
 import { Errors } from "../../../exceptions/types"
-import { addCaregiverLabel, closeLabel, emptyValue, linkLabel } from "../../../assets/constants/constants"
+import { addCaregiverLabel, cancelLabel, emptyValue, linkLabel } from "../../../assets/constants/constants"
 
 export function AddCaregiverModal({visibility, concludeAction}: Readonly<{visibility: boolean, concludeAction: Function}>) {
   const [caregiverEmail, setCaregiverEmail] = useState(emptyValue)
@@ -55,7 +55,7 @@ export function AddCaregiverModal({visibility, concludeAction}: Readonly<{visibi
             <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{linkLabel}</Text>
           </TouchableOpacity> }
           <TouchableOpacity style={[{flex: 0.5, marginVertical: '3%', marginLeft: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={() => {setCaregiverEmail(emptyValue); concludeAction()}}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{closeLabel}</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{cancelLabel}</Text>
           </TouchableOpacity>
         </View>
     </ModalBox>

@@ -118,10 +118,10 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
               {/* Botões para copiar a password e para gerar uma nova */}
               <View style={{flexDirection: 'row', margin: '3%', marginBottom: '5%'}}>
                 <TouchableOpacity style={[{flex: 0.5, marginRight: '2%'}, passwordFirstHalf.copyButton, stylesButtons.mainConfig]} onPress={() => saveOnClickBoard() }>
-                  <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>{copyLabel}</Text>
+                  <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '5%' }]}>{copyLabel}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[{flex: 0.5, marginLeft: '2%'}, passwordFirstHalf.regenerateButton, stylesButtons.mainConfig]} onPress={() => generatePassword() }>
-                  <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, fontWeight: 'bold', margin: '5%' }]}>{regenerateLabel}</Text>
+              <Text numberOfLines={2} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '5%', textAlign: 'center' }]}>{regenerateLabel}</Text>
                 </TouchableOpacity>
               </View>
           </View>

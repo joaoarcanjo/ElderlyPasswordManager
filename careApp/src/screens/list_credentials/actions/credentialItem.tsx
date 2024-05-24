@@ -2,17 +2,18 @@ import { useNavigation } from "@react-navigation/native"
 import { StackNavigationProp } from "@react-navigation/stack"
 import { useState } from "react"
 import { Linking, TouchableOpacity, View, Text, Image} from "react-native"
-import { pageCredentialLogin, pageCredentialCard, copyCardNumberLabel, copyPasswordLabel, copySecurityCodeLabel, copyUsernameLabel, copyVerificationCodeLabel, navigateLabel } from "../../../assets/constants/constants"
+import { pageCredentialLogin, pageCredentialCard, copyCardNumberLabel, copyPasswordLabel, copySecurityCodeLabel, copyUsernameLabel, copyVerificationCodeLabel, navigateLabel, actionsLabel, closeLabel, seeMoreLabel } from "../../../assets/constants/constants"
 import { stylesButtons } from "../../../assets/styles/main_style"
 import { copyValue } from "../../../components/userMessages/UserMessages"
 import { copyUsernameDescription, copyPasswordDescription, copyCardNumberDescription, FlashMessage } from "../../../components/userMessages/messages"
 import { CredentialType } from "./types"
-import { MaterialIcons } from "@expo/vector-icons"
+import { FontAwesome, MaterialIcons } from "@expo/vector-icons"
 import { useSessionInfo } from "../../../firebase/authentication/session"
 import { deriveSecret } from "../../../algorithms/shamirSecretSharing/sss"
 import { getKey } from "../../../firebase/firestore/functionalities"
 import { getKeychainValueFor } from "../../../keychain"
 import { elderlySSSKey } from "../../../keychain/constants"
+import { darkBlueBackground } from "../../../assets/styles/colors"
 
 function ActionItem({text, func} : {text: string, func: Function}) {
 
@@ -140,9 +141,17 @@ export function ScrollItem({credential, elderlyId}: Readonly<{credential: Creden
                 </View>
               </View>
               <View style={{flex: 0.21}}>
-                <TouchableOpacity style={[stylesButtons.whiteButton, stylesButtons.mainSlimConfig, {height: '85%'}]} onPress={() => {setShowFilter(!showFilter)}}>
-                  {!showFilter ? <Image source={require('../../../assets/images/down-arrow.png')} style={[{width: '70%', height: '70%', resizeMode: 'contain'}]}/> 
-                  : <Image source={require('../../../assets/images/up-arrow.png')} style={[{width: '70%', height: '70%', resizeMode: 'contain'}]}/>}
+              <TouchableOpacity style={[stylesButtons.whiteButton, stylesButtons.mainSlimConfig]} onPress={() => {setShowFilter(!showFilter)}}>
+                  {!showFilter ? 
+                  <View style={{marginVertical: '5%', alignContent: 'center', alignItems: 'center'}}>
+                    <FontAwesome name="arrow-circle-down" size={40} color={darkBlueBackground} />
+                    <Text>{seeMoreLabel}</Text>
+                  </View>
+                  :
+                  <View style={{marginVertical: '5%', alignContent: 'center', alignItems: 'center'}}>
+                    <FontAwesome name="arrow-circle-up" size={40} color={darkBlueBackground} />
+                    <Text>{closeLabel}</Text>
+                  </View>}
                 </TouchableOpacity>
               </View>
             </View>

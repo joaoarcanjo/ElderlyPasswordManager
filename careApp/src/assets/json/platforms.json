@@ -2,64 +2,75 @@
     "platforms": [
         {
             "platformName": "Facebook",
+            "platformUsernameLabel": "Email ou telefone",
+            "platformPasswordLabel": "Senha",
             "platformURI": "www.facebook.com",
             "materialCommunityIcon": "facebook",
             "iconColor": "#3b5998"
         },
         {
             "platformName": "Instagram",
+            "platformUsernameLabel": "Telefone, nome de utilizador ou email",
+            "platformPasswordLabel": "Senha",
             "platformURI": "www.instagram.com",
             "materialCommunityIcon": "instagram",
             "iconColor": "#e4405f"
         },
         {
-            "platformName": "WhatsApp",
-            "platformURI": "www.whatsapp.com",
-            "materialCommunityIcon": "whatsapp",
-            "iconColor": "#25d366"
-        },
-        {
             "platformName": "Skype",
+            "platformUsernameLabel": "Email, telefone, ou Skype",
+            "platformPasswordLabel": "Senha",
             "platformURI": "www.skype.com",
             "materialCommunityIcon": "skype",
             "iconColor": "#00aff0"
         },
         {
             "platformName": "TikTok",
+            "platformUsernameLabel": "Telefone / e-mail / nome de utilizador",
+            "platformPasswordLabel": "Senha",
             "platformURI": "www.tiktok.com",
             "materialCommunityIcon": "music-note-eighth",
             "iconColor": "#000000"
         },
         {
             "platformName": "Twitter",
+            "platformUsernameLabel": "Telefone, e-mail ou nome de utilizador",
+            "platformPasswordLabel": "Senha",
             "platformURI": "www.twitter.com",
             "materialCommunityIcon": "twitter",
             "iconColor": "#1da1f2"
         },
         {
             "platformName": "LinkedIn",
+            "platformUsernameLabel": "Email ou telefone",
+            "platformPasswordLabel": "Senha",
             "platformURI": "www.linkedin.com",
             "materialCommunityIcon": "linkedin",
             "iconColor": "#0077b5"
         },
         {
             "platformName": "Snapchat",
+            "platformUsernameLabel": "Nome de utilizador ou e-mail",
+            "platformPasswordLabel": "Palavra-passe",
             "platformURI": "www.snapchat.com",
             "materialCommunityIcon": "snapchat",
             "iconColor": "#fffc00"
         },
         {
             "platformName": "Pinterest",
+            "platformUsernameLabel": "Email",
+            "platformPasswordLabel": "Senha",
             "platformURI": "www.pinterest.com",
             "materialCommunityIcon": "pinterest",
             "iconColor": "#bd081c"
         },
         {
             "platformName": "Reddit",
+            "platformUsernameLabel": "Email ou nome de utilizador",
+            "platformPasswordLabel": "Palavra-passe",
             "platformURI": "www.reddit.com",
             "materialCommunityIcon": "reddit",
             "iconColor": "#ff4500"
         }
-
     ]
 }

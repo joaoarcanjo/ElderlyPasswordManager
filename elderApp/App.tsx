@@ -4,7 +4,6 @@ import Credentials from './src/screens/list_credentials/actions';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Settings from './src/screens/settings_interface/actions';
-import FrequentQuestions from './src/screens/list_faqs/actions';
 import Generator from './src/screens/password_generator/actions';
 import PasswordHistory from './src/screens/password_history/actions';
 import React, { useEffect, useState } from 'react';
@@ -14,6 +13,7 @@ import { Caregivers } from './src/screens/list_caregivers/actions';
 import { initFirestore } from './src/firebase/firestore/functionalities';
 import { initKeychain } from './src/keychain';
 import { AddCredencial } from './src/screens/add_credentials/actions';
+import FrequentQuestions from './src/screens/list_questions/actions';
 import SignInPage from './src/screens/signin_interface/actions';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from './src/firebase/FirebaseConfig';
@@ -22,7 +22,7 @@ import SignUpPage from './src/screens/signup_interface/actions';
 import { StatusBar } from 'expo-status-bar';
 import { createIdentity } from './src/e2e/identity/functions';
 import * as Notifications from "expo-notifications";
-import { emptyValue, pageAddCredential, pageCaregivers, pageCredentialCard, pageCredentialLogin, pageCredentials, pageFAQs, pageGenerator, pageLogin, pageMainMenu, pagePasswordHistory, pageSettings, pageSignup } from './src/assets/constants/constants';
+import { emptyValue, pageAddCredential, pageCaregivers, pageCredentialCard, pageCredentialLogin, pageCredentials, pageQuestions, pageGenerator, pageLogin, pageMainMenu, pagePasswordHistory, pageSettings, pageSignup } from './src/assets/constants/constants';
 import CredencialLoginPage from './src/screens/credential_interface/actions/login';
 import CredencialCardPage from './src/screens/credential_interface/actions/card';
 import { initSSS } from './src/algorithms/shamirSecretSharing/sss';
@@ -57,7 +57,7 @@ function InsideLayout() {
       <InsideStack.Screen name={pageSettings} component={Settings} options={{ title: "Settings", headerShown: false }} />
       <InsideStack.Screen name={pageGenerator} component={Generator} options={{ title: "Generator", headerShown: false }} />
       <InsideStack.Screen name={pagePasswordHistory} component={PasswordHistory} options={{ title: "Password history", headerShown: false }} />
-      <InsideStack.Screen name={pageFAQs} component={FrequentQuestions} options={{ title: "Frequent Questions", headerShown: false }} />
+      <InsideStack.Screen name={pageQuestions} component={FrequentQuestions} options={{ title: "Frequent Questions", headerShown: false }} />
       <InsideStack.Screen name={pageCaregivers} component={Caregivers} options={{ title: "Caregivers", headerShown: false }} />
       <InsideStack.Screen name={pageCredentialLogin} component={CredencialLoginPage} options={{ title: "CredencialLoginPage", headerShown: false }} />
       <InsideStack.Screen name={pageCredentialCard} component={CredencialCardPage} options={{ title: "CredencialCardPage", headerShown: false }} />

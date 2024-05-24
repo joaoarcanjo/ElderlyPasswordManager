@@ -9,7 +9,7 @@ import { getKeychainValueFor, saveKeychainValue } from '../../../keychain';
 import { elderlyName, elderlyPhone } from '../../../keychain/constants';
 import { createIdentity } from '../../../e2e/identity/functions';
 import { getAllCredentialsAndValidate } from '../../list_credentials/actions/functions';
-import { credentialTimoutRefresh, credentialsLabel, cuidadoresLabel, emptyValue, generatorLabel, heyLabel, pageCaregivers, pageCredentials, pageFAQs, pageGenerator, pageSettings, questionsLabel, settingsLabel } from '../../../assets/constants/constants';
+import { credentialTimoutRefresh, credentialsLabel, cuidadoresLabel, emptyValue, generatorLabel, heyLabel, pageCaregivers, pageCredentials, pageQuestions, pageGenerator, pageSettings, questionsLabel, settingsLabel } from '../../../assets/constants/constants';
 import { flashTimeoutPromise } from '../../splash_screen/actions/functions';
 import SplashScreen from '../../splash_screen/actions';
 import * as SplashFunctions from 'expo-splash-screen';
@@ -58,7 +58,7 @@ function Functionalities() {
     }
 
     const FrequentQuestionsNavigation = () => {
-        navigation.push(pageFAQs)
+        navigation.push(pageQuestions)
     }
 
     const SettingsNavigation = () => {
@@ -89,7 +89,7 @@ function Functionalities() {
                 </TouchableOpacity>
                 <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareQuestions, stylesButtons.mainConfig]} onPress={() => FrequentQuestionsNavigation()}>
                     <Image source={require(questionsImage)} style={[stylesOptions.squarePhoto]}/>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>{questionsLabel}</Text>
+                    <Text numberOfLines={2} adjustsFontSizeToFit style={[stylesOptions.squareText]}>{questionsLabel}</Text>
                 </TouchableOpacity>
            </View>
         </View>

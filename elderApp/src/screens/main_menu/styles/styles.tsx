@@ -57,7 +57,8 @@ const stylesOptions = StyleSheet.create({
      borderWidth: 5
    },
    squareText: {
-     fontSize: 23,
+      marginHorizontal: '5%',
+      fontSize: 24,
      textAlign: 'center'
    },
    squarePhoto: {

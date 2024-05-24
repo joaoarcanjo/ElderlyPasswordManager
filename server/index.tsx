@@ -195,7 +195,7 @@ app.get("/getBundle/:username", (req, res) => {
 
 http.listen({port: PORT}, async () => {
     console.log (ip.address())
-    db.collection("Server").doc("server").set({ip: `${http ? 'https://' : 'http://'}${ip.address()}`})
+    db.collection("Server").doc("server").set({ip: `${https ? 'https://' : 'http://'}${ip.address()}`})
     
     console.log(`Server listening on ${PORT}`);
 })

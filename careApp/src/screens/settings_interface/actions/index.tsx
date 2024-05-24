@@ -16,7 +16,7 @@ import { sendElderlyNewInfo } from './functions'
 import { closeWebsocket } from '../../../e2e/network/webSockets'
 import { usernameSubject } from '../../../e2e/identity/state'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
-import { accountInfoLabel, cancelLabel, editLabel, emptyValue, gitHubUrl, leaveAccountLabel, moreAboutTheApp, pageTitleSettings, saveChangesLabel, saveLabel } from '../../../assets/constants/constants'
+import { accountInfoLabel, cancelLabel, editLabel, emptyValue, gitHubUrl, leaveAccountLabel, logoutAlertLabel, moreAboutTheApp, pageTitleSettings, saveChangesLabel, saveLabel } from '../../../assets/constants/constants'
 import { caregiverPersonalInfoUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
 
 function AccountInfo() {
@@ -211,29 +211,38 @@ function AppInfo() {
   )
 }
 
-function Logout() {
+  function Logout() {
 
-  const { setUserId, setUserName, setUserPhone } = useSessionInfo()
-
-  const signOut = () => {
-    setUserId(emptyValue)
-    setUserName(emptyValue)
-    setUserPhone(emptyValue)
-    saveKeychainValue(caregiverPwd, emptyValue)
-    saveKeychainValue(caregiverId, emptyValue)
-    closeWebsocket()
-    usernameSubject.next(emptyValue)
-    FIREBASE_AUTH.signOut()
+    const { setUserId, setUserName, setUserPhone } = useSessionInfo()
+    const [modalVisible, setModalVisible] = useState(false)
+    const [decision, setDecision] = useState(false)
+  
+    useEffect(() => {
+      if(decision) {
+        setUserId(emptyValue)
+        setUserName(emptyValue)
+        setUserPhone(emptyValue)
+        saveKeychainValue(caregiverPwd, emptyValue)
+        saveKeychainValue(caregiverId, emptyValue)
+        closeWebsocket()
+        usernameSubject.next(emptyValue)
+        FIREBASE_AUTH.signOut()
+      }
+  
+    }, [decision])
+  
+    const yesFunction = () => { setModalVisible(false); setDecision(true) }
+    const noFunction = () => { setModalVisible(false) }
+  
+    return (
+      <View style= { { flex: 0.10, flexDirection: 'row', justifyContent: 'space-around', marginBottom: '2%'} }>
+        <YesOrNoSpinnerModal question={logoutAlertLabel} yesFunction={() => yesFunction()} noFunction={() => noFunction()} visibleFlag={modalVisible} loading={false}/>
+        <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, logout.logoutButton, stylesButtons.mainConfig]} onPress={() => setModalVisible(true)}>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>{leaveAccountLabel}</Text>
+        </TouchableOpacity>
+      </View>
+    )
   }
-
-  return (
-    <View style= { { flex: 0.10, flexDirection: 'row', justifyContent: 'space-around', marginBottom: '2%'} }>
-      <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, logout.logoutButton, stylesButtons.mainConfig]} onPress={signOut}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>{leaveAccountLabel}</Text>
-      </TouchableOpacity>
-    </View>
-  )
-}
 
 export default function Settings() {
   return (

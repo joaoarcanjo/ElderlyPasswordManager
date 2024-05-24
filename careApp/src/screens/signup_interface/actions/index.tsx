@@ -8,7 +8,7 @@ import { Spinner } from "../../../components/LoadingComponents";
 import { useSessionInfo } from "../../../firebase/authentication/session";
 import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
 import { signUpOperation } from "../../../firebase/authentication/funcionalities";
-import { appName, createAccountLabel, emailLabel, emailPlaceholder, emptyValue, mobileLabel, mobilePlaceholder, nameLabel, namePlaceholder, passwordLabelBig, passwordPlaceholder } from "../../../assets/constants/constants";
+import { appName, createAccountLabel, emailLabel, emailPlaceholder, emptyValue, mobileLabel, mobilePlaceholder, nameLabel, namePlaceholder, passwordLabel, passwordPlaceholder } from "../../../assets/constants/constants";
 import  { NavbarJustBack } from "../../../navigation/actions";
 
 export function SignUp () {
@@ -81,7 +81,7 @@ export function SignUp () {
                     { loading ? <Spinner width={250} height={250}/>
                     : 
                     <>
-                        <Text numberOfLines={1} adjustsFontSizeToFit style={[{ marginTop: '3%', marginLeft: '5%', justifyContent: 'center', fontSize: 20 }]}>{passwordLabelBig}</Text>
+                        <Text numberOfLines={1} adjustsFontSizeToFit style={[{ marginTop: '3%', marginLeft: '5%', justifyContent: 'center', fontSize: 20 }]}>{passwordLabel}</Text>
                         <View style={[{ marginTop: '3%', marginHorizontal: '4%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }, { borderRadius: 15, borderWidth: 2, backgroundColor: whiteBackgroud }]}>
                             <TextInput
                                 placeholder={passwordPlaceholder}

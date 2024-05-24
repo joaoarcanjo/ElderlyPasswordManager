@@ -16,7 +16,7 @@ async function createLocalDBKey(userId: string) {
 
 export async function initDb(userId: string) {
 
-    dbSQL = await SQLite.openDatabaseAsync('elderly.db')
+    dbSQL = SQLite.openDatabaseSync('elderly.db')
   
 /*
     dbSQL.execAsync(`

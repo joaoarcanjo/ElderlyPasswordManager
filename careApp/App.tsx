@@ -17,14 +17,48 @@ import Settings from './src/screens/settings_interface/actions';
 import Credentials from './src/screens/list_credentials/actions/personalCredentials';
 import { initFirestore } from './src/firebase/firestore/functionalities';
 import { createIdentity } from './src/e2e/identity/functions';
-import { emptyValue, pageAddCredential, pageCredentialCard, pageCredentialLogin, pageCredentials, pageElderlyCredentials, pageElderlyList, pageFAQs, pageGenerator, pageLogin, pageMainMenu, pagePasswordHistory, pageSettings, pageSignup } from './src/assets/constants/constants';
+import { emptyValue, pageAddCredential, pageCredentialCard, pageCredentialLogin, pageCredentials, pageElderlyCredentials, pageElderlyList, pageQuestions, pageGenerator, pageLogin, pageMainMenu, pagePasswordHistory, pageSettings, pageSignup } from './src/assets/constants/constants';
 import CredencialCardPage from './src/screens/credential_interface/actions/card';
 import CredencialLoginPage from './src/screens/credential_interface/actions/login';
 import SignUpPage from './src/screens/signup_interface/actions';
 import ElderlyCredentials from './src/screens/list_credentials/actions/elderlyCredentials';
-import FrequentQuestions from './src/screens/list_faqs/actions';
+import FrequentQuestions from './src/screens/list_questions/actions';
 import Generator from './src/screens/password_generator/actions';
 import PasswordHistory from './src/screens/password_history/actions';
+import pbkdf2 from 'pbkdf2';
+import { getNewId } from './src/algorithms/tweetNacl/crypto';
+/*import Crypto from 'react-native-quick-crypto';
+
+// Function to generate a random alphanumeric string
+export function generateRandomString() {
+  return Math.random().toString(36).substring(2);
+}
+
+// Configuration for PBKDF2
+const ITERATIONS = 1000; // Iterations count, adjustable
+const KEY_LENGTH = 64;   // Output key length in bytes (512 bits)
+const ALGORITHM = 'SHA256'; // Hashing algorithm, can be changed
+
+// Asynchronous function to generate a renewal token
+export async function generateToken(token: string, authToken: string) {
+  // Creating a unique salt by combining authToken with a random string
+  const salt = authToken + generateRandomString();
+
+  // Generating a hash using PBKDF2
+  const hash = Crypto.pbkdf2Sync(
+    token,
+    salt,
+    ITERATIONS,
+    KEY_LENGTH,
+    ALGORITHM
+  );
+
+  // Converting the hash to a hexadecimal string
+  const renewalToken = Buffer.from(hash).toString('hex');
+
+  // Returning the generated salt and renewal token
+  return { salt, renewalToken };
+}*/
 
 const Stack = createNativeStackNavigator()
 const InsideStack = createNativeStackNavigator()
@@ -43,7 +77,7 @@ function InsideLayout() {
       <InsideStack.Screen name={pageCredentialCard} component={CredencialCardPage} options={{ title: "CredencialCardPage", headerShown: false }} />
       <InsideStack.Screen name={pageGenerator} component={Generator} options={{ title: "Generator", headerShown: false }} />
       <InsideStack.Screen name={pagePasswordHistory} component={PasswordHistory} options={{ title: "Password history", headerShown: false }} />
-      <InsideStack.Screen name={pageFAQs} component={FrequentQuestions} options={{ title: "Frequent Questions", headerShown: false }} />
+      <InsideStack.Screen name={pageQuestions} component={FrequentQuestions} options={{ title: "Frequent Questions", headerShown: false }} />
     </InsideStack.Navigator>
   )
 }
@@ -54,6 +88,9 @@ function Inicialization() {
   const [user, setUser] = useState<User | null>(null)
   const { setUserId, setUserEmail, setLocalDBKey, userId } = useSessionInfo()
   const [loading, setLoading] = useState(false)
+
+  //
+  //console.log(arrayBufferToString(pbkdf2.pbkdf2Sync('password', getNewId(), 1, 32, 'sha512')))
 
   useEffect(() => {
     onAuthStateChanged(FIREBASE_AUTH, async (user) => {

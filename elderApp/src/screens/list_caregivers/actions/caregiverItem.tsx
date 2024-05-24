@@ -71,7 +71,7 @@ export function CaregiverToBeAccepted({ caregiverId, number, name, email, setRef
     <View style={{flex: 0.55, justifyContent: 'center', alignItems: 'center'}}>
        <View style={[{ flexDirection: 'row', alignItems: 'center', marginVertical: '3%' }, caregiverStyle.newCaregiverContainer]}>
         <View style={{ flex: 1, marginTop: '4%' }}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 20, marginLeft: '5%', fontWeight: 'bold' }]}>{`Pedido recebido de: ${email}`}</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 20, marginHorizontal: '5%', fontWeight: 'bold' }]}>{`Pedido recebido de: ${email}`}</Text>
           <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }}/>
           <View style={{flexDirection: 'row', marginHorizontal: '3%'}}>
             <Text numberOfLines={2} adjustsFontSizeToFit style={[{ fontSize: 18 }, caregiverStyle.newCaregiverText]}>{`O idoso ${name} com o email ${email} enviou-lhe um pedido!`}</Text>
@@ -100,7 +100,7 @@ export function CaregiverWaiting({caregiverEmail, setRefresh}: Readonly<{ caregi
     <View style={{flex: 0.55, justifyContent: 'center', alignItems: 'center'}}>
       <View style={[{ flexDirection: 'row', alignItems: 'center', marginVertical: '3%' }, caregiverStyle.sentRequestCaregiverContainer]}>
         <View style={{ flex: 1, marginTop: '4%' }}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 20, marginLeft: '5%', fontWeight: 'bold' }]}>{`Pedido enviado para: ${caregiverEmail}`}</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 20, marginHorizontal: '5%', fontWeight: 'bold' }]}>{`Pedido enviado para: ${caregiverEmail}`}</Text>
           <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }}/>
           <View style={{flexDirection: 'row', marginHorizontal: '3%'}}>
             <Text numberOfLines={2} adjustsFontSizeToFit style={{ fontSize: 18 }}>{`À espera que o cuidador com o email ${caregiverEmail} aceite o seu pedido.`}</Text>

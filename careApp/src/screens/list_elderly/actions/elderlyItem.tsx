@@ -10,7 +10,9 @@ import { useSessionInfo } from "../../../firebase/authentication/session";
 import { ElderlyRequestStatus } from "../../../database/types";
 import { getKeychainValueFor } from "../../../keychain";
 import { elderlySSSKey } from "../../../keychain/constants";
-import { acceptLabel, cancelLabel, credentialsLabel, emptyValue, pageElderlyCredentials, refuseLabel, unlinkLabel } from "../../../assets/constants/constants";
+import { acceptLabel, cancelLabel, closeLabel, credentialsLabel, emptyValue, optionsLabel, pageElderlyCredentials, refuseLabel, seeMoreLabel, unlinkLabel } from "../../../assets/constants/constants";
+import { FontAwesome } from "@expo/vector-icons";
+import { darkBlueBackground } from "../../../assets/styles/colors";
 
 const caregiverImage = '../../../assets/images/elderly.png'
 const telephoneImage = '../../../assets/images/telephone.png'
@@ -39,7 +41,7 @@ export function ElderlyToBeAccepted({ name, email, setRefresh }: Readonly<{name:
     <View style={[{flex: 1}, elderlyStyle.newElderlyContainer]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: '3%' }}>
         <View style={{ flex: 1 }}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 20, marginLeft: '5%', fontWeight: 'bold' }]}>{`Pedido recebido de: ${email}`}</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 20, marginHorizontal: '5%', fontWeight: 'bold' }]}>{`Pedido recebido de: ${email}`}</Text>
           <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }}/>
           <View style={{flexDirection: 'row', marginHorizontal: '3%'}}>
             <Text numberOfLines={3} adjustsFontSizeToFit style={{ fontSize: 15 }}>{`O idoso ${name} com o email ${email} enviou-lhe um pedido!`}</Text>
@@ -68,7 +70,7 @@ export function ElderlyWaiting({elderlyEmail, setRefresh}: Readonly<{ elderlyEma
     <View style={{flex: 0.55, justifyContent: 'center', alignItems: 'center'}}>
       <View style={[{ flexDirection: 'row', alignItems: 'center', marginVertical: '3%' }, elderlyStyle.sentRequestElderlyContainer]}>
         <View style={{ flex: 1, marginTop: '4%' }}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 20, marginLeft: '5%', fontWeight: 'bold' }]}>{`Pedido enviado para: ${elderlyEmail}`}</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 20, marginHorizontal: '5%', fontWeight: 'bold' }]}>{`Pedido enviado para: ${elderlyEmail}`}</Text>
           <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }}/>
           <View style={{flexDirection: 'row', marginHorizontal: '3%'}}>
             <Text numberOfLines={2} adjustsFontSizeToFit style={{ fontSize: 18 }}>{`À espera que o idoso com o email ${elderlyEmail} aceite o seu pedido.`}</Text>
@@ -120,10 +122,18 @@ export function Elderly({ elderlyId, name, phone, email, setRefresh }: Readonly<
             <TouchableOpacity style={[{flex: 0.7, marginHorizontal: '1%', marginVertical: '1%'}, elderlyOptions.openCredentials, stylesButtons.mainConfig]} onPress={navigateToElderlyCredentials}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginHorizontal: '2%', marginVertical: '4%' }]}>{credentialsLabel}</Text>
             </TouchableOpacity>
-            <View style={{flex: 0.30, marginLeft: '8%'}}>
+            <View style={{flex: 0.35, marginLeft: '1%'}}>
               <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%', justifyContent: 'center',  alignItems: 'center'}, stylesButtons.whiteButton, stylesButtons.mainSlimConfig]} onPress={() => changeInfoState()}>
-                {showInfo ? <Image source={require('../../../assets/images/down-arrow.png')} style={[{width: '80%', height: '80%', marginRight: '5%', resizeMode: 'contain'}]}/> :
-                <Image source={require('../../../assets/images/up-arrow.png')} style={[{width: '80%', height: '80%', marginRight: '5%', resizeMode: 'contain'}]}/>}
+                {showInfo ? 
+                <View style={{marginVertical: '5%', marginHorizontal: '2%', alignContent: 'center', alignItems: 'center'}}>
+                  <FontAwesome name="arrow-circle-down" size={34} color={darkBlueBackground} />
+                  <Text>{seeMoreLabel}</Text>
+                </View>
+                :
+                <View style={{marginVertical: '5%', marginHorizontal: '2%', alignContent: 'center', alignItems: 'center'}}>
+                  <FontAwesome name="arrow-circle-up" size={34} color={darkBlueBackground} />
+                  <Text>{closeLabel}</Text>
+                </View>}
               </TouchableOpacity>
             </View>
           </View>

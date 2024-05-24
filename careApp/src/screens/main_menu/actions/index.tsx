@@ -8,7 +8,7 @@ import { useSessionInfo } from '../../../firebase/authentication/session'
 import { getKeychainValueFor, saveKeychainValue } from '../../../keychain'
 import { caregiverName, caregiverPhone } from '../../../keychain/constants'
 import { createIdentity } from '../../../e2e/identity/functions'
-import { credentialTimoutRefresh, credentialsLabel, elderlyLabel, emptyValue, generatorLabel, heyLabel, pageCredentials, pageElderlyList, pageFAQs, pageGenerator, pageSettings, questionsLabel, settingsLabel } from '../../../assets/constants/constants'
+import { credentialTimoutRefresh, credentialsLabel, elderlyLabel, emptyValue, generatorLabel, heyLabel, pageCredentials, pageElderlyList, pageQuestions, pageGenerator, pageSettings, questionsLabel, settingsLabel } from '../../../assets/constants/constants'
 import { getAllCredentialsAndValidate } from '../../list_credentials/actions/functions'
 import SplashScreen from '../../splash_screen/actions'
 import { flashTimeoutPromise } from '../../splash_screen/actions/functions'
@@ -58,7 +58,7 @@ function Functionalities() {
     }
 
     const FrequentQuestionsNavigation = () => {
-        navigation.push(pageFAQs)
+        navigation.push(pageQuestions)
     }
 
     const SettingsNavigation = () => {
@@ -79,7 +79,7 @@ function Functionalities() {
                 </TouchableOpacity>
                 <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareGenerator, stylesButtons.mainConfig]} onPress={() => GeneratorsNavigation()}>
                     <Image source={require(generatorImage)} style={[stylesOptions.squarePhoto]}/>
-                    <Text numberOfLines={2} adjustsFontSizeToFit style={[{margin: '0%'}, stylesOptions.squareText]}>{generatorLabel}</Text>
+                    <Text numberOfLines={2} adjustsFontSizeToFit style={[stylesOptions.squareText]}>{generatorLabel}</Text>
                 </TouchableOpacity>
            </View>
            <View style={{flex: 0.5, flexDirection: 'row', justifyContent: 'space-around' }}>
@@ -89,7 +89,7 @@ function Functionalities() {
                 </TouchableOpacity>
                 <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareQuestions, stylesButtons.mainConfig]} onPress={() => FrequentQuestionsNavigation()}>
                     <Image source={require(questionsImage)} style={[stylesOptions.squarePhoto]}/>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>{questionsLabel}</Text>
+                    <Text numberOfLines={2} adjustsFontSizeToFit style={[stylesOptions.squareText]}>{questionsLabel}</Text>
                 </TouchableOpacity>
            </View>
         </View>
