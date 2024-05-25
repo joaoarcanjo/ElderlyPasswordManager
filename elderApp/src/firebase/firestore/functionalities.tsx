@@ -1,3 +1,4 @@
+import { Alert } from 'react-native';
 import { encrypt } from '../../algorithms/tweetNacl/crypto';
 import { elderlyCollectionName, keyCollectionName, keyDocumentName, caregiversCollectionName, caregiversDocumentName, credencialsCollectionName, emptyValue } from '../../assets/constants/constants';
 import { getKeychainValueFor } from '../../keychain';
@@ -39,7 +40,7 @@ async function getKey(userId: string): Promise<string> {
             } 
         })
         .catch((error) => {
-            alert('Erro ao tentar obter a chave, tente novamente!')
+            Alert.alert("Erro", 'Erro ao tentar obter a chave, tente novamente!')
             //console.log('Error: ', error)
             return emptyValue
         })
@@ -65,7 +66,7 @@ async function createElderly(elderlyId: string) {
             .set(defaultCaregivers)
 
     } catch (error) {
-        alert('Erro ao tentar criar a conta na firebase!')
+        Alert.alert("Erro", 'Erro ao tentar criar a conta na firebase!')
         //console.log('Error: ', error)
     }
 }
@@ -95,7 +96,7 @@ export async function addCaregiverToArray(elderlyId: string, caregiverId: string
         return true
     })
     .catch(error => {
-        alert('Erro ao tentar adicionar caregiver de leitura, tente novamente!')
+        Alert.alert("Erro", 'Erro ao tentar adicionar caregiver de leitura, tente novamente!')
         return false
     })
 }
@@ -124,7 +125,7 @@ export async function removeCaregiverFromArray(elderlyId: string, caregiverId: s
         return true
     })
     .catch(error => {
-        alert('Erro ao tentar remover caregiver, tente novamente!')
+        Alert.alert("Erro", 'Erro ao tentar remover caregiver, tente novamente!')
         //console.log(error)
         return false
     })
@@ -148,7 +149,7 @@ export async function getCaregiversArray(elderlyId: string, permission: string) 
         return elderlyDoc[permission] || []
     })
     .catch((error) => {
-        alert('Erro ao obter os cuidadores que conseguem ler, tente novamente!')
+        Alert.alert("Erro", 'Erro ao obter os cuidadores que conseguem ler, tente novamente!')
         //console.error('Error: ', error)
         return []
     });
@@ -189,7 +190,7 @@ export async function addCredencialToFirestore(userId: string, newCredencialId: 
             .doc(newCredencialId)
             .set(credential)
         .catch((error) => {
-            alert('Erro ao tentar adicionar a nova credencial, tente novamente!')
+            Alert.alert("Erro", 'Erro ao tentar adicionar a nova credencial, tente novamente!')
             //console.log('Error: ', error)
         })
 }
@@ -204,7 +205,7 @@ async function listAllElderly(): Promise<string[]> {
         docs.forEach((doc) => { console.log(doc.id, ' => ', doc.data()); values.push(doc.data().caregivers) });
         return values
     }).catch((error) => {
-        alert('Erro ao obter os idosos, tente novamente!')
+        Alert.alert("Erro", 'Erro ao obter os idosos, tente novamente!')
         return []
     });
 }
@@ -299,7 +300,7 @@ async function getServerIP(): Promise<string> {
         }
         return emptyValue
     }).catch((error) => {
-        alert('Erro ao obter o IP do servidor, tente novamente!');
+        Alert.alert("Erro", 'Erro ao obter o IP do servidor, tente novamente!');
         console.error('Error: ', error);
         return emptyValue
     })

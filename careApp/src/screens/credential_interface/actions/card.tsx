@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import {View, Text, TouchableOpacity, TextInput} from 'react-native'
+import {View, Text, TouchableOpacity, TextInput, Alert} from 'react-native'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import {Navbar} from '../../../navigation/actions'
 import { credentials, logout, options } from '../styles/styles'
@@ -49,7 +49,7 @@ function CardInfo({ownerId, id, platform, cn, on, sc, vc, edited, auxKey, isElde
       editValueFlash()
       setEditFlag(!editFlag)
     } else {
-      alert('Você não tem permissão para editar credenciais.')
+      Alert.alert('Informação', 'Você não tem permissão para editar credenciais.')
     }
   }
 
@@ -269,7 +269,7 @@ function DeleteCredential({ownerId, id, platform, auxKey, isElderlyCredential}: 
     if(canDelete) {
       setModalVisible(true)
     } else {
-      alert('Você não tem permissão para apagar credenciais.')
+      Alert.alert('Informação', 'Você não tem permissão para apagar credenciais.')
     }
   }
 

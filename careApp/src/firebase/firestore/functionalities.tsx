@@ -1,3 +1,4 @@
+import { Alert } from 'react-native';
 import { encrypt, decrypt } from '../../algorithms/tweetNacl/crypto';
 import { elderlyCollectionName, keyCollectionName, keyDocumentName, caregiverCollectionName, credencialsCollectionName, caregiversCollectionName, caregiversDocumentName, emptyValue } from '../../assets/constants/constants';
 import { CredentialType } from '../../screens/list_credentials/actions/types';
@@ -18,7 +19,7 @@ async function getKey(elderlyId: string): Promise<string> {
             } 
         })
         .catch((error: any) => {
-            alert('Erro ao tentar obter a chave, tente novamente!')
+            Alert.alert('Erro', 'Erro ao tentar obter a chave, tente novamente!')
             console.log('Error: ', error)
             return emptyValue
         })
@@ -40,7 +41,7 @@ async function addCredencialToFirestore(userId: string, encryptionKey: string, n
             .doc(newCredencialId)
             .set(credential)
         .catch((error: any) => {
-            alert('Erro ao tentar adicionar a nova credencial, tente novamente!')
+            Alert.alert('Erro', 'Erro ao tentar adicionar a nova credencial, tente novamente!')
             console.log('Error: ', error)
         })
 }
@@ -64,7 +65,7 @@ export async function listAllCredentialsFromFirestore(userId: string, encryption
         return values
     }).catch((error: any) => {
         //alert('Erro ao obter as credenciais, tente novamente!')
-        alert(error.message)
+        Alert.alert('Erro', error.message)
         return []
     })
 }
@@ -121,7 +122,7 @@ export async function getCaregiversArray(elderlyId: string, permission: string) 
         return elderlyDoc[permission] || []
     })
     .catch((error: any) => {
-        alert('Erro ao obter os cuidadores que conseguem ler, tente novamente!')
+        Alert.alert('Erro', 'Erro ao obter os cuidadores que conseguem ler, tente novamente!')
         console.error('Error: ', error)
         return []
     });
@@ -158,7 +159,7 @@ async function createCaregiver(caregiverId: string) {
         novoDocumentoRef.set(defaultCaregiver)
 
     } catch (error) {
-        alert('Erro ao tentar criar a conta na firebase!')
+        Alert.alert('Erro', 'Erro ao tentar criar a conta na firebase!')
         //console.log('Error: ', error)
     }
 }
@@ -189,7 +190,7 @@ async function getServerIP(): Promise<string> {
         }
         return "";
     }).catch((error) => {
-        alert('Erro ao obter o IP do servidor, tente novamente!');
+        Alert.alert('Erro', 'Erro ao obter o IP do servidor, tente novamente!');
         //console.error('Error: ', error);
         return ""
     })

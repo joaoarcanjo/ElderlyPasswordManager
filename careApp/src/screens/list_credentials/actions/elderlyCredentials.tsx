@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, Dimensions, Keyboard, Image } from 'react-native'
+import { View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, Dimensions, Keyboard, Image, Alert } from 'react-native'
 import { stylesAddCredential, styleScroolView } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import {Navbar} from '../../../navigation/actions'
@@ -34,7 +34,7 @@ function AddCredencial({ elderlyId }: Readonly<{elderlyId: string}>) {
     if(canCreate) {
       navigation.navigate('AddCredential', { userId: elderlyId, key: encryptionKey, isElderlyCredential: true })
     } else {
-      alert('Você não tem permissão para adicionar credenciais.')
+      Alert.alert('Informação', 'Você não tem permissão para adicionar credenciais.')
     }
   }
 

@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { TouchableOpacity, View, Text, TextInput, StyleSheet } from "react-native"
+import { TouchableOpacity, View, Text, TextInput, StyleSheet, Alert } from "react-native"
 import { stylesButtons } from "../../../assets/styles/main_style"
 import { stylesAddCaregiver } from "../styles/styles"
 import { ModalBox } from "../../../components/Modal"
@@ -20,7 +20,7 @@ export function AddElderlyModal({visibility, concludeAction}: Readonly<{visibili
 
   const addElderly = async (email: string) => {
     if(email == userEmail) {
-      alert(Errors.ERROR_USER_EMAIL) 
+      Alert.alert('Erro', Errors.ERROR_USER_EMAIL) 
     } else {
       await saveElderly(userId, '0', '0', email, '0', ElderlyRequestStatus.WAITING)
       .then(() => startSessionWithElderly(email, userId, userName, userEmail, userPhone))
@@ -30,8 +30,8 @@ export function AddElderlyModal({visibility, concludeAction}: Readonly<{visibili
         const errorAux = error as ErrorInstance
         if(errorAux.code === Errors.ERROR_ELDERLY_ALREADY_ADDED
           || errorAux.code === Errors.ERROR_ELDERLY_REQUEST_ALREADY_SENT
-        ) alert(errorAux.code)
-        else deleteElderly(userId, email).then(() => alert(errorAux.code))
+        ) Alert.alert('Erro', errorAux.code)
+        else deleteElderly(userId, email).then(() => Alert.alert('Erro', errorAux.code))
       })
     }
   }

@@ -1,3 +1,4 @@
+import { Alert } from "react-native";
 import { dbSQL } from ".";
 import { maxElderlyCount } from "../assets/constants/constants";
 import { ErrorInstance } from "../exceptions/error";
@@ -35,7 +36,7 @@ export const saveElderly = async (userId: string, elderlyId: string, elderlyName
                 }
             })
             .catch((error) => {
-                alert("Unexpected error.")
+                Alert.alert('Erro', "Unexpected error.")
                 return false
             })  
         } else {
@@ -204,7 +205,7 @@ export const getAllElderly = (userId: string): Promise<Elderly[]> => {
                     return false
                 })
             } else {
-                alert("Problema ao tentar obter os idosos, tente novamente.")
+                Alert.alert('Erro', "Problema ao tentar obter os idosos, tente novamente.")
             }            
         } catch (error) {
             console.log("-> Erro a obter os idosos.")

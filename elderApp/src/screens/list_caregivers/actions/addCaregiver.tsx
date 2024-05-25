@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { TouchableOpacity, View, Text, TextInput, StyleSheet } from "react-native"
+import { TouchableOpacity, View, Text, TextInput, StyleSheet, Alert } from "react-native"
 import { stylesButtons } from "../../../assets/styles/main_style"
 import { stylesAddCaregiver } from "../styles/styles"
 import { ModalBox } from "../../../components/Modal"
@@ -19,7 +19,7 @@ export function AddCaregiverModal({visibility, concludeAction}: Readonly<{visibi
 
   const addCaregiver = async (email: string) => {
     if(email == userEmail) {
-      alert(Errors.ERROR_USER_EMAIL)
+      Alert.alert("Erro", Errors.ERROR_USER_EMAIL)
     } else {
       await saveCaregiver(userId, emptyValue, emptyValue, email, emptyValue, CaregiverRequestStatus.WAITING)
       .then(() =>  startSessionWithCaregiver(email, userId, userName, userEmail, userPhone))
@@ -27,9 +27,9 @@ export function AddCaregiverModal({visibility, concludeAction}: Readonly<{visibi
       .then(() => concludeAction())
       .catch(async (error) => {
         const errorAux = error as ErrorInstance
-        if(errorAux.code === Errors.ERROR_CAREGIVER_ALREADY_ADDED.valueOf()) alert(errorAux.code)
+        if(errorAux.code === Errors.ERROR_CAREGIVER_ALREADY_ADDED.valueOf()) Alert.alert("Erro", errorAux.code)
         else {
-          await deleteCaregiver(userId, email).then(() => alert(errorAux.code))
+          await deleteCaregiver(userId, email).then(() => Alert.alert("Erro", errorAux.code))
           .catch(() => console.log('#1 Error deleting caregiver'))
         }
       })    

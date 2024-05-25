@@ -9,6 +9,7 @@ import { stringToArrayBuffer } from './signal-store';
 import { getKeychainValueFor, saveKeychainValue } from '../../keychain';
 import { signalPrivateKey, signalPublicKey } from '../../keychain/constants';
 import { getServerIP } from '../../firebase/firestore/functionalities';
+import { Alert } from 'react-native';
 
 export interface PublicDirectoryEntry {
     identityKey: ArrayBuffer
@@ -101,7 +102,7 @@ export class SignalDirectory {
             return res.json()
         })
         .catch((_error) => {
-            alert(Errors.ERROR_SERVER_INTERNAL_ERROR)
+            Alert.alert("Erro", Errors.ERROR_SERVER_INTERNAL_ERROR)
         })
     }
 

@@ -1,4 +1,4 @@
-import { StatusBar, View } from 'react-native';
+import { Alert, StatusBar, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -105,12 +105,12 @@ function Inicialization() {
         .then(() => createIdentity(user.uid, userEmail))
         .then(() => initDb()) 
         .then(() => setLoading(true))
-        .catch((e) => alert(e))
+        .catch((e) => Alert.alert('Erro', e))
       }
 
       let { status } = await Notifications.requestPermissionsAsync()
       if (status !== 'granted') {
-        alert('É necessário habilitar as notificações para usar esta aplicação.')
+        Alert.alert('Info', 'É necessário habilitar as notificações para usar esta aplicação.')
       }
     })
   }, [user])

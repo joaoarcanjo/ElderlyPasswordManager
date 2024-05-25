@@ -1,3 +1,4 @@
+import { Alert } from "react-native";
 import { decrypt, encrypt } from "../../../algorithms/tweetNacl/crypto";
 import { emptyValue, readCaregivers, writeCaregivers } from "../../../assets/constants/constants";
 import { getCaregivers } from "../../../database/caregivers";
@@ -55,7 +56,7 @@ export const getAllCredentialsAndValidate = async (userId: string, localDbKey: s
             }
         }))
     } catch (error) {  
-        alert("Error validating credentials from cloud")
+        Alert.alert("Erro", "Erro ao obter as credenciais da cloud. Por favor, tente novamente.")
     }
     await addMissingCredentialsToReturn(toReturn, localDbKey, userId, userKey)
     return toReturn

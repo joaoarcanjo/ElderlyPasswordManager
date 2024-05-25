@@ -4,7 +4,7 @@ import * as Notifications from "expo-notifications"
 import Contants from "expo-constants"
 
 
-import { Platform } from 'react-native'
+import { Alert, Platform } from 'react-native'
 import { useSessionInfo } from '../firebase/authentication/session';
 
 export interface PushNotificationState {
@@ -36,7 +36,7 @@ export const usePushNotifications = (): PushNotificationState => {
             const {status: existingStatus} = await Notifications.getPermissionsAsync()
 
             if(existingStatus !== 'granted') {
-                alert("Failed to get push token for push notifications")
+                Alert.alert("Erro", "Failed to get push token for push notifications")
                 return
             }
 

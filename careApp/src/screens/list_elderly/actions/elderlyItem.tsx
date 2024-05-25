@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { View, Text, Image, TouchableOpacity, Linking } from "react-native"
+import { View, Text, Image, TouchableOpacity, Linking, Alert } from "react-native"
 import { elderlyOptions, elderlyStyle, newElderlyOptions, elderlyContactInfo, decouplingOption } from "../styles/styles"
 import { stylesButtons } from "../../../assets/styles/main_style";
 import { acceptElderly, cancelWaitingElderly, decouplingElderly, refuseElderly } from "./functions";
@@ -104,7 +104,7 @@ export function Elderly({ elderlyId, name, phone, email, setRefresh }: Readonly<
     const sssKey = await getKeychainValueFor(elderlySSSKey(elderlyId))
 
     if(sssKey == emptyValue) {
-      alert('O Idoso foi informado que você aceitou a conexão, por favor aguarde.')
+      Alert.alert('Informação', 'O Idoso foi informado que você aceitou a conexão, por favor aguarde.')
       return
     }
 
