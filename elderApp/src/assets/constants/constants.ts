@@ -49,11 +49,11 @@ export const seeMoreLabel = 'Ver mais'
 export const platformsLabel = 'Plataformas'
 
 export const cuidadoresLabel = 'Gerir Cuidadores'
-export const credentialsLabel = 'Gerir Credenciais'//export const credentialsLabel = 'Gerir credenciais'
+export const credentialsLabel = 'Gerir Credenciais'
 export const settingsLabel = 'Definições'
 export const questionsLabel = 'Ajuda'
 
-export const generatorLabel = 'Gerar nova Palavra-passe' //export const generatorLabel = 'Gerar nova password'
+export const generatorLabel = 'Gerar nova Palavra-passe'
 export const createAccountLabel = 'Criar Conta'
 export const doesNotHaveAccountLabel = 'Não tem conta?'
 export const enterLabel = 'Entrar'

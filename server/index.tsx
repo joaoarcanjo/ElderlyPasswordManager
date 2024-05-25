@@ -29,22 +29,33 @@ let ip = require("ip")
 
 // Create a WebSocket server instance
 const wss = new webSocket.Server({ port: 442 })
+app.set("wss", wss)
 
 const options = {
     key: fs.readFileSync('./certificates/example.com+5-key.pem'),
     cert: fs.readFileSync('./certificates/example.com+5.pem')
 };
 
-
 const http = https ? require("https").Server(options, app) : require("http").Server(app)
 
+//Map to store the client sockets, the key is the username and the value is the socket
 const clientSockets = new Map()
+//Map to store the client sockets, the key is the socket and the value is the username
 const clientSocketsInverse = new Map()
 
+//Map to store the client bundles, the key is the username and the value is the bundle
 const clientBundles = new Map()
+
+//Map to store the client types, the key is the username and the value is the type
+//*Its important to dont allow a caregiver send a request to a caregiver or a elderly to a elderly
+const clientType = new Map()
+
+//Map to store the last update of the bundle, the key is the username and the value is the timestamp
 const clientLastBundleUpdate = new Map()
+//Map to store the public key of the client, the key is the username and the value is the public key
 const clientPublicKey = new Map()
 
+//Map to store the messages that are waiting to be sent, the key is the username and the value is the list of messages
 const clientMessagesWaiting = new Map()
 
 
@@ -101,35 +112,11 @@ wss.on('connection', function connection(ws) {
     ws.on('close', function close() {
         console.log('Client disconnected')
         const username = clientSocketsInverse.get(ws)
-        
         clientSocketsInverse.delete(ws)
         clientSockets.delete(username)
         //clientBundles.delete(username)
     })
 })
-
-app.set("wss", wss)
-
-app.get("/isAlive", (req, res) => {
-    res.send("Hello World!")
-});
-
-app.get("/getBundles", (req, res) => {
-    console.log("GetBundlesCalled!")
-    let identities = ""
-    clientBundles.forEach((value, key) => {
-        identities += key + ", " + JSON + ",\n "
-    })
-    res.send("<html><body><h1>Bundles: " + identities + "</h1></body></html>")
-});
-
-app.get("/getSockets", (req, res) => {
-    let identities = ""
-    clientSockets.forEach((value, key) => {
-        identities += key + ", "
-    })
-    res.send("<html><body><h1>Sockets: " + identities + "</h1></body></html>")
-});
 
 /**
  * Add a bundle to the server
@@ -142,7 +129,7 @@ app.put("/addBundle", (req, res) => {
     console.log("==> AddBundleCalled")
     try {
         let publicKey = Uint8Array.from(tweetnaclUtil.decodeBase64(req.body.publicKey)) 
-        const bundle = Uint8Array.from(tweetnaclUtil.decodeBase64(req.body.bundle))
+        const bundle = Uint8Array.from(tweetnaclUtil.decodeBase64(req.body.bundleSigned))
         
         //Se ainda não possuir a chave privada do utilizador, vamos armazenar no servidor
         if (!clientPublicKey.has(req.body.username)) {
@@ -152,30 +139,31 @@ app.put("/addBundle", (req, res) => {
             publicKey = clientPublicKey.get(req.body.username)
         }
 
-        const verified = verifyMessage(bundle, publicKey)
+        const verifiedBundle = tweetnacl.sign.open(bundle, publicKey)
         //Verifico se a mensagem foi assinada com a devida chave privada
-        if (verified === null) {
+        if (verifiedBundle === null) {
             console.error('Message could not be verified')
             return
         }
-        const verifiedString = tweetnaclUtil.encodeUTF8(verified)
-        const obj = JSON.parse(verifiedString.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F]/g, ''))
+        const verified = tweetnaclUtil.encodeUTF8(verifiedBundle)
+        const bundleObj = JSON.parse(verified.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F]/g, ''))
 
         //Verifico se o username do bundle é igual ao username da requisição
-        if(obj.username !== req.body.username) {
+        if(bundleObj.username !== req.body.username) {
             console.error('Username does not match')
             return
         }
 
         //Verifico se o timestamp do bundle é maior que o timestamp do último bundle
-        if(obj.timestamp <= clientLastBundleUpdate.get(req.body.username)) {
+        if(bundleObj.timestamp <= clientLastBundleUpdate.get(req.body.username)) {
             console.error('Bundle is outdated')
             return
         } else {
-            clientLastBundleUpdate.set(req.body.username, obj.timestamp)
+            clientLastBundleUpdate.set(req.body.username, bundleObj.timestamp)
         }
 
-        clientBundles.set(req.body.username, JSON.stringify(obj.bundle))
+        clientType.set(req.body.username, bundleObj.userType)
+        clientBundles.set(req.body.username, JSON.stringify(bundleObj.bundle))
         console.log('=> Bundle added successfully')
     } catch (error) {
         console.log(error)
@@ -183,15 +171,39 @@ app.put("/addBundle", (req, res) => {
     }
 })
 
-app.get("/getBundle/:username", (req, res) => {
-    console.log("==> GetBundleCalled")
+/**
+ * Get a bundle from the server
+ * @param username - The username of the user
+ * @returns void
+ */
+app.get("/getCaregiverBundle/:username", (req, res) => {
+    console.log("==> getCaregiverBundleCalled")
     try {
-        const bundle = JSON.parse(clientBundles.get(req.params.username))
-        res.send(bundle)
+        if(clientType.get(req.params.username) === 'caregiver') {
+            const bundle = JSON.parse(clientBundles.get(req.params.username))
+            res.send(bundle)
+        } else {
+            res.send(null)
+        }
     } catch (error) {
         res.send(null)
     }
 })
+
+app.get("/getElderlyBundle/:username", (req, res) => {
+    console.log("==> getElderlyBundleCalled")
+    try {
+        if(clientType.get(req.params.username) === 'elderly') {
+            const bundle = JSON.parse(clientBundles.get(req.params.username))
+            res.send(bundle)
+        } else {
+            res.send(null)
+        }
+    } catch (error) {
+        res.send(null)
+    }
+})
+
 
 http.listen({port: PORT}, async () => {
     console.log (ip.address())
@@ -199,7 +211,3 @@ http.listen({port: PORT}, async () => {
     
     console.log(`Server listening on ${PORT}`);
 })
-
-function verifyMessage(signedMessage, publicKey) {
-    return tweetnacl.sign.open(signedMessage, publicKey)
-}

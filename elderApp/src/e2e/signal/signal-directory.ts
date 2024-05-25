@@ -60,6 +60,7 @@ export class SignalDirectory {
         const bundleString = JSON.stringify({
             "bundle": serializedBundle,
             "username": username,
+            "userType": "elderly",
             "timestamp": Date.now()
         })
 
@@ -81,7 +82,7 @@ export class SignalDirectory {
         
         const body = {
             "publicKey": encodeBase64(new Uint8Array(pubKey)),
-            "bundle": encodeBase64(signed),
+            "bundleSigned": encodeBase64(signed),
             "username": username,
         }
 
@@ -104,19 +105,19 @@ export class SignalDirectory {
         })
     }
 
-    async getPreKeyBundle(address: string): Promise<DeviceType | undefined> {
-        //console.log("-> getPreKeyBundle: "+address)
+    async getPreKeyBundle(username: string): Promise<DeviceType | undefined> {
         const ipAddress = await getServerIP()
-        const res = await fetch(`${ipAddress}:${apiPort}/getBundle/${address}`/*, { headers: { 'x-api-key': this._apiKey } }*/)
+        const res = await fetch(`${ipAddress}:${apiPort}/getCaregiverBundle/${username}`)
         
         const bundle = await res.json() 
-        if (!bundle) {
+        if (bundle === null || !bundle) {
             return undefined
         } else {
             try {
                 const bundleString = JSON.stringify(bundle)
                 const bundleParsed = JSON.parse(bundleString.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F]/g, emptyValue))
                 const { identityKey, signedPreKey, registrationId, preKey } = bundleParsed.bundle || {};
+                
                 return deserializeKeyBundle({ identityKey, signedPreKey, preKey, registrationId })
             }catch(e) { 
                 console.log("Erro: "+e)

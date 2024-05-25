@@ -213,6 +213,7 @@ export async function cancelWaitingCaregivers(userId: string) {
     elderlies.forEach(async email => {
         await encryptAndSendMessage(email, ChatMessageDescription.CANCEL_SESSION, true, ChatMessageType.CANCEL_SESSION)
         .then(() => removeSession(email))
+        .then(() => deleteSessionById(userId, email))
         .then(() => deleteCaregiver(userId, email))
         .then(() => setCaregiverListUpdated(userId))
     })

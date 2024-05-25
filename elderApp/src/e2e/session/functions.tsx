@@ -16,6 +16,7 @@ export async function startSession(recipient: string): Promise<void> {
     console.log("--> Start session!")
     let directory = directorySubject.value!
     const keyBundle = await directory.getPreKeyBundle(recipient)
+    console.log("KeyBundle: ", keyBundle)
     const recipientAddress = new SignalProtocolAddress(recipient, 1)
     // Instantiate a SessionBuilder for a remote recipientId + deviceId tuple.
     const sessionBuilder = new SessionBuilder(signalStore, recipientAddress)

@@ -197,6 +197,7 @@ export async function cancelWaitingElderlies(userId: string) {
     elderlies.forEach(async email => {
         await encryptAndSendMessage(email, 'rejectSession', true, ChatMessageType.CANCEL_SESSION)
         .then(() => removeSession(email))
+        .then(() => deleteSessionById(userId, email))
         .then(() => deleteElderly(userId, email))
         .then(() => setElderlyListUpdated())
     })
@@ -206,6 +207,7 @@ export async function cancelWaitingElderly(userId: string, elderlyEmail: string)
     console.log("===> cancelWaitingCaregiverCalled")
     await encryptAndSendMessage(elderlyEmail, 'cancelSession', true, ChatMessageType.CANCEL_SESSION)
     .then(() => removeSession(elderlyEmail))
+    .then(() => deleteSessionById(userId, elderlyEmail))
     .then(() => deleteElderly(userId, elderlyEmail))
     .then(() => setElderlyListUpdated())
 }

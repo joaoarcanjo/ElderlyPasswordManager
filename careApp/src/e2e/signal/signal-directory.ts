@@ -60,6 +60,7 @@ export class SignalDirectory {
         const bundleString = JSON.stringify({
             "bundle": serializedBundle,
             "username": username,
+            "userType": "caregiver",
             "timestamp": Date.now()
         })
 
@@ -81,8 +82,9 @@ export class SignalDirectory {
         
         const body = {
             "publicKey": encodeBase64(new Uint8Array(pubKey)),
-            "bundle": encodeBase64(signed),
+            "bundleSigned": encodeBase64(signed),
             "username": username,
+
         }
 
         const ipAddress = await getServerIP()
@@ -105,12 +107,11 @@ export class SignalDirectory {
     }
 
     async getPreKeyBundle(address: string): Promise<DeviceType | undefined> {
-        //console.log("-> getPreKeyBundle: "+address)
         const ipAddress = await getServerIP()
-        const res = await fetch(`${ipAddress}:${apiPort}/getBundle/${address}`/*, { headers: { 'x-api-key': this._apiKey } }*/)
+        const res = await fetch(`${ipAddress}:${apiPort}/getElderlyBundle/${address}`)
         
         const bundle = await res.json() 
-        if (!bundle) {
+        if (bundle === null || !bundle) {
             return undefined
         } else {
             try {
