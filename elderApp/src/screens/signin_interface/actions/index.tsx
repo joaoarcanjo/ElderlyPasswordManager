@@ -21,7 +21,6 @@ const SignInPage = () => {
     const [loading, setLoading] = useState(false)
     const [loadingPersistent, setLoadingPersistent] = useState(false)
     const [showPassword, setShowPassword] = useState(true)
-    const [accountCreated, setAccountCreated] = useState(false)
 
     const navigation = useNavigation<StackNavigationProp<any>>()
     const toggleShowPassword = () => {setShowPassword(!showPassword);}
@@ -105,7 +104,7 @@ const SignInPage = () => {
                                 />
                             </View>
                             <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
-                                <TouchableOpacity style={[{flex: 0.22, marginHorizontal: '4%', marginTop: '2%'}, stylesButtons.mainConfig, stylesButtons.copyButton]}  onPress={toggleShowPassword} >
+                                <TouchableOpacity style={[{flex: 0.22, marginHorizontal: '4%', marginTop: '2%'}, stylesButtons.mainConfig, stylesButtons.visibilityButton]}  onPress={toggleShowPassword} >
                                     <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={showPassword ? 'eye' : 'eye-off'} size={40} color="black"/> 
                                 </TouchableOpacity>  
                             </View> 
@@ -114,12 +113,12 @@ const SignInPage = () => {
                             { loading ? <Spinner/>
                             : 
                                 <>
-                                <TouchableOpacity style={[{flex: 0.6, width: '80%', marginBottom: '5%', marginHorizontal: '10%', marginTop: '5%'}, stylesButtons.mainConfig, stylesButtons.copyButton, actions.signInButton]} onPress={signIn}>
+                                <TouchableOpacity style={[{flex: 0.6, width: '80%', marginBottom: '5%', marginHorizontal: '10%', marginTop: '5%'}, stylesButtons.mainConfig, actions.signInButton]} onPress={signIn}>
                                     <Text style={{fontSize: 30, marginVertical: '5%'}}>{enterLabel}</Text>
                                 </TouchableOpacity>
                                 <View style={{ borderBottomColor: 'black', borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: '3%' }}/>
                                 <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginLeft: '10%', marginBottom: '2%', marginTop: '10%', justifyContent: 'center', fontSize: 20}]}>{doesNotHaveAccountLabel}</Text>
-                                <TouchableOpacity style={[{flex: 0.4, width: '80%', marginBottom: '5%', marginHorizontal: '10%'}, stylesButtons.mainConfig, stylesButtons.copyButton, actions.sinUpButton]} onPress={signUp}>
+                                <TouchableOpacity style={[{flex: 0.4, width: '80%', marginBottom: '5%', marginHorizontal: '10%'}, stylesButtons.mainConfig, actions.sinUpButton]} onPress={signUp}>
                                     <Text style={{fontSize: 30, marginVertical: '5%'}}>{createAccountLabel}</Text>
                                 </TouchableOpacity>
                                 </>

@@ -6,11 +6,11 @@ import {Navbar} from '../../../navigation/actions'
 import { savePasswordGenerated } from '../../../database/passwords'
 import MainBox from '../../../components/MainBox'
 import { useSessionInfo } from '../../../firebase/authentication/session'
-import { decLength, incLength, updateUpperCase, updateLowerCase, updateNumbers, updateSpecial } from '../../../components/passwordGenerator/functions'
-import { lengthLabel, requirementLabel, upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, timeoutToSavePassword, historyLabel, copyLabel, regenerateLabel, pagePasswordHistory, pageTitleGenerator, emptyValue } from '../../../assets/constants/constants'
-import { copyValue } from '../../../components/UserMessages'
-import { FlashMessage, copyPasswordDescription } from '../../../assets/constants/messages'
+import { copyLabel, emptyValue, historyLabel, lengthLabel, lowerLabel, numbersLabel, pagePasswordHistory, pageTitleGenerator, passwordDefaultLengthGenerator, regenerateLabel, requirementLabel, specialLabel, timeoutToSavePassword, upperLabel } from '../../../assets/constants/constants'
+import { Requirements } from '../../../components/passwordGenerator/constants'
 import Algorithm from '../../../algorithms/newPassword/newPass'
+import { FlashMessage, copyPasswordDescription } from '../../../assets/constants/messages'
+import { copyValue } from '../../../components/UserMessages'
 
 const minusImage = "../../../assets/images/minus.png"
 const plusImage = "../../../assets/images/plus.png"
@@ -28,6 +28,13 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
   const [special, setSpecial] = useState(true)
   const { localDBKey, userId } = useSessionInfo()
 
+  const incLength = () => {if(length < 40)setLength(length + 1)}
+  const decLength = () => {if(length > 8)setLength(length - 1)}
+  const updateUpperCase = () => {if(!verifyPool(Requirements.Upper)) setUppercase(!uppercase)}
+  const updateLowerCase = () => {if(!verifyPool(Requirements.Lower)) setLowercase(!lowercase)}
+  const updateSpecial = () => {if(!verifyPool(Requirements.Special)) setSpecial(!special)}
+  const updateNumbers = () => {if(!verifyPool(Requirements.Numbers)) setNumbers(!numbers)}
+
   //UseEffects: ---
   useEffect(() => { 
     generatePassword()
@@ -41,6 +48,22 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
     }, timeoutToSavePassword);
     return () => clearTimeout(timer);
   }, [password, passGenerated]);
+
+
+  //Auxiliar functions: ---
+  function verifyPool(currentCase: string): boolean {
+    switch(currentCase) {
+      case Requirements.Upper: 
+        return (uppercase && !lowercase && !numbers && !special)
+      case Requirements.Lower: 
+        return (!uppercase && lowercase && !numbers && !special)
+      case Requirements.Special: 
+        return (!lowercase && special && !uppercase && !numbers)
+      case Requirements.Numbers: 
+        return (!lowercase && !special && numbers && !uppercase)
+    }
+    return (!lowercase && !uppercase && !numbers && !special) 
+  }
 
   async function saveNewPassword() {
     if(passGenerated != password) {
@@ -98,7 +121,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
                   <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '5%' }]}>{copyLabel}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[{flex: 0.5, marginLeft: '2%'}, passwordFirstHalf.regenerateButton, stylesButtons.mainConfig]} onPress={() => generatePassword() }>
-                  <Text numberOfLines={2} adjustsFontSizeToFit style={[{ fontSize: 22, textAlign: 'center', margin: '5%' }]}>{regenerateLabel}</Text>
+              <Text numberOfLines={2} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '5%', textAlign: 'center' }]}>{regenerateLabel}</Text>
                 </TouchableOpacity>
               </View>
           </View>
@@ -113,13 +136,13 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
           <Text numberOfLines={1} adjustsFontSizeToFit style={[passwordSecondHalf.lengthText]}>{lengthLabel}</Text>
         </View>
         <View style={[{flex: 0.60, flexDirection: 'row', margin: '5%', justifyContent: 'center',  alignItems: 'center'}]}>
-        <TouchableOpacity style={[{flex: 0.30}]} onPress={() => decLength(setLength, length)}>
+        <TouchableOpacity style={[{flex: 0.30}]} onPress={() => decLength()}>
           <Image source={require(minusImage)} style={[{width: '100%', height: 40, margin: '5%', resizeMode: 'contain'}]}/>
         </TouchableOpacity>
         <View style={[{flex: 0.40, marginHorizontal: '5%', alignItems: 'center'}, passwordSecondHalf.lengthDisplay]}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '1%'}, passwordSecondHalf.numberSelectedText]}>{length}</Text>
         </View>
-        <TouchableOpacity style={[{flex: 0.30}]} onPress={() => incLength(setLength, length)}>
+        <TouchableOpacity style={[{flex: 0.30}]} onPress={() => incLength()}>
           <Image source={require(plusImage)} style={[{width: '100%', height: 40, margin: '5%', resizeMode: 'contain'}]}/>
         </TouchableOpacity>
         </View>
@@ -128,11 +151,13 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
   }
   
   function Requirement({name, value, func}:Readonly<{name: string, value: boolean, func: Function}>) {
+    
+    const style = value ? stylesButtons.selectedButton : stylesButtons.unselectedButton
     return (
-      <TouchableOpacity style={[{flex: 0.50, height: '90%', marginHorizontal: '3%', justifyContent: 'center',  alignItems: 'center' }, passwordSecondHalf.lengthContainer, stylesButtons.mainConfig]} onPress={() => func()}>
-      <Text numberOfLines={1} adjustsFontSizeToFit style={[passwordSecondHalf.requirementsText, {textAlign: 'center'}]}>{name}</Text>
-      <View style={{flex: 0.65, width: '100%', marginTop: '5%'}}>
-        {value ? 
+      <TouchableOpacity style={[{flex: 0.50, height: '90%', marginHorizontal: '3%', justifyContent: 'center',  alignItems: 'center' }, passwordSecondHalf.lengthContainer, stylesButtons.mainConfig, style]} onPress={() => func()}>
+        <Text numberOfLines={1} adjustsFontSizeToFit style={[passwordSecondHalf.requirementsText]}>{name}</Text>
+        <View style={{flex: 0.65, width: '100%', marginTop: '5%'}}>
+          {value ? 
           <Image source={require(checkImage)} style={[{width: '100%', height: '100%', resizeMode: 'contain'}]}/>:
           <Image source={require(crossImage)} style={[{width: '100%', height: '100%', resizeMode: 'contain'}]}/>}
         </View>
@@ -148,12 +173,12 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
               <RequirementLength/>
               <View style={{flex: 0.70, marginHorizontal: '5%', marginVertical: '5%'}}>
                 <View style={[{flex: 0.50, width: '90%', flexDirection: 'row', justifyContent: 'center',  alignItems: 'center'}]}>
-                  <Requirement name={upperLabel} value={uppercase} func={() => updateUpperCase(setUppercase, uppercase, lowercase, numbers, special)}/>
-                  <Requirement name={lowerLabel} value={lowercase} func={() => updateLowerCase(setLowercase, uppercase, lowercase, numbers, special)}/>
+                  <Requirement name={upperLabel} value={uppercase} func={updateUpperCase}/>
+                  <Requirement name={lowerLabel} value={lowercase} func={updateLowerCase}/>
                 </View>
                 <View style={[{flex: 0.50, width: '90%', flexDirection: 'row', justifyContent: 'center',  alignItems: 'center'}]}>
-                  <Requirement name={numbersLabel} value={numbers} func={() => updateNumbers(setNumbers, uppercase, lowercase, numbers, special)}/>
-                  <Requirement name={specialLabel} value={special} func={() => updateSpecial(setSpecial, uppercase, lowercase, numbers, special)}/>
+                  <Requirement name={numbersLabel} value={numbers} func={updateNumbers}/>
+                  <Requirement name={specialLabel} value={special} func={updateSpecial}/>
                 </View>
               </View>
           </View>

@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native'
-import { addCredentialButtonBackgroud, addCredentialButtonBorder, blackBorder, greyBackgroud, greyBorder, optionsButtonBackgroud, optionsButtonBorder, regenerateButtonBackgroud, regenerateButtonBorder, visibilityButtonBackground, visibilityButtonBorder, whiteBackgroud } from '../../../assets/styles/colors';
+import { addCredentialButtonBackgroud, addCredentialButtonBorder, blackBorder, copyButtonBackground, copyButtonBorder, greyBackgroud, greyBorder, regenerateButtonBackgroud, regenerateButtonBorder, whiteBackgroud } from '../../../assets/styles/colors';
 
 
 /**
@@ -27,7 +27,7 @@ const stylesAddCredential = StyleSheet.create({
     },
     buttonText: {
         fontSize: 25,
-        color: '#f5f5f5',
+        color: whiteBackgroud,
         fontWeight: 'bold'
     }
 })
@@ -46,23 +46,17 @@ const passwordFirstHalf = StyleSheet.create({
         backgroundColor: whiteBackgroud,
         borderColor: greyBorder,
     },
-    visibilityButton: {
+    copyButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         borderWidth: 5, // Largura da linha na margem
-        backgroundColor: visibilityButtonBackground,
-        borderColor: visibilityButtonBorder,
+        backgroundColor: copyButtonBackground,
+        borderColor: copyButtonBorder,
     },
     regenerateButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         borderWidth: 5, // Largura da linha na margem
         backgroundColor: regenerateButtonBackgroud,
         borderColor: regenerateButtonBorder,
-    },
-    optionsButton: {
-        borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        borderWidth: 5, // Largura da linha na margem
-        backgroundColor: optionsButtonBackgroud,
-        borderColor: optionsButtonBorder,
     }
 })
 

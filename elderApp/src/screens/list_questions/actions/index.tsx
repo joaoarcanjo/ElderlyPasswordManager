@@ -1,18 +1,17 @@
 import React,{useEffect, useRef, useState} from 'react'
-import {View, Text, TouchableOpacity, Image, ScrollView, StyleSheet, Platform} from 'react-native'
+import {View, Text, TouchableOpacity, ScrollView, StyleSheet} from 'react-native'
 import {Navbar} from '../../../navigation/actions'
-import { styleScroolView, stylesVideo } from '../styles/styles'
+import { styleScroolView, styleSectionButton, stylesVideo } from '../styles/styles'
 import MainBox from '../../../components/MainBox';
-import { cancelLabel, closeLabel, detailsLabel, pageTitleQuestions, passosLabel, perguntasLabel, seeMoreLabel, sugestoesLabel } from '../../../assets/constants/constants';
+import { closeLabel, pageTitleQuestions, passosLabel, perguntasLabel, seeMoreLabel, sugestoesLabel } from '../../../assets/constants/constants';
 import { stylesButtons } from '../../../assets/styles/main_style';
-import { blueBackground, darkBlueBackground, darkGreenBorder, greyBackgroud, lightBlueBackground } from '../../../assets/styles/colors';
+import { darkBlueBackground, greyBackgroud } from '../../../assets/styles/colors';
 import { useVideoPlayer, VideoView } from 'expo-video';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { FontAwesome } from '@expo/vector-icons';
 
 const jsonData = require('../../../assets/json/questions.json');
 
 interface Questions { title: string, description: [string], video: string}
-
 
 function ScrollItemExample({question, buttonSelected}: Readonly<{question: Questions, buttonSelected: number}>) {
 
@@ -36,14 +35,13 @@ function ScrollItemExample({question, buttonSelected}: Readonly<{question: Quest
 
   return (
     <View style={[{margin: '3%'}, styleScroolView.itemContainer]}>
-
       <View style={{flex: 0.65, marginHorizontal: '3%', marginVertical: '2%', flexDirection: 'row'}}>
         <View style={{flex: flex, marginRight: '3%' }}>
           <Text numberOfLines={numberOfLines} adjustsFontSizeToFit style={[{ fontSize: 20, margin: '3%', color: 'black', textAlign: 'left' }]}>{question.title}</Text>
         </View>
         {question.description.length > 0 ? 
         <View style={{flex: 0.25, marginVertical: '1%'}}>
-          <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%', justifyContent: 'center',  alignItems: 'center'}, stylesButtons.whiteButton, stylesButtons.mainConfig]} onPress={changeInfoState}>
+          <TouchableOpacity style={[{flex: 1, marginHorizontal: '2%', marginVertical: '2%', justifyContent: 'center',  alignItems: 'center'}, stylesButtons.moreInfoButton, stylesButtons.mainConfig]} onPress={changeInfoState}>
             {showInfo ? 
             <View style={{marginVertical: '5%', alignContent: 'center', alignItems: 'center'}}>
               <FontAwesome name="arrow-circle-down" size={34} color={darkBlueBackground} />
@@ -63,6 +61,7 @@ function ScrollItemExample({question, buttonSelected}: Readonly<{question: Quest
         <View style={{ borderBottomColor: 'black', borderBottomWidth: StyleSheet.hairlineWidth, margin: '4%' }}/>
         {question.description.map((item: any, index: number) => <Text key={index} numberOfLines={10} adjustsFontSizeToFit style={[{ fontSize: 15, margin: '5%', marginTop: '1%', color: 'black', textAlign: 'left' }]}>{item}</Text>)}
         {question.video.length > 0 ?
+
         <>
         <View style={{ borderBottomColor: 'black', borderBottomWidth: StyleSheet.hairlineWidth, margin: '4%' }}/>
         <View style={stylesVideo.contentContainer}>
@@ -90,9 +89,9 @@ function QuestionsList() {
   const [questions, setQuestions] = useState(jsonData.questions)
   const [buttonSelected, setButtonSelected] = useState(0)
 
-  const questionColor = buttonSelected === 0 ? stylesButtons.blueButton : stylesButtons.whiteButton
-  const stepsColorSelected = buttonSelected === 1 ? stylesButtons.blueButton : stylesButtons.whiteButton
-  const suggestionsColorSelected = buttonSelected === 2 ? stylesButtons.blueButton : stylesButtons.whiteButton
+  const questionColor = buttonSelected === 0 ? styleSectionButton.sectionButtonSelected : styleSectionButton.sectionButtonNotSelected
+  const stepsColorSelected = buttonSelected === 1 ? styleSectionButton.sectionButtonSelected : styleSectionButton.sectionButtonNotSelected
+  const suggestionsColorSelected = buttonSelected === 2 ? styleSectionButton.sectionButtonSelected : styleSectionButton.sectionButtonNotSelected
 
   return (
     <View style={{ flex: 0.75, width: '100%', marginTop: '5%', justifyContent: 'space-around'}}>
@@ -104,7 +103,7 @@ function QuestionsList() {
             <TouchableOpacity style={[{flex: 0.33, marginHorizontal: '1%'}, questionColor, stylesButtons.mainConfig]} onPress={() => {setQuestions(jsonData.questions); setButtonSelected(0)}}>
               <Text style={{fontSize: 17, color: 'black', marginVertical: '10%', fontWeight: 'bold'}}>{perguntasLabel}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[{flex: 0.33, marginHorizontal: '1%'}, stepsColorSelected, stylesButtons.mainConfig, stepsColorSelected]} onPress={() => {setQuestions(jsonData.stepByStep); setButtonSelected(1)}}>
+            <TouchableOpacity style={[{flex: 0.33, marginHorizontal: '1%'}, stepsColorSelected, stylesButtons.mainConfig]} onPress={() => {setQuestions(jsonData.stepByStep); setButtonSelected(1)}}>
               <Text style={{fontSize: 17, color: 'black', marginVertical: '10%', fontWeight: 'bold'}}>{passosLabel}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[{flex: 0.33, marginHorizontal: '1%'}, suggestionsColorSelected, stylesButtons.mainConfig]} onPress={() => {setQuestions(jsonData.suggestions); setButtonSelected(2)}}>
@@ -125,3 +124,4 @@ export default function FrequentQuestions() {
     </View>
   )
 }
+

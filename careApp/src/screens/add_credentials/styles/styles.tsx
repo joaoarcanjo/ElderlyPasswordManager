@@ -27,7 +27,7 @@ const stylesAddCredential = StyleSheet.create({
     },
     buttonText: {
         fontSize: 25,
-        color: '#f5f5f5',
+        color: whiteBackgroud,
         fontWeight: 'bold'
     }
 })

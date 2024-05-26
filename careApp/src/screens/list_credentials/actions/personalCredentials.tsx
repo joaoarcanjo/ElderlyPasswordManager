@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, Keyboard, Image} from 'react-native'
-import { stylesAddCredential, styleScroolView } from '../styles/styles'
+import { stylesAddCredential, styleScroolView, styleSearch } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import {Navbar} from '../../../navigation/actions'
 import { useNavigation, useIsFocused } from '@react-navigation/native'
@@ -11,7 +11,7 @@ import { useSessionInfo } from '../../../firebase/authentication/session'
 import { getAllCredentialsAndValidate, getAllLocalCredentialsFormattedWithFilter } from './functions'
 import { addCredentialsLabel, allLabel, cardsLabel, closeLabel, emptyValue, loginLabel, optionsLabel, pageTitleCredentials, searchLabel, seeMoreLabel } from '../../../assets/constants/constants'
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons'
-import { darkBlueBackground, whiteBackgroud } from '../../../assets/styles/colors'
+import { darkBlueBackground, dividerLineColor, whiteBackgroud } from '../../../assets/styles/colors'
 import { CredentialType } from './types'
 import { ScrollItem } from './credentialItem'
 
@@ -78,16 +78,16 @@ function CredentialsList() {
 
   useEffect(() => search(), [searchType])
 
-  const allSelected = buttonSelected === 0 ? stylesButtons.blueButton : stylesButtons.whiteButton
-  const cardsSelected = buttonSelected === 1 ? stylesButtons.blueButton : stylesButtons.whiteButton
-  const loginsSelected = buttonSelected === 2 ? stylesButtons.blueButton : stylesButtons.whiteButton
+  const allSelected = buttonSelected === 0 ? styleSearch.optionButtonSelected : styleSearch.optionButtonNotSelected
+  const cardsSelected = buttonSelected === 1 ? styleSearch.optionButtonSelected : styleSearch.optionButtonNotSelected
+  const loginsSelected = buttonSelected === 2 ? styleSearch.optionButtonSelected : styleSearch.optionButtonNotSelected
 
   return (
     <View style={{ flex: 0.72, flexDirection: 'row', justifyContent: 'space-around'}}>
       <View style={[{ flex: 1, marginTop:'5%', marginHorizontal: '4%', justifyContent: 'space-around'}, styleScroolView.credencialsContainer]}>
         <View style={{flexDirection: 'row'}}>
           <View style={{flex: 0.25, marginLeft: '2%', marginVertical: '2%'}}>
-            <TouchableOpacity style={[{flex: 1, justifyContent: 'center',  alignItems: 'center'}, stylesButtons.whiteButton, stylesButtons.mainSlimConfig]} onPress={() => {setShowFilter(!showFilter)}}>
+            <TouchableOpacity style={[{flex: 1, justifyContent: 'center',  alignItems: 'center'}, stylesButtons.moreInfoButton, stylesButtons.mainSlimConfig]} onPress={() => {setShowFilter(!showFilter)}}>
               {!showFilter ? 
               <View style={{marginVertical: '5%', alignContent: 'center', alignItems: 'center'}}>
                 <FontAwesome name="arrow-circle-down" size={34} color={darkBlueBackground} />
@@ -107,7 +107,7 @@ function CredentialsList() {
             style={{ flex: 1, fontSize: 22, padding: '2%', marginHorizontal: '1%' }}
             onChangeText={(value) => {setSearchValue(value)}}
             />
-            <TouchableOpacity style={[{flex: 0.2, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.navigateButton, stylesButtons.mainConfig]} onPress={fetchCredencials}>
+            <TouchableOpacity style={[{flex: 0.2, marginHorizontal: '2%', marginVertical: '2%'}, styleSearch.button, stylesButtons.mainConfig]} onPress={fetchCredencials}>
               <MaterialIcons style={{marginHorizontal: '1%'}} name={'search'} size={40} color="black"/> 
             </TouchableOpacity>
           </View>
@@ -131,8 +131,8 @@ function CredentialsList() {
             <MaterialIcons style={{marginHorizontal: '1%'}} name={'person'} size={40} color="orange"/> 
           </TouchableOpacity>
         </View> : <></>}
-        <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '1%' }}/>
-        <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '1%' }}/>
+        <View style={{ height: 1, backgroundColor: dividerLineColor, marginVertical: '1%' }}/>
+        <View style={{ height: 1, backgroundColor: dividerLineColor, marginVertical: '1%' }}/>
         {isFething ?
         <Spinner width={300} height={300}/> :
         <ScrollView>

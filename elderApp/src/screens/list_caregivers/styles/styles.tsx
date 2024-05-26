@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native'
-import { acceptButtonBackground, acceptButtonBorder, addCaregiverButtonBackgroud, addCaregiverButtonBorder, blueBorder, desvinculateButtonBackgroud, desvinculateButtonBorder, greyBackgroud, greyBorder, permissionsNoButtonBackground, permissionsNoButtonBorder, permissionsYesButtonBackground, permissionsYesButtonBorder, rejectButtonBackground, rejectButtonBorder, superlightBlueBackgroud, whiteBackgroud } from '../../../assets/styles/colors'
+import { addCaregiverButtonBackground, addCaregiverButtonBorder, blueBorder, desvinculateButtonBackgroud, desvinculateButtonBorder, greyBackgroud, greyBorder, permissionsNoButtonBackground, permissionsNoButtonBorder, permissionsYesButtonBackground, permissionsYesButtonBorder, superlightBlueBackgroud, whiteBackgroud } from '../../../assets/styles/colors'
 
 /**
  * Estilos da view para adicionar uma nova credencial
@@ -7,13 +7,13 @@ import { acceptButtonBackground, acceptButtonBorder, addCaregiverButtonBackgroud
 const stylesAddCaregiver = StyleSheet.create({
     button: {
         borderRadius: 20, // Define o raio dos cantos para arredondá-los
-        backgroundColor: addCaregiverButtonBackgroud,
+        backgroundColor: addCaregiverButtonBackground,
         borderColor: addCaregiverButtonBorder,
         borderWidth: 3, // Largura da linha na marge
     },
     buttonText: {
         fontSize: 25,
-        color: '#f5f5f5',
+        color: whiteBackgroud,
         fontWeight: 'bold'
     }
 })

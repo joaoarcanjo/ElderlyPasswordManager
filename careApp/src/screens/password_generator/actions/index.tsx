@@ -4,13 +4,12 @@ import { stylesButtons } from '../../../assets/styles/main_style'
 import { historyStyle, passwordFirstHalf, passwordSecondHalf } from '../styles/styles'
 import {Navbar} from '../../../navigation/actions'
 import { savePasswordGenerated } from '../../../database/passwords'
-import Algorithm from './algorithm'
 import MainBox from '../../../components/MainBox'
 import { useSessionInfo } from '../../../firebase/authentication/session'
-import { copyLabel, emptyValue, lengthLabel, lowerLabel, numbersLabel, pageTitleGenerator, passwordDefaultLengthGenerator, regenerateLabel, requirementLabel, specialLabel, timeoutToSavePassword, upperLabel } from '../../../assets/constants/constants'
+import { copyLabel, emptyValue, historyLabel, lengthLabel, lowerLabel, numbersLabel, pagePasswordHistory, pageTitleGenerator, passwordDefaultLengthGenerator, regenerateLabel, requirementLabel, specialLabel, timeoutToSavePassword, upperLabel } from '../../../assets/constants/constants'
 import { Requirements } from '../../../components/passwordGenerator/constants'
-import { copyValue } from '../../../components/userMessages/UserMessages'
-import { FlashMessage, copyPasswordDescription } from '../../../components/userMessages/messages'
+import { FlashMessage, copyPasswordDescription, copyValue } from '../../../components/UserMessages'
+import Algorithm from './algorithm'
 
 const minusImage = "../../../assets/images/minus.png"
 const plusImage = "../../../assets/images/plus.png"
@@ -92,13 +91,13 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
 
     const HistoryPressed = () => {
       saveNewPassword()
-      navigation.push('PasswordHistory')
+      navigation.push(pagePasswordHistory)
     }
 
     return (
       <View style= { { flex: 0.06, width: '100%', marginTop: '2%', alignItems: 'flex-end' } }>
             <TouchableOpacity style={[{flex: 1,  width: '45%', marginRight: '8%'}, historyStyle.historyButton, stylesButtons.mainConfig]} onPress={() => HistoryPressed()}>
-                <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontWeight: 'bold', fontSize: 22 }]}>Histórico</Text>
+                <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontWeight: 'bold', fontSize: 22 }]}>{historyLabel}</Text>
             </TouchableOpacity>
       </View>
     )
@@ -151,8 +150,10 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
   }
   
   function Requirement({name, value, func}:Readonly<{name: string, value: boolean, func: Function}>) {
+    
+    const style = value ? stylesButtons.selectedButton : stylesButtons.unselectedButton
     return (
-      <TouchableOpacity style={[{flex: 0.50, height: '90%', marginHorizontal: '3%', justifyContent: 'center',  alignItems: 'center' }, passwordSecondHalf.lengthContainer, stylesButtons.mainConfig]} onPress={() => func()}>
+      <TouchableOpacity style={[{flex: 0.50, height: '90%', marginHorizontal: '3%', justifyContent: 'center',  alignItems: 'center' }, passwordSecondHalf.lengthContainer, stylesButtons.mainConfig, style]} onPress={() => func()}>
         <Text numberOfLines={1} adjustsFontSizeToFit style={[passwordSecondHalf.requirementsText]}>{name}</Text>
         <View style={{flex: 0.65, width: '100%', marginTop: '5%'}}>
           {value ? 

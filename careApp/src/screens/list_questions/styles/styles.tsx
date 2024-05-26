@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native"
-import { blackBorder, greyBackgroud } from "../../../assets/styles/colors"
+import { itemContainerBackgroud, itemContainerBorder, questionButtonNotSelected, questionButtonNotSelectedBorder, questionButtonSelectedBackground, questionButtonSelectedBorder } from "../../../assets/styles/colors"
 
 /**
  * Estilos da scroll view com as credenciais
@@ -14,9 +14,24 @@ const styleScroolView = StyleSheet.create({
     itemContainer: {
         borderRadius: 20, // Define o raio dos cantos para arredondá-los
         borderWidth: 2, // Largura da linha na margem
-        backgroundColor: greyBackgroud, // Cor de fundo
-        borderColor: blackBorder,
+        backgroundColor: itemContainerBackgroud, // Cor de fundo
+        borderColor: itemContainerBorder,
         marginVertical: 8, // Margem vertical entre os itens
+    }
+})
+
+const styleSectionButton = StyleSheet.create({
+    sectionButtonSelected: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        borderWidth: 2, // Largura da linha na margem
+        backgroundColor: questionButtonSelectedBackground, // Cor de fundo
+        borderColor: questionButtonSelectedBorder,
+    },
+    sectionButtonNotSelected: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        borderWidth: 2, // Largura da linha na margem
+        backgroundColor: questionButtonNotSelected, // Cor de fundo
+        borderColor: questionButtonNotSelectedBorder,
     }
 })
 
@@ -37,4 +52,4 @@ const stylesVideo = StyleSheet.create({
     },
 })
 
-export { styleScroolView, stylesVideo }
+export { styleScroolView, stylesVideo, styleSectionButton }

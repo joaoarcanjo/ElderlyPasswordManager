@@ -59,7 +59,7 @@ export default function CredentialsCardInput() {
     return (
         <View style={[{flex: 0.85}]}>
             <View style={{width: '100%', flexDirection: 'row'}}>
-                <View style={[{flex: 1,marginHorizontal: '5%'}, stylesInputsCredencials.inputContainer]}>
+                <View style={[{flex: 1, marginTop:'3%', marginHorizontal: '5%'}, stylesInputsCredencials.inputContainer]}>
                     <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginTop: '2%', marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: 20}]}>{cardPlatformLabel}</Text>
                     <View style={[{margin: '4%', marginTop: '1%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 1, backgroundColor: whiteBackgroud }]}>
                         <TextInput

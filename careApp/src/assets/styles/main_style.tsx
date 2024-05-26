@@ -1,5 +1,6 @@
 import {StyleSheet} from 'react-native'
-import { acceptButtonBackground, acceptButtonBorder, blueBorder, cancelButtonBackground, cancelButtonBorder, copyButtonBackground, copyButtonBorder, darkGreenBorder, greyBackgroud, greyBorder, lightGreenBackgroud, lightOrangeBackground, lightOrangeBorder, lightPurpleBackground, orangeBorder, purpleBackground, purpleBorder, regenerateButtonBackgroud, regenerateButtonBorder, rejectButtonBackground, rejectButtonBorder, saveButtonBackground, saveButtonBorder, superLightOrangeBackground, superlightBlueBackgroud, superlightGreenBackground, visibilityButtonBackground, visibilityButtonBorder, whiteBackgroud } from './colors'
+import { acceptButtonBackground, acceptButtonBorder, blueBorder, cancelButtonBackground, cancelButtonBorder, copyButtonBackground, copyButtonBorder, darkGreenBorder, editButtonBackgroud, editButtonBorder, greyBorder, lightOrangeBackground, lightPurpleBackground, navigateButtonBackgroud, navigateButtonBorder, optionsButtonBackground, optionsButtonBorder, orangeBorder, purpleBorder, rejectButtonBackground, rejectButtonBorder, superlightBlueBackgroud, superlightGreenBackground, visibilityButtonBackground, visibilityButtonBorder, whiteBackgroud } from './colors'
+
 
 const stylesMainBox = StyleSheet.create({
     pageInfoContainer: {
@@ -53,35 +54,36 @@ const stylesButtons = StyleSheet.create({
         shadowOpacity: 1, // IOS
         shadowRadius: 1, //IOS
     },
+    editButton: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        backgroundColor: editButtonBackgroud, // Cor de fundo
+        borderColor: editButtonBorder
+    },
+    
     acceptButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         backgroundColor: acceptButtonBackground,
         borderColor: acceptButtonBorder
-    },
-    cancelButton: {
-        borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        backgroundColor: cancelButtonBackground,
-        borderColor: cancelButtonBorder
     },
     rejectButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         backgroundColor: rejectButtonBackground,
         borderColor: rejectButtonBorder
     },
+    cancelButton: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        backgroundColor: cancelButtonBackground,
+        borderColor: cancelButtonBorder
+    },
+    optionsButton: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        backgroundColor: optionsButtonBackground, // Cor de fundo
+        borderColor: optionsButtonBorder
+    },
     copyButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         backgroundColor: copyButtonBackground,
         borderColor: copyButtonBorder
-    },
-    regenerateButton: {
-        borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        backgroundColor: regenerateButtonBackgroud,
-        borderColor: regenerateButtonBorder,
-    },
-    saveButton: {
-        borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        backgroundColor: saveButtonBackground, // Cor de fundo
-        borderColor: saveButtonBorder
     },
     visibilityButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
@@ -93,46 +95,39 @@ const stylesButtons = StyleSheet.create({
         backgroundColor: superlightBlueBackgroud, // Cor de fundo
         borderColor: blueBorder
     },
-    greenButton: {
+    //ESTILO PARA O BOTÃO COM A SETA PARA MAIS INFORMAÇAO
+    moreInfoButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        backgroundColor: lightGreenBackgroud, // Cor de fundo
-        borderColor: darkGreenBorder
+        backgroundColor: whiteBackgroud, // Cor de fundo
+        borderColor: greyBorder
     },
-    lightGreenButton: {
+    //ESTILO PARA OS BOTOES COM OPÇÃO DE SELECIONADO E NÃO SELECIONADO
+    selectedButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         backgroundColor: superlightGreenBackground, // Cor de fundo
         borderColor: darkGreenBorder
     },
-    greyButton: {
-        borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        backgroundColor: greyBackgroud, // Cor de fundo
-        borderColor: greyBorder
-    },
-    whiteButton: {
+    unselectedButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         backgroundColor: whiteBackgroud, // Cor de fundo
         borderColor: greyBorder
     },
-    purpleButton: {
+    //BUTOES UTILIZADOS PARA SELECIONAR QUAL O FORMULARIO DE ADICIONAR CREDENCIAL 
+    cardButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         backgroundColor: lightPurpleBackground, // Cor de fundo
         borderColor: purpleBorder
     },
-    orangeButton: {
+    loginButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         backgroundColor: lightOrangeBackground, // Cor de fundo
         borderColor: orangeBorder
     },
-    lightOrangeButton: {
+    navigateButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        backgroundColor: superLightOrangeBackground, // Cor de fundo
-        borderColor: lightOrangeBorder
+        backgroundColor: navigateButtonBackgroud, // Cor de fundo
+        borderColor: navigateButtonBorder
     },
-    borderOrangeButton: {
-        borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        backgroundColor: whiteBackgroud, // Cor de fundo
-        borderColor: lightOrangeBorder
-    }
 })
 
 export { stylesMainBox, stylesButtons }

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import {View, Text, TouchableOpacity, Image, Linking, TextInput} from 'react-native'
+import {View, Text, TouchableOpacity, Image, TextInput} from 'react-native'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import {Navbar} from '../../../navigation/actions'
-import { accountInfo, appInfo, logout } from '../styles/styles'
+import { accountInfo, logout } from '../styles/styles'
 import MainBox from '../../../components/MainBox'
 import { FIREBASE_AUTH } from '../../../firebase/FirebaseConfig'
 import { elderlyId, elderlyName, elderlyPhone, elderlyPwd } from '../../../keychain/constants'
@@ -16,7 +16,7 @@ import { sendCaregiversNewInfo } from './functions'
 import { closeWebsocket } from '../../../e2e/network/webSockets'
 import { usernameSubject } from '../../../e2e/identity/state'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
-import { accountInfoLabel, cancelLabel, editLabel, emptyValue, gitHubUrl, leaveAccountLabel, logoutAlertLabel, moreAboutTheApp, pageTitleSettings, saveChangesLabel, saveLabel } from '../../../assets/constants/constants'
+import { accountInfoLabel, cancelLabel, editLabel, emptyValue, gitHubUrl, leaveAccountLabel, logoutAlertLabel, pageTitleSettings, saveChangesLabel, saveLabel } from '../../../assets/constants/constants'
 import { editCanceledFlash, editValueFlash, elderlyPersonalInfoUpdatedFlash } from '../../../components/UserMessages'
 
 function AccountInfo() {
@@ -181,15 +181,15 @@ function AccountInfo() {
       <View style= { { flex: 0.25, marginHorizontal: '10%', marginTop: '3%', flexDirection: 'row'} }>
         {editFlag ?
           <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
-            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.editButton]} onPress={() => {toggleEditFlag(); editValueFlash();}}>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.editButton]} onPress={() => {toggleEditFlag(); editValueFlash();}}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>{editLabel}</Text>
             </TouchableOpacity>
           </View> :
           <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
-            {infoModified && <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.saveButton]} onPress={() => setModalVisible(true)}>
+            {infoModified && <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.acceptButton]} onPress={() => setModalVisible(true)}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>{saveLabel}</Text>
             </TouchableOpacity>}
-            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={cancelUpdate}>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.cancelButton]} onPress={cancelUpdate}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>{cancelLabel}</Text>
             </TouchableOpacity>
           </View>

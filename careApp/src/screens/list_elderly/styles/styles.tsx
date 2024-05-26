@@ -1,19 +1,19 @@
 import {StyleSheet} from 'react-native'
-import { addElderlyButtonBackgroud, addElderlyButtonBorder, greyBackgroud, greyBorder, whiteBackgroud, superlightBlueBackgroud, blueBorder, desvinculateButtonBackgroud, desvinculateButtonBorder } from '../../../assets/styles/colors'
+import { greyBackgroud, greyBorder, whiteBackgroud, superlightBlueBackgroud, blueBorder, desvinculateButtonBackgroud, desvinculateButtonBorder, addElderlyButtonBackground, addElderlyButtonBorder, openCredentialsButtonBackground, openCredentialsButtonBorder, contactInfoButtonBackgroud, contactInfoButtonBorder } from '../../../assets/styles/colors'
 
 /**
  * Estilos da view para adicionar uma nova credencial
  */
 const stylesAddCaregiver = StyleSheet.create({
-    button: {
-        borderRadius: 20, // Define o raio dos cantos para arredondá-los
-        backgroundColor: addElderlyButtonBackgroud,
+    addCaregiver: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        backgroundColor: addElderlyButtonBackground,
         borderColor: addElderlyButtonBorder,
-        borderWidth: 3, // Largura da linha na marge
+        borderWidth: 3
     },
     buttonText: {
         fontSize: 25,
-        color: '#f5f5f5',
+        color: whiteBackgroud,
         fontWeight: 'bold'
     }
 })
@@ -39,21 +39,20 @@ const elderlyStyle = StyleSheet.create({
         backgroundColor: greyBackgroud, // Cor de fundo
         borderColor: greyBorder,
         marginBottom: 15,
-    }
+    },
 })
 
 const elderlyContactInfo = StyleSheet.create({
-    contactContainer: {
-      borderRadius: 20, // Define o raio dos cantos para arredondá-los
-      borderWidth: 2, // Largura da linha na margem
-      backgroundColor: greyBackgroud, // Cor de fundo
-      borderColor: greyBorder
-    },
     accountInfo: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         borderWidth: 2, // Largura da linha na margem
-        backgroundColor: whiteBackgroud, // Cor de fundo
-        borderColor: greyBorder
+        backgroundColor: contactInfoButtonBackgroud, // Cor de fundo
+        borderColor: contactInfoButtonBorder
+    },
+    credentialsButton: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        backgroundColor: openCredentialsButtonBackground, // Cor de fundo
+        borderColor: openCredentialsButtonBorder
     },
     accountInfoText: {
       fontSize: 20,
@@ -68,24 +67,6 @@ const newElderlyOptions = StyleSheet.create({
     },
 })
 
-/**
- * Estilos ações sobre idoso
- */
-const elderlyOptions = StyleSheet.create({
-    openCredentials: {
-        borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        borderWidth: 3, // Largura da linha na margem
-        backgroundColor: '#9FCFDD',
-        borderColor: '#297D95',
-    },
-    elderlyMoreInfo: {
-        borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        borderWidth: 3, // Largura da linha na margem
-        backgroundColor: '#F5D274',
-        borderColor: '#D09C11',
-    }
-})
-
 const decouplingOption = StyleSheet.create({
     button: {
       borderRadius: 15, // Define o raio dos cantos para arredondá-los
@@ -94,7 +75,7 @@ const decouplingOption = StyleSheet.create({
       borderWidth: 3
     },
     buttonText: {
-        color: '#f5f5f5'
+        color: whiteBackgroud
     }
 })
 
@@ -108,4 +89,4 @@ const elderlyName = StyleSheet.create({
     }
 })
 
-export { elderlyName, decouplingOption, elderlyOptions, newElderlyOptions, stylesAddCaregiver, elderlyStyle, elderlyContactInfo }
+export { elderlyName, decouplingOption, newElderlyOptions, stylesAddCaregiver, elderlyStyle, elderlyContactInfo }

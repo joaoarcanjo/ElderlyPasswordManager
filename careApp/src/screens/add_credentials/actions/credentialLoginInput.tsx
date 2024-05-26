@@ -2,10 +2,10 @@ import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons"
 import { useNavigation } from "@react-navigation/native"
 import { StackNavigationProp } from "@react-navigation/stack"
 import { useState, useEffect } from "react"
-import { View, TextInput, TouchableOpacity, Text, Image } from "react-native"
+import { View, TextInput, TouchableOpacity, Text } from "react-native"
 import { getScore } from "../../../algorithms/zxcvbn/algorithm"
 import { placeholderPlatform, placeholderURI, placeholderUsername, placeholderPassword, addLabel, emptyValue, optionsLabel, regenerateLabel, usernameLabel, passwordLabel, uriLabel, platformLabel, seeMoreLabel } from "../../../assets/constants/constants"
-import { darkBlueBackground, darkOrangeBackground, whiteBackgroud } from "../../../assets/styles/colors"
+import { darkBlueBackground, whiteBackgroud } from "../../../assets/styles/colors"
 import { stylesButtons } from "../../../assets/styles/main_style"
 import AvaliationEmoji from "../../../components/EmojiAvaliation"
 import { PasswordOptionsModal, PlatformSelectionModal } from "../../../components/Modal"
@@ -17,7 +17,6 @@ import { addCredencialToFirestore } from "../../../firebase/firestore/functional
 import { sendElderlyCredentialInfoAction } from "../../credential_interface/actions/functions"
 import { stylesInputsCredencials, stylesAddCredential, passwordFirstHalf } from "../styles/styles"
 import { getNewId, encrypt } from "../../../algorithms/tweetNacl/crypto"
-import { Platform } from "../../../assets/json/interfaces"
 import { getSpecificUsernameAndPassword } from "../../../components/SpecificUsername&Password"
 
 const jsonData = require('../../../assets/json/platforms.json')
@@ -100,7 +99,7 @@ export function CredentialsLoginInput({ ownerId, auxKey, isElderlyCredential }: 
                             onChangeText={text => setPlatform(text)}
                             />
                         </View>
-                        <TouchableOpacity style={[{justifyContent: 'center',  alignItems: 'center', marginHorizontal: '1%'}, stylesButtons.whiteButton, stylesButtons.mainSlimConfig]} onPress={() => {setPlatformModal(true)}}>
+                        <TouchableOpacity style={[{justifyContent: 'center',  alignItems: 'center', marginHorizontal: '1%'}, stylesButtons.moreInfoButton, stylesButtons.mainSlimConfig]} onPress={() => {setPlatformModal(true)}}>
                             <View style={{margin: '2%', alignContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
                                 <FontAwesome name="arrow-circle-down" size={34} color={darkBlueBackground} />
                                 <Text style={{marginLeft: '5%'}}>{seeMoreLabel}</Text>
@@ -143,7 +142,7 @@ export function CredentialsLoginInput({ ownerId, auxKey, isElderlyCredential }: 
                         </View>
                     </View>
                     <View style={{flexDirection: 'row', marginVertical: '5%', marginHorizontal: '3%'}}>
-                        <TouchableOpacity style={[{flex: 0.40}, stylesButtons.blueButton, stylesButtons.mainConfig]} onPress={() => {setModalVisible(true)}}>
+                        <TouchableOpacity style={[{flex: 0.40}, stylesButtons.optionsButton, stylesButtons.mainConfig]} onPress={() => {setModalVisible(true)}}>
                             <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 24, margin: '5%' }]}>{optionsLabel}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[{flex: 0.20, marginHorizontal: '3%', flexDirection: 'row'}, stylesButtons.visibilityButton, stylesButtons.mainConfig]} onPress={toggleShowPassword} >

@@ -9,7 +9,7 @@ export function Requirement({name, value, func}:Readonly<{name: string, value: b
   const crossImage = "../../assets/images/cross.png"
   const checkImage = "../../assets/images/check.png"
 
-  const style = value ? stylesButtons.whiteButton : stylesButtons.greyButton
+  const style = value ? stylesButtons.selectedButton : stylesButtons.unselectedButton
 
   return (
     <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, style]} onPress={() => {func()}}>

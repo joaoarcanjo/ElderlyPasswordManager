@@ -138,15 +138,15 @@ function CardInfo({ownerId, id, platform, cn, on, sc, vc, edited, auxKey, isElde
       <View style= { { flex: 0.13, marginHorizontal: '10%', flexDirection: 'row'} }>
         {editFlag ?
           <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
-            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.editButton]} onPress={toggleEditFlag}>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.editButton]} onPress={toggleEditFlag}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>{editLabel}</Text>
             </TouchableOpacity>
           </View> :
           <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
-            {credentialsModified && <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.saveButton]} onPress={() => setModalVisible(true)}>
+            {credentialsModified && <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.acceptButton]} onPress={() => setModalVisible(true)}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>{saveLabel}</Text>
             </TouchableOpacity>}
-            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={cancelUpdate}>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.cancelButton]} onPress={cancelUpdate}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>{cancelLabel}</Text>
             </TouchableOpacity>
           </View>
@@ -239,7 +239,7 @@ function CardInfo({ownerId, id, platform, cn, on, sc, vc, edited, auxKey, isElde
           </View>
           {editFlag ?
           <View style={{ flex: 0.14, flexDirection: 'row', justifyContent: 'space-between', marginBottom: '5%' }}>
-            <TouchableOpacity style={[{marginLeft:'5%', marginTop: '0%'}, stylesButtons.mainConfig, stylesButtons.copyButton]}  onPress={toggleShowSecurityCode} >
+            <TouchableOpacity style={[{marginLeft:'5%', marginTop: '0%'}, stylesButtons.mainConfig, stylesButtons.visibilityButton]}  onPress={toggleShowSecurityCode} >
               <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={showSecurityCode ? 'eye' : 'eye-off'} size={40} color="black"/> 
             </TouchableOpacity>
           </View>
@@ -302,7 +302,7 @@ function DeleteCredential({ownerId, id, platform, auxKey, isElderlyCredential}: 
   return (
     <View style= { { flex: 0.10, flexDirection: 'row', justifyContent: 'space-around', marginBottom: '2%'} }>
       <YesOrNoModal question={'Apagar a credencial?'} yesFunction={() => deleteCredentialAction()} noFunction={() => setModalVisible(false)} visibleFlag={modalVisible}/>
-      <TouchableOpacity style={[{flex: 1, marginHorizontal: '20%', marginVertical: '3%'}, logout.logoutButton, stylesButtons.mainConfig]} onPress={setModalVisibleAux}>
+      <TouchableOpacity style={[{flex: 1, marginHorizontal: '20%', marginVertical: '3%'}, credentials.deleteCredentialButton, stylesButtons.mainConfig]} onPress={setModalVisibleAux}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>{deleteCredentialLabel}</Text>
       </TouchableOpacity>
     </View>

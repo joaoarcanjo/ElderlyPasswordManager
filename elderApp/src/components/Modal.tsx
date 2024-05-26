@@ -1,24 +1,24 @@
 import { BlurView } from "expo-blur";
 import React, { ReactNode, useState } from "react";
-import { View, StyleSheet, Modal, TouchableOpacity, Text, ScrollView, Image } from 'react-native'
+import { View, StyleSheet, Modal, TouchableOpacity, Text, ScrollView } from 'react-native'
 import { stylesButtons } from "../assets/styles/main_style"
 import { modal, options } from "../screens/credential_interface/styles/styles"
 import { Spinner } from "./LoadingComponents"
-import { upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, modalIntensity, copyCardNumberLabel, copyPasswordLabel, copySecurityCodeLabel, copyUsernameLabel, copyVerificationCodeLabel, navigateLabel, otherLabel, saveLabel, loginLabel, cardLabel, cancelLabel } from "../assets/constants/constants";
+import { upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, modalIntensity, saveLabel, loginLabel, cardLabel, cancelLabel } from "../assets/constants/constants";
 import { updateUpperCase, updateLowerCase, updateNumbers, updateSpecial } from "./passwordGenerator/functions";
 import { Requirement, RequirementLength } from "./passwordGenerator/Requirement";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Platform } from "../assets/json/interfaces";
+import { platformButtonBackgroud, platformButtonBorder } from "../assets/styles/colors";
 
 export function YesOrNoModal({question, yesFunction, noFunction, visibleFlag}: Readonly<{question: string, yesFunction: Function, noFunction: Function, visibleFlag: boolean}>) {
   return (
     <ModalBox visibleFlag={visibleFlag}>
       <Text numberOfLines={2} adjustsFontSizeToFit style={modal.modalText}>{question}</Text>
       <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.saveButton]} onPress={() => yesFunction()}>
+        <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.acceptButton]} onPress={() => yesFunction()}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Sim</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={() => noFunction()}>
+        <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.rejectButton]} onPress={() => noFunction()}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Não</Text>
         </TouchableOpacity>
       </View>
@@ -31,10 +31,10 @@ export function CredentialTypeModal({question, loginFunction, cardFunction, visi
     <ModalBox visibleFlag={visibleFlag}>
       <Text numberOfLines={2} adjustsFontSizeToFit style={modal.modalText}>{question}</Text>
       <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.orangeButton]} onPress={() => loginFunction()}>
+        <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.loginButton]} onPress={() => loginFunction()}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{loginLabel}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.purpleButton]} onPress={() => cardFunction()}>
+        <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.cardButton]} onPress={() => cardFunction()}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{cardLabel}</Text>
         </TouchableOpacity>
       </View>
@@ -52,10 +52,10 @@ export function YesOrNoSpinnerModal({question, yesFunction, noFunction, visibleF
         <>
           <Text numberOfLines={2} adjustsFontSizeToFit style={modal.modalText}>{question}</Text>
           <View style={{flexDirection: 'row'}}>
-            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.saveButton]} onPress={() => yesFunction()}>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.acceptButton]} onPress={() => yesFunction()}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Sim</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={() => noFunction()}>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.cancelButton]} onPress={() => noFunction()}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Não</Text>
             </TouchableOpacity>
           </View>
@@ -92,10 +92,10 @@ export function PasswordOptionsModal({saveFunction, closeFunction, visibleFlag}:
         </View>
         <View style={{ borderBottomColor: 'black', borderWidth: StyleSheet.hairlineWidth, marginVertical: '5%' }}/>
         <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.greenButton]} onPress={saveRequirements}>
+          <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.acceptButton]} onPress={saveRequirements}>
             <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{saveLabel}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={() => closeFunction()}>
+          <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.cancelButton]} onPress={() => closeFunction()}>
             <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{cancelLabel}</Text>
           </TouchableOpacity>
         </View>
@@ -106,7 +106,9 @@ export function PasswordOptionsModal({saveFunction, closeFunction, visibleFlag}:
 
 export function PlatformSelectionModal({setPlatformName, setPlatformURI, closeFunction, visibleFlag}: Readonly<{setPlatformName: Function, setPlatformURI: Function, closeFunction: Function, visibleFlag: boolean}>) {
 
-  const jsonData = require('../assets/json/platforms.json')
+  interface Platform { platformName: any, platformURI: any, materialCommunityIcon: any, iconColor: any }
+
+  const jsonData = require('../assets/json/platforms.json');
 
   const applySelection = (platform: Platform) => {
     setPlatformName(platform.platformName)
@@ -120,7 +122,7 @@ export function PlatformSelectionModal({setPlatformName, setPlatformURI, closeFu
         <ScrollView style={{width: '100%'}}>
           {jsonData.platforms.map((platform: Platform, index: string) => 
             <View key={index} style={{flexDirection: 'row'}}>
-              <TouchableOpacity style={[{flex: 1, marginVertical: '3%', flexDirection: 'row'}, stylesButtons.mainConfig, stylesButtons.greyButton]} onPress={() => {applySelection(platform)}}>
+              <TouchableOpacity style={[{flex: 1, marginVertical: '3%', flexDirection: 'row'}, stylesButtons.mainConfig, platformSelection.itemButton]} onPress={() => {applySelection(platform)}}>
                 <MaterialCommunityIcons name={platform.materialCommunityIcon} size={35} color={platform.iconColor}/>
                 <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }, options.permissionsButtonText]}>{platform.platformName}</Text>
               </TouchableOpacity>
@@ -129,8 +131,8 @@ export function PlatformSelectionModal({setPlatformName, setPlatformURI, closeFu
         </ScrollView>
       </View><View style={{ height: 1, backgroundColor: 'black', marginVertical: '3%' }}/>
       <View style={{flexDirection: 'row', marginBottom: '2%'}}>
-        <TouchableOpacity style={[{flex: 1, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.orangeButton]} onPress={() => closeFunction()}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>{otherLabel}</Text>
+        <TouchableOpacity style={[{flex: 1, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.cancelButton]} onPress={() => closeFunction()}>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>{cancelLabel}</Text>
         </TouchableOpacity>
       </View>
     </ModalBox>
@@ -182,4 +184,11 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
 });
-  
+
+const platformSelection = StyleSheet.create({
+  itemButton: {
+      borderRadius: 15, // Define o raio dos cantos para arredondá-los
+      backgroundColor: platformButtonBackgroud, // Cor de fundo
+      borderColor: platformButtonBorder,
+  }
+})

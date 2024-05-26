@@ -4,7 +4,7 @@ import { StackNavigationProp } from "@react-navigation/stack"
 import { useState, useEffect } from "react"
 import { View, TextInput, TouchableOpacity, Text, Image } from "react-native"
 import { getScore } from "../../../algorithms/zxcvbn/algorithm"
-import { passwordDefaultLengthGenerator, placeholderPlatform, placeholderURI, usernameLabel, placeholderUsername, passwordLabel, placeholderPassword, optionsLabel, regenerateLabel, addLabel, platformLabel, uriLabel, emptyValue, detailsLabel, seeMoreLabel, platformsLabel } from "../../../assets/constants/constants"
+import { passwordDefaultLengthGenerator, placeholderPlatform, placeholderURI, usernameLabel, placeholderUsername, passwordLabel, placeholderPassword, optionsLabel, regenerateLabel, addLabel, platformLabel, uriLabel, emptyValue, seeMoreLabel } from "../../../assets/constants/constants"
 import { darkBlueBackground, greyBackgroud, whiteBackgroud } from "../../../assets/styles/colors"
 import { stylesButtons } from "../../../assets/styles/main_style"
 import AvaliationEmoji from "../../../components/EmojiAvaliation"
@@ -16,7 +16,7 @@ import { ChatMessageType } from "../../../e2e/messages/types"
 import { useSessionInfo } from "../../../firebase/authentication/session"
 import { addCredencialToFirestore } from "../../../firebase/firestore/functionalities"
 import { sendCaregiversCredentialInfoAction } from "../../credential_interface/actions/functions"
-import { stylesInputsCredencials, stylesAddCredential } from "../styles/styles"
+import { stylesInputsCredencials, stylesAddCredential, passwordFirstHalf } from "../styles/styles"
 import { encrypt, getNewId } from "../../../algorithms/tweetNacl/crypto"
 import { getSpecificUsernameAndPassword } from "../../../components/SpecificUsername&Password"
 import { Platform } from "../../../assets/json/interfaces"
@@ -92,11 +92,11 @@ export default function CredentialsLoginInput() {
     }
 
     return (
-        <View style={[{flex: 0.85}]}>
+       <View style={[{flex: 0.85}]}>
             <View style={{width: '100%', flexDirection: 'row'}}>
                 <View style={[{flex: 1, marginTop:'3%', marginHorizontal: '5%'}, stylesInputsCredencials.inputContainer]}>
                     <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginTop: '2%', marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: 20}]}>{platformLabel}</Text>
-                    <View style={{margin: '4%',flex: 1, flexDirection: 'row', marginTop: '1%', marginRight: '1%'}}>
+                    <View style={{flex: 1, flexDirection: 'row', margin: '4%', marginTop: '1%', marginRight: '2%'}}>
                         <View style={[{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 1, backgroundColor: whiteBackgroud }]}>
                             <TextInput
                             placeholder={placeholderPlatform}
@@ -106,7 +106,7 @@ export default function CredentialsLoginInput() {
                             onChangeText={text => setPlatform(text)}
                             />
                         </View>
-                        <TouchableOpacity style={[{justifyContent: 'center',  alignItems: 'center', marginHorizontal: '1%'}, stylesButtons.whiteButton, stylesButtons.mainSlimConfig]} onPress={() => {setPlatformModal(true)}}>
+                        <TouchableOpacity style={[{justifyContent: 'center',  alignItems: 'center', marginHorizontal: '1%'}, stylesButtons.moreInfoButton, stylesButtons.mainSlimConfig]} onPress={() => {setPlatformModal(true)}}>
                             <View style={{margin: '2%', alignContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
                                 <FontAwesome name="arrow-circle-down" size={34} color={darkBlueBackground} />
                                 <Text style={{marginLeft: '5%'}}>{seeMoreLabel}</Text>
@@ -141,7 +141,7 @@ export default function CredentialsLoginInput() {
                             <TextInput
                             placeholder={placeholderPassword}
                             value={password}
-                            style={{ flex: 1, fontSize: 17, marginRight: '3%', marginVertical: '4%'}}
+                            style={{ flex: 1, fontSize: 17, marginLeft: '1%', marginRight: '3%', marginVertical: '4%'}}
                             secureTextEntry={showPassword}
                             onChangeText={text => setPassword(text)}
                             />
@@ -149,13 +149,13 @@ export default function CredentialsLoginInput() {
                         </View>
                     </View>
                     <View style={{flexDirection: 'row', marginVertical: '5%', marginHorizontal: '3%'}}>
-                        <TouchableOpacity style={[{flex: 0.40}, stylesButtons.blueButton, stylesButtons.mainConfig]} onPress={() => {setModalVisible(true)}}>
+                        <TouchableOpacity style={[{flex: 0.40}, stylesButtons.optionsButton, stylesButtons.mainConfig]} onPress={() => {setModalVisible(true)}}>
                             <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 24, margin: '5%' }]}>{optionsLabel}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[{flex: 0.20, marginHorizontal: '3%', flexDirection: 'row'}, stylesButtons.visibilityButton, stylesButtons.mainConfig]} onPress={toggleShowPassword} >
                             <MaterialCommunityIcons name={showPassword ? 'eye' : 'eye-off'} size={35} color="black"/> 
                         </TouchableOpacity>
-                        <TouchableOpacity style={[{flex: 0.40}, stylesButtons.greenButton, stylesButtons.mainConfig]} onPress={() => regeneratePassword(requirements, setPassword)}>
+                        <TouchableOpacity style={[{flex: 0.40}, passwordFirstHalf.regenerateButton, stylesButtons.mainConfig]} onPress={() => regeneratePassword(requirements, setPassword)}>
                             <Text numberOfLines={2} adjustsFontSizeToFit style={[{ fontSize: 24, margin: '5%', textAlign: 'center' }]}>{regenerateLabel}</Text>
                         </TouchableOpacity>
                     </View>

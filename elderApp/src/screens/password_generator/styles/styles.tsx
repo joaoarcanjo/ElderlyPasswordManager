@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native'
-import { copyButtonBackground, copyButtonBorder, greyBackgroud, greyBorder, historyButtonBackgroud, historyButtonBorder, regenerateButtonBackgroud, regenerateButtonBorder, whiteBackgroud } from '../../../assets/styles/colors'
+import { copyButtonBackground, copyButtonBorder, firstHalfContainerBackgroud, greyBorder, historyButtonBackgroud, historyButtonBorder, passwordOptionButtonBackgroud, passwordOptionButtonBorder, regenerateButtonBackgroud, regenerateButtonBorder, whiteBackgroud } from '../../../assets/styles/colors'
 
 /**
  * Estilos da view que informa qual é a página atual
@@ -17,7 +17,7 @@ const passwordFirstHalf = StyleSheet.create({
         borderTopLeftRadius: 20, // Arredonda o canto inferior esquerdo
         borderTopRightRadius: 20, // Arredonda o canto inferior direito     
         borderBottomWidth: 0,
-        backgroundColor: greyBackgroud, // Cor de fundo
+        backgroundColor: firstHalfContainerBackgroud, // Cor de fundo
         borderWidth: 1, // Largura da linha na margem
     },
     passwordGenerated: {
@@ -55,8 +55,8 @@ const passwordSecondHalf = StyleSheet.create({
     lengthContainer: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         borderWidth: 2, // Largura da linha na margem
-        backgroundColor: greyBackgroud, // Cor de fundo
-        borderColor: greyBorder,
+        backgroundColor: passwordOptionButtonBackgroud, // Cor de fundo
+        borderColor: passwordOptionButtonBorder,
     },
     lengthText: {
         fontSize: 25,

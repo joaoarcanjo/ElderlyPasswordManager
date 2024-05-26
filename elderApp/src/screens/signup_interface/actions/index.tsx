@@ -92,12 +92,12 @@ export function SignUp () {
                             onChangeText={setPassword} />
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
-                        <TouchableOpacity style={[{ flex: 0.22, marginHorizontal: '4%', marginTop: '2%' }, stylesButtons.mainConfig, stylesButtons.copyButton]} onPress={toggleShowPassword}>
+                        <TouchableOpacity style={[{ flex: 0.22, marginHorizontal: '4%', marginTop: '2%' }, stylesButtons.mainConfig, stylesButtons.visibilityButton]} onPress={toggleShowPassword}>
                             <MaterialCommunityIcons style={{ marginHorizontal: '5%' }} name={showPassword ? 'eye' : 'eye-off'} size={40} color="black" />
                         </TouchableOpacity>
                     </View>
                     <View style={{}}>
-                        <TouchableOpacity style={[{  marginVertical: '5%', marginHorizontal: '10%' }, stylesButtons.mainConfig, stylesButtons.copyButton, actions.sinUpButton]} onPress={signUp}>
+                        <TouchableOpacity style={[{  marginVertical: '5%', marginHorizontal: '10%' }, stylesButtons.mainConfig, actions.sinUpButton]} onPress={signUp}>
                             <Text style={{ fontSize: 30, marginVertical: '5%' }}>{createAccountLabel}</Text>
                         </TouchableOpacity>
                     </View>

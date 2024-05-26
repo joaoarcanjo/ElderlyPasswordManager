@@ -15,7 +15,7 @@ import { acceptLabel, cancelLabel, emptyValue, noOption, refuseLabel, unlinkLabe
 import { cancelWaitingCaregiver } from "../../../e2e/messages/functions"
 import { encryptAndSendMessage } from "../../../e2e/messages/sendMessage"
 import { setCaregiverListUpdated } from "./state"
-import { darkGreenBackgroud, darkRedBackground, lightGreenBackgroud, lightRedBackground } from "../../../assets/styles/colors"
+import { darkGreenBackgroud, darkRedBackground, dividerLineColor, lightGreenBackgroud, lightRedBackground } from "../../../assets/styles/colors"
 
 const caregiverImage = '../../../assets/images/caregiver.png'
 const telephoneImage = '../../../assets/images/telephone.png'
@@ -72,11 +72,11 @@ export function CaregiverToBeAccepted({ caregiverId, number, name, email, setRef
        <View style={[{ flexDirection: 'row', alignItems: 'center', marginVertical: '3%' }, caregiverStyle.newCaregiverContainer]}>
         <View style={{ flex: 1, marginTop: '4%' }}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 20, marginHorizontal: '5%', fontWeight: 'bold' }]}>{`Pedido recebido de: ${email}`}</Text>
-          <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }}/>
+          <View style={{ height: 1, backgroundColor: dividerLineColor, marginVertical: '3%' }}/>
           <View style={{flexDirection: 'row', marginHorizontal: '3%'}}>
             <Text numberOfLines={2} adjustsFontSizeToFit style={[{ fontSize: 18 }, caregiverStyle.newCaregiverText]}>{`O idoso ${name} com o email ${email} enviou-lhe um pedido!`}</Text>
           </View>
-          <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }}/>
+          <View style={{ height: 1, backgroundColor: dividerLineColor, marginVertical: '3%' }}/>
           <View style={{flexDirection: 'row'}}>
             <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.acceptButton, stylesButtons.mainConfig]} onPress={accept}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginVertical: '5%' }, newCaregiverContainer.buttonText]}>{acceptLabel}</Text>
@@ -101,11 +101,11 @@ export function CaregiverWaiting({caregiverEmail, setRefresh}: Readonly<{ caregi
       <View style={[{ flexDirection: 'row', alignItems: 'center', marginVertical: '3%' }, caregiverStyle.sentRequestCaregiverContainer]}>
         <View style={{ flex: 1, marginTop: '4%' }}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 20, marginHorizontal: '5%', fontWeight: 'bold' }]}>{`Pedido enviado para: ${caregiverEmail}`}</Text>
-          <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }}/>
+          <View style={{ height: 1, backgroundColor: dividerLineColor, marginVertical: '3%' }}/>
           <View style={{flexDirection: 'row', marginHorizontal: '3%'}}>
             <Text numberOfLines={2} adjustsFontSizeToFit style={{ fontSize: 18 }}>{`À espera que o cuidador com o email ${caregiverEmail} aceite o seu pedido.`}</Text>
           </View>
-          <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '3%' }}/>
+          <View style={{ height: 1, backgroundColor: dividerLineColor, marginVertical: '3%' }}/>
           <View style={{flexDirection: 'row'}}>
             <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.cancelButton, stylesButtons.mainConfig]} onPress={cancel}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, marginVertical: '5%' }, newCaregiverContainer.buttonText]}>{cancelLabel}</Text>

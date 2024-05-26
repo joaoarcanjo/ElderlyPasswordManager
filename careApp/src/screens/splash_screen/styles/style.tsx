@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native"
+import { splashScreenTextColor } from "../../../assets/styles/colors"
 
 const splashStyle = StyleSheet.create({
     text: {
@@ -6,7 +7,7 @@ const splashStyle = StyleSheet.create({
         textAlign: 'center', 
         letterSpacing: 0.5, 
         justifyContent: 'center', 
-        color: '#e37629', 
+        color: splashScreenTextColor, 
         marginTop: '20%', 
         fontWeight: 'bold'
     }

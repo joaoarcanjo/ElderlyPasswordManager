@@ -1,18 +1,18 @@
 import {StyleSheet} from 'react-native'
+import { addCredentialButtonBackgroud, addCredentialButtonBorder, cardOrLoginOptionButtonNotSelectedBackground, cardOrLoginOptionButtonNotSelectedBorder, cardOrLoginOptionButtonSelectedBackground, cardOrLoginOptionButtonSelectedBorder, credentialItemBackgroud, credentialItemBorder, searchButtonBackgroud, searchButtonBorder, whiteBackgroud } from '../../../assets/styles/colors'
 
 /**
  * Estilos da view para adicionar uma nova credencial
  */
 const stylesAddCredential = StyleSheet.create({
     addCredentialButton: {
-        borderRadius: 20, // Define o raio dos cantos para arredondá-los
-        borderWidth: 5, // Largura da linha na margem
-        backgroundColor: '#58b859',
-        borderColor: '#449447',
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        backgroundColor: addCredentialButtonBackgroud, // Cor de fundo
+        borderColor: addCredentialButtonBorder
     },
     addCredentialButtonText: {
         fontSize: 20,
-        color: '#f5f5f5'
+        color: whiteBackgroud
     }
 })
 
@@ -26,38 +26,29 @@ const styleScroolView = StyleSheet.create({
         borderBottomWidth: 0,
         borderWidth: 1, // Largura da linha na margem
     },
-    itemContainer: {
-        borderRadius: 20, // Define o raio dos cantos para arredondá-los
-        borderWidth: 2, // Largura da linha na margem
-        backgroundColor: '#DCE0DE', // Cor de fundo
-        borderColor: '#8c8d8f',
-        marginVertical: 8, // Margem vertical entre os itens
-    },
-    itemCopyUsername: {
+    credentialContainer: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        borderWidth: 3, // Largura da linha na margem
-        backgroundColor: '#9FCFDD',
-        borderColor: '#297D95',
-    },
-    itemCopyPassword: {
-        borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        borderWidth: 3, // Largura da linha na margem
-        backgroundColor: '#F5D274',
-        borderColor: '#D09C11',
-    },
-    itemMoreInfoButton: {
-        borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        borderWidth: 5, // Largura da linha na margem
-        backgroundColor: '#F3E7AB',
-        borderColor: '#E1C748',
-    },
-    navigateButton: {
-        borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        borderWidth: 5, // Largura da linha na margem
-        backgroundColor: '#9FCFDD',
-        borderColor: '#297D95',
+        backgroundColor: credentialItemBackgroud,
+        borderColor: credentialItemBorder,
     }
 })
 
+const styleSearch = StyleSheet.create({
+    button: {
+        borderRadius: 15,
+        backgroundColor: searchButtonBackgroud,
+        borderColor: searchButtonBorder
+    },
+    optionButtonSelected: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        backgroundColor: cardOrLoginOptionButtonSelectedBackground, // Cor de fundo
+        borderColor: cardOrLoginOptionButtonSelectedBorder,
+    },
+    optionButtonNotSelected: {
+        borderRadius: 15, // Define o raio dos cantos para arredondá-los
+        backgroundColor: cardOrLoginOptionButtonNotSelectedBackground, // Cor de fundo
+        borderColor: cardOrLoginOptionButtonNotSelectedBorder,
+    }
+})
 
-export { stylesAddCredential, styleScroolView }
+export { stylesAddCredential, styleScroolView, styleSearch }

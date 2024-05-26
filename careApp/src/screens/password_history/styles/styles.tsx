@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native'
-import { greyBackgroud, greyBorder } from '../../../assets/styles/colors'
+import { passwordContainerBackgroud, passwordContainerBorder } from '../../../assets/styles/colors'
 
 const styleScroolView = StyleSheet.create({
     container: {
@@ -12,8 +12,8 @@ const styleScroolView = StyleSheet.create({
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         borderWidth: 2, // Largura da linha na margem
         marginVertical: 8, // Margem vertical entre os itens
-        backgroundColor: greyBackgroud, // Cor de fundo
-        borderColor: greyBorder,
+        backgroundColor: passwordContainerBackgroud, // Cor de fundo
+        borderColor: passwordContainerBorder,
     },
     itemPassword: {
         fontSize: 20,

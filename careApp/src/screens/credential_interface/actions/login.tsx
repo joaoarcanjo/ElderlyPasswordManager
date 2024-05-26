@@ -17,13 +17,13 @@ import { buildEditMessage, sendElderlyCredentialInfoAction } from './functions'
 import { ChatMessageType } from '../../../e2e/messages/types'
 import { deleteCredentialFromLocalDB, updateCredentialFromLocalDB } from '../../../database/credentials'
 import { regeneratePassword } from '../../../components/passwordGenerator/functions'
-import { cancelLabel, copyLabel, deleteCredentialLabel, editLabel, emptyValue, optionsLabel, passosLabel, passwordLabel, regenerateLabel, saveChangesLabel, saveLabel, uriLabel, usernameLabel } from '../../../assets/constants/constants'
+import { cancelLabel, copyLabel, deleteCredentialLabel, editLabel, emptyValue, optionsLabel, passwordLabel, regenerateLabel, saveChangesLabel, saveLabel, uriLabel, usernameLabel } from '../../../assets/constants/constants'
 import { copyValue, credentialUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
 import { FlashMessage, copyPasswordDescription, copyUsernameDescription } from '../../../components/userMessages/messages'
 import { encrypt } from '../../../algorithms/tweetNacl/crypto'
 import { Platform } from '../../../assets/json/interfaces'
 import { getSpecificUsernameAndPassword } from '../../../components/SpecificUsername&Password'
-import { darkBlueBackground } from '../../../assets/styles/colors'
+import { platformLabelToPresent } from '../../../assets/styles/colors'
 
 const jsonData = require('../../../assets/json/platforms.json')
 
@@ -155,15 +155,15 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
       <View style= { { flex: 0.13, marginHorizontal: '10%', flexDirection: 'row'} }>
         {editFlag ?
           <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
-            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.editButton]} onPress={toggleEditFlag}>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.editButton]} onPress={toggleEditFlag}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>{editLabel}</Text>
             </TouchableOpacity>
           </View> :
           <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
-            {credentialsModified && <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.saveButton]} onPress={() => setModalVisible(true)}>
+            {credentialsModified && <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.acceptButton]} onPress={() => setModalVisible(true)}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>{saveLabel}</Text>
             </TouchableOpacity>}
-            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, options.cancelButton]} onPress={cancelUpdate}>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.cancelButton]} onPress={cancelUpdate}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>{cancelLabel}</Text>
             </TouchableOpacity>
           </View>
@@ -199,7 +199,7 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
             <View style={{flex: 0.6, flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '4%'}}>
               <View style={{flex: 0.5}}>
                 <Text numberOfLines={2} adjustsFontSizeToFit style={[{marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>{usernameLabel}</Text>
-                {usernameLabelToPresent != emptyValue && <Text numberOfLines={2} adjustsFontSizeToFit style={[{fontSize: 15, color: darkBlueBackground}]}>{usernameLabelToPresent}</Text>}
+                {usernameLabelToPresent != emptyValue && <Text numberOfLines={2} adjustsFontSizeToFit style={[{fontSize: 15, color: platformLabelToPresent}]}>{usernameLabelToPresent}</Text>}
               </View>
               {editFlag && 
               <TouchableOpacity style={[{flex: 0.4, marginTop:'3%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(username, FlashMessage.usernameCopied, copyUsernameDescription)}>
@@ -221,7 +221,7 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
             <View style={{flex: 0.6, flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '4%'}}>
               <View style={{flex: 0.5}}>
                 <Text numberOfLines={2} adjustsFontSizeToFit style={[{marginTop: '3%', justifyContent: 'center', fontSize: 20}]}>{passwordLabel}</Text>
-                {passwordLabelToPresent != emptyValue && <Text numberOfLines={2} adjustsFontSizeToFit style={[{fontSize: 15, color: darkBlueBackground}]}>{passwordLabelToPresent}</Text>}
+                {passwordLabelToPresent != emptyValue && <Text numberOfLines={2} adjustsFontSizeToFit style={[{fontSize: 15, color: platformLabelToPresent}]}>{passwordLabelToPresent}</Text>}
               </View>
               {editFlag && 
               <TouchableOpacity style={[{flex: 0.4, marginTop:'3%'}, stylesButtons.copyButton, stylesButtons.mainConfig]} onPress={() => copyValue(password, FlashMessage.passwordCopied, copyPasswordDescription)}>
@@ -249,7 +249,7 @@ function AppInfo({ownerId, id, platform, uri, un, pw, edited, auxKey, isElderlyC
           </View>
           :
           <View style={{ flex: 0.14, flexDirection: 'row', justifyContent: 'flex-end', marginVertical: '5%', marginHorizontal: '5%' }}>
-            <TouchableOpacity style={[{flex: 0.50}, stylesButtons.blueButton, stylesButtons.mainConfig]} onPress={() => {setPasswordOptionsModalVisible(true)}}>
+            <TouchableOpacity style={[{flex: 0.50}, stylesButtons.optionsButton, stylesButtons.mainConfig]} onPress={() => {setPasswordOptionsModalVisible(true)}}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 24, margin: '5%' }]}>{optionsLabel}</Text>
             </TouchableOpacity>
             <View style={{margin: '1%'}}/>
@@ -315,7 +315,7 @@ function DeleteCredential({ownerId, id, platform, auxKey, isElderlyCredential}: 
   return (
     <View style= { { flex: 0.10, flexDirection: 'row', justifyContent: 'space-around', marginBottom: '2%'} }>
       <YesOrNoModal question={'Apagar a credencial?'} yesFunction={() => deleteCredentialAction()} noFunction={() => setModalVisible(false)} visibleFlag={modalVisible}/>
-      <TouchableOpacity style={[{flex: 1, marginHorizontal: '20%', marginVertical: '3%'}, logout.logoutButton, stylesButtons.mainConfig]} onPress={setModalVisibleAux}>
+      <TouchableOpacity style={[{flex: 1, marginHorizontal: '20%', marginVertical: '3%'}, credentials.deleteCredentialButton, stylesButtons.mainConfig]} onPress={setModalVisibleAux}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>{deleteCredentialLabel}</Text>
       </TouchableOpacity>
     </View>

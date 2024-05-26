@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native'
-import { blueBorder, cancelButtonBackground, cancelButtonBorder, editCredentialsButtonBackground, editCredentialsButtonBorder, greyBackgroud, greyBorder, hiperlightBlueBackground, lightBlueBackground, lightYellowBackground, logoutButtonBackgroud, logoutButtonBorder, permissionsButtonBackground, permissionsButtonBorder, regenerateButtonBackgroud, regenerateButtonBorder, saveButtonBackground, saveButtonBorder, superlightBlueBackgroud, whiteBackgroud } from '../../../assets/styles/colors'
+import { blueBorder, deleteCredentialButtonBackground, deleteCredentialButtonBorder, greyBackgroud, greyBorder, hiperlightBlueBackground, logoutButtonBackgroud, logoutButtonBorder, regenerateButtonBackgroud, regenerateButtonBorder, whiteBackgroud } from '../../../assets/styles/colors'
 
 /**
  * Estilos da view para adicionar uma nova credencial
@@ -13,7 +13,7 @@ const logout = StyleSheet.create({
     },
     logoutButtonText: {
       fontSize: 25,
-      color: '#f5f5f5'
+      color: whiteBackgroud
     }
 })
 
@@ -45,6 +45,12 @@ const credentials = StyleSheet.create({
       backgroundColor: regenerateButtonBackgroud,
       borderColor: regenerateButtonBorder,
   },
+  deleteCredentialButton: {
+    borderRadius: 15, // Define o raio dos cantos para arredondá-los
+    borderWidth: 5, // Largura da linha na margem
+    backgroundColor: deleteCredentialButtonBackground,
+    borderColor: deleteCredentialButtonBorder,
+  },
   credentialInfoText: {
     fontSize: 20,
     color: 'black'
@@ -63,21 +69,6 @@ const changer = StyleSheet.create({
 })
 
 const options = StyleSheet.create({
-  editButton: {
-    borderRadius: 15, // Define o raio dos cantos para arredondá-los
-    backgroundColor: editCredentialsButtonBackground,
-    borderColor: editCredentialsButtonBorder
-  },
-  saveButton: {
-    borderRadius: 15, // Define o raio dos cantos para arredondá-los
-    backgroundColor: saveButtonBackground,
-    borderColor: saveButtonBorder
-  },
-  cancelButton: {
-    borderRadius: 15, // Define o raio dos cantos para arredondá-los
-    backgroundColor: cancelButtonBackground,
-    borderColor: cancelButtonBorder
-  },
   permissionsButtonText: {
     fontSize: 25,
     color: 'black'

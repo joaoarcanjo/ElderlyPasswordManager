@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, Dimensions, Keyboard, Image, Alert } from 'react-native'
-import { stylesAddCredential, styleScroolView } from '../styles/styles'
+import { View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, Dimensions, Keyboard, Alert } from 'react-native'
+import { stylesAddCredential, styleScroolView, styleSearch } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import {Navbar} from '../../../navigation/actions'
 import { getKey, listAllCredentialsFromFirestore, verifyIfCanManipulateCredentials } from '../../../firebase/firestore/functionalities'
@@ -13,7 +13,7 @@ import { getKeychainValueFor } from '../../../keychain'
 import { elderlySSSKey } from '../../../keychain/constants'
 import { addCredentialsLabel, allLabel, cardsLabel, closeLabel, emptyValue, loginLabel, optionsLabel, pageTitleCredentials, searchLabel, seeMoreLabel } from '../../../assets/constants/constants'
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons'
-import { darkBlueBackground, whiteBackgroud } from '../../../assets/styles/colors'
+import { darkBlueBackground, dividerLineColor, whiteBackgroud } from '../../../assets/styles/colors'
 import { CredentialType } from './types'
 import { elderlyName } from '../../list_elderly/styles/styles'
 import { credentialsListUpdated } from './state'
@@ -41,7 +41,7 @@ function AddCredencial({ elderlyId }: Readonly<{elderlyId: string}>) {
   return (
     <View style= { { flex: 0.1, marginTop: '5%', flexDirection: 'row'} }>
       <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '1%'}, stylesAddCredential.addCredentialButton, stylesButtons.mainConfig]} onPress={navigateToAddCredential}>
-          <Text numberOfLines={1} adjustsFontSizeToFit={true} style={[{fontWeight: 'bold'}, stylesAddCredential.addCredentialButtonText]}>{addCredentialsLabel}</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{fontWeight: 'bold'}, stylesAddCredential.addCredentialButtonText]}>{addCredentialsLabel}</Text>
       </TouchableOpacity>
     </View>
   )
@@ -89,16 +89,16 @@ function ElderlyCredentialsList({ elderlyId }: Readonly<{elderlyId: string}>) {
     fetchCredencials().then(() => setIsFething(false))
   }, [isFocused, searchType])
 
-  const allSelected = buttonSelected === 0 ? stylesButtons.blueButton : stylesButtons.whiteButton
-  const cardsSelected = buttonSelected === 1 ? stylesButtons.blueButton : stylesButtons.whiteButton
-  const loginsSelected = buttonSelected === 2 ? stylesButtons.blueButton : stylesButtons.whiteButton
+  const allSelected = buttonSelected === 0 ? styleSearch.optionButtonSelected : styleSearch.optionButtonNotSelected
+  const cardsSelected = buttonSelected === 1 ? styleSearch.optionButtonSelected : styleSearch.optionButtonNotSelected
+  const loginsSelected = buttonSelected === 2 ? styleSearch.optionButtonSelected : styleSearch.optionButtonNotSelected
 
   return (
     <View style={{ flex: 0.72, flexDirection: 'row', justifyContent: 'space-around'}}>
       <View style={[{ flex: 1, marginTop:'5%', marginHorizontal: '4%', justifyContent: 'space-around'}, styleScroolView.credencialsContainer]}>
         <View style={{flexDirection: 'row'}}>
           <View style={{flex: 0.25, marginLeft: '2%', marginVertical: '2%'}}>
-            <TouchableOpacity style={[{flex: 1, justifyContent: 'center',  alignItems: 'center'}, stylesButtons.whiteButton, stylesButtons.mainSlimConfig]} onPress={() => {setShowFilter(!showFilter)}}>
+            <TouchableOpacity style={[{flex: 1, justifyContent: 'center',  alignItems: 'center'}, stylesButtons.moreInfoButton, stylesButtons.mainSlimConfig]} onPress={() => {setShowFilter(!showFilter)}}>
               {!showFilter ? 
               <View style={{marginVertical: '5%', alignContent: 'center', alignItems: 'center'}}>
                 <FontAwesome name="arrow-circle-down" size={34} color={darkBlueBackground} />
@@ -118,7 +118,7 @@ function ElderlyCredentialsList({ elderlyId }: Readonly<{elderlyId: string}>) {
             style={{ flex: 1, fontSize: 22, padding: '2%', marginHorizontal: '1%' }}
             onChangeText={(value) => {setSearchValue(value)}}
             />
-            <TouchableOpacity style={[{flex: 0.2, marginHorizontal: '2%', marginVertical: '2%'}, styleScroolView.navigateButton, stylesButtons.mainConfig]} onPress={fetchCredencials}>
+            <TouchableOpacity style={[{flex: 0.2, marginHorizontal: '2%', marginVertical: '2%'},  styleSearch.button, stylesButtons.mainConfig]} onPress={fetchCredencials}>
               <MaterialIcons style={{marginHorizontal: '1%'}} name={'search'} size={40} color="black"/> 
             </TouchableOpacity>
           </View>
@@ -142,8 +142,8 @@ function ElderlyCredentialsList({ elderlyId }: Readonly<{elderlyId: string}>) {
             <MaterialIcons style={{marginHorizontal: '1%'}} name={'person'} size={40} color="orange"/> 
           </TouchableOpacity>
         </View> : <></>}
-        <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '1%' }}/>
-        <View style={{ height: 1, backgroundColor: '#ccc', marginVertical: '1%' }}/>
+        <View style={{ height: 1, backgroundColor: dividerLineColor, marginVertical: '1%' }}/>
+        <View style={{ height: 1, backgroundColor: dividerLineColor, marginVertical: '1%' }}/>
         {isFething ?
         <Spinner width={300} height={300}/> :
         <ScrollView>

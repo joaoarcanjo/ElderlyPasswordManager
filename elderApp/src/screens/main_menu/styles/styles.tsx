@@ -7,10 +7,10 @@ import {
   generatorButtonBorder,
   questionsButtonBackgroud,
   questionsButtonBorder,
-  caregiversButtonBackgroud,
-  caregiversButtonBorder, 
   settingsButtonBorder,
-  whiteBackgroud
+  whiteBackgroud,
+  caregiverButtonBackgroud,
+  caregiverButtonBorder
 } from '../../../assets/styles/colors';
 
 const stylesFirstHalf = StyleSheet.create({
@@ -23,8 +23,8 @@ const stylesFirstHalf = StyleSheet.create({
         borderRadius: 20, // Define o raio dos cantos para arredondá-los
         borderWidth: 3, // Largura da linha na margem
         margin: '3%',
-        backgroundColor: caregiversButtonBackgroud,
-        borderColor: caregiversButtonBorder
+        backgroundColor: caregiverButtonBackgroud,
+        borderColor: caregiverButtonBorder
     },
     caregiversButtonText: {
         fontSize: 33,
