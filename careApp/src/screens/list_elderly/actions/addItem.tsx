@@ -51,7 +51,7 @@ export function AddElderlyModal({visibility, concludeAction}: Readonly<{visibili
       </View> 
       <View style={{ borderBottomColor: 'black', borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: '3%' }}/>
       <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
-        {(elderlyEmail != emptyValue) && <TouchableOpacity style={[{flex: 0.5, marginVertical: '3%', marginRight: '3%'}, stylesButtons.mainConfig, stylesButtons.saveButton]} onPress={() => addElderly(elderlyEmail)}>
+        {(elderlyEmail != emptyValue) && <TouchableOpacity style={[{flex: 0.5, marginVertical: '3%', marginRight: '3%'}, stylesButtons.mainConfig, stylesButtons.acceptButton]} onPress={() => addElderly(elderlyEmail)}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{linkLabel}</Text>
         </TouchableOpacity> }
         <TouchableOpacity style={[{flex: 0.5, marginVertical: '3%', marginLeft: '3%'}, stylesButtons.mainConfig, stylesButtons.cancelButton]} onPress={() => {setElderlyEmail(emptyValue); concludeAction()}}>

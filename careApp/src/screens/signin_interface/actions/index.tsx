@@ -24,7 +24,7 @@ const SignInPage = () => {
 
     const navigation = useNavigation<StackNavigationProp<any>>()
     const toggleShowPassword = () => {setShowPassword(!showPassword);}
-    const { setUserEmail, setUserId } = useSessionInfo()
+    const { setUserEmail } = useSessionInfo()
 
     useEffect(() => {
         console.debug("===> SignIn_Page: Component presented.\n")

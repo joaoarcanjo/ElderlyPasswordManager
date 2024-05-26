@@ -11,6 +11,8 @@ import {
 import { deleteAllSessions, deleteSessionById, getSessionById, saveSignalSessions } from "../../database/signalSessions"
 import { deleteKeychainValueFor, getKeychainValueFor, saveKeychainValue } from "../../keychain"
 import { keySignedPub25519, keySignedPriv25519, signedKeySignature25519, signedPreKeyId, identityIdPubKey, identityIdPrivKey, identityKeyK, keypreKeyPub25519, keypreKeyPriv25519, baseKeyIdK, caregiverId, localDBKey } from '../../keychain/constants'
+import { encode } from '@stablelib/base64'
+import { encodeBase64 } from 'tweetnacl-util'
 
 // Type guards
 export function isKeyPairType(kp: any): kp is KeyPairType {

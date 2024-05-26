@@ -4,7 +4,7 @@ import { View, StyleSheet, Modal, TouchableOpacity, Text, ScrollView } from 'rea
 import { stylesButtons } from "../assets/styles/main_style"
 import { modal, options } from "../screens/credential_interface/styles/styles"
 import { Spinner } from "./LoadingComponents"
-import { upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, modalIntensity, saveLabel, loginLabel, cardLabel, cancelLabel } from "../assets/constants/constants";
+import { upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, modalIntensity, saveLabel, loginLabel, cardLabel, cancelLabel, yesOption, noOption } from "../assets/constants/constants";
 import { updateUpperCase, updateLowerCase, updateNumbers, updateSpecial } from "./passwordGenerator/functions";
 import { Requirement, RequirementLength } from "./passwordGenerator/Requirement";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -16,10 +16,10 @@ export function YesOrNoModal({question, yesFunction, noFunction, visibleFlag}: R
       <Text numberOfLines={2} adjustsFontSizeToFit style={modal.modalText}>{question}</Text>
       <View style={{flexDirection: 'row'}}>
         <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.acceptButton]} onPress={() => yesFunction()}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Sim</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{yesOption}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.rejectButton]} onPress={() => noFunction()}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Não</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{noOption}</Text>
         </TouchableOpacity>
       </View>
     </ModalBox>
@@ -53,10 +53,10 @@ export function YesOrNoSpinnerModal({question, yesFunction, noFunction, visibleF
           <Text numberOfLines={2} adjustsFontSizeToFit style={modal.modalText}>{question}</Text>
           <View style={{flexDirection: 'row'}}>
             <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.acceptButton]} onPress={() => yesFunction()}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Sim</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{yesOption}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.cancelButton]} onPress={() => noFunction()}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>Não</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{noOption}</Text>
             </TouchableOpacity>
           </View>
         </>

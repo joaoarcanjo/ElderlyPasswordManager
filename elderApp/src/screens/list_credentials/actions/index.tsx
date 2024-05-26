@@ -10,7 +10,7 @@ import { Spinner } from '../../../components/LoadingComponents'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { credentialsListUpdated } from './state'
 import { getAllCredentialsAndValidate, getAllLocalCredentialsFormatted, getAllLocalCredentialsFormattedWithFilter } from './functions'
-import { addCredentialsLabel, allLabel, cardsLabel, closeLabel, emptyValue, loginLabel, pageAddCredential, pageTitleCredentials, searchLabel, seeMoreLabel } from '../../../assets/constants/constants'
+import { addCredentialsLabel, allLabel, cardsLabel, closeLabel, emptyValue, loginLabel, pageAddCredential, pageTitleCredentials, searchLabel, filtersLabel } from '../../../assets/constants/constants'
 import { darkBlueBackground, dividerLineColor, whiteBackgroud } from '../../../assets/styles/colors';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { CredentialType } from './types';
@@ -92,7 +92,7 @@ function CredentialsList() {
               {!showFilter ? 
               <View style={{marginVertical: '5%', alignContent: 'center', alignItems: 'center'}}>
                 <FontAwesome name="arrow-circle-down" size={34} color={darkBlueBackground} />
-                <Text>{seeMoreLabel}</Text>
+                <Text>{filtersLabel}</Text>
               </View>
               :
               <View style={{marginVertical: '5%', alignContent: 'center', alignItems: 'center'}}>

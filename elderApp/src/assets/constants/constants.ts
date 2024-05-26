@@ -47,6 +47,7 @@ export const acceptLabel = 'Aceitar'
 export const refuseLabel = 'Recusar'
 export const seeMoreLabel = 'Ver mais'
 export const platformsLabel = 'Plataformas'
+export const filtersLabel = 'Filtros'
 
 export const cuidadoresLabel = 'Gerir Cuidadores'
 export const credentialsLabel = 'Gerir Credenciais'

@@ -11,7 +11,7 @@ import { Spinner } from '../../../components/LoadingComponents'
 import { useSessionInfo } from '../../../firebase/authentication/session'
 import { getKeychainValueFor } from '../../../keychain'
 import { elderlySSSKey } from '../../../keychain/constants'
-import { addCredentialsLabel, allLabel, cardsLabel, closeLabel, emptyValue, loginLabel, optionsLabel, pageTitleCredentials, searchLabel, seeMoreLabel } from '../../../assets/constants/constants'
+import { addCredentialsLabel, allLabel, cardsLabel, closeLabel, emptyValue, filtersLabel, loginLabel, pageTitleCredentials, searchLabel } from '../../../assets/constants/constants'
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons'
 import { darkBlueBackground, dividerLineColor, whiteBackgroud } from '../../../assets/styles/colors'
 import { CredentialType } from './types'
@@ -102,7 +102,7 @@ function ElderlyCredentialsList({ elderlyId }: Readonly<{elderlyId: string}>) {
               {!showFilter ? 
               <View style={{marginVertical: '5%', alignContent: 'center', alignItems: 'center'}}>
                 <FontAwesome name="arrow-circle-down" size={34} color={darkBlueBackground} />
-                <Text>{seeMoreLabel}</Text>
+                <Text>{filtersLabel}</Text>
               </View>
               :
               <View style={{marginVertical: '5%', alignContent: 'center', alignItems: 'center'}}>

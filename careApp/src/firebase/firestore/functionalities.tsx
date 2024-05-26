@@ -1,6 +1,6 @@
 import { Alert } from 'react-native';
 import { encrypt, decrypt } from '../../algorithms/tweetNacl/crypto';
-import { elderlyCollectionName, keyCollectionName, keyDocumentName, caregiverCollectionName, credencialsCollectionName, caregiversCollectionName, caregiversDocumentName, emptyValue } from '../../assets/constants/constants';
+import { elderlyCollectionName, keyCollectionName, keyDocumentName, caregiverCollectionName, credencialsCollectionName, caregiversCollectionName, caregiversDocumentName, emptyValue, SaltDocumentName } from '../../assets/constants/constants';
 import { CredentialType } from '../../screens/list_credentials/actions/types';
 import { firebase } from '../FirebaseConfig';
 import { defaultCaregiver, defaultCredencials, updateDataCredencial } from './constants';
@@ -65,7 +65,11 @@ export async function listAllCredentialsFromFirestore(userId: string, encryption
         return values
     }).catch((error: any) => {
         //alert('Erro ao obter as credenciais, tente novamente!')
-        Alert.alert('Erro', error.message)
+        if(isElderlyCredentials) {
+            Alert.alert('Erro', 'Erro ao obter as credenciais do idoso, verifique o estado da relação.')
+        } else {
+            Alert.alert('Erro', 'Não foi possível obter as credenciais.')
+        }
         return []
     })
 }
@@ -123,7 +127,6 @@ export async function getCaregiversArray(elderlyId: string, permission: string) 
     })
     .catch((error: any) => {
         Alert.alert('Erro', 'Erro ao obter os cuidadores que conseguem ler, tente novamente!')
-        console.error('Error: ', error)
         return []
     });
 }
@@ -140,7 +143,6 @@ async function caregiverExists(caregiverId: string): Promise<boolean> {
     .then((doc) => doc.exists)
     .catch((error) => {
         //alert('Erro ao verificar se o cuidador existe, tente novamente!')
-        console.error('Error: ', error)
         return false
     })
 }
@@ -194,6 +196,43 @@ async function getServerIP(): Promise<string> {
         //console.error('Error: ', error);
         return ""
     })
+}
+/**
+ * Posts the salt key for a given elderly ID.
+ * @param caregiverId - The ID of the caregiver.
+ * @param saltValue - The salt to be posted.
+ * @returns A Promise that resolves to a boolean indicating if the salt key was successfully posted.
+ */
+export async function postSalt(caregiverId: string, saltValue: string, SaltCollectionName: string): Promise<boolean> {
+    console.log("===> postSaltCalled")
+    try {
+        await firestore.collection(caregiverCollectionName)
+            .doc(caregiverId).collection(SaltCollectionName).doc(SaltDocumentName)
+            .set({ salt: saltValue })
+        return true;
+    } catch (error) {
+        console.log('Error: ', error);
+        return false;
+    }
+}
+
+/**
+ * Retrieves the salt key for a given elderly ID.
+ * @param caregiverId - The ID of the caregiver.
+ * @returns A Promise that resolves to the salt key as a string.
+ */
+export async function getSalt(caregiverId: string, SaltCollectionName: string): Promise<string> {
+    console.log("===> getSaltCalled")
+    return firestore.collection(caregiverCollectionName)
+        .doc(caregiverId).collection(SaltCollectionName).doc(SaltDocumentName).get().then((doc: any) => {
+            if(doc.exists) {
+                return doc.data().salt
+            } 
+        })
+        .catch((error: any) => {
+            console.log('Error: ', error)
+            return emptyValue
+        })
 }
 
 export { getServerIP, deleteCredential, getKey, addCredencialToFirestore, updateCredentialFromFirestore }

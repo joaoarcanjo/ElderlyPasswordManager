@@ -142,7 +142,7 @@ app.put("/addBundle", (req, res) => {
         const verifiedBundle = tweetnacl.sign.open(bundle, publicKey)
         //Verifico se a mensagem foi assinada com a devida chave privada
         if (verifiedBundle === null) {
-            console.error('Message could not be verified')
+            console.log('Message could not be verified')
             return
         }
         const verified = tweetnaclUtil.encodeUTF8(verifiedBundle)
@@ -150,7 +150,7 @@ app.put("/addBundle", (req, res) => {
 
         //Verifico se o username do bundle é igual ao username da requisição
         if(bundleObj.username !== req.body.username) {
-            console.error('Username does not match')
+            console.log('Username does not match')
             return
         }
 

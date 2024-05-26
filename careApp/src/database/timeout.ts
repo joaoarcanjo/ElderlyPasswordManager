@@ -13,7 +13,6 @@ import { TimeoutType } from "./types";
 export async function insertTimeoutToLocalDB(userId: string, timestamp: number, type: TimeoutType): Promise<void> {
     console.log("===> insertTimeoutCalled")
     return new Promise(async (resolve, reject) => {
-        console.log(dbSQL)
         if (dbSQL != null) {
             await dbSQL.runAsync('INSERT INTO timeout (userId, timestamp, type) VALUES (?, ?, ?);', [userId, timestamp, type])
             .then(() => { resolve() })

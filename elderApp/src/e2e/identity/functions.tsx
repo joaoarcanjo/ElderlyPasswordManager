@@ -13,7 +13,6 @@ import { getServerIP } from "../../firebase/firestore/functionalities";
  */
 export async function createIdentity(userId: string, username: string): Promise<void> {
 
-
     if (usernameSubject.value === username) return
     console.log("Username: ", username)
     console.log("userId: ", userId)
@@ -127,7 +126,6 @@ export async function createIdentity(userId: string, username: string): Promise<
         publicKey: preKey.keyPair.pubKey,
     }
 
-    //TODO: Enviar o bundle para o servidor, mas com mais que uma oneTimePreKeys.
     directory.storeKeyBundle(username, userId, {
         registrationId,
         identityKey: identityKeyPair.pubKey,

@@ -47,6 +47,7 @@ export const unlinkLabel = 'Desvincular'
 export const acceptLabel = 'Aceitar'
 export const refuseLabel = 'Recusar'
 export const seeMoreLabel = 'Ver mais'
+export const filtersLabel = 'Filtros'
 
 export const elderlyLabel = 'Gerir Idosos'
 export const credentialsLabel = 'Gerir Credenciais'
@@ -107,6 +108,9 @@ export const placeholderCardNumber = "Insira o número do cartão"
 export const placeholderOwnerName = "Insira o nome do proprietário"
 export const placeholderCardPlatform = "Insira o nome do cartão"
 
+//PBDKF2:
+export const pbkdf2Iterations = 1000
+
 //SplashScreen:
 export const splashScreenDuration = 7000
 export const timeoutToNewSplash = 1000 * 60 * 60 * 24
@@ -138,6 +142,9 @@ export const credencialsCollectionName = 'Credencials'
 
 export const keyParameter = 'key'
 export const keyCollectionName = 'Key'
+export const SaltCredentialCollectionName = 'SaltCredential'
+export const SaltServerCollectionName = 'SaltServer'
+export const SaltDocumentName = 'Value'
 export const keyDocumentName = 'Value'
 export const caregiversCollectionName = 'Caregivers'
 export const caregiverCollectionName = 'Caregiver'

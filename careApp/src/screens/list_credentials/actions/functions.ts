@@ -10,7 +10,6 @@ import { CredentialType } from "./types";
 
 export const getAllCredentialsAndValidate = async (userId: string, key: string): Promise<(CredentialType | undefined)[]> => {
     console.log("getAllCredentialsAndValidateCalled")
-
     const credentialsCloud = await listAllCredentialsFromFirestore(userId, key, false)
     let toReturn: (CredentialType | undefined)[] = []
     try {
@@ -18,8 +17,7 @@ export const getAllCredentialsAndValidate = async (userId: string, key: string):
             const localCredential = await getCredential(userId, cloudCredential.id)
             try {
                 if (cloudCredential.data) {
-                    const credentialCloud = JSON.parse(decrypt(cloudCredential.data, key))
-
+                    const credentialCloud = cloudCredential.data
                     if (credentialCloud.id !== cloudCredential.id) {
                         throw new ErrorInstance(Errors.ERROR_CREDENTIAL_INVALID_ID)
                     }
@@ -31,6 +29,7 @@ export const getAllCredentialsAndValidate = async (userId: string, key: string):
                     return { id: cloudCredential.id, data: credentialCloud }
                 }
             } catch (error) {
+                console.log("error", error)
                 const errorAux = error as ErrorInstance
                 if (errorAux.code === Errors.ERROR_INVALID_MESSAGE_OR_KEY ||
                 errorAux.code === Errors.ERROR_CREDENTIAL_ON_CLOUD_OUTDATED ||

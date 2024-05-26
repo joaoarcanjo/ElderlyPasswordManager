@@ -27,7 +27,6 @@ export function SignUp () {
     const signUp = async () => {
         setLoading(true)
         signUpOperation(email, password).then((loginResult) => {
-            setLoading(false)
             if(loginResult) {
                 setUserPhone(phoneNumber)
                 setUserName(name) 

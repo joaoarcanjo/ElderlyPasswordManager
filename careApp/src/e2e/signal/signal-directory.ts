@@ -1,15 +1,19 @@
 import { SignedPublicPreKeyType, DeviceType, PreKeyType } from '@privacyresearch/libsignal-protocol-typescript'
-import { encode as encodeBase64} from '@stablelib/base64';
-import { sign } from 'tweetnacl'
+import { encode, encode as encodeBase64} from '@stablelib/base64';
+import { sign, secretbox } from 'tweetnacl'
 import { decodeBase64 } from 'tweetnacl-util'
 import * as base64 from 'base64-js'
-import { apiPort, emptyValue } from '../../assets/constants/constants'
+import { SaltServerCollectionName, apiPort, emptyValue, pbkdf2Iterations } from '../../assets/constants/constants'
 import { Errors } from '../../exceptions/types'
 import { stringToArrayBuffer } from './signal-store';
 import { getKeychainValueFor, saveKeychainValue } from '../../keychain';
-import { signalPrivateKey, signalPublicKey } from '../../keychain/constants';
-import { getServerIP } from '../../firebase/firestore/functionalities';
+import { caregiverPwd, signalPrivateKey, signalPublicKey } from '../../keychain/constants';
+import { getSalt, getServerIP, postSalt } from '../../firebase/firestore/functionalities';
 import { Alert } from 'react-native';
+import { pbkdf2Sync } from 'pbkdf2';
+import { randomUUID } from 'expo-crypto';
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
+import { async } from 'rxjs';
 
 export interface PublicDirectoryEntry {
     identityKey: ArrayBuffer
@@ -69,11 +73,18 @@ export class SignalDirectory {
         let pubKey = decodeBase64(await getKeychainValueFor(signalPublicKey(userId)))
 
         if(privKey.byteLength === 0 || pubKey.byteLength === 0) {
-            const boxKeyPair = sign.keyPair()
-            privKey = boxKeyPair.secretKey
-            pubKey = boxKeyPair.publicKey
-            await saveKeychainValue(signalPrivateKey(userId), encodeBase64(new Uint8Array(privKey)))
-            await saveKeychainValue(signalPublicKey(userId), encodeBase64(new Uint8Array(pubKey)))
+            let salt = await getSalt(userId, SaltServerCollectionName)
+            if(salt == undefined || salt == emptyValue) {
+                salt = randomUUID()
+                await postSalt(userId, salt, SaltServerCollectionName)
+            }
+            const pwd = await getKeychainValueFor(caregiverPwd)
+            const key = pbkdf2Sync(pwd, salt, pbkdf2Iterations, secretbox.keyLength, 'sha512')
+            const boxKeyPair2 = sign.keyPair.fromSeed(key)
+            privKey = boxKeyPair2.secretKey
+            pubKey = boxKeyPair2.publicKey
+            await saveKeychainValue(signalPrivateKey(userId), encodeBase64(new Uint8Array(boxKeyPair2.secretKey)))
+            await saveKeychainValue(signalPublicKey(userId), encodeBase64(new Uint8Array(boxKeyPair2.secretKey)))            
         }
 
         const signed = sign(

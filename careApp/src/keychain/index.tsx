@@ -1,7 +1,11 @@
 import {setItemAsync, getItemAsync, deleteItemAsync} from 'expo-secure-store';
-import { caregiverEmail, caregiverId, localDBKey } from './constants';
-import { generateKey } from '../algorithms/tweetNacl/crypto';
-import { emptyValue } from '../assets/constants/constants';
+import { caregiverEmail, caregiverId, caregiverPwd, localDBKey } from './constants';
+import { SaltCredentialCollectionName, emptyValue, pbkdf2Iterations } from '../assets/constants/constants';
+import { secretbox } from "tweetnacl";
+import { pbkdf2Sync } from 'pbkdf2';
+import { decode as decodeBase64, encode as encodeBase64} from '@stablelib/base64';
+import { getSalt, postSalt } from '../firebase/firestore/functionalities';
+import { randomUUID } from 'expo-crypto';
 
 /*
  * Função para armazenar o valor key-value.
@@ -56,14 +60,22 @@ export async function cleanKeychain(id: string) {
  * @returns 
  */
 export async function initKeychain(userId: string, userEmail: string): Promise<string> {
+  console.log("==> initKeychain")
   if(await getKeychainValueFor(caregiverId) !== userId) {
     await cleanKeychain(userId).then(async () => {
       await saveKeychainValue(caregiverId, userId)
       await saveKeychainValue(caregiverEmail, userEmail)
     })
   }
-  if(await getKeychainValueFor(localDBKey(userId)) == emptyValue) {
-    await saveKeychainValue(localDBKey(userId), generateKey()) 
+  let key = await getKeychainValueFor(localDBKey(userId))
+  if(key == emptyValue) {
+    let salt = await getSalt(userId, SaltCredentialCollectionName)
+    if(salt == undefined || salt == emptyValue) {
+      salt = randomUUID()
+      postSalt(userId, salt, SaltCredentialCollectionName)
+    }
+    key = encodeBase64(pbkdf2Sync(await getKeychainValueFor(caregiverPwd), salt, pbkdf2Iterations, secretbox.keyLength, 'sha512'))
+    await saveKeychainValue(localDBKey(userId), key) 
   }
-  return await getKeychainValueFor(localDBKey(userId))
+  return key
 }

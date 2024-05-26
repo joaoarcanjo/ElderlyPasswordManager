@@ -301,7 +301,6 @@ async function getServerIP(): Promise<string> {
         return emptyValue
     }).catch((error) => {
         Alert.alert("Erro", 'Erro ao obter o IP do servidor, tente novamente!');
-        console.error('Error: ', error);
         return emptyValue
     })
 }

@@ -101,7 +101,6 @@ export async function createIdentity(userId: string, username: string): Promise<
         await signalStore.storeSignature(`${signedPreKeyId}`, preKeyPairAux.signature)
         signedPreKeyPair = await signalStore.loadSignedPreKey(signedPreKeyId)
         signature = await signalStore.loadSignedSignature(signedPreKeyId)
-
     }
 
     if(signedPreKeyPair === undefined || signature === undefined) {
@@ -135,8 +134,6 @@ export async function createIdentity(userId: string, username: string): Promise<
     }) 
 }
 
-
-
 export const createDirectory = async (): Promise<SignalDirectory> => {
     const directory = new SignalDirectory(await getUrl())
     directorySubject.next(directory)
@@ -145,5 +142,5 @@ export const createDirectory = async (): Promise<SignalDirectory> => {
 
 export const getUrl = async () => {
     const ipAddr = await getServerIP()
-    return `ws://${ipAddr}:${port}`
+    return `${ipAddr}:${port}`
 }

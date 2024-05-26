@@ -74,7 +74,7 @@ export async function processRegularMessage(address: string, message: string, ty
         const cm: ProcessedChatMessage = JSON.parse(plaintext)
         addMessageToSession(address, cm, type)
     } catch (error) {
-        console.error('Error processing message:', error)
+        console.log('Error processing message:', error)
     }
 }
 

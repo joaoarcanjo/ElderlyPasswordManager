@@ -23,10 +23,10 @@ export function initializeSignalWebsocket(uri: string): Subscription {
             //console.log(`received message on signal wss`)
             if (isSendWebSocketMessage(msg)) {
                 processWebsocketMessage(msg).catch((e) => {
-                    console.warn(`error accepting signal message`, { e })
+                    console.log(`error accepting signal message`, { e })
                 })
             } else {
-                console.error('Message on wss is not recognized', { msg })
+                console.log('Message on wss is not recognized', { msg })
             }
         },
         error: (err) => {
