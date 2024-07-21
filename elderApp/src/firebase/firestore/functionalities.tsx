@@ -1,49 +1,32 @@
 import { Alert } from 'react-native';
 import { encrypt } from '../../algorithms/tweetNacl/crypto';
-import { elderlyCollectionName, keyCollectionName, keyDocumentName, caregiversCollectionName, caregiversDocumentName, credencialsCollectionName, emptyValue } from '../../assets/constants/constants';
+import { elderlyCollectionName, keyCollectionName, keyDocumentName, caregiversCollectionName, caregiversDocumentName, credentialsCollectionName, emptyValue, SaltCollection, SaltDocument } from '../../assets/constants/constants';
 import { getKeychainValueFor } from '../../keychain';
-import { elderlyFireKey, firestoreSSSKey } from '../../keychain/constants';
+import { firestoreSSSKey } from '../../keychain/constants';
 import { firebase } from '../FirebaseConfig';
-import { defaultCaregivers, defaultCredencials, defaultElderly, updateDataCredencial } from './constants';
+import { defaultCaregivers, defaultCredentials, defaultElderly, defaultSalt, updateDataCredencial } from './constants';
 
 const firestore = firebase.firestore()
 
 /**
  * Função para alterar a chave que se encontra na cloud.
  */
-async function changeFirestoreKey(userId: string) {
-    console.log("===> changeFirestoreKeyCalled")
+async function changeFirestoreShare(userId: string) {
+    console.log("===> changeFirestoreShareCalled")
+    console.log("Value:", await getKeychainValueFor(firestoreSSSKey(userId)))
     await getKeychainValueFor(firestoreSSSKey(userId))
     .then(async (firestoreKey) => {
         await firestore.collection(elderlyCollectionName)
         .doc(userId).collection(keyCollectionName).doc(keyDocumentName).set({key: firestoreKey})
         .catch((error) => {
-            //console.log('Error: ', error)
+            console.log('Error: ', error)
             throw new Error('Erro ao alterar a chave na firestore, tente novamente!')
         })
     })
     .catch((error) => {
-        //console.log('Error: ', error)
+        console.log('Error: ', error)
         throw new Error('Erro ao alterar a chave na firestore, tente novamente!')
     })
-}
-
-/**
- * Função para obter a chave que se encontra na cloud.
- */
-async function getKey(userId: string): Promise<string> {
-    return firestore.collection(elderlyCollectionName)
-        .doc(userId).collection(keyCollectionName).doc(keyDocumentName).get().then((doc) => {
-            if(doc.exists) {
-                const data = doc.data()
-                return data!.key
-            } 
-        })
-        .catch((error) => {
-            Alert.alert("Erro", 'Erro ao tentar obter a chave, tente novamente!')
-            //console.log('Error: ', error)
-            return emptyValue
-        })
 }
 
 /**
@@ -57,13 +40,18 @@ async function createElderly(elderlyId: string) {
 
         //Cria na coleção o elemento do idoso.
         const novoDocumentoRef = elderlyCollectionRef.doc(elderlyId)
-        novoDocumentoRef
+        await novoDocumentoRef
             .set(defaultElderly)
 
-        novoDocumentoRef
+        await novoDocumentoRef
             .collection(caregiversCollectionName)
             .doc(caregiversDocumentName)
             .set(defaultCaregivers)
+        
+        await novoDocumentoRef
+            .collection(SaltCollection)  
+            .doc(SaltDocument) 
+            .set(defaultSalt) 
 
     } catch (error) {
         Alert.alert("Erro", 'Erro ao tentar criar a conta na firebase!')
@@ -177,37 +165,21 @@ async function elderlyExists(elderlyId: string): Promise<boolean> {
  * @param newCredencialId 
  * @param data 
  */
-export async function addCredencialToFirestore(userId: string, newCredencialId: string, data: string) {
+export async function addCredencialToFirestore(userId: string, encryptionKey: string, newCredencialId: string, data: string) {
     console.log("===> addCredencialToFirestoreCalled")
     console.log("Data: "+ data)
-    const userKey = await getKeychainValueFor(elderlyFireKey(userId))
-    const encrypted = encrypt(data, userKey)
-    const credential = defaultCredencials(encrypted)
+    const encrypted = encrypt(data, encryptionKey)
+    const credential = defaultCredentials(encrypted)
 
     firestore.collection(elderlyCollectionName)
         .doc(userId)
-            .collection(credencialsCollectionName)
+            .collection(credentialsCollectionName)
             .doc(newCredencialId)
             .set(credential)
         .catch((error) => {
             Alert.alert("Erro", 'Erro ao tentar adicionar a nova credencial, tente novamente!')
             //console.log('Error: ', error)
         })
-}
-
-/**
- * Função para listar todos os idosos
- */
-async function listAllElderly(): Promise<string[]> {
-  
-    return firestore.collection(elderlyCollectionName).get().then((docs) => {
-        const values: string[] = []
-        docs.forEach((doc) => { console.log(doc.id, ' => ', doc.data()); values.push(doc.data().caregivers) });
-        return values
-    }).catch((error) => {
-        Alert.alert("Erro", 'Erro ao obter os idosos, tente novamente!')
-        return []
-    });
 }
 
 interface Credential {
@@ -219,8 +191,8 @@ interface Credential {
  * Função para listar as credenciais de determinado utilizador
  * @param userId 
  */
-async function listAllElderlyCredencials(userId: string): Promise<Credential[]> {
-    return firestore.collection(elderlyCollectionName).doc(userId).collection(credencialsCollectionName).get().then((docs) => {
+async function listAllElderlyCredentials(userId: string): Promise<Credential[]> {
+    return firestore.collection(elderlyCollectionName).doc(userId).collection(credentialsCollectionName).get().then((docs) => {
         const values: Credential[] = []
         docs.forEach((doc) => { 
             if(doc.data()) {
@@ -242,7 +214,7 @@ async function deleteCredentialFromFiretore(userId: string, credentialId: string
 
     return firestore.collection(elderlyCollectionName)
         .doc(userId)
-            .collection(credencialsCollectionName)
+            .collection(credentialsCollectionName)
             .doc(credentialId)
             .delete()
         .catch((error) => {
@@ -252,16 +224,15 @@ async function deleteCredentialFromFiretore(userId: string, credentialId: string
         }).then(() => { return true })
 }
 
-async function updateCredentialFromFiretore(userId: string, credencialId: string, data: string): Promise<boolean> {
+async function updateCredentialFromFiretore(userId: string, encryptionKey: string, credencialId: string, data: string): Promise<boolean> {
     console.log("===> updateCredentialFromFiretoreCalled")
 
-    const userKey = await getKeychainValueFor(elderlyFireKey(userId))
-    const encrypted = encrypt(data, userKey)
+    const encrypted = encrypt(data, encryptionKey)
     const updatedCredencial = updateDataCredencial(encrypted)
     
     return firestore.collection(elderlyCollectionName)
         .doc(userId)
-            .collection(credencialsCollectionName)
+            .collection(credentialsCollectionName)
             .doc(credencialId)
             .update(updatedCredencial)
         .catch((error) => {
@@ -278,7 +249,6 @@ async function initFirestore(userId: string): Promise<boolean> {
     return elderlyExists(userId).then(async (result) => {
         if (!result) { //se não existir
             await createElderly(userId)
-            .then(() => changeFirestoreKey(userId))
             //console.log('Elderly created sucessfully!!')
         }
         return true
@@ -305,4 +275,45 @@ async function getServerIP(): Promise<string> {
     })
 }
 
-export { getServerIP, deleteCredentialFromFiretore, initFirestore, changeFirestoreKey, getKey, listAllElderly, createElderly, updateCredentialFromFiretore, listAllElderlyCredencials, /*firebaseTest*/ }
+
+/**
+ * Posts the salt key for a given elderly ID.
+ * @param elderlyId - The ID of the elderlyId.
+ * @param saltValue - The salt to be posted.
+ * @returns A Promise that resolves to a boolean indicating if the salt key was successfully posted.
+ */
+export async function postSalt(elderlyId: string, saltValue: string, SaltDocumentName: string): Promise<boolean> {
+    console.log("===> postSaltCalled")
+    try {
+        await firestore.collection(elderlyCollectionName)
+            .doc(elderlyId).collection(SaltCollection).doc(SaltDocument)
+            .update({ [SaltDocumentName]: saltValue })
+        return true;
+    } catch (error) {
+        console.log('Error: ', error);
+        return false;
+    }
+}
+
+/**
+ * Retrieves the salt key for a given elderly ID.
+ * @param elderlyId - The ID of the elderly.
+ * @returns A Promise that resolves to the salt key as a string.
+ */
+export async function getSalt(elderlyId: string, SaltDocumentName: string): Promise<string> {
+    console.log("===> getSaltCalled")
+    return firestore.collection(elderlyCollectionName)
+        .doc(elderlyId).collection(SaltCollection).doc(SaltDocument).get().then((doc: any) => {
+            if(doc.exists) {
+                const value: string = doc[SaltDocumentName]
+                return value || emptyValue
+            } 
+            return emptyValue
+        })
+        .catch((error: any) => {
+            console.log('Error: ', error)
+            return emptyValue
+        })
+}
+
+export { getServerIP, deleteCredentialFromFiretore, initFirestore, changeFirestoreShare, createElderly, updateCredentialFromFiretore, listAllElderlyCredentials, /*firebaseTest*/ }

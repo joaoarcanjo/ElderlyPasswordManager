@@ -1,10 +1,10 @@
 
-import { Image, AppState } from 'react-native';
+import { Image, AppState, InteractionManager } from 'react-native';
 import { showMessage } from "react-native-flash-message";
 import * as Clipboard from 'expo-clipboard';
 import React from 'react';
 import { darkGreenBackgroud, lightBlueBackground, lightGreenBackgroud, lightRedBackground, lightYellowBackground, purpleBackground, superlightBlueBackgroud, superlightGreenBackground, yellowBackground } from '../../assets/styles/colors';
-import { triggerNotifications } from '../../notifications/localNotifications';
+import { triggerFlashMessage, triggerNotifications } from '../../notifications/localNotifications';
 import { appActive, durationQuickMessage, durationSlowMessage } from '../../assets/constants/constants';
 import { FlashMessage, credentialCreatedByElderlyDescription, credentialCreatedDescription, credentialDeletedByElderlyDescription, credentialDeletedDescription, credentialUpdatedByElderlyDescription, credentialUpdatedDescription, editModeActiveDescription, editModeCanceledDescription, elderlyPersonalInfoUpdatedDescription, maxNumberOfConnectionsDescription, maxNumberOfConnectionsElderlyDescription, permissionsChangedDescription, personalInfoUpdatedDescription, sessionAcceptedDescription, sessionEndedDescription, sessionRejectedDescription, sessionRequestCanceledDescription, sessionRequestReceivedDescription, sessionRequestSentDescription, sessionVerifiedDescription } from './messages';
 
@@ -17,15 +17,8 @@ import { FlashMessage, credentialCreatedByElderlyDescription, credentialCreatedD
  */
 export async function copyValue(value: string, message: FlashMessage, description: string = ""): Promise<void> {
   Clipboard.setStringAsync(value).then(() => {
-    showMessage({
-      floating: true,
-      message: message,
-      description: description,
-      icon: props => <Image source={require('../../assets/images/copy.png')} {...props} />,
-      backgroundColor: yellowBackground,
-      duration: durationQuickMessage,
-      color: "black",
-    })
+    const image = '../../assets/images/copy.png'
+    triggerFlashMessage(message, description, require(image))
   })
 }
 
@@ -33,30 +26,16 @@ export async function copyValue(value: string, message: FlashMessage, descriptio
  * Displays a flash message with an edit mode active indicator.
  */
 export function editValueFlash() {
-  showMessage({
-    floating: true,
-    message: FlashMessage.editModeActive,
-    description: editModeActiveDescription,
-    icon: props => <Image source={require("../../assets/images/edit.png")} {...props} />,
-    backgroundColor: superlightBlueBackgroud,
-    duration: durationQuickMessage,
-    color: "black",
-  })
+  const image = "../../assets/images/edit.png"
+  triggerFlashMessage(FlashMessage.editModeActive, editModeActiveDescription, require(image))
 }
 
 /**
  * Displays a flash message indicating that the edit mode has been canceled.
  */
 export function editCanceledFlash() {
-  showMessage({
-    floating: true,
-    message: FlashMessage.editModeCanceled,
-    description: editModeCanceledDescription,
-    icon: props => <Image source={require("../../assets/images/edit.png")} {...props} />,
-    backgroundColor: lightYellowBackground,
-    duration: durationQuickMessage,
-    color: "black",
-  })
+  const image = "../../assets/images/edit.png"
+  triggerFlashMessage(FlashMessage.editModeCanceled, editModeCanceledDescription, require(image))
 } 
 
 /**
@@ -64,30 +43,16 @@ export function editCanceledFlash() {
  * @param elderlyEmail - The email of the elderly.
  */
 export function elderlyPersonalInfoUpdatedFlash(elderlyEmail: string) {
-  showMessage({
-    floating: true,
-    message: FlashMessage.elderlyPersonalInfoUpdated,
-    description: elderlyPersonalInfoUpdatedDescription(elderlyEmail),
-    icon: props => <Image source={require("../../assets/images/edit.png")} {...props} />,
-    backgroundColor: superlightGreenBackground,
-    duration: durationQuickMessage,
-    color: "black",
-  })
+  const image = "../../assets/images/edit.png"
+  triggerFlashMessage(FlashMessage.elderlyPersonalInfoUpdated, elderlyPersonalInfoUpdatedDescription(elderlyEmail), require(image))
 }
 
 /**
  * Displays a flash message indicating that the caregiver's personal information has been updated.
  */
 export function caregiverPersonalInfoUpdatedFlash() {
-  showMessage({
-    floating: true,
-    message: FlashMessage.personalInfoUpdated,
-    description: personalInfoUpdatedDescription,
-    icon: props => <Image source={require("../../assets/images/edit.png")} {...props} />,
-    backgroundColor: superlightGreenBackground,
-    duration: durationQuickMessage,
-    color: "black",
-  })
+  const image = "../../assets/images/edit.png"
+  triggerFlashMessage(FlashMessage.personalInfoUpdated, personalInfoUpdatedDescription, require(image))
 }
 
 /**
@@ -95,15 +60,8 @@ export function caregiverPersonalInfoUpdatedFlash() {
  * @param elderlyEmail - The email of the elderly.
  */
 export function sessionRequestSent(elderlyEmail: string) {
-  showMessage({
-    floating: true,
-    message: FlashMessage.sessionRequest,
-    description: sessionRequestSentDescription(elderlyEmail),
-    icon: props => <Image source={require("../../assets/images/check.png")} {...props} />,
-    backgroundColor: lightBlueBackground,
-    duration: durationQuickMessage,
-    color: "black",
-  })
+  const image = "../../assets/images/check.png"
+  triggerFlashMessage(FlashMessage.sessionRequest, sessionRequestSentDescription(elderlyEmail), require(image))
 } 
 
 /**
@@ -112,15 +70,8 @@ export function sessionRequestSent(elderlyEmail: string) {
  */
 export function sessionRequestReceivedFlash(elderlyEmail: string) {
   if(AppState.currentState === appActive) {
-    showMessage({
-      floating: true,
-      message: FlashMessage.sessionRequestReceived,
-      description: sessionRequestReceivedDescription(elderlyEmail),
-      icon: props => <Image source={require("../../assets/images/plus.png")} {...props} />,
-      backgroundColor: purpleBackground,
-      duration: durationQuickMessage,
-      color: "black",
-    })
+    const image = "../../assets/images/plus.png"
+    triggerFlashMessage(FlashMessage.sessionRequestReceived, sessionRequestReceivedDescription(elderlyEmail), require(image))
   } else {
     triggerNotifications(FlashMessage.sessionRequestReceived, sessionRequestReceivedDescription(elderlyEmail), "")
   }
@@ -133,15 +84,8 @@ export function sessionRequestReceivedFlash(elderlyEmail: string) {
  */
 export function sessionAcceptedFlash(from: string, byMe: boolean) {
   if(AppState.currentState === appActive) {
-    showMessage({
-      floating: true,
-      message:  byMe ? FlashMessage.sessionAccepted : FlashMessage.elderlyAccept,
-      description: sessionAcceptedDescription(from),
-      icon: props => <Image source={require("../../assets/images/check.png")} {...props} />,
-      backgroundColor: darkGreenBackgroud,
-      duration: durationQuickMessage,
-      color: "black",
-    })
+    const image = "../../assets/images/check.png"
+    triggerFlashMessage(byMe ? FlashMessage.sessionAccepted : FlashMessage.elderlyAccept, sessionAcceptedDescription(from), require(image))
   } else {
     triggerNotifications(byMe ? FlashMessage.sessionAccepted : FlashMessage.elderlyAccept, sessionAcceptedDescription(from), "")
   }
@@ -154,15 +98,8 @@ export function sessionAcceptedFlash(from: string, byMe: boolean) {
  */
 export function sessionRejectedFlash(from: string, byMe: boolean) {
   if(AppState.currentState === appActive) {
-    showMessage({
-      floating: true,
-      message:  byMe ? FlashMessage.sessionRejected : FlashMessage.elderlyReject,
-      description: sessionRejectedDescription(from),
-      icon: props => <Image source={require("../../assets/images/cross.png")} {...props} />,
-      backgroundColor: lightRedBackground,
-      duration: durationQuickMessage,
-      color: "black",
-    })
+    const image = "../../assets/images/cross.png"
+    triggerFlashMessage(byMe ? FlashMessage.sessionRejected : FlashMessage.elderlyReject, sessionRejectedDescription(from), require(image))
   } else {
     triggerNotifications(byMe ? FlashMessage.sessionRejected : FlashMessage.elderlyReject, sessionRejectedDescription(from), "")
   }
@@ -174,15 +111,8 @@ export function sessionRejectedFlash(from: string, byMe: boolean) {
  */
 export function sessionRequestCanceledFlash(elderlyEmail: string, byMe: boolean) {
   if (AppState.currentState === appActive) {
-    showMessage({
-      floating: true,
-      message: FlashMessage.sessionRequestCanceled,
-      description: sessionRequestCanceledDescription(elderlyEmail),
-      icon: props => <Image source={require("../../assets/images/cross.png")} {...props} />,
-      backgroundColor: lightRedBackground,
-      duration: durationQuickMessage,
-      color: "black",
-    });
+    const image = "../../assets/images/cross.png"
+    triggerFlashMessage(FlashMessage.sessionRequestCanceled, sessionRequestCanceledDescription(elderlyEmail), require(image))
   } else {
     triggerNotifications(FlashMessage.sessionRequestCanceled, sessionRequestCanceledDescription(elderlyEmail), "");
   }
@@ -197,13 +127,15 @@ export function sessionRejectMaxReachedFlash(from: string) {
   if(AppState.currentState === appActive) {
     showMessage({
       floating: true,
-      message: FlashMessage.cantAcceptConnection,
+      message: FlashMessage.sessionRequestCanceled,
       description: maxNumberOfConnectionsDescription(from),
       icon: props => <Image source={require("../../assets/images/cross.png")} {...props} />,
       backgroundColor: lightRedBackground,
       duration: durationSlowMessage,
       color: "black",
     })
+    const image = "../../assets/images/cross.png"
+    triggerFlashMessage(FlashMessage.sessionRequestCanceled, maxNumberOfConnectionsDescription(from), require(image))
   } else {
     triggerNotifications(FlashMessage.cantAcceptConnection, maxNumberOfConnectionsDescription(from), "")
   }
@@ -354,18 +286,20 @@ export function sessionPermissionsFlash(from: string) {
  * @param from - The sender of the key.
  */
 export function elderlySentFirstKey(from: string) {
-  if(AppState.currentState === 'active') {
-    showMessage({
-      floating: true,
-      message: FlashMessage.sessionVerified,
-      description: sessionVerifiedDescription(from),
-      icon: props => <Image source={require("../../assets/images/plus.png")} {...props} />,
-      backgroundColor: purpleBackground,
-      duration: durationSlowMessage,
-      color: "black",
-    });
-  } else {
-    triggerNotifications(FlashMessage.sessionVerified, sessionVerifiedDescription(from), "")
-  }
+  setTimeout(() => {
+    if (AppState.currentState === 'active') {
+      showMessage({
+        floating: true,
+        message: FlashMessage.sessionVerified,
+        description: sessionVerifiedDescription(from),
+        icon: props => <Image source={require("../../assets/images/plus.png")} {...props} />,
+        backgroundColor: purpleBackground,
+        duration: durationSlowMessage,
+        color: "black",
+      });
+    } else {
+      triggerNotifications(FlashMessage.sessionVerified, sessionVerifiedDescription(from), "");
+    }
+  }, 7000);
 }
 

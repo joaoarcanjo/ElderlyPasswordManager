@@ -7,17 +7,17 @@ import MainBox from '../../../components/MainBox'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
-import { deleteCredential, updateCredentialFromFirestore, verifyIfCanManipulateCredentials } from '../../../firebase/firestore/functionalities'
+import { deleteCredentialFromFirestore, updateCredentialFromFirestore, verifyIfCanManipulateCredentials } from '../../../firebase/firestore/functionalities'
 import { YesOrNoModal, YesOrNoSpinnerModal } from '../../../components/Modal'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
-import { useSessionInfo } from '../../../firebase/authentication/session'
+import { useSessionInfo } from '../../../context/session'
 import { buildEditMessage, sendElderlyCredentialInfoAction } from './functions'
 import { ChatMessageType } from '../../../e2e/messages/types'
 import { deleteCredentialFromLocalDB, updateCredentialFromLocalDB } from '../../../database/credentials'
 import { cancelLabel, cardNumberLabel, copyLabel, deleteCredentialLabel, editLabel, emptyValue, ownerNameLabel, saveChangesLabel, saveLabel, securityCodeLabel, verificationCodeLabel } from '../../../assets/constants/constants'
-import { copyValue, credentialUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
-import { FlashMessage, copyCardNumberDescription, copyOwnerNameDescription, copySecurityCodeDescription, copyVerificationCodeDescription } from '../../../components/userMessages/messages'
 import { encrypt } from '../../../algorithms/tweetNacl/crypto'
+import { editValueFlash, credentialUpdatedFlash, editCanceledFlash, copyValue } from '../../../notifications/userMessages/UserMessages'
+import { copyOwnerNameDescription, copyCardNumberDescription, copySecurityCodeDescription, copyVerificationCodeDescription, FlashMessage } from '../../../notifications/userMessages/messages'
 
 /**
  * Componente para apresentar as credenciais bem como as ações de editar/permissões
@@ -293,7 +293,7 @@ function DeleteCredential({ownerId, id, platform, auxKey, isElderlyCredential}: 
         .then(() => sendElderlyCredentialInfoAction(userId, ownerId, emptyValue, platform, ChatMessageType.CREDENTIALS_DELETED))
         .then(() => navigation.goBack())
     } else {
-      await deleteCredential(ownerId, id)
+      await deleteCredentialFromFirestore(ownerId, id)
       .then(() => deleteCredentialFromLocalDB(userId, id))
       .then(() => navigation.goBack())
     }

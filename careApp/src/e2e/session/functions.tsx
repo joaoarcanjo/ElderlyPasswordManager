@@ -56,7 +56,3 @@ export async function startSession(recipient: string): Promise<void> {
     sessionList.unshift(newSession)
     sessionListSubject.next(sessionList)
 }
-
-export async function removeSession(recipient: string): Promise<void> {
-    console.log("--> Remove session!")
-}

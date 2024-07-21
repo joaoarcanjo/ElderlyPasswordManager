@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native"
-import { superlightBlueBackgroud, signinButtonBackground, signinButtonBorder, signupButtonBackground, signupButtonBorder, blueBorder } from "../../../assets/styles/colors"
+import { signinButtonBackground, signinButtonBorder, signinPageBackground, signinPageBorder, signupButtonBackground, signupButtonBorder } from "../../../assets/styles/colors"
 
 const styles = StyleSheet.create({
     container: {
@@ -9,8 +9,8 @@ const styles = StyleSheet.create({
         borderWidth: 3, // Largura da linha na margem
         flex: 1, 
         justifyContent: 'center',
-        borderColor: blueBorder,
-        backgroundColor: superlightBlueBackgroud
+        borderColor: signinPageBorder,
+        backgroundColor: signinPageBackground
     }
 })
 

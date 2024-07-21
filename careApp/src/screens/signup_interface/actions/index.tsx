@@ -5,7 +5,7 @@ import { whiteBackgroud } from "../../../assets/styles/colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { stylesButtons } from "../../../assets/styles/main_style";
 import { Spinner } from "../../../components/LoadingComponents";
-import { useSessionInfo } from "../../../firebase/authentication/session";
+import { useSessionInfo } from "../../../context/session";
 import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
 import { signUpOperation } from "../../../firebase/authentication/funcionalities";
 import { appName, createAccountLabel, emailLabel, emailPlaceholder, emptyValue, mobileLabel, mobilePlaceholder, nameLabel, namePlaceholder, passwordLabel, passwordPlaceholder } from "../../../assets/constants/constants";
@@ -31,6 +31,8 @@ export function SignUp () {
                 setUserPhone(phoneNumber)
                 setUserName(name) 
                 setUserEmail(email)
+            } else {
+                setLoading(false)
             }
         })
     }

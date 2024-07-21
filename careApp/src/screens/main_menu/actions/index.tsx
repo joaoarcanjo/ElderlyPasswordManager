@@ -4,15 +4,16 @@ import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { stylesOptions, stylesFirstHalf } from '../styles/sytles'
 import { stylesButtons } from '../../../assets/styles/main_style'
-import { useSessionInfo } from '../../../firebase/authentication/session'
+import { useSessionInfo } from '../../../context/session'
 import { getKeychainValueFor, saveKeychainValue } from '../../../keychain'
-import { caregiverName, caregiverPhone } from '../../../keychain/constants'
+import { caregiverFireKey, caregiverName, caregiverPhone } from '../../../keychain/constants'
 import { createIdentity } from '../../../e2e/identity/functions'
 import { credentialTimoutRefresh, credentialsLabel, elderlyLabel, emptyValue, generatorLabel, heyLabel, pageCredentials, pageElderlyList, pageQuestions, pageGenerator, pageSettings, questionsLabel, settingsLabel } from '../../../assets/constants/constants'
 import { getAllCredentialsAndValidate } from '../../list_credentials/actions/functions'
 import SplashScreen from '../../splash_screen/actions'
 import { flashTimeoutPromise } from '../../splash_screen/actions/functions'
 import * as SplashFunctions from 'expo-splash-screen';
+import { localDBKey as localDBKeyLabel } from '../../../keychain/constants';
 
 const credentialsImage = '../../../assets/images/credenciais.png'
 const generatorImage = '../../../assets/images/gerador.png'
@@ -49,7 +50,7 @@ function Functionalities() {
         navigation.push(pageElderlyList)
     }
 
-    const CredencialsNavigation = async () => {
+    const CredentialsNavigation = async () => {
         navigation.push(pageCredentials)
     }
 
@@ -73,7 +74,7 @@ function Functionalities() {
                 </TouchableOpacity>
             </View>
            <View style={{flex: 0.5, flexDirection: 'row', justifyContent: 'space-around' }}>
-                <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareCredentials, stylesButtons.mainConfig]} onPress={() => CredencialsNavigation()}>
+                <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareCredentials, stylesButtons.mainConfig]} onPress={() => CredentialsNavigation()}>
                     <Image source={require(credentialsImage)} style={[stylesOptions.squarePhoto]}/>
                     <Text numberOfLines={2} adjustsFontSizeToFit style={[stylesOptions.squareText]}>{credentialsLabel}</Text>
                 </TouchableOpacity>
@@ -102,15 +103,19 @@ function Functionalities() {
  */
 export default function MainMenu() {
 
-    const { userId, setUserName, setUserPhone, userPhone, userName, userEmail, localDBKey } = useSessionInfo()
+    const { userId, setUserName, setUserPhone, userPhone, userName, userEmail, localDBKey, setLocalDBKey } = useSessionInfo()
     const [appIsReady, setAppIsReady] = useState(true)
     //const { expoPushToken } = usePushNotifications()
     
     useEffect(() => {
-        if(userId == emptyValue || localDBKey == emptyValue) return
+        
+        if(userId == emptyValue) return
         
         const interval = setInterval(async () => {
-            await getAllCredentialsAndValidate(userId, localDBKey)
+            if(localDBKey == '') {
+                setLocalDBKey(await getKeychainValueFor(localDBKeyLabel(userId)))
+            }
+            await getAllCredentialsAndValidate(userId, await getKeychainValueFor(caregiverFireKey(userId)), localDBKey)
         }, credentialTimoutRefresh) 
 
         return () => clearInterval(interval)
@@ -119,8 +124,7 @@ export default function MainMenu() {
     useEffect(() => {
         savePhoneAndName()
         identityCreation()
-
-        flashTimeoutPromise(userId, setAppIsReady)
+        flashTimeoutPromise(userId, setAppIsReady, setLocalDBKey)
         .then(() => setAppIsReady(true))
     }, [])
     

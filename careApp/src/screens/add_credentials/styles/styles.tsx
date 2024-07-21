@@ -5,7 +5,7 @@ import { addCredentialButtonBackgroud, addCredentialButtonBorder, blackBorder, c
 /**
  * Estilos dos inputs das credenciais
  */
-const stylesInputsCredencials = StyleSheet.create({
+const stylesInputsCredentials = StyleSheet.create({
     inputContainer: {
         borderRadius: 20, // Define o raio dos cantos para arredondá-los
         borderWidth: 2, // Largura da linha na margem
@@ -60,4 +60,4 @@ const passwordFirstHalf = StyleSheet.create({
     }
 })
 
-export { stylesInputsCredencials, stylesAddCredential, passwordFirstHalf }
+export { stylesInputsCredentials, stylesAddCredential, passwordFirstHalf }

@@ -16,7 +16,7 @@ const styleScroolView = StyleSheet.create({
         borderWidth: 2, // Largura da linha na margem
         backgroundColor: itemContainerBackgroud, // Cor de fundo
         borderColor: itemContainerBorder,
-        marginVertical: 8, // Margem vertical entre os itens
+        marginVertical: 4, // Margem vertical entre os itens
     }
 })
 

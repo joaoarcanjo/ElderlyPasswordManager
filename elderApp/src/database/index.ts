@@ -29,33 +29,33 @@ export async function initDb(userId: string) {
     dbSQL.execSync(`
         CREATE TABLE IF NOT EXISTS passwords (
             id TEXT PRIMARY KEY, 
-            userId TEXT, 
-            password TEXT, 
-            timestamp INTEGER
+            userId TEXT NOT NULL, 
+            password TEXT NOT NULL, 
+            timestamp INTEGER NOT NULL
         );
     
         CREATE TABLE IF NOT EXISTS caregivers (
-            caregiverId TEXT, 
-            userId TEXT, 
-            name TEXT, 
-            email TEXT, 
-            phoneNumber TEXT, 
-            status INTEGER, 
-            PRIMARY KEY(userId, email, phoneNumber)
+            caregiverId TEXT NOT NULL, 
+            userId TEXT NOT NULL, 
+            name TEXT NOT NULL, 
+            email TEXT NOT NULL, 
+            phoneNumber TEXT NOT NULL, 
+            status INTEGER DEFAULT 0, 
+            PRIMARY KEY(userId, email)
         );
 
         CREATE TABLE IF NOT EXISTS sessionsSignal (
-            id TEXT, 
-            userId TEXT, 
-            record TEXT, 
-            PRIMARY KEY (id, userId)
+            caregiverId TEXT NOT NULL, 
+            userId TEXT NOT NULL, 
+            record TEXT NOT NULL, 
+            PRIMARY KEY (caregiverId, userId)
         );
 
         CREATE TABLE IF NOT EXISTS credentials (
             userId TEXT NOT NULL, 
             credentialId TEXT NOT NULL, 
             record TEXT NOT NULL, 
-            PRIMARY KEY (userId, credentialId)
+            PRIMARY KEY (credentialId)
         );
 
         CREATE TABLE IF NOT EXISTS timeout (

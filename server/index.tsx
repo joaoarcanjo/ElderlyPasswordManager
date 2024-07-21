@@ -1,7 +1,7 @@
 // server.js
 var admin = require("firebase-admin");
 
-var serviceAccount = require("./admin/thesis-pm-fa03e-firebase-adminsdk-9.json");
+var serviceAccount = require("./admin/thesis-2-ed7c6-firebase-adminsdk.json");
 
 const appFirebase = admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
@@ -32,8 +32,8 @@ const wss = new webSocket.Server({ port: 442 })
 app.set("wss", wss)
 
 const options = {
-    key: fs.readFileSync('./certificates/example.com+5-key.pem'),
-    cert: fs.readFileSync('./certificates/example.com+5.pem')
+    key: fs.readFileSync('./certificates/server.key'),
+    cert: fs.readFileSync('./certificates/server.crt')
 };
 
 const http = https ? require("https").Server(options, app) : require("http").Server(app)
@@ -54,7 +54,8 @@ const clientType = new Map()
 const clientLastBundleUpdate = new Map()
 //Map to store the public key of the client, the key is the username and the value is the public key
 const clientPublicKey = new Map()
-
+//Map to store the last update of the publicKey, the key is the username and the value is the timestamp
+const clientLastPKUpdate = new Map()
 //Map to store the messages that are waiting to be sent, the key is the username and the value is the list of messages
 const clientMessagesWaiting = new Map()
 
@@ -118,6 +119,47 @@ wss.on('connection', function connection(ws) {
     })
 })
 
+app.put("/updatePublicKey", (req, res) => {
+    console.log("==> UpdatePublicKey")
+    try {
+        const bundleWithPublicKey = Uint8Array.from(tweetnaclUtil.decodeBase64(req.body.bundleWithPublicKey))
+        let oldPublicKey = clientPublicKey.get(req.body.username)
+        const verifiedNewPublicKey = tweetnacl.sign.open(bundleWithPublicKey, oldPublicKey)
+
+        //let newPublicKey = Uint8Array.from(tweetnaclUtil.decodeBase64(req.body.newPublicKey)) 
+        //const publicKey = tweetnacl.sign.open(newPublicKey, oldPublicKey)
+        if (verifiedNewPublicKey === null) {
+            console.log('Key could not be verified')
+            return
+        } 
+        
+        const verified = tweetnaclUtil.encodeUTF8(verifiedNewPublicKey)
+        const publicKeyObj = JSON.parse(verified.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F]/g, ''))
+
+        //Verifico se o username do bundle é igual ao username da requisição
+        console.log(publicKeyObj.username)
+        console.log(req.body.username)
+        if(publicKeyObj.username !== req.body.username) {
+            console.log('Username does not match')
+            return
+        }
+
+        //Verifico se o timestamp do bundle é maior que o timestamp do último bundle
+        if(publicKeyObj.timestamp <= clientLastPKUpdate.get(req.body.username)) {
+            console.error('BundleKey is outdated')
+            return
+        } else {
+            clientLastPKUpdate.set(req.body.username, publicKeyObj.timestamp)
+        }
+        console.log("Public key updated sucessfully")
+
+        clientPublicKey.set(req.body.username, Uint8Array.from(tweetnaclUtil.decodeBase64(publicKeyObj.publicKey)))
+    } catch (error) {
+        console.log(error)
+        return
+    }
+})
+
 /**
  * Add a bundle to the server
  * @param publicKey - The public key of the user
@@ -130,7 +172,6 @@ app.put("/addBundle", (req, res) => {
     try {
         let publicKey = Uint8Array.from(tweetnaclUtil.decodeBase64(req.body.publicKey)) 
         const bundle = Uint8Array.from(tweetnaclUtil.decodeBase64(req.body.bundleSigned))
-        
         //Se ainda não possuir a chave privada do utilizador, vamos armazenar no servidor
         if (!clientPublicKey.has(req.body.username)) {
             clientPublicKey.set(req.body.username, publicKey)
@@ -138,7 +179,6 @@ app.put("/addBundle", (req, res) => {
         } else {
             publicKey = clientPublicKey.get(req.body.username)
         }
-
         const verifiedBundle = tweetnacl.sign.open(bundle, publicKey)
         //Verifico se a mensagem foi assinada com a devida chave privada
         if (verifiedBundle === null) {
@@ -149,6 +189,8 @@ app.put("/addBundle", (req, res) => {
         const bundleObj = JSON.parse(verified.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F]/g, ''))
 
         //Verifico se o username do bundle é igual ao username da requisição
+        console.log(bundleObj.username)
+        console.log(req.body.username)
         if(bundleObj.username !== req.body.username) {
             console.log('Username does not match')
             return
@@ -166,7 +208,7 @@ app.put("/addBundle", (req, res) => {
         clientBundles.set(req.body.username, JSON.stringify(bundleObj.bundle))
         console.log('=> Bundle added successfully')
     } catch (error) {
-        console.log(error)
+        console.log("Erro", error)
         return
     }
 })
@@ -209,5 +251,23 @@ http.listen({port: PORT}, async () => {
     console.log (ip.address())
     db.collection("Server").doc("server").set({ip: `${https ? 'https://' : 'http://'}${ip.address()}`})
     
+
+    /*
+    db.collection("Elderly").doc("qf3pF9rKc1Wdq6G1vYrWOPxGHa33").collection("Credencials").get().then((docs) => {
+        docs.forEach((doc) => { 
+            if(doc.data()) {
+                console.log(doc.data().data)
+            }
+        });
+    })
+
+    db.collection("Elderly").doc("9ap7Vg3pZbcBTAnt1KTaTh4oDfC3").collection("Credencials").get().then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+            doc.ref.update({
+                data: '1111'
+            });
+        });
+    });
+*/
     console.log(`Server listening on ${PORT}`);
 })

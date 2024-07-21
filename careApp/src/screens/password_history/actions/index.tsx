@@ -7,9 +7,10 @@ import  { Navbar } from "../../../navigation/actions";
 import { getGeneratedPasswords } from '../../../database/passwords'
 import { Password } from '../../../database/types';
 import MainBox from '../../../components/MainBox';
-import { useSessionInfo } from '../../../firebase/authentication/session';
-import { FlashMessage, copyPasswordDescription, copyValue } from '../../../components/UserMessages';
+import { useSessionInfo } from '../../../context/session';
 import { pageTitleHistory } from '../../../assets/constants/constants';
+import { copyValue } from '../../../notifications/userMessages/UserMessages';
+import { copyPasswordDescription, FlashMessage } from '../../../notifications/userMessages/messages';
 
 export default function PasswordHistory() {
 

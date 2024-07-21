@@ -1,7 +1,7 @@
 import {StyleSheet} from 'react-native'
 import {
-  credencialsButtonBackgroud,
-  credencialsButtonBorder,
+  credentialsButtonBackgroud,
+  credentialsButtonBorder,
   settingsButtonBackgroud,
   generatorButtonBackgroud,
   generatorButtonBorder,
@@ -45,8 +45,8 @@ const stylesOptions = StyleSheet.create({
      borderWidth: 5
    },
    squareCredentials: {
-     backgroundColor: credencialsButtonBackgroud,
-     borderColor: credencialsButtonBorder,
+     backgroundColor: credentialsButtonBackgroud,
+     borderColor: credentialsButtonBorder,
      borderRadius: 20, 
      borderWidth: 5
    },

@@ -4,14 +4,14 @@ import { stylesButtons } from "../../../assets/styles/main_style"
 import { stylesAddCaregiver } from "../styles/styles"
 import { ModalBox } from "../../../components/Modal"
 import { modal, options } from "../../credential_interface/styles/styles"
-import { useSessionInfo } from "../../../firebase/authentication/session"
+import { useSessionInfo } from "../../../context/session"
 import { startSessionWithElderly } from "./functions"
 import { ElderlyRequestStatus } from "../../../database/types"
 import { ErrorInstance } from "../../../exceptions/error"
 import { Errors } from "../../../exceptions/types"
 import { deleteElderly, saveElderly } from "../../../database/elderly"
 import { addElderlyLabel, cancelLabel, elderlyEmailLabel, emailPlaceholder, emptyValue, linkLabel } from "../../../assets/constants/constants"
-import { sessionRequestSent } from "../../../components/userMessages/UserMessages"
+import { sessionRequestSent } from "../../../notifications/userMessages/UserMessages"
 
 export function AddElderlyModal({visibility, concludeAction}: Readonly<{visibility: boolean, concludeAction: Function}>) {
 

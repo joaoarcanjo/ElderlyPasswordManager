@@ -21,7 +21,7 @@ export async function insertCredentialToLocalDB(userId: string, credentialId: st
             await dbSQL.runAsync(`INSERT INTO credentials (userId, credentialId, record) VALUES (?, ?, ?);`, [userId, credentialId, record])
                 .then(() => { resolve()})
                 .catch((error) => {
-                    console.log("Error: " + error.message)
+                    console.log("UserKey " + error.message)
                     reject(new ErrorInstance(Errors.ERROR_CREATING_CREDENTIAL))
                 })
         } else {
@@ -37,8 +37,8 @@ export async function insertCredentialToLocalDB(userId: string, credentialId: st
  * @param credentialId - O ID da credencial.
  * @returns Uma Promise que é resolvida com os dados da credencial se for encontrada, ou rejeitada com um erro se a busca falhar.
  */
-export async function getCredential(userId: string, credentialId: string): Promise<any> {
-    console.log("===> getCredentialCalled")
+export async function getCredentialFromLocalDB(userId: string, credentialId: string): Promise<any> {
+    //console.log("===> getCredentialCalled")
     return new Promise(async (resolve, reject) => {
         if (dbSQL != null) {
             await dbSQL.getFirstAsync(`SELECT record FROM credentials WHERE userId = ? AND credentialId = ?;`, [userId, credentialId])
@@ -73,6 +73,25 @@ export async function deleteCredentialFromLocalDB(userId: string, credentialId: 
     return new Promise(async (resolve, reject) => {
         if (dbSQL != null) {
             await dbSQL.runAsync(`DELETE FROM credentials WHERE userId = ? AND credentialId = ?;`, [userId, credentialId])
+                .then(() => { resolve() })
+                .catch((error) => {
+                    console.log("Error: " + error.message)
+                    reject(Errors.ERROR_DELETING_CREDENTIAL)
+                })
+        } else {
+            reject(Errors.ERROR_DATABASE_NOT_INITIALIZED)
+        }
+    })
+}
+
+/**
+ * Apaga uma credencial do banco de dados.
+ */
+export async function deleteAllCredentialFromLocalDB(): Promise<void> {
+    console.log("===> deleteAllCredential called");
+    return new Promise(async (resolve, reject) => {
+        if (dbSQL != null) {
+            await dbSQL.runAsync(`DELETE FROM credentials;`)
                 .then(() => { resolve() })
                 .catch((error) => {
                     console.log("Error: " + error.message)
@@ -122,7 +141,7 @@ export interface CredentialLocalRecord {
     record: string;
 }
 
-export async function getAllLocalCredentials(userId: string): Promise<CredentialLocalRecord[]> {
+export async function getAllCredentialsFromLocalDB(userId: string): Promise<CredentialLocalRecord[]> {
     console.log("===> getAllCredentialsCalled");
     return new Promise(async (resolve, reject) => {
         if (dbSQL != null) {

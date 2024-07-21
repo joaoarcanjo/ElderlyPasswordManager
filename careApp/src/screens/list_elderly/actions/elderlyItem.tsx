@@ -6,7 +6,7 @@ import { acceptElderly, cancelWaitingElderly, decouplingElderly, refuseElderly }
 import { StackNavigationProp } from "@react-navigation/stack/lib/typescript/src/types";
 import { useNavigation } from "@react-navigation/native";
 import { YesOrNoModal } from "../../../components/Modal";
-import { useSessionInfo } from "../../../firebase/authentication/session";
+import { useSessionInfo } from "../../../context/session";
 import { ElderlyRequestStatus } from "../../../database/types";
 import { getKeychainValueFor } from "../../../keychain";
 import { elderlySSSKey } from "../../../keychain/constants";
@@ -101,7 +101,7 @@ export function Elderly({ elderlyId, name, phone, email, setRefresh }: Readonly<
   const changeInfoState = () => setShowInfo(!showInfo)
 
   const navigateToElderlyCredentials = async () => {
-    const sssKey = await getKeychainValueFor(elderlySSSKey(elderlyId))
+    const sssKey = await getKeychainValueFor(elderlySSSKey(userId, elderlyId))
 
     if(sssKey == emptyValue) {
       Alert.alert('Informação', 'O Idoso foi informado que você aceitou a conexão, por favor aguarde.')

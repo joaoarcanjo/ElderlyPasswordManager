@@ -1,5 +1,6 @@
 import {StyleSheet} from 'react-native'
-import { copyButtonBackground, copyButtonBorder, firstHalfContainerBackgroud, greyBorder, historyButtonBackgroud, historyButtonBorder, passwordOptionButtonBackgroud, passwordOptionButtonBorder, regenerateButtonBackgroud, regenerateButtonBorder, whiteBackgroud } from '../../../assets/styles/colors'
+import { borderColorDark, copyButtonBackground, copyButtonBorder, firstHalfContainerBackgroud, greyBorder, historyButtonBackgroud, historyButtonBorder, passwordOptionButtonBackgroud, passwordOptionButtonBorder, regenerateButtonBackgroud, regenerateButtonBorder, color8, darkGrey } from '../../../assets/styles/colors'
+import { generatorLengthLabelTextSize, generatorNumberSelectedTextSize, generatorRequirementLabelTextSize } from '../../../assets/styles/text'
 
 /**
  * Estilos da view que informa qual é a página atual
@@ -18,12 +19,13 @@ const passwordFirstHalf = StyleSheet.create({
         borderTopRightRadius: 20, // Arredonda o canto inferior direito     
         borderBottomWidth: 0,
         backgroundColor: firstHalfContainerBackgroud, // Cor de fundo
-        borderWidth: 1, // Largura da linha na margem
+        borderColor: borderColorDark,
+        borderWidth: 2, // Largura da linha na margem
     },
     passwordGenerated: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         borderWidth: 3, // Largura da linha na margem
-        backgroundColor: whiteBackgroud,
+        backgroundColor: color8,
         borderColor: greyBorder,
     },
     copyButton: {
@@ -42,15 +44,13 @@ const passwordFirstHalf = StyleSheet.create({
 
 const passwordSecondHalf = StyleSheet.create({
     container: {
-        borderTopLeftRadius: 20, // Arredonda o canto inferior esquerdo
-        borderTopRightRadius: 20, // Arredonda o canto inferior direito     
-        borderBottomWidth: 0,
-        backgroundColor: whiteBackgroud, // Cor de fundo
-        borderWidth: 1, // Largura da linha na margem
+        borderRadius: 20, // Arredonda o canto inferior direito  
+        backgroundColor: color8, // Cor de fundo
+        borderColor: borderColorDark,
+        borderWidth: 2, // Largura da linha na marge
     }, 
     requirementsText: {
-        fontSize: 20,
-        color: 'black'
+        fontSize: generatorRequirementLabelTextSize,
     },
     lengthContainer: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
@@ -59,18 +59,18 @@ const passwordSecondHalf = StyleSheet.create({
         borderColor: passwordOptionButtonBorder,
     },
     lengthText: {
-        fontSize: 25,
-        color: 'black'
+        fontSize: generatorLengthLabelTextSize,
+        color: darkGrey
     },
     lengthDisplay: {
         borderRadius: 10, // Define o raio dos cantos para arredondá-los
         borderWidth: 3, // Largura da linha na margem
-        backgroundColor: whiteBackgroud,
+        backgroundColor: color8,
         borderColor: greyBorder
     },
     numberSelectedText: {
-        fontSize: 40,
-        color: 'black'
+        fontSize: generatorNumberSelectedTextSize,
+        color: darkGrey
     }
 })
 

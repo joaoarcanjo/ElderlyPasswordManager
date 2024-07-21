@@ -37,7 +37,7 @@ export async function insertCredentialToLocalDB(userId: string, credentialId: st
  * @param credentialId - O ID da credencial.
  * @returns Uma Promise que é resolvida com os dados da credencial se for encontrada, ou rejeitada com um erro se a busca falhar.
  */
-export async function getCredential(userId: string, credentialId: string): Promise<any> {
+export async function getCredentialFromLocalDB(userId: string, credentialId: string): Promise<any> {
     console.log("===> getCredentialCalled")
     return new Promise(async (resolve, reject) => {
         if (dbSQL != null) {
@@ -122,7 +122,7 @@ export interface CredentialLocalRecord {
     record: string;
 }
 
-export async function getAllLocalCredentials(userId: string): Promise<CredentialLocalRecord[]> {
+export async function getAllCredentialsFromLocalDB(userId: string): Promise<CredentialLocalRecord[]> {
     console.log("===> getAllCredentialsCalled");
     return new Promise(async (resolve, reject) => {
         if (dbSQL != null) {

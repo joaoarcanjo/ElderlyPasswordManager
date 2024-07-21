@@ -1,6 +1,6 @@
 import { ReactNode, createContext, useContext, useState } from "react"
 import React from 'react';
-import { emptyValue } from "../../assets/constants/constants";
+import { emptyValue } from "../assets/constants/constants";
 
 interface LoginContextProps {
     children: ReactNode;

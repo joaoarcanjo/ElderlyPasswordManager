@@ -10,14 +10,14 @@ import React, { useEffect, useState } from 'react';
 import { initDb } from './src/database';
 import FlashMessage from 'react-native-flash-message';
 import { Caregivers } from './src/screens/list_caregivers/actions';
-import { initFirestore } from './src/firebase/firestore/functionalities';
+import { changeFirestoreShare, initFirestore } from './src/firebase/firestore/functionalities';
 import { initKeychain } from './src/keychain';
 import { AddCredencial } from './src/screens/add_credentials/actions';
 import FrequentQuestions from './src/screens/list_questions/actions';
 import SignInPage from './src/screens/signin_interface/actions';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from './src/firebase/FirebaseConfig';
-import { SessionProvider, useSessionInfo } from './src/firebase/authentication/session';
+import { SessionProvider, useSessionInfo } from './src/context/session';
 import SignUpPage from './src/screens/signup_interface/actions';
 import { StatusBar } from 'expo-status-bar';
 import { createIdentity } from './src/e2e/identity/functions';
@@ -52,7 +52,7 @@ function InsideLayout() {
   return (
     <InsideStack.Navigator initialRouteName={pageMainMenu}>
       <InsideStack.Screen name={pageMainMenu} component={MainMenu} options={{ title: "MainMenu", headerShown: false }} />
-      <InsideStack.Screen name={pageCredentials} component={Credentials} options={{ title: "Credencials", headerShown: false }} />
+      <InsideStack.Screen name={pageCredentials} component={Credentials} options={{ title: "Credentials", headerShown: false }} />
       <InsideStack.Screen name={pageAddCredential} component={AddCredencial} options={{ title: "AddCredencial", headerShown: false }} />
       <InsideStack.Screen name={pageSettings} component={Settings} options={{ title: "Settings", headerShown: false }} />
       <InsideStack.Screen name={pageGenerator} component={Generator} options={{ title: "Generator", headerShown: false }} />
@@ -80,9 +80,10 @@ function Inicialization() {
         setUser(user)
       }else if(userEmail && user.uid && !notLoading) {
         await initKeychain(user.uid, userEmail)
-        .then(() => initSSS(user.uid))
-        .then(() => initDb(user.uid)).then((DBKey) => setLocalDBKey(DBKey))
         .then(() => initFirestore(user.uid))
+        .then(() => initSSS(user.uid, emptyValue))
+        .then(() => changeFirestoreShare(user.uid))
+        .then(() => initDb(user.uid)).then((DBKey) => setLocalDBKey(DBKey))
         .then(() => createIdentity(user.uid, userEmail))
         .then(() => {setUserId(user.uid); setUserEmail(userEmail); setUser(user)})
         .then(() => console.log("User: ", user.uid))

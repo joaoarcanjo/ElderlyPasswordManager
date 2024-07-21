@@ -7,22 +7,24 @@ import { useNavigation, useIsFocused } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import MainBox from '../../../components/MainBox'
 import { Spinner } from '../../../components/LoadingComponents'
-import { useSessionInfo } from '../../../firebase/authentication/session'
-import { getAllCredentialsAndValidate, getAllLocalCredentialsFormattedWithFilter } from './functions'
+import { useSessionInfo } from '../../../context/session'
+import { getAllCredentialsAndValidate, getAllCredentialsFromLocalDBFormattedWithFilter } from './functions'
 import { addCredentialsLabel, allLabel, cardsLabel, closeLabel, emptyValue, filtersLabel, loginLabel, pageTitleCredentials, searchLabel } from '../../../assets/constants/constants'
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons'
 import { darkBlueBackground, dividerLineColor, whiteBackgroud } from '../../../assets/styles/colors'
 import { CredentialType } from './types'
 import { ScrollItem } from './credentialItem'
+import { getKeychainValueFor } from '../../../keychain'
+import { caregiverFireKey } from '../../../keychain/constants'
 
 function AddCredencial() {
 
-  const { userId, localDBKey } = useSessionInfo()
+  const { userId } = useSessionInfo()
   const navigation = useNavigation<StackNavigationProp<any>>()
 
   const navigateToAddCredential = async () => {
     Keyboard.dismiss()
-    navigation.navigate('AddCredential', { userId: userId, key: localDBKey, isElderlyCredential: false })
+    navigation.navigate('AddCredential', { userId: userId, key: await getKeychainValueFor(caregiverFireKey(userId)), isElderlyCredential: false })
   }
   return (
     <View style= { { flex: 0.1, marginTop: '5%', flexDirection: 'row'} }>
@@ -35,7 +37,7 @@ function AddCredencial() {
 
 function CredentialsList() {
 
-  const [credencials, setCredencials] = useState<(CredentialType | undefined)[]>([])
+  const [credentials, setCredentials] = useState<(CredentialType | undefined)[]>([])
   const isFocused = useIsFocused()
   const { userId, localDBKey } = useSessionInfo()
   const [searchValue, setSearchValue] = useState(emptyValue)
@@ -44,35 +46,37 @@ function CredentialsList() {
   const [showFilter, setShowFilter] = useState(false)
   const [isFething, setIsFething] = useState(true)
 
-  const fetchCredencials = async () => {
-    getAllCredentialsAndValidate(userId, localDBKey)
+  const fetchCredentials = async () => {
+    getAllCredentialsAndValidate(userId, await getKeychainValueFor(caregiverFireKey(userId)), localDBKey)
+    .then((credentials) => setCredentials(credentials))
     search()
   }
 
   const search = ()=> {
     setIsFething(true)
-    getAllLocalCredentialsFormattedWithFilter(userId, localDBKey, searchValue)
-    .then((credentialsAux) => {   
-      let auxCredencials: CredentialType[] = [];
+    getAllCredentialsFromLocalDBFormattedWithFilter(userId, localDBKey, searchValue)
+    .then((credentialsAux) => { 
+      console.log("Local credentials: ", credentialsAux)  
+      let auxCredentials: CredentialType[] = [];
       credentialsAux.forEach(value => {
         if(value && value.data && (value.data.platform.toLowerCase().includes(searchValue.toLowerCase()))) {
           if (value.data.type === 'login' && searchType === 'login') {
-            auxCredencials.push({id: value.id, data: value.data})
+            auxCredentials.push({id: value.id, data: value.data})
           } else if (value.data.type === 'card' && searchType === 'card') {
-            auxCredencials.push({id: value.id, data: value.data})
+            auxCredentials.push({id: value.id, data: value.data})
           } else if (searchType === emptyValue) {
-            auxCredencials.push({id: value.id, data: value.data})
+            auxCredentials.push({id: value.id, data: value.data})
           }
         }
       })
-      setCredencials(auxCredencials)
+      setCredentials(auxCredentials)
       setIsFething(false)
     })
   }
 
   useEffect(() => {
     setIsFething(true)
-    fetchCredencials()
+    fetchCredentials()
     .then(() => setIsFething(false))
   }, [isFocused])
 
@@ -84,7 +88,7 @@ function CredentialsList() {
 
   return (
     <View style={{ flex: 0.72, flexDirection: 'row', justifyContent: 'space-around'}}>
-      <View style={[{ flex: 1, marginTop:'5%', marginHorizontal: '4%', justifyContent: 'space-around'}, styleScroolView.credencialsContainer]}>
+      <View style={[{ flex: 1, marginTop:'5%', marginHorizontal: '4%', justifyContent: 'space-around'}, styleScroolView.credentialsContainer]}>
         <View style={{flexDirection: 'row'}}>
           <View style={{flex: 0.25, marginLeft: '2%', marginVertical: '2%'}}>
             <TouchableOpacity style={[{flex: 1, justifyContent: 'center',  alignItems: 'center'}, stylesButtons.moreInfoButton, stylesButtons.mainSlimConfig]} onPress={() => {setShowFilter(!showFilter)}}>
@@ -107,7 +111,7 @@ function CredentialsList() {
             style={{ flex: 1, fontSize: 22, padding: '2%', marginHorizontal: '1%' }}
             onChangeText={(value) => {setSearchValue(value)}}
             />
-            <TouchableOpacity style={[{flex: 0.2, marginHorizontal: '2%', marginVertical: '2%'}, styleSearch.button, stylesButtons.mainConfig]} onPress={fetchCredencials}>
+            <TouchableOpacity style={[{flex: 0.2, marginHorizontal: '2%', marginVertical: '2%'}, styleSearch.button, stylesButtons.mainConfig]} onPress={fetchCredentials}>
               <MaterialIcons style={{marginHorizontal: '1%'}} name={'search'} size={40} color="black"/> 
             </TouchableOpacity>
           </View>
@@ -136,7 +140,7 @@ function CredentialsList() {
         {isFething ?
         <Spinner width={300} height={300}/> :
         <ScrollView>
-          {credencials.map((value: CredentialType | undefined) => {
+          {credentials.map((value: CredentialType | undefined) => {
             if(value != undefined) {
               return <ScrollItem key={value.id} credential={value} elderlyId={emptyValue}/>
             }

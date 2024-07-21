@@ -1,5 +1,5 @@
 import { emptyValue } from "../../assets/constants/constants"
-import { getCaregivers } from "../../database/caregivers"
+import { getAllCaregivers } from "../../database/caregivers"
 import { encryptAndSendMessage } from "../../e2e/messages/sendMessage"
 import { ElderlyDataBody, ChatMessageType } from "../../e2e/messages/types"
 import { startSession } from "../../e2e/session/functions"
@@ -13,7 +13,7 @@ import { sessionForRemoteUser, currentSessionSubject } from "../../e2e/session/s
  */
 export const sendShares = async (userId: string, caregiver1Key: string, caregiver2Key: string) => {
     console.log("===> sendSharesCalled")
-    const caregivers = await getCaregivers(userId)
+    const caregivers = await getAllCaregivers(userId)
     caregivers.forEach(async (caregiver, index) => {
         if(!sessionForRemoteUser(caregiver.email)) {
             await startSession(caregiver.email)

@@ -7,15 +7,15 @@ import { setCaregiverListUpdated } from "../../screens/list_caregivers/actions/s
 import { getKeychainValueFor } from "../../keychain"
 import { caregiver1SSSKey, caregiver2SSSKey, elderlyId, localDBKey } from "../../keychain/constants"
 import { addCaregiverToArray, removeCaregiverFromArray } from "../../firebase/firestore/functionalities"
-import { checkCaregiverByEmailAccepted, checkCaregiverByEmailNotAccepted, checkNumberOfCaregivers, deleteCaregiver, getCaregiverId, getCaregivers, getCaregiversWithSpecificState, isMaxCaregiversReached, saveCaregiver, updateCaregiver } from "../../database/caregivers"
+import { checkCaregiverByEmailAccepted, checkCaregiverByEmailWaitingForResponse, checkNumberOfCaregivers, deleteCaregiver, getAllCaregivers, getCaregiverId, getCaregiversWithSpecificState, isMaxCaregiversReached, saveCaregiver, updateCaregiver } from "../../database/caregivers"
 import { CaregiverRequestStatus } from "../../database/types"
 import { setCredentialsListUpdated } from "../../screens/list_credentials/actions/state"
 import { getAllCredentialsAndValidate } from "../../screens/list_credentials/actions/functions"
 import { encryptAndSendMessage } from "./sendMessage"
-import { caregiverPersonalInfoUpdatedFlash, credentialCreatedFlash, credentialDeletedFlash, credentialUpdatedFlash, sessionAcceptedFlash, sessionEndedFlash, sessionRejectMaxReachedFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionRequestCanceledFlash, sessionRequestReceivedFlash } from "../../components/UserMessages"
 import { deleteSessionById } from "../../database/signalSessions"
 import { executeKeyExchange } from "../../algorithms/shamirSecretSharing/sssOperations"
 import { emptyValue, readCaregivers, writeCaregivers } from "../../assets/constants/constants"
+import { credentialUpdatedFlash, credentialCreatedFlash, credentialDeletedFlash, caregiverPersonalInfoUpdatedFlash, sessionAcceptedFlash, sessionRequestReceivedFlash, sessionRejectMaxReachedFlash, sessionRequestCanceledFlash, sessionRejectedFlash, sessionEndedFlash, sessionRejectedMaxReachedFlash } from "../../notifications/UserMessages"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -134,7 +134,7 @@ async function processPersonalData(currentUserId: string, cm: ProcessedChatMessa
         .catch(() => console.log('#1 Error updating caregiver'))
     
     //Se for uma relação que estamos à espera de resposta, o cuidador aceitou a relação.
-    } else if(await checkCaregiverByEmailNotAccepted(currentUserId, cm.from)) {
+    } else if(await checkCaregiverByEmailWaitingForResponse(currentUserId, cm.from)) {
         await updateCaregiver(data.userId, currentUserId, data.email, data.name, data.phone)
         .then(() => addCaregiverToArray(currentUserId, data.userId, readCaregivers))
         .then(() => sessionAcceptedFlash(cm.from, false))
@@ -147,7 +147,7 @@ async function processPersonalData(currentUserId: string, cm: ProcessedChatMessa
     } else {
         await isMaxCaregiversReached(currentUserId)
         .then(async (isMaxReached) => {
-            if(isMaxReached) await refuseCaregiverMaxReached(currentUserId, cm)
+            if(isMaxReached) await refuseMaxReached(currentUserId, cm)
             else {
                 await saveCaregiver(currentUserId, data.userId, data.name, data.email, data.phone, CaregiverRequestStatus.RECEIVED)
                 .then(() => sessionRequestReceivedFlash(cm.from))
@@ -159,7 +159,7 @@ async function processPersonalData(currentUserId: string, cm: ProcessedChatMessa
     }
 }
 
-async function refuseCaregiverMaxReached(currentUserId: string, cm: ProcessedChatMessage) {
+async function refuseMaxReached(currentUserId: string, cm: ProcessedChatMessage) {
     await encryptAndSendMessage(cm.from, ChatMessageDescription.REJECT_SESSION, true, ChatMessageType.MAX_REACHED_SESSION)
     .then(() => removeSession(cm.from))
     .then(() => deleteSessionById(currentUserId, cm.from))
@@ -208,7 +208,7 @@ async function processMaxReachedMessage(currentUserId: string, cm: ProcessedChat
 
 export async function cancelWaitingCaregivers(userId: string) {
     console.log("===> cancelWaitingCaregiversCalled")
-    console.log(await getCaregivers(userId))
+    console.log(await getAllCaregivers(userId))
     const elderlies = await getCaregiversWithSpecificState(userId, CaregiverRequestStatus.WAITING)
     elderlies.forEach(async email => {
         await encryptAndSendMessage(email, ChatMessageDescription.CANCEL_SESSION, true, ChatMessageType.CANCEL_SESSION)

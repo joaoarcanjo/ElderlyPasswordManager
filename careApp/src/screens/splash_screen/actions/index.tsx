@@ -1,6 +1,6 @@
 import React from 'react'
 import {View, Text} from 'react-native'
-import { ElderlyLoading } from '../../../components/LoadingComponents'
+import { BellLoading } from '../../../components/LoadingComponents'
 import { splashStyle } from '../styles/style'
 
 export default function SplashScreen({ layout }: Readonly<{layout: () => Promise<void>}>) {
@@ -13,7 +13,7 @@ export default function SplashScreen({ layout }: Readonly<{layout: () => Promise
         onLayout={layout}>
           <Text style={[splashStyle.text]}>{randomMessage}</Text>
           <View style={{marginTop: '15%'}}>
-          <ElderlyLoading/>
+          <BellLoading/>
         </View>
     </View>
   )

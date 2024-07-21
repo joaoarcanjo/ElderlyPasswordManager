@@ -16,9 +16,8 @@ import { Caregiver, CaregiverRequestStatus } from "./types";
  */
 export const saveCaregiver = async (userId: string, caregiverId: string, name: string, email: string, phoneNumber: string, requestStatus: CaregiverRequestStatus): Promise<void> => {
     console.log("===> saveCaregiverCalled")
-    const aux = await checkCaregiverByEmailNotAccepted(userId, email)
     if (requestStatus == CaregiverRequestStatus.WAITING) {
-        if(await checkCaregiverByEmailNotAccepted(userId, email)) {
+        if(await checkCaregiverByEmailWaitingForResponse(userId, email)) {
             return Promise.reject(new ErrorInstance(Errors.ERROR_CAREGIVER_REQUEST_ALREADY_SENT))
         } else if (await checkCaregiverByEmail(userId, email)) {
             return Promise.reject(new ErrorInstance(Errors.ERROR_CAREGIVER_ALREADY_ADDED))
@@ -157,8 +156,8 @@ export const checkNumberOfCaregivers = async (userId: string): Promise<number> =
  * @param email - The email of the caregiver.
  * @returns A Promise that resolves to a boolean indicating whether the caregiver is not accepted.
  */
-export const checkCaregiverByEmailNotAccepted = async (userId: string, email: string): Promise<boolean> => {
-    console.log("===> checkCaregiverByEmailNotAccepted")
+export const checkCaregiverByEmailWaitingForResponse = async (userId: string, email: string): Promise<boolean> => {
+    console.log("===> checkCaregiverByEmailWaitingForResponse")
     return new Promise(async (resolve,) => {
         if (dbSQL != null) {
             await dbSQL.getFirstAsync('SELECT COUNT(*) AS count FROM caregivers WHERE email = ? AND userId = ? AND status = ?', [email, userId, CaregiverRequestStatus.WAITING])
@@ -233,7 +232,7 @@ export const changeCaregiverStatusOnDatabase = async (userId: string, email: str
  * @param userId - The ID of the user.
  * @returns A promise that resolves to an array of caregivers.
  */
-export const getCaregivers = (userId: string): Promise<Caregiver[]> => {
+export const getAllCaregivers = (userId: string): Promise<Caregiver[]> => {
     console.log("===> getCaregiversCalled")
     return new Promise((resolve,) => {
         const data: Caregiver[] = [];

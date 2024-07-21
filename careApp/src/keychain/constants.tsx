@@ -1,11 +1,16 @@
-export const caregiverId = 'userId' //TODO: CHANGE caregiverId to userId
+export const caregiverId = 'userId'
 export const caregiverEmail = 'userEmail'
 export const caregiverPwd = 'userPwd'
 
-export const caregiverPhone = (caregiverId: string) => `${caregiverId}-userPhone`
-export const caregiverName = (caregiverId: string) => `${caregiverId}-userName`
-export const elderlySSSKey = (elderlyId: string) => `${elderlyId}-elderlySSSKey`
+export const caregiverPhone = (caregiverId: string) => 
+    `${caregiverId}-userPhone`
+
+export const caregiverName = (caregiverId: string) => 
+    `${caregiverId}-userName`
+
+export const elderlySSSKey = (caregiverId: string, elderlyId: string) => `${caregiverId}-${elderlyId}-elderlySSSKey`
 export const localDBKey = (caregiverId: string) => `${caregiverId}-localDBKey`
+export const caregiverFireKey = (caregiverId: string) => `${caregiverId}-firestoreKey`
 export const signalPublicKey = (caregiverId: string) => `${caregiverId}-signalPublicKey`
 export const signalPrivateKey = (caregiverId: string) => `${caregiverId}-signalPrivateKey`
 

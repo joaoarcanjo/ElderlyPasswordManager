@@ -5,17 +5,19 @@ import { historyStyle, passwordFirstHalf, passwordSecondHalf } from '../styles/s
 import {Navbar} from '../../../navigation/actions'
 import { savePasswordGenerated } from '../../../database/passwords'
 import MainBox from '../../../components/MainBox'
-import { useSessionInfo } from '../../../firebase/authentication/session'
+import { useSessionInfo } from '../../../context/session'
 import { copyLabel, emptyValue, historyLabel, lengthLabel, lowerLabel, numbersLabel, pagePasswordHistory, pageTitleGenerator, passwordDefaultLengthGenerator, regenerateLabel, requirementLabel, specialLabel, timeoutToSavePassword, upperLabel } from '../../../assets/constants/constants'
 import { Requirements } from '../../../components/passwordGenerator/constants'
 import Algorithm from '../../../algorithms/newPassword/newPass'
 import { FlashMessage, copyPasswordDescription } from '../../../assets/constants/messages'
-import { copyValue } from '../../../components/UserMessages'
+import { historyTextColor } from '../../../assets/styles/colors'
+import { options } from '../../credential_interface/styles/styles'
+import { copyValue } from '../../../notifications/UserMessages'
+import { Requirement } from '../../../components/passwordGenerator/Requirement'
+import { buttonNormalTextSize, generatorPasswordGeneratedLabelTextSize } from '../../../assets/styles/text'
 
 const minusImage = "../../../assets/images/minus.png"
 const plusImage = "../../../assets/images/plus.png"
-const crossImage = "../../../assets/images/cross.png"
-const checkImage = "../../../assets/images/check.png"
 
 export default function Generator({ navigation }: {readonly navigation: any}) {
 
@@ -36,6 +38,7 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
   const updateNumbers = () => {if(!verifyPool(Requirements.Numbers)) setNumbers(!numbers)}
 
   //UseEffects: ---
+  
   useEffect(() => { 
     generatePassword()
    }, [length, uppercase, lowercase, numbers, special])
@@ -96,39 +99,14 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
     }
 
     return (
-      <View style= { { flex: 0.06, width: '100%', marginTop: '2%', alignItems: 'flex-end' } }>
-            <TouchableOpacity style={[{flex: 1,  width: '45%', marginRight: '8%'}, historyStyle.historyButton, stylesButtons.mainConfig]} onPress={() => HistoryPressed()}>
-                <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontWeight: 'bold', fontSize: 22 }]}>{historyLabel}</Text>
-            </TouchableOpacity>
+      <View style={{flex: 0.10}}>
+        <TouchableOpacity style={[{flex: 1, marginVertical: '3%', width: '90%'}, historyStyle.historyButton, stylesButtons.mainConfig]} onPress={() => HistoryPressed()}>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ marginHorizontal: '25%', fontWeight: 'bold', fontSize: buttonNormalTextSize, color: historyTextColor }]}>{historyLabel}</Text>
+        </TouchableOpacity>
       </View>
     )
   }
-  
-  function PasswordFirstBox() {
-    
-    return (
-      <View style= { { flex: 0.24, flexDirection: 'row', justifyContent: 'space-around'} }>
-          <View style={[{flex: 1, marginTop: '2%', marginHorizontal: '8%', justifyContent: 'center',  alignItems: 'center'}, passwordFirstHalf.container]}>
-              
-              {/* View onde vai aparecer a password que será gerada */}
-              <View style={[{flex: 1,  width: '90%', marginTop: '5%',marginBottom: '1%', marginHorizontal: '5%', justifyContent: 'center', alignItems: 'center'}, passwordFirstHalf.passwordGenerated]}>
-                <Text numberOfLines={2} adjustsFontSizeToFit style={[{ fontSize: 22 }]}>{passGenerated}</Text>
-              </View>
-              
-              {/* Botões para copiar a password e para gerar uma nova */}
-              <View style={{flexDirection: 'row', margin: '3%', marginBottom: '5%'}}>
-                <TouchableOpacity style={[{flex: 0.5, marginRight: '2%'}, passwordFirstHalf.copyButton, stylesButtons.mainConfig]} onPress={() => saveOnClickBoard() }>
-                  <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '5%' }]}>{copyLabel}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[{flex: 0.5, marginLeft: '2%'}, passwordFirstHalf.regenerateButton, stylesButtons.mainConfig]} onPress={() => generatePassword() }>
-              <Text numberOfLines={2} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '5%', textAlign: 'center' }]}>{regenerateLabel}</Text>
-                </TouchableOpacity>
-              </View>
-          </View>
-      </View>
-    )
-  }
-  
+
   function RequirementLength() {
     return (
       <View style={[{flex: 0.20, flexDirection: 'row', width: '90%', justifyContent: 'center',  alignItems: 'center' }, passwordSecondHalf.lengthContainer]}>
@@ -149,49 +127,45 @@ export default function Generator({ navigation }: {readonly navigation: any}) {
       </View>
     )
   }
-  
-  function Requirement({name, value, func}:Readonly<{name: string, value: boolean, func: Function}>) {
-    
-    const style = value ? stylesButtons.selectedButton : stylesButtons.unselectedButton
-    return (
-      <TouchableOpacity style={[{flex: 0.50, height: '90%', marginHorizontal: '3%', justifyContent: 'center',  alignItems: 'center' }, passwordSecondHalf.lengthContainer, stylesButtons.mainConfig, style]} onPress={() => func()}>
-        <Text numberOfLines={1} adjustsFontSizeToFit style={[passwordSecondHalf.requirementsText]}>{name}</Text>
-        <View style={{flex: 0.65, width: '100%', marginTop: '5%'}}>
-          {value ? 
-          <Image source={require(checkImage)} style={[{width: '100%', height: '100%', resizeMode: 'contain'}]}/>:
-          <Image source={require(crossImage)} style={[{width: '100%', height: '100%', resizeMode: 'contain'}]}/>}
-        </View>
-      </TouchableOpacity>
-    )
-  }
 
-  function PasswordSecondBox() {
-    return (
-      <View style= { { flex: 0.55, flexDirection: 'row', justifyContent: 'space-around'} }>
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+      <MainBox text={pageTitleGenerator}/>
+      <View style= { { flex: 0.24, flexDirection: 'row', justifyContent: 'space-around'} }>
+          <View style={[{flex: 1, marginTop: '2%', marginHorizontal: '8%', justifyContent: 'center',  alignItems: 'center'}, passwordFirstHalf.container]}>
+              
+              {/* View onde vai aparecer a password que será gerada */}
+              <View style={[{flex: 1,  width: '90%', marginTop: '5%',marginBottom: '1%', marginHorizontal: '5%', justifyContent: 'center', alignItems: 'center'}, passwordFirstHalf.passwordGenerated]}>
+                <Text numberOfLines={2} adjustsFontSizeToFit style={[{ fontSize: generatorPasswordGeneratedLabelTextSize }]}>{passGenerated}</Text>
+              </View>
+              {/* Botões para copiar a password e para gerar uma nova */}
+              <View style={{flexDirection: 'row', margin: '3%', marginBottom: '5%'}}>
+                <TouchableOpacity style={[{flex: 0.5, marginRight: '2%'}, passwordFirstHalf.copyButton, stylesButtons.mainConfig]} onPress={() => saveOnClickBoard() }>
+                  <Text numberOfLines={1} adjustsFontSizeToFit style={[{ margin: '5%' }, options.copyButtonText]}>{copyLabel}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[{flex: 0.5, marginLeft: '2%'}, passwordFirstHalf.regenerateButton, stylesButtons.mainConfig]} onPress={() => generatePassword() }>
+                  <Text numberOfLines={2} adjustsFontSizeToFit style={[{ margin: '5%', textAlign: 'center' }, options.generateLabelText]}>{regenerateLabel}</Text>
+                </TouchableOpacity>
+              </View>
+          </View>
+      </View>
+      <View style= { { flex: 0.50, flexDirection: 'row', justifyContent: 'space-around'} }>
           <View style={[{flex: 1, marginHorizontal: '4%', justifyContent: 'center',  alignItems: 'center'}, passwordSecondHalf.container]}>
               <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.10, marginTop: '2%', width: '90%', justifyContent: 'center'}, passwordSecondHalf.requirementsText]}>{requirementLabel}</Text>
               <RequirementLength/>
               <View style={{flex: 0.70, marginHorizontal: '5%', marginVertical: '5%'}}>
-                <View style={[{flex: 0.50, width: '90%', flexDirection: 'row', justifyContent: 'center',  alignItems: 'center'}]}>
+                <View style={[{flex: 0.50, width: '100%', flexDirection: 'row', justifyContent: 'center',  alignItems: 'center'}]}>
                   <Requirement name={upperLabel} value={uppercase} func={updateUpperCase}/>
                   <Requirement name={lowerLabel} value={lowercase} func={updateLowerCase}/>
                 </View>
-                <View style={[{flex: 0.50, width: '90%', flexDirection: 'row', justifyContent: 'center',  alignItems: 'center'}]}>
+                <View style={[{flex: 0.50, width: '100%', flexDirection: 'row', justifyContent: 'center',  alignItems: 'center'}]}>
                   <Requirement name={numbersLabel} value={numbers} func={updateNumbers}/>
                   <Requirement name={specialLabel} value={special} func={updateSpecial}/>
                 </View>
               </View>
           </View>
       </View>
-    )
-  }
-
-  return (
-    <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
-      <MainBox text={pageTitleGenerator}/>
       <HistoryButton/>
-      <PasswordFirstBox/>
-      <PasswordSecondBox/>
       <Navbar/>
     </View>
   )

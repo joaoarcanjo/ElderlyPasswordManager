@@ -22,7 +22,7 @@ export const usernameLabel = 'Utilizador'
 export const passwordLabel = 'Palavra-passe'
 export const platformLabel = 'Plataforma'
 export const cardNumberLabel = 'Número do Cartão'
-export const ownerNameLabel = 'Nome do Proprietário'
+export const ownerNameLabel = 'Nome do Titular'
 export const securityCodeLabel = 'Código de Segurança'
 export const verificationCodeLabel = 'Código de Verificação'
 export const cardPlatformLabel = 'Nome do Cartão'
@@ -115,11 +115,6 @@ export const pbkdf2Iterations = 1000
 export const splashScreenDuration = 7000
 export const timeoutToNewSplash = 1000 * 60 * 60 * 24
 
-//SSS:
-export const numberOfShares = 3
-export const threshold = 2
-export const keyRefreshTimeout = 1000 * 60 * 60 * 24 * 10 // 10 days
-
 //Password generator:
 export const passwordMaxLengthGenerator = 40
 export const passwordMinLengthGenerator = 8
@@ -138,12 +133,14 @@ export const maxElderlyCount = 4
 
 //Firestore:
 export const elderlyCollectionName = 'Elderly'
-export const credencialsCollectionName = 'Credencials'
+export const credentialsCollectionName = 'Credentials'
 
 export const keyParameter = 'key'
 export const keyCollectionName = 'Key'
-export const SaltCredentialCollectionName = 'SaltCredential'
-export const SaltServerCollectionName = 'SaltServer'
+export const SaltCollection = "Salt"
+export const SaltDocument = "Value"
+export const SaltCredentialDocumentName = 'SaltCredential'
+export const SaltServerDocumentName = 'SaltServer'
 export const SaltDocumentName = 'Value'
 export const keyDocumentName = 'Value'
 export const caregiversCollectionName = 'Caregivers'

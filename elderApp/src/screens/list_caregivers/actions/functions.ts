@@ -1,6 +1,5 @@
 import { executeKeyExchange } from "../../../algorithms/shamirSecretSharing/sssOperations"
 import { emptyValue, readCaregivers, writeCaregivers } from "../../../assets/constants/constants"
-import { sessionAcceptedFlash, sessionEndedFlash, sessionRejectedFlash } from "../../../components/UserMessages"
 import { changeCaregiverStatusOnDatabase, deleteCaregiver, getCaregiversWithSpecificState, isMaxCaregiversReached } from "../../../database/caregivers"
 import { deleteSessionById } from "../../../database/signalSessions"
 import { CaregiverRequestStatus } from "../../../database/types"
@@ -13,6 +12,7 @@ import { Errors } from "../../../exceptions/types"
 import { addCaregiverToArray, removeCaregiverFromArray } from "../../../firebase/firestore/functionalities"
 import { getKeychainValueFor } from "../../../keychain"
 import { caregiver1SSSKey, caregiver2SSSKey } from "../../../keychain/constants"
+import { sessionAcceptedFlash, sessionEndedFlash, sessionRejectedFlash } from "../../../notifications/UserMessages"
 import { setCaregiverListUpdated } from "./state"
 
 export async function startSessionWithCaregiver(caregiverEmail: string, userId: string, userName: string, userEmail: string, userPhone: string) {
@@ -67,8 +67,8 @@ export async function acceptCaregiver(caregiverId: string, number: number, userI
 }
 
 /**
- * Quando o cuidador rejeita a relação, é enviada uma mensagem para o idoso a dizer que rejeitou a conexão.
- * O cuidador vai remover a sessão (webSocket) que possui com o idoso.
+ * Quando o idoso rejeita a relação, é enviada uma mensagem para o cuidador a dizer que rejeitou a conexão.
+ * O idoso vai remover a sessão (webSocket) que possui com o cuidador.
  * @param to 
  */
 export async function refuseCaregiver(userId: string, to: string, elderlyName: string) {

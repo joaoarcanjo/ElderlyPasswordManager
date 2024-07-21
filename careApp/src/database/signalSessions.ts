@@ -15,9 +15,8 @@ import { SessionSignal } from "./types";
  * @throws {Errors.ERROR_CREATING_SESSION} If there is an error creating the session.
  * @throws {Errors.ERROR_RETRIEVING_SESSION} If there is an error retrieving the session.
  */
-export const saveSignalSessions = async (userId: string, otherId: string, record: string, localDBKey: string) => {
-    console.log("===> saveSignalSessionsCalled")
-    const encrypted = encrypt(record, localDBKey)
+export const saveSignalSession = async (userId: string, otherId: string, record: string) => {
+    console.log("===> saveSignalSessionCalled")
 
     if(dbSQL != null) {
         await dbSQL.getAllAsync('SELECT id FROM sessionsSignal WHERE id = ? AND userId = ?', [otherId, userId])
@@ -26,7 +25,7 @@ export const saveSignalSessions = async (userId: string, otherId: string, record
                     console.log("Session exists")
                     // Row with given id and userId exists, perform UPDATE
                     if (dbSQL != null) {
-                        await dbSQL.runAsync('UPDATE sessionsSignal SET record = ? WHERE id = ? AND userId = ?', [encrypted, otherId, userId])
+                        await dbSQL.runAsync('UPDATE sessionsSignal SET record = ? WHERE id = ? AND userId = ?', [record, otherId, userId])
                             .then(() => {
                                 return Promise.resolve()
                             })
@@ -40,9 +39,9 @@ export const saveSignalSessions = async (userId: string, otherId: string, record
                 } else {
                     console.log("Session not exists")
                     if (dbSQL != null) {
-                        console.log("===> saveSignalSessionsCalled")
+                        console.log("===> saveSignalSessionCalled")
                         // Row with given id and userId does not exist, perform INSERT
-                        await dbSQL.runAsync('INSERT INTO sessionsSignal (id, userId, record) VALUES (?,?,?)', [otherId, userId, encrypted])
+                        await dbSQL.runAsync('INSERT INTO sessionsSignal (id, userId, record) VALUES (?,?,?)', [otherId, userId, record])
                         .then(() => {
                             console.log('- Sessão salva com sucesso.')
                             return Promise.resolve()
@@ -74,8 +73,8 @@ export const saveSignalSessions = async (userId: string, otherId: string, record
  * @throws {Errors.ERROR_RETRIEVING_SESSION} If there was an error retrieving the session.
  * @throws {Errors.ERROR_DATABASE_NOT_INITIALIZED} If the database is not initialized.
  */
-export const getSessionById = async (otherId: string, userId: string, localDBKey: string): Promise<SessionSignal | undefined> => {
-    console.log("===> getSessionByIdCalled")
+export const getSession = async (otherId: string, userId: string, localDBKey: string): Promise<SessionSignal | undefined> => {
+    console.log("===> getSessionCalled")
 
     return new Promise(async (resolve, reject) => {
         if(dbSQL != null) {

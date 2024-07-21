@@ -3,10 +3,11 @@ import { Image, AppState } from 'react-native';
 import { showMessage } from "react-native-flash-message";
 import * as Clipboard from 'expo-clipboard';
 import React from 'react';
-import { darkGreenBackgroud, lightBlueBackground, lightGreenBackgroud, lightRedBackground, lightYellowBackground, purpleBackground, superlightBlueBackgroud, superlightGreenBackground, yellowBackground } from '../assets/styles/colors';
-import { triggerNotifications } from '../notifications/localNotifications';
 import { appActive, durationQuickMessage, durationSlowMessage, emptyValue } from '../assets/constants/constants';
 import { FlashMessage, caregiverPersonalInfoUpdatedDescription, editModeActiveDescription, editModeCanceledDescription, maxNumberOfConnectionsDescription, maxNumberOfConnectionsCaregiverDescription, sessionAcceptedDescription, sessionEndedDescription, sessionRejectedDescription, sessionRequestReceivedDescription, sessionRequestSentDescription, credentialUpdatedByCaregiver, credentialCreatedByCaregiver, credentialDeletedByCaregiver, credentialDeletedDescription, credentialCreatedDescription, credentialUpdatedDescription, personalInfoUpdatedDescription, sessionRequestCanceledDescription } from '../assets/constants/messages';
+import { notificationColor } from '../assets/styles/colors';
+import { triggerNotifications } from '../notifications/localNotifications';
+import { notificationDescriptionTextSize, notificationTitleTextSize } from '../assets/styles/text';
 
 /**
  * Copies the provided value to the clipboard and shows a flash message.
@@ -19,10 +20,12 @@ export async function copyValue(value: string, message: FlashMessage, descriptio
   Clipboard.setStringAsync(value).then(() => {
     showMessage({
       floating: true,
+      textStyle: {fontSize: notificationDescriptionTextSize},
+      titleStyle: {fontSize: notificationTitleTextSize},
       message: message,
       description: description,
       icon: props => <Image source={require('../assets/images/copy.png')} {...props} />,
-      backgroundColor: yellowBackground,
+      backgroundColor: notificationColor,
       duration: durationQuickMessage,
       color: "black",
     })
@@ -35,10 +38,12 @@ export async function copyValue(value: string, message: FlashMessage, descriptio
 export function editValueFlash() {
   showMessage({
     floating: true,
+    textStyle: {fontSize: notificationDescriptionTextSize},
+    titleStyle: {fontSize: notificationTitleTextSize},
     message: FlashMessage.editModeActive,
     description: editModeActiveDescription,
     icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
-    backgroundColor: superlightBlueBackgroud,
+    backgroundColor: notificationColor,
     duration: durationQuickMessage,
     color: "black",
   })
@@ -50,10 +55,12 @@ export function editValueFlash() {
 export function editCanceledFlash() {
   showMessage({
     floating: true,
+    textStyle: {fontSize: notificationDescriptionTextSize},
+    titleStyle: {fontSize: notificationTitleTextSize},
     message: FlashMessage.editModeCanceled,
     description: editModeCanceledDescription,
     icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
-    backgroundColor: lightYellowBackground,
+    backgroundColor: notificationColor,
     duration: durationQuickMessage,
     color: "black",
   })
@@ -66,10 +73,11 @@ export function editCanceledFlash() {
 export function caregiverPersonalInfoUpdatedFlash(caregiverEmail: string) {
   showMessage({
     floating: true,
+    textStyle: {fontSize: notificationDescriptionTextSize},
     message: FlashMessage.caregiverPersonalInfoUpdated,
     description: caregiverPersonalInfoUpdatedDescription(caregiverEmail),
     icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
-    backgroundColor: superlightGreenBackground,
+    backgroundColor: notificationColor,
     duration: durationQuickMessage,
     color: "black",
   })
@@ -81,10 +89,12 @@ export function caregiverPersonalInfoUpdatedFlash(caregiverEmail: string) {
 export function elderlyPersonalInfoUpdatedFlash() {
   showMessage({
     floating: true,
+    textStyle: {fontSize: notificationDescriptionTextSize},
+    titleStyle: {fontSize: notificationTitleTextSize},
     message: FlashMessage.personalInfoUpdated,
     description: personalInfoUpdatedDescription,
     icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
-    backgroundColor: superlightGreenBackground,
+    backgroundColor: notificationColor,
     duration: durationQuickMessage,
     color: "black",
   })
@@ -97,10 +107,12 @@ export function elderlyPersonalInfoUpdatedFlash() {
 export function sessionRequestSent(caregiverEmail: string) {
   showMessage({
     floating: true,
+    textStyle: {fontSize: notificationDescriptionTextSize},
+    titleStyle: {fontSize: notificationTitleTextSize},
     message: FlashMessage.sessionRequest,
     description: sessionRequestSentDescription(caregiverEmail),
-    icon: props => <Image source={require("../assets/images/check.png")} {...props} />,
-    backgroundColor: lightBlueBackground,
+    icon: props => <Image source={require("../assets/images/send.png")} {...props} />,
+    backgroundColor: notificationColor,
     duration: durationQuickMessage,
     color: "black",
   })
@@ -114,10 +126,12 @@ export function sessionRequestReceivedFlash(caregiverEmail: string) {
   if(AppState.currentState === appActive) {
     showMessage({
       floating: true,
+      textStyle: {fontSize: notificationDescriptionTextSize},
+      titleStyle: {fontSize: notificationTitleTextSize},
       message: FlashMessage.sessionRequestReceived,
       description: sessionRequestReceivedDescription(caregiverEmail),
-      icon: props => <Image source={require("../assets/images/plus.png")} {...props} />,
-      backgroundColor: purpleBackground,
+      icon: props => <Image source={require("../assets/images/send.png")} {...props} />,
+      backgroundColor: notificationColor,
       duration: durationQuickMessage,
       color: "black",
     })
@@ -135,10 +149,12 @@ export function sessionAcceptedFlash(from: string, byMe: boolean) {
   if(AppState.currentState === appActive) {
     showMessage({
       floating: true,
+      textStyle: {fontSize: notificationDescriptionTextSize},
+      titleStyle: {fontSize: notificationTitleTextSize},
       message:  byMe ? FlashMessage.sessionAccepted : FlashMessage.caregiverAccept,
       description: sessionAcceptedDescription(from),
       icon: props => <Image source={require("../assets/images/check.png")} {...props} />,
-      backgroundColor: darkGreenBackgroud,
+      backgroundColor: notificationColor,
       duration: durationQuickMessage,
       color: "black",
     })
@@ -156,10 +172,12 @@ export function sessionRejectedFlash(from: string, byMe: boolean) {
   if(AppState.currentState === appActive) {
     showMessage({
       floating: true,
+      textStyle: {fontSize: notificationDescriptionTextSize},
+      titleStyle: {fontSize: notificationTitleTextSize},
       message:  byMe ? FlashMessage.sessionRejected : FlashMessage.caregiverReject,
       description: sessionRejectedDescription(from),
       icon: props => <Image source={require("../assets/images/cross.png")} {...props} />,
-      backgroundColor: lightRedBackground,
+      backgroundColor: notificationColor,
       duration: durationQuickMessage,
       color: "black",
     })
@@ -176,10 +194,12 @@ export function sessionRequestCanceledFlash(elderlyEmail: string, byMe: boolean)
   if (AppState.currentState === appActive) {
     showMessage({
       floating: true,
+      textStyle: {fontSize: notificationDescriptionTextSize},
+      titleStyle: {fontSize: notificationTitleTextSize},
       message: FlashMessage.sessionRequestCanceled,
       description: sessionRequestCanceledDescription(elderlyEmail),
       icon: props => <Image source={require("../assets/images/cross.png")} {...props} />,
-      backgroundColor: lightRedBackground,
+      backgroundColor: notificationColor,
       duration: durationQuickMessage,
       color: "black",
     });
@@ -197,10 +217,12 @@ export function sessionRejectMaxReachedFlash(from: string) {
   if(AppState.currentState === appActive) {
     showMessage({
       floating: true,
+      textStyle: {fontSize: notificationDescriptionTextSize},
+      titleStyle: {fontSize: notificationTitleTextSize},
       message: FlashMessage.cantAcceptConnection,
       description: maxNumberOfConnectionsDescription(from),
       icon: props => <Image source={require("../assets/images/cross.png")} {...props} />,
-      backgroundColor: lightRedBackground,
+      backgroundColor: notificationColor,
       duration: durationSlowMessage,
       color: "black",
     })
@@ -219,10 +241,12 @@ export function sessionRejectedMaxReachedFlash(from: string) {
   if(AppState.currentState === appActive) {
     showMessage({
       floating: true,
+      textStyle: {fontSize: notificationDescriptionTextSize},
+      titleStyle: {fontSize: notificationTitleTextSize},
       message: FlashMessage.caregiverCantAcceptConnection,
       description: maxNumberOfConnectionsCaregiverDescription(from),
       icon: props => <Image source={require("../assets/images/cross.png")} {...props} />,
-      backgroundColor: lightRedBackground,
+      backgroundColor: notificationColor,
       duration: durationSlowMessage,
       color: "black",
     })
@@ -240,10 +264,12 @@ export function sessionEndedFlash(from: string, byMe: boolean) {
   if(AppState.currentState === appActive) {
     showMessage({
       floating: true,
+      textStyle: {fontSize: notificationDescriptionTextSize},
+      titleStyle: {fontSize: notificationTitleTextSize},
       message: byMe ? FlashMessage.sessionEnded : FlashMessage.sessionEndedByCaregiver,
       description: sessionEndedDescription(from),
-      icon: props => <Image source={require("../assets/images/minus.png")} {...props} />,
-      backgroundColor: lightRedBackground,
+      icon: props => <Image source={require("../assets/images/cross.png")} {...props} />,
+      backgroundColor: notificationColor,
       duration: durationQuickMessage,
       color: "black",
     })
@@ -266,10 +292,12 @@ export function credentialUpdatedFlash(from: string, platform: string, byMe: boo
   if(AppState.currentState === appActive) {
     showMessage({
       floating: true,
+      textStyle: {fontSize: notificationDescriptionTextSize},
+      titleStyle: {fontSize: notificationTitleTextSize},
       message: message,
       description: description,
       icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
-      backgroundColor: superlightBlueBackgroud,
+      backgroundColor: notificationColor,
       duration: durationSlowMessage,
       color: "black",
     })
@@ -291,10 +319,12 @@ export function credentialCreatedFlash(from: string, platform: string, byMe: boo
   if(AppState.currentState === appActive) {
     showMessage({
       floating: true,
+      textStyle: {fontSize: notificationDescriptionTextSize},
+      titleStyle: {fontSize: notificationTitleTextSize},
       message: message,
       description: description,
       icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
-      backgroundColor: lightGreenBackgroud,
+      backgroundColor: notificationColor,
       duration: durationSlowMessage,
       color: "black",
       position: 'top'
@@ -315,10 +345,12 @@ export function credentialDeletedFlash(from: string, platform: string, byMe: boo
   if(AppState.currentState === appActive) {
     showMessage({
       floating: true,
+      textStyle: {fontSize: notificationDescriptionTextSize},
+      titleStyle: {fontSize: notificationTitleTextSize},
       message: message,
       description: description,
       icon: props => <Image source={require("../assets/images/edit.png")} {...props} />,
-      backgroundColor: lightRedBackground,
+      backgroundColor: notificationColor,
       duration: durationSlowMessage,
       color: "black",
     })

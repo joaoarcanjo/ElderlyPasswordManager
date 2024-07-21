@@ -33,7 +33,7 @@ export enum Errors {
 
     ERROR_GETTING_GENERATED_PASSWORDS = "Não foi possível obter as passwords geradas.",
     
-    ERROR_SERVER_INTERNAL_ERROR = 'Erro interno, tente novamente mais tarde ou contacte o administrador. A comunicação com o idoso não está disponível \n#1',
+    ERROR_SERVER_INTERNAL_ERROR = 'Erro interno, tente novamente mais tarde ou contacte o administrador. A comunicação com o cuidador não está disponível \n#1',
 
     ERROR_EMAIL_ALREADY_IN_USE = 'O email fornecido já está em uso.',
     ERROR_EMAIL_INVALID = 'O email fornecido é inválido.',

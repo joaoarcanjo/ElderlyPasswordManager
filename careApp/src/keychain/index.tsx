@@ -1,6 +1,6 @@
 import {setItemAsync, getItemAsync, deleteItemAsync} from 'expo-secure-store';
-import { caregiverEmail, caregiverId, caregiverPwd, localDBKey } from './constants';
-import { SaltCredentialCollectionName, emptyValue, pbkdf2Iterations } from '../assets/constants/constants';
+import { caregiverEmail, caregiverId, caregiverPwd, caregiverFireKey, localDBKey } from './constants';
+import { SaltCredentialDocumentName, emptyValue, pbkdf2Iterations } from '../assets/constants/constants';
 import { secretbox } from "tweetnacl";
 import { pbkdf2Sync } from 'pbkdf2';
 import { decode as decodeBase64, encode as encodeBase64} from '@stablelib/base64';
@@ -43,14 +43,6 @@ export async function deleteKeychainValueFor(key: string): Promise<void> {
   return await deleteItemAsync(key)
 }
 
-/**
- * Função para apagar todos os valores armazenados na keychain do dispositivo.
- * Apenas utilizado para debug, para limpar tudo.
- */
-export async function cleanKeychain(id: string) {
-  await deleteItemAsync(caregiverId)
-}
-
 
 /**
  * Função para inicializar a keychain, onde será armazenado na mesma o identificador
@@ -59,23 +51,22 @@ export async function cleanKeychain(id: string) {
  * @param userId 
  * @returns 
  */
-export async function initKeychain(userId: string, userEmail: string): Promise<string> {
+export async function initKeychain(userId: string, userEmail: string) {
   console.log("==> initKeychain")
   if(await getKeychainValueFor(caregiverId) !== userId) {
-    await cleanKeychain(userId).then(async () => {
+    await deleteKeychainValueFor(userId).then(async () => {
       await saveKeychainValue(caregiverId, userId)
       await saveKeychainValue(caregiverEmail, userEmail)
     })
   }
-  let key = await getKeychainValueFor(localDBKey(userId))
+  let key = await getKeychainValueFor(caregiverFireKey(userId))
   if(key == emptyValue) {
-    let salt = await getSalt(userId, SaltCredentialCollectionName)
+    let salt = await getSalt(userId, SaltCredentialDocumentName)
     if(salt == undefined || salt == emptyValue) {
       salt = randomUUID()
-      postSalt(userId, salt, SaltCredentialCollectionName)
+      await postSalt(userId, salt, SaltCredentialDocumentName)
     }
-    key = encodeBase64(pbkdf2Sync(await getKeychainValueFor(caregiverPwd), salt, pbkdf2Iterations, secretbox.keyLength, 'sha512'))
-    await saveKeychainValue(localDBKey(userId), key) 
-  }
-  return key
+    key = encodeBase64(pbkdf2Sync(await getKeychainValueFor(caregiverPwd), salt, pbkdf2Iterations, secretbox.keyLength, 'sha256'))
+  } 
+  await saveKeychainValue(caregiverFireKey(userId), key)
 }

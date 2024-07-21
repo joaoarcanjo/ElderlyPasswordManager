@@ -1,4 +1,4 @@
-export const defaultCredencials = (data: string) => ({
+export const defaultCredentials = (data: string) => ({
     data: data
 })
 
@@ -7,4 +7,9 @@ export const updateDataCredencial = (data: string) => ({
 })
 
 export const defaultCaregiver = {
+}
+
+export const defaultSalt = {
+    SaltCredential: '',
+    SaltServer: ''
 }

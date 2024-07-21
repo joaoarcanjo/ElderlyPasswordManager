@@ -9,21 +9,21 @@ import AvaliationEmoji from '../../../components/EmojiAvaliation'
 import { getScore } from '../../../algorithms/zxcvbn/algorithm'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
-import { deleteCredential, updateCredentialFromFirestore, verifyIfCanManipulateCredentials } from '../../../firebase/firestore/functionalities'
+import { deleteCredentialFromFirestore, updateCredentialFromFirestore, verifyIfCanManipulateCredentials } from '../../../firebase/firestore/functionalities'
 import { PasswordOptionsModal, YesOrNoModal, YesOrNoSpinnerModal } from '../../../components/Modal'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
-import { useSessionInfo } from '../../../firebase/authentication/session'
+import { useSessionInfo } from '../../../context/session'
 import { buildEditMessage, sendElderlyCredentialInfoAction } from './functions'
 import { ChatMessageType } from '../../../e2e/messages/types'
 import { deleteCredentialFromLocalDB, updateCredentialFromLocalDB } from '../../../database/credentials'
 import { regeneratePassword } from '../../../components/passwordGenerator/functions'
 import { cancelLabel, copyLabel, deleteCredentialLabel, editLabel, emptyValue, optionsLabel, passwordLabel, regenerateLabel, saveChangesLabel, saveLabel, uriLabel, usernameLabel } from '../../../assets/constants/constants'
-import { copyValue, credentialUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
-import { FlashMessage, copyPasswordDescription, copyUsernameDescription } from '../../../components/userMessages/messages'
 import { encrypt } from '../../../algorithms/tweetNacl/crypto'
 import { Platform } from '../../../assets/json/interfaces'
 import { getSpecificUsernameAndPassword } from '../../../components/SpecificUsername&Password'
 import { platformLabelToPresent } from '../../../assets/styles/colors'
+import { copyValue, credentialUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../notifications/userMessages/UserMessages'
+import { FlashMessage, copyPasswordDescription, copyUsernameDescription } from '../../../notifications/userMessages/messages'
 
 const jsonData = require('../../../assets/json/platforms.json')
 
@@ -306,7 +306,7 @@ function DeleteCredential({ownerId, id, platform, auxKey, isElderlyCredential}: 
         .then(() => sendElderlyCredentialInfoAction(userId, ownerId, emptyValue, platform, ChatMessageType.CREDENTIALS_DELETED))
         .then(() => navigation.goBack())
     } else {
-      await deleteCredential(ownerId, id)
+      await deleteCredentialFromFirestore(ownerId, id)
       .then(() => deleteCredentialFromLocalDB(userId, id))
       .then(() => navigation.goBack())
     }

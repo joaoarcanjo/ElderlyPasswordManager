@@ -1,26 +1,33 @@
 import { Alert } from "react-native";
 import { decrypt, encrypt } from "../../../algorithms/tweetNacl/crypto";
 import { emptyValue, readCaregivers, writeCaregivers } from "../../../assets/constants/constants";
-import { getCaregivers } from "../../../database/caregivers";
-import { CredentialLocalRecord, deleteCredentialFromLocalDB, getAllLocalCredentials, getCredential, insertCredentialToLocalDB, updateCredentialOnLocalDB } from "../../../database/credentials";
+import { getAllCaregivers } from "../../../database/caregivers";
+import { CredentialLocalRecord, deleteCredentialFromLocalDB, getAllCredentialsFromLocalDB, getCredentialFromLocalDB, insertCredentialToLocalDB, updateCredentialOnLocalDB } from "../../../database/credentials";
 import { Caregiver, CaregiverRequestStatus } from "../../../database/types";
 import { ErrorInstance } from "../../../exceptions/error";
 import { Errors } from "../../../exceptions/types";
-import { addCredencialToFirestore, deleteCredentialFromFiretore, getCaregiversArray, listAllElderlyCredencials, updateCredentialFromFiretore } from "../../../firebase/firestore/functionalities";
+import { addCredencialToFirestore, deleteCredentialFromFiretore, getCaregiversArray, listAllElderlyCredentials, updateCredentialFromFiretore } from "../../../firebase/firestore/functionalities";
 import { getKeychainValueFor } from "../../../keychain";
 import { elderlyFireKey } from "../../../keychain/constants";
 import { CredentialType } from "./types";
 
 export const getAllCredentialsAndValidate = async (userId: string, localDbKey: string): Promise<(CredentialType | undefined)[]> => {
     console.log("===> getAllCredentialsAndValidateCalled")
+
+    /*
+    if(await getSalt(userId, SaltServerDocumentName) != await getKeychainValueFor(elderlySalt(userId))) {
+        await initSSS(userId, emptyValue)
+    }*/
+
     const userKey = await getKeychainValueFor(elderlyFireKey(userId))
-    const credentialsCloud = await listAllElderlyCredencials(userId)
+    console.log("UserKey:", userKey)
+    const credentialsCloud = await listAllElderlyCredentials(userId)
     let toReturn: (CredentialType | undefined)[] = []
     try {
         toReturn = await Promise.all(credentialsCloud.map(async value => {
             let credentialInfo = undefined
             try {
-                credentialInfo = await getCredential(userId, value.id)
+                credentialInfo = await getCredentialFromLocalDB(userId, value.id)
                 if (value.data.length != 0) {
                     let credentialCloud = undefined
                     const valueDecrypted = decrypt(value.data, userKey)
@@ -49,7 +56,7 @@ export const getAllCredentialsAndValidate = async (userId: string, localDbKey: s
                     
                     const credencialLocal = JSON.parse(decrypt(credentialInfo, localDbKey))
                     if (credencialLocal) {
-                        await updateCredentialFromFiretore(userId, value.id, JSON.stringify(credencialLocal))
+                        await updateCredentialFromFiretore(userId, userKey, value.id, JSON.stringify(credencialLocal))
                     }
                     return { id: value.id, data: credencialLocal }
                 }
@@ -84,20 +91,20 @@ const updateCredentialIfNeeded = async (userId: string, credentialId: string, cr
 const addMissingCredentialsToReturn = async (toReturn: (CredentialType | undefined)[], localDbKey: string, userId: string, userKey: string) => {
     console.log("===> addMissingCredentialsToReturnCalled")
     
-    const credenciaisLocal = await getAllLocalCredentialsFormatted(userId, localDbKey)
+    const credenciaisLocal = await getAllCredentialsFromLocalDBFormatted(userId, localDbKey)
     credenciaisLocal.forEach(async value => {
         if(!value) return
         if (!toReturn.find(credential => credential?.data.id === value.id)) {
             toReturn.push(value)
-            await addCredencialToFirestore(userId, value.id, JSON.stringify(value.data))
+            await addCredencialToFirestore(userId, userKey, value.id, JSON.stringify(value.data))
         }
     })
 }
 
-export const getAllLocalCredentialsFormatted = async (userId: string, localDBKey: string): Promise<(CredentialType | undefined)[]> => {
-    console.log("===> getAllLocalCredentialsFormattedCalled")
+export const getAllCredentialsFromLocalDBFormatted = async (userId: string, localDBKey: string): Promise<(CredentialType | undefined)[]> => {
+    console.log("===> getAllCredentialsFromLocalDBFormattedCalled")
 
-    const credentialsLocal = await getAllLocalCredentials(userId)
+    const credentialsLocal = await getAllCredentialsFromLocalDB(userId)
         .then(async (credentialsLocal: CredentialLocalRecord[]) => {
             return credentialsLocal.map(value => {
                 const credential = JSON.parse(decrypt(value.record, localDBKey))
@@ -112,10 +119,10 @@ export const getAllLocalCredentialsFormatted = async (userId: string, localDBKey
     return credentialsLocal;
 }
 
-export const getAllLocalCredentialsFormattedWithFilter = async (userId: string, localDBKey: string, platformFilter: string): Promise<(CredentialType | undefined)[]> => {
-    console.log("===> getAllLocalCredentialsFormattedWithFilterCalled")
+export const getAllCredentialsFromLocalDBFormattedWithFilter = async (userId: string, localDBKey: string, platformFilter: string): Promise<(CredentialType | undefined)[]> => {
+    console.log("===> getAllCredentialsFromLocalDBFormattedWithFilterCalled")
 
-    const credentialsLocal = await getAllLocalCredentials(userId)
+    const credentialsLocal = await getAllCredentialsFromLocalDB(userId)
         .then(async (credentialsLocal: CredentialLocalRecord[]) => {
             return credentialsLocal.map(value => {
                 const credential = JSON.parse(decrypt(value.record, localDBKey))
@@ -141,7 +148,7 @@ export interface CaregiverPermission {
   
   export async function getCaregiversPermissions(userId: string): Promise<CaregiverPermission[]> {
     console.log('===> getCaregiversPermissionsCalled')
-    const caregivers = await getCaregivers(userId)
+    const caregivers = await getAllCaregivers(userId)
     const readCaregiversList = await getCaregiversArray(userId, readCaregivers)
     const writeCaregiversList = await getCaregiversArray(userId, writeCaregivers)
     let caregiversPermissions: CaregiverPermission[] = []

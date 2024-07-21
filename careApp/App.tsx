@@ -4,14 +4,14 @@ import React, { useEffect, useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainMenu from './src/screens/main_menu/actions';
 import ElderlyListScreen from './src/screens/list_elderly/actions';
-import { initDb } from './src/database';
+import { dbSQL, initDb } from './src/database';
 import FlashMessage from "react-native-flash-message";
 import { AddCredencial } from './src/screens/add_credentials/actions';
-import { SessionProvider, useSessionInfo } from './src/firebase/authentication/session';
+import { SessionProvider, useSessionInfo } from './src/context/session';
 import * as Notifications from "expo-notifications";
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from './src/firebase/FirebaseConfig';
-import { getKeychainValueFor, initKeychain } from './src/keychain';
+import { getKeychainValueFor, initKeychain, saveKeychainValue } from './src/keychain';
 import SignInPage from './src/screens/signin_interface/actions';
 import Settings from './src/screens/settings_interface/actions';
 import Credentials from './src/screens/list_credentials/actions/personalCredentials';
@@ -25,10 +25,7 @@ import ElderlyCredentials from './src/screens/list_credentials/actions/elderlyCr
 import FrequentQuestions from './src/screens/list_questions/actions';
 import Generator from './src/screens/password_generator/actions';
 import PasswordHistory from './src/screens/password_history/actions';
-import { sign, secretbox } from 'tweetnacl'
-import { pbkdf2Sync } from 'pbkdf2';
-import { encodeBase64 } from 'tweetnacl-util';
-import { caregiverPwd } from './src/keychain/constants';
+import { caregiverFireKey } from './src/keychain/constants';
 
 const Stack = createNativeStackNavigator()
 const InsideStack = createNativeStackNavigator()
@@ -38,9 +35,9 @@ function InsideLayout() {
   return (
     <InsideStack.Navigator initialRouteName={pageMainMenu}>
       <InsideStack.Screen name={pageMainMenu} component={MainMenu} options={{ title: "MainMenu", headerShown: false }} />
-      <InsideStack.Screen name={pageCredentials} component={Credentials} options={{ title: "Credencials", headerShown: false }} />
+      <InsideStack.Screen name={pageCredentials} component={Credentials} options={{ title: "Credentials", headerShown: false }} />
       <InsideStack.Screen name={pageElderlyList} component={ElderlyListScreen} options={{ title: "listElderly", headerShown: false }} />
-      <InsideStack.Screen name={pageElderlyCredentials} component={ElderlyCredentials} options={{ title: "ElderlyCredencials", headerShown: false }} />
+      <InsideStack.Screen name={pageElderlyCredentials} component={ElderlyCredentials} options={{ title: "ElderlyCredentials", headerShown: false }} />
       <InsideStack.Screen name={pageAddCredential} component={AddCredencial} options={{ title: "AddCredential", headerShown: false }} />
       <InsideStack.Screen name={pageSettings} component={Settings} options={{ title: "Settings", headerShown: false }} />
       <InsideStack.Screen name={pageCredentialLogin} component={CredencialLoginPage} options={{ title: "CredencialLoginPage", headerShown: false }} />
@@ -61,15 +58,17 @@ function Inicialization() {
   useEffect(() => {
     onAuthStateChanged(FIREBASE_AUTH, async (user) => {
       const userEmail = user?.email
-      if(userId) {
+      if(userId != emptyValue) {
         setUser(user)
       }else if(userEmail && user.uid && !loading) {
-        await initKeychain(user.uid, user.email)
-        .then((key) => setLocalDBKey(key))
-        .then(() => { setUserId(user.uid); setUserEmail(userEmail); setUser(user)})
-        .then(() => initFirestore(user.uid))
+        await initFirestore(user.uid)
+        .then(() => {setUserId(user.uid); setUserEmail(userEmail); setUser(user)})
+        .then(() => initKeychain(user.uid, userEmail))
         .then(() => createIdentity(user.uid, userEmail))
-        .then(() => initDb()) 
+        .then(() => initDb(user.uid).then((DBKey) => {
+          setLocalDBKey(DBKey)
+        }))
+        .then(() => console.log("User: ", user.uid))
         .then(() => setLoading(true))
         .catch((e) => Alert.alert('Erro', e))
       }

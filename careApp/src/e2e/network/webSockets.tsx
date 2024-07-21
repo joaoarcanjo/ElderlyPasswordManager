@@ -13,7 +13,6 @@ function setWebsocketSubscription(sub: Subscription): void {
     websocketSub = sub
 }
 
-//TODO: Esta mensagem tem que ser enviada assinada pelo cliente e com um timestamp.
 function subscribeWebsocket(username: string): void {
     const wsm: SubscribeWebSocketMessage = {
         action: 'subscribe',

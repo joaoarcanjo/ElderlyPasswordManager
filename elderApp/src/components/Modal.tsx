@@ -4,24 +4,30 @@ import { View, StyleSheet, Modal, TouchableOpacity, Text, ScrollView } from 'rea
 import { stylesButtons } from "../assets/styles/main_style"
 import { modal, options } from "../screens/credential_interface/styles/styles"
 import { Spinner } from "./LoadingComponents"
-import { upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, modalIntensity, saveLabel, loginLabel, cardLabel, cancelLabel, yesOption, noOption } from "../assets/constants/constants";
+import { upperLabel, lowerLabel, numbersLabel, specialLabel, passwordDefaultLengthGenerator, modalIntensity, saveLabel, loginLabel, cardLabel, cancelLabel, yesOption, noOption, requirementLabel } from "../assets/constants/constants";
 import { updateUpperCase, updateLowerCase, updateNumbers, updateSpecial } from "./passwordGenerator/functions";
 import { Requirement, RequirementLength } from "./passwordGenerator/Requirement";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { platformButtonBackgroud, platformButtonBorder } from "../assets/styles/colors";
+import { color8, platformButtonBackgroud, platformButtonBorder } from "../assets/styles/colors";
+import { platformsModalSize } from "../assets/styles/text";
 
-export function YesOrNoModal({question, yesFunction, noFunction, visibleFlag}: Readonly<{question: string, yesFunction: Function, noFunction: Function, visibleFlag: boolean}>) {
+export function YesOrNoModal({question, yesFunction, noFunction, visibleFlag, isLoading}: Readonly<{question: string, yesFunction: Function, noFunction: Function, visibleFlag: boolean, isLoading?: boolean}>) {
   return (
     <ModalBox visibleFlag={visibleFlag}>
-      <Text numberOfLines={2} adjustsFontSizeToFit style={modal.modalText}>{question}</Text>
-      <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.acceptButton]} onPress={() => yesFunction()}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{yesOption}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.rejectButton]} onPress={() => noFunction()}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{noOption}</Text>
-        </TouchableOpacity>
+      {!isLoading ?
+      <View>
+        <Text numberOfLines={3} adjustsFontSizeToFit style={modal.modalText}>{question}</Text>
+        <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.acceptButton]} onPress={() => yesFunction()}>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[options.yesLabelText]}>{yesOption}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.rejectButton]} onPress={() => noFunction()}>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.noLabelText]}>{noOption}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
+    :
+    <Spinner width={300} height={200}></Spinner>}
     </ModalBox>
   )
 }
@@ -29,13 +35,13 @@ export function YesOrNoModal({question, yesFunction, noFunction, visibleFlag}: R
 export function CredentialTypeModal({question, loginFunction, cardFunction, visibleFlag}: Readonly<{question: string, loginFunction: Function, cardFunction: Function, visibleFlag: boolean}>) {
   return (
     <ModalBox visibleFlag={visibleFlag}>
-      <Text numberOfLines={2} adjustsFontSizeToFit style={modal.modalText}>{question}</Text>
+      <Text numberOfLines={3} adjustsFontSizeToFit style={modal.modalText}>{question}</Text>
       <View style={{flexDirection: 'row'}}>
         <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.loginButton]} onPress={() => loginFunction()}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{loginLabel}</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.loginCardLabelText]}>{loginLabel}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.cardButton]} onPress={() => cardFunction()}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{cardLabel}</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.loginCardLabelText]}>{cardLabel}</Text>
         </TouchableOpacity>
       </View>
     </ModalBox>
@@ -47,16 +53,16 @@ export function YesOrNoSpinnerModal({question, yesFunction, noFunction, visibleF
   return (
     <ModalBox visibleFlag={visibleFlag}>
       {loading ?
-        <Spinner/>
+        <Spinner width={300} height={300}/>
         :  
         <>
-          <Text numberOfLines={2} adjustsFontSizeToFit style={modal.modalText}>{question}</Text>
+          <Text numberOfLines={3} adjustsFontSizeToFit style={modal.modalText}>{question}</Text>
           <View style={{flexDirection: 'row'}}>
             <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.acceptButton]} onPress={() => yesFunction()}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{yesOption}</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.yesLabelText]}>{yesOption}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.cancelButton]} onPress={() => noFunction()}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{noOption}</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.noLabelText]}>{noOption}</Text>
             </TouchableOpacity>
           </View>
         </>
@@ -81,6 +87,8 @@ export function PasswordOptionsModal({saveFunction, closeFunction, visibleFlag}:
   return (
     <ModalBox visibleFlag={visibleFlag}>
       <View>
+      <Text numberOfLines={1} adjustsFontSizeToFit style={modal.modalText}>{requirementLabel}</Text>
+      <View style={{ borderBottomColor: 'black', borderWidth: StyleSheet.hairlineWidth, marginBottom: '5%' }}/>
         <RequirementLength setLength={setLength} currentLength={length}/>
         <View style={{flexDirection: 'row', marginTop: '5%'}}>
           <Requirement name={upperLabel} value={uppercase} func={() => {updateUpperCase(setUppercase, uppercase, lowercase, numbers, special)}}/>
@@ -93,10 +101,10 @@ export function PasswordOptionsModal({saveFunction, closeFunction, visibleFlag}:
         <View style={{ borderBottomColor: 'black', borderWidth: StyleSheet.hairlineWidth, marginVertical: '5%' }}/>
         <View style={{flexDirection: 'row'}}>
           <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.acceptButton]} onPress={saveRequirements}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{saveLabel}</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.saveAcceptLabelText]}>{saveLabel}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.cancelButton]} onPress={() => closeFunction()}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.permissionsButtonText]}>{cancelLabel}</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '10%'}, options.cancelLabelText]}>{cancelLabel}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -124,7 +132,7 @@ export function PlatformSelectionModal({setPlatformName, setPlatformURI, closeFu
             <View key={index} style={{flexDirection: 'row'}}>
               <TouchableOpacity style={[{flex: 1, marginVertical: '3%', flexDirection: 'row'}, stylesButtons.mainConfig, platformSelection.itemButton]} onPress={() => {applySelection(platform)}}>
                 <MaterialCommunityIcons name={platform.materialCommunityIcon} size={35} color={platform.iconColor}/>
-                <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }, options.permissionsButtonText]}>{platform.platformName}</Text>
+                <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: platformsModalSize, margin: '3%', color: platform.iconColor, fontWeight: 'bold' }]}>{platform.platformName}</Text>
               </TouchableOpacity>
             </View>  
           )}
@@ -132,7 +140,7 @@ export function PlatformSelectionModal({setPlatformName, setPlatformURI, closeFu
       </View><View style={{ height: 1, backgroundColor: 'black', marginVertical: '3%' }}/>
       <View style={{flexDirection: 'row', marginBottom: '2%'}}>
         <TouchableOpacity style={[{flex: 1, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.cancelButton]} onPress={() => closeFunction()}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '3%' }]}>{cancelLabel}</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ margin: '3%' }, options.cancelLabelText]}>{cancelLabel}</Text>
         </TouchableOpacity>
       </View>
     </ModalBox>
@@ -170,7 +178,7 @@ const styles = StyleSheet.create({
   modalView: {
     maxHeight: '60%', // 90% of the screen height
     margin: '8%',
-    backgroundColor: 'white',
+    backgroundColor: color8,
     borderRadius: 20,
     padding: '8%',
     alignItems: 'center',

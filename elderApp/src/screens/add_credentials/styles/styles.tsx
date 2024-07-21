@@ -1,16 +1,17 @@
 import {StyleSheet} from 'react-native'
-import { addCredentialButtonBackgroud, addCredentialButtonBorder, blackBorder, copyButtonBackground, copyButtonBorder, greyBackgroud, greyBorder, regenerateButtonBackgroud, regenerateButtonBorder, whiteBackgroud } from '../../../assets/styles/colors';
+import { addCredentialButtonBackgroud, addCredentialButtonBorder, copyButtonBackground, copyButtonBorder, color7, greyBorder, regenerateButtonBackgroud, regenerateButtonBorder, color8 } from '../../../assets/styles/colors';
+import { buttonAddCredencialTextSize } from '../../../assets/styles/text';
 
 
 /**
  * Estilos dos inputs das credenciais
  */
-const stylesInputsCredencials = StyleSheet.create({
+const stylesInputsCredentials = StyleSheet.create({
     inputContainer: {
         borderRadius: 20, // Define o raio dos cantos para arredondá-los
         borderWidth: 2, // Largura da linha na margem
-        backgroundColor: greyBackgroud, // Cor de fundo
-        borderColor: blackBorder,
+        backgroundColor: color7, // Cor de fundo
+        borderColor: greyBorder,
         marginVertical: 8, // Margem vertical entre os itens
     }
 })
@@ -26,8 +27,8 @@ const stylesAddCredential = StyleSheet.create({
         borderWidth: 3, // Largura da linha na marge
     },
     buttonText: {
-        fontSize: 25,
-        color: whiteBackgroud,
+        fontSize: buttonAddCredencialTextSize,
+        color: color8,
         fontWeight: 'bold'
     }
 })
@@ -37,13 +38,13 @@ const passwordFirstHalf = StyleSheet.create({
         borderTopLeftRadius: 20, // Arredonda o canto inferior esquerdo
         borderTopRightRadius: 20, // Arredonda o canto inferior direito     
         borderBottomWidth: 0,
-        backgroundColor: greyBackgroud, // Cor de fundo
+        backgroundColor: color7, // Cor de fundo
         borderWidth: 2, // Largura da linha na margem
     },
     passwordGenerated: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         borderWidth: 3, // Largura da linha na margem
-        backgroundColor: whiteBackgroud,
+        backgroundColor: color8,
         borderColor: greyBorder,
     },
     copyButton: {
@@ -60,4 +61,4 @@ const passwordFirstHalf = StyleSheet.create({
     }
 })
 
-export { stylesInputsCredencials, stylesAddCredential, passwordFirstHalf }
+export { stylesInputsCredentials, stylesAddCredential, passwordFirstHalf }

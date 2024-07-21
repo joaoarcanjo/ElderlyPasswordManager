@@ -6,6 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Entypo, FontAwesome5 } from '@expo/vector-icons'; 
 import { pageMainMenu } from "../../assets/constants/constants";
+import { darkGrey } from "../../assets/styles/colors";
 
 export function Navbar() {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -33,10 +34,10 @@ export function Navbar() {
     return (!Keyboard.isVisible() ? 
     <View style={[{flex: 0.12, backgroundColor: 'red', flexDirection: 'row'}, navigationStyle.pageInfoContainer]}>
         <TouchableOpacity style={[{flex: 0.5, marginLeft: '5%', marginRight: '2%', marginTop: '2%', marginBottom: '2%'}, navigationStyle.backButton, stylesButtons.mainConfig]} onPress={() => goBack()}>
-            <Entypo name="back" size={40} color="black" />
+            <Entypo name="back" size={40} color={darkGrey} />
         </TouchableOpacity>
         <TouchableOpacity style={[{flex: 0.5, marginLeft: '2%', marginRight: '5%', marginTop: '2%', marginBottom: '2%'}, navigationStyle.initialButton, stylesButtons.mainConfig]} onPress={() => goToFirstPage()}>
-            <FontAwesome5 name="home" size={35} color="black" />
+            <FontAwesome5 name="home" size={35} color={darkGrey} />
         </TouchableOpacity>
     </View> : null)
 }
@@ -66,7 +67,7 @@ export function NavbarJustBack() {
     }, [keyboardStatus])
 
     return (!Keyboard.isVisible() ? 
-        <View style={[{flex: 0.12, flexDirection: 'row', justifyContent: 'center'}, navigationStyle.pageInfoContainer]}>
+        <View style={[{flex: 0.12, flexDirection: 'row'}, navigationStyle.pageInfoContainer]}>
             <TouchableOpacity style={[{flex: 0.5, marginLeft: '5%', marginRight: '2%', marginTop: '2%', marginBottom: '2%'}, navigationStyle.backButton, stylesButtons.mainConfig]} onPress={() => goBack()}>
                 <Entypo name="back" size={40} color="black" />
             </TouchableOpacity>

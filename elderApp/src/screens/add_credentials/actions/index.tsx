@@ -15,7 +15,7 @@ function Input() {
 
     return (
         <View style={{width: '100%'}}>
-            <View style={{marginVertical: '5%'}}>
+            <View style={{marginVertical: '1%'}}>
                 {option == loginLabel ? <CredentialsLoginInput /> : <></>}
                 {option == cardLabel ? <CredentialsCardInput /> : <></>}
             </View>

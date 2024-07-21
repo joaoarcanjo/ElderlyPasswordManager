@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { View } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 import {Navbar} from '../../../navigation/actions'
 import MainBox from '../../../components/MainBox'
 import AddCaregiver from './addCaregiver'
 import {CaregiverItem} from './caregiverItem'
 import { caregiverListUpdated, setCaregiverListUpdated } from './state'
-import { useSessionInfo } from '../../../firebase/authentication/session'
+import { useSessionInfo } from '../../../context/session'
 import { CaregiverPermission } from '../../list_credentials/actions/functions'
 import { pageTitleCaregiversList } from '../../../assets/constants/constants'
 
@@ -49,7 +49,10 @@ const CaregiversList = React.memo(function CaregiversList() {
             />
           )
         })}
-        {caregivers.length < 2 && <AddCaregiver setRefresh={refreshValue} />}
+        {caregivers.length < 2 && 
+        <>
+          <AddCaregiver setRefresh={refreshValue} isSecond={caregivers.length == 0}/>
+        </>}
       </View>
     </View>
   )

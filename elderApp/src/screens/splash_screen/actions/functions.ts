@@ -3,11 +3,11 @@ import { dbSQL, initDb } from "../../../database"
 import { getTimeoutFromLocalDB, insertTimeoutToLocalDB, updateTimeoutToLocalDB } from "../../../database/timeout"
 import { TimeoutType } from "../../../database/types"
 
-export const flashTimeoutPromise = async (userId: string, setXd: Function) => {
+export const flashTimeoutPromise = async (userId: string, setXd: Function, setLocalDBKey: Function) => {
     console.log("==> flashTimeoutPromiseCalled")
     if(userId == emptyValue || userId == null) return Promise.resolve()
     if(dbSQL == null) {
-        initDb(userId)
+        initDb(userId).then((DBKey) => setLocalDBKey(DBKey))
     }
     await getTimeoutFromLocalDB(userId, TimeoutType.SPLASH).then(async (timestamp) => {
         if(timestamp == null) {

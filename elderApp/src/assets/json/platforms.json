@@ -10,7 +10,7 @@
         },
         {
             "platformName": "Instagram",
-            "platformUsernameLabel": "Telefone, nome de utilizador ou email",
+            "platformUsernameLabel": "Telefone, nome, email",
             "platformPasswordLabel": "Senha",
             "platformURI": "www.instagram.com",
             "materialCommunityIcon": "instagram",
@@ -47,14 +47,6 @@
             "platformURI": "www.linkedin.com",
             "materialCommunityIcon": "linkedin",
             "iconColor": "#0077b5"
-        },
-        {
-            "platformName": "Snapchat",
-            "platformUsernameLabel": "Nome de utilizador ou e-mail",
-            "platformPasswordLabel": "Palavra-passe",
-            "platformURI": "www.snapchat.com",
-            "materialCommunityIcon": "snapchat",
-            "iconColor": "#fffc00"
         },
         {
             "platformName": "Pinterest",

@@ -1,5 +1,4 @@
 import { emptyValue } from "../../../assets/constants/constants"
-import { sessionAcceptedFlash, sessionRejectedFlash } from "../../../components/userMessages/UserMessages"
 import { acceptElderlyOnDatabase, deleteElderly, getElderlyWithSpecificState, isMaxElderlyReached } from "../../../database/elderly"
 import { deleteSessionById } from "../../../database/signalSessions"
 import { ElderlyRequestStatus } from "../../../database/types"
@@ -9,6 +8,7 @@ import { startSession } from "../../../e2e/session/functions"
 import { sessionForRemoteUser, currentSessionSubject, removeSession } from "../../../e2e/session/state"
 import { ErrorInstance } from "../../../exceptions/error"
 import { Errors } from "../../../exceptions/types"
+import { sessionAcceptedFlash, sessionRejectedFlash } from "../../../notifications/userMessages/UserMessages"
 import { setElderlyListUpdated } from "./state"
 
 //
@@ -32,6 +32,7 @@ export async function startSessionWithElderly(elderlyEmail: string, userId: stri
         await encryptAndSendMessage(elderlyEmail, JSON.stringify(data), true, ChatMessageType.PERSONAL_DATA) 
 
     } catch (error) {
+        console.log(error)
         return Promise.reject(new ErrorInstance(Errors.ERROR_STARTING_SESSION))
         //FAZER UM ALERT PARA ISTO?
     }

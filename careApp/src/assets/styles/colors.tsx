@@ -1,6 +1,7 @@
 //BACKGROUD COLORS
 export const whiteBackgroud =             '#FFFFFF'
 export const greyBackgroud =              '#DCE0DE'
+export const darkPurpleBackground =       '#b16fd1'
 export const purpleBackground =           '#DBB8E9'
 export const lightPurpleBackground =      '#f7e3ff'
 export const darkGreenBackgroud =         '#58b859'
@@ -69,8 +70,8 @@ export const cancelButtonBackground = lightRedBackground
 export const cancelButtonBorder = lightRedBorder
 
 //MAIN MENU PAGE COLORS
-export const credencialsButtonBackgroud = lightGreenBackgroud
-export const credencialsButtonBorder = darkGreenBorder
+export const credentialsButtonBackgroud = lightGreenBackgroud
+export const credentialsButtonBorder = darkGreenBorder
 
 export const settingsButtonBackgroud = lightRedBackground
 export const settingsButtonBorder = lightRedBorder
@@ -134,7 +135,7 @@ export const filterButtonBorder = greyBorder
 export const credentialItemBackgroud = greyBackgroud
 export const credentialItemBorder = greyBorder
 
-export const cardColor = purpleBackground
+export const cardColor = darkPurpleBackground
 export const loginColor = orangeBackground
 
 export const navigateButtonBackgroud = superlightBlueBackgroud 

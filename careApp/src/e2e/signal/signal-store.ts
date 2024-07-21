@@ -8,11 +8,12 @@ import {
     SignedPreKeyPairType,
 } from '@privacyresearch/libsignal-protocol-typescript'
 
-import { deleteAllSessions, deleteSessionById, getSessionById, saveSignalSessions } from "../../database/signalSessions"
+import { deleteAllSessions, deleteSessionById, getSession, saveSignalSession } from "../../database/signalSessions"
 import { deleteKeychainValueFor, getKeychainValueFor, saveKeychainValue } from "../../keychain"
 import { keySignedPub25519, keySignedPriv25519, signedKeySignature25519, signedPreKeyId, identityIdPubKey, identityIdPrivKey, identityKeyK, keypreKeyPub25519, keypreKeyPriv25519, baseKeyIdK, caregiverId, localDBKey } from '../../keychain/constants'
 import { encode } from '@stablelib/base64'
 import { encodeBase64 } from 'tweetnacl-util'
+import { encrypt } from '../../algorithms/tweetNacl/crypto'
 
 // Type guards
 export function isKeyPairType(kp: any): kp is KeyPairType {
@@ -100,6 +101,7 @@ export class SignalProtocolStore implements StorageType {
 
     async getDBKey(): Promise<string> {
         if (this._dbKey === '') {
+            console.log("Testinho: ", await getKeychainValueFor(localDBKey(await this.getUserId())))
             await this.setDBKey(await getKeychainValueFor(localDBKey(await this.getUserId()))) 
         }
         return this._dbKey
@@ -294,7 +296,7 @@ export class SignalProtocolStore implements StorageType {
     //==-> obter do sql.
     async loadSession(identifier: string): Promise<SessionRecordType | undefined> {
         console.log("===> LoadSessionCalled")
-        const rec = await getSessionById('session' + identifier, await this.getUserId(), await this.getDBKey())
+        const rec = await getSession('session' + identifier, await this.getUserId(), await this.getDBKey())
         if (typeof rec === 'object') {
             return rec.record as string
         } else if (typeof rec === 'undefined') {
@@ -304,7 +306,10 @@ export class SignalProtocolStore implements StorageType {
     }
     async storeSession(identifier: string, record: SessionRecordType): Promise<void> { 
         console.log("===> StoreSessionCalled")
-        await saveSignalSessions(await this.getUserId(), 'session' + identifier, record, await this.getDBKey())
+        console.log("Record: ", record)
+        console.log("DBKey: ", await this.getDBKey())
+        const encrypted = encrypt(record, await this.getDBKey())
+        await saveSignalSession(await this.getUserId(), 'session' + identifier, encrypted)
     }
     async removeSession(identifier: string): Promise<void> {
         console.log("===> RemoveSessionCalled")

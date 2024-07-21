@@ -3,12 +3,12 @@ import { View, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingVi
 import { stylesAddCredential, styleScroolView, styleSearch } from '../styles/styles'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import {Navbar} from '../../../navigation/actions'
-import { getKey, listAllCredentialsFromFirestore, verifyIfCanManipulateCredentials } from '../../../firebase/firestore/functionalities'
+import { getShare, listAllCredentialsFromFirestore, verifyIfCanManipulateCredentials } from '../../../firebase/firestore/functionalities'
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import MainBox from '../../../components/MainBox'
 import { Spinner } from '../../../components/LoadingComponents'
-import { useSessionInfo } from '../../../firebase/authentication/session'
+import { useSessionInfo } from '../../../context/session'
 import { getKeychainValueFor } from '../../../keychain'
 import { elderlySSSKey } from '../../../keychain/constants'
 import { addCredentialsLabel, allLabel, cardsLabel, closeLabel, emptyValue, filtersLabel, loginLabel, pageTitleCredentials, searchLabel } from '../../../assets/constants/constants'
@@ -27,10 +27,12 @@ function AddCredencial({ elderlyId }: Readonly<{elderlyId: string}>) {
 
   const navigateToAddCredential = async () => {
     const canCreate = await verifyIfCanManipulateCredentials(userId, elderlyId)
-    const cloudKey = await getKey(elderlyId)
-    const sssKey = await getKeychainValueFor(elderlySSSKey(elderlyId))
+    const cloudKey = await getShare(elderlyId)
+    console.log(cloudKey)
+    const sssKey = await getKeychainValueFor(elderlySSSKey(userId, elderlyId))
+    console.log(sssKey)
     const encryptionKey = deriveSecret([cloudKey, sssKey]) 
-
+    console.log(encryptionKey)
     if(canCreate) {
       navigation.navigate('AddCredential', { userId: elderlyId, key: encryptionKey, isElderlyCredential: true })
     } else {
@@ -49,44 +51,46 @@ function AddCredencial({ elderlyId }: Readonly<{elderlyId: string}>) {
 
 function ElderlyCredentialsList({ elderlyId }: Readonly<{elderlyId: string}>) {
 
-  const [credencials, setCredencials] = useState<CredentialType[]>([])
+  const [credentials, setCredentials] = useState<CredentialType[]>([])
   const isFocused = useIsFocused()
   const [isFething, setIsFething] = useState(true)
   const [searchValue, setSearchValue] = useState(emptyValue)
   const [searchType, setSearchType] = useState(emptyValue)
   const [buttonSelected, setButtonSelected] = useState(0)
   const [showFilter, setShowFilter] = useState(false)
+  const { userId } = useSessionInfo()
 
-  const fetchCredencials = async () => {
+  const fetchCredentials = async () => {
     setIsFething(true)
-    const cloudKey = await getKey(elderlyId)
-    const sssKey = await getKeychainValueFor(elderlySSSKey(elderlyId))
+    const cloudKey = await getShare(elderlyId)
+    console.log("CloudKey: ", cloudKey)
+    const sssKey = await getKeychainValueFor(elderlySSSKey(userId, elderlyId))
     const encryptionKey = deriveSecret([cloudKey, sssKey])
-    await listAllCredentialsFromFirestore(elderlyId, encryptionKey, true).then((credencials) => {
-      let auxCredencials: CredentialType[] = [];
-      credencials.forEach(value => {
+    await listAllCredentialsFromFirestore(elderlyId, encryptionKey, true).then((credentials) => {
+      let auxCredentials: CredentialType[] = [];
+      credentials.forEach(value => {
         if(value.data && (value.data.platform.toLowerCase().includes(searchValue.toLowerCase()))) {
           if (value.data.type === 'login' && searchType === 'login') {
-            auxCredencials.push({id: value.id, data: value.data})
+            auxCredentials.push({id: value.id, data: value.data})
           } else if (value.data.type === 'card' && searchType === 'card') {
-            auxCredencials.push({id: value.id, data: value.data})
+            auxCredentials.push({id: value.id, data: value.data})
           } else if (searchType === emptyValue) {
-            auxCredencials.push({id: value.id, data: value.data})
+            auxCredentials.push({id: value.id, data: value.data})
           }
         }
       })
-      setCredencials(auxCredencials)
+      setCredentials(auxCredentials)
     })
     setIsFething(false)
   }
 
   useEffect(() => {
-    credentialsListUpdated.subscribe((credenciais) => setCredencials(credenciais))
+    credentialsListUpdated.subscribe((credenciais) => setCredentials(credenciais))
   }, [credentialsListUpdated])
 
   useEffect(() => {
     setIsFething(true)
-    fetchCredencials().then(() => setIsFething(false))
+    fetchCredentials().then(() => setIsFething(false))
   }, [isFocused, searchType])
 
   const allSelected = buttonSelected === 0 ? styleSearch.optionButtonSelected : styleSearch.optionButtonNotSelected
@@ -95,7 +99,7 @@ function ElderlyCredentialsList({ elderlyId }: Readonly<{elderlyId: string}>) {
 
   return (
     <View style={{ flex: 0.72, flexDirection: 'row', justifyContent: 'space-around'}}>
-      <View style={[{ flex: 1, marginTop:'5%', marginHorizontal: '4%', justifyContent: 'space-around'}, styleScroolView.credencialsContainer]}>
+      <View style={[{ flex: 1, marginTop:'5%', marginHorizontal: '4%', justifyContent: 'space-around'}, styleScroolView.credentialsContainer]}>
         <View style={{flexDirection: 'row'}}>
           <View style={{flex: 0.25, marginLeft: '2%', marginVertical: '2%'}}>
             <TouchableOpacity style={[{flex: 1, justifyContent: 'center',  alignItems: 'center'}, stylesButtons.moreInfoButton, stylesButtons.mainSlimConfig]} onPress={() => {setShowFilter(!showFilter)}}>
@@ -118,7 +122,7 @@ function ElderlyCredentialsList({ elderlyId }: Readonly<{elderlyId: string}>) {
             style={{ flex: 1, fontSize: 22, padding: '2%', marginHorizontal: '1%' }}
             onChangeText={(value) => {setSearchValue(value)}}
             />
-            <TouchableOpacity style={[{flex: 0.2, marginHorizontal: '2%', marginVertical: '2%'},  styleSearch.button, stylesButtons.mainConfig]} onPress={fetchCredencials}>
+            <TouchableOpacity style={[{flex: 0.2, marginHorizontal: '2%', marginVertical: '2%'},  styleSearch.button, stylesButtons.mainConfig]} onPress={fetchCredentials}>
               <MaterialIcons style={{marginHorizontal: '1%'}} name={'search'} size={40} color="black"/> 
             </TouchableOpacity>
           </View>
@@ -147,7 +151,7 @@ function ElderlyCredentialsList({ elderlyId }: Readonly<{elderlyId: string}>) {
         {isFething ?
         <Spinner width={300} height={300}/> :
         <ScrollView>
-          {credencials.map((value, index) => <ScrollItem key={index} credential={value} elderlyId={elderlyId}/>)}
+          {credentials.map((value, index) => <ScrollItem key={index} credential={value} elderlyId={elderlyId}/>)}
         </ScrollView>}
       </View>
     </View>

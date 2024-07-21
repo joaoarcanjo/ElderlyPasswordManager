@@ -1,11 +1,11 @@
 import FormatTimestamp from "../../../components/time"
-import { getCaregivers } from "../../../database/caregivers"
+import { getAllCaregivers } from "../../../database/caregivers"
 import { encryptAndSendMessage } from "../../../e2e/messages/sendMessage"
 import { ChatMessageType, CredentialBody } from "../../../e2e/messages/types"
 
 export async function sendCaregiversCredentialInfoAction(userId: string, credentialId: string, platform: string, type: ChatMessageType) {
     console.log("===> sendCaregiversCredentialInfoActionCalled")
-    const caregivers = await getCaregivers(userId)
+    const caregivers = await getAllCaregivers(userId)
     caregivers.forEach(async (caregiver) => {
         /*if(!sessionForRemoteUser(caregiver.email)) {
             await startSession(caregiver.email)

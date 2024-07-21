@@ -20,7 +20,7 @@ const stylesAddCredential = StyleSheet.create({
  * Estilos da scroll view com as credenciais
  */
 const styleScroolView = StyleSheet.create({
-    credencialsContainer: {
+    credentialsContainer: {
         borderTopLeftRadius: 20, // Arredonda o canto inferior esquerdo
         borderTopRightRadius: 20, // Arredonda o canto inferior direito        
         borderBottomWidth: 0,

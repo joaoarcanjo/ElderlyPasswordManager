@@ -1,9 +1,9 @@
 import { SignedPublicPreKeyType, DeviceType, PreKeyType } from '@privacyresearch/libsignal-protocol-typescript'
-import { encode, encode as encodeBase64} from '@stablelib/base64';
+import { encode as encodeBase64} from '@stablelib/base64';
 import { sign, secretbox } from 'tweetnacl'
 import { decodeBase64 } from 'tweetnacl-util'
 import * as base64 from 'base64-js'
-import { SaltServerCollectionName, apiPort, emptyValue, pbkdf2Iterations } from '../../assets/constants/constants'
+import { SaltServerDocumentName, apiPort, emptyValue, pbkdf2Iterations } from '../../assets/constants/constants'
 import { Errors } from '../../exceptions/types'
 import { stringToArrayBuffer } from './signal-store';
 import { getKeychainValueFor, saveKeychainValue } from '../../keychain';
@@ -12,8 +12,6 @@ import { getSalt, getServerIP, postSalt } from '../../firebase/firestore/functio
 import { Alert } from 'react-native';
 import { pbkdf2Sync } from 'pbkdf2';
 import { randomUUID } from 'expo-crypto';
-import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
-import { async } from 'rxjs';
 
 export interface PublicDirectoryEntry {
     identityKey: ArrayBuffer
@@ -73,18 +71,22 @@ export class SignalDirectory {
         let pubKey = decodeBase64(await getKeychainValueFor(signalPublicKey(userId)))
 
         if(privKey.byteLength === 0 || pubKey.byteLength === 0) {
-            let salt = await getSalt(userId, SaltServerCollectionName)
+            let salt = await getSalt(userId, SaltServerDocumentName)
             if(salt == undefined || salt == emptyValue) {
                 salt = randomUUID()
-                await postSalt(userId, salt, SaltServerCollectionName)
+                await postSalt(userId, salt, SaltServerDocumentName)
             }
+            //const password = await getKeychainValueFor(caregiverPwd)
+            //const saltLookAlike = await arrayLookAlikeFromString(salt)
+            //const passwordLookAlike = await arrayLookAlikeFromString(password)
+            //const key = await scrypt(passwordLookAlike, saltLookAlike, 1024, 8, 1, secretbox.keyLength)
             const pwd = await getKeychainValueFor(caregiverPwd)
-            const key = pbkdf2Sync(pwd, salt, pbkdf2Iterations, secretbox.keyLength, 'sha512')
+            const key = pbkdf2Sync(pwd, salt, pbkdf2Iterations, secretbox.keyLength, 'sha256')
             const boxKeyPair2 = sign.keyPair.fromSeed(key)
             privKey = boxKeyPair2.secretKey
             pubKey = boxKeyPair2.publicKey
             await saveKeychainValue(signalPrivateKey(userId), encodeBase64(new Uint8Array(boxKeyPair2.secretKey)))
-            await saveKeychainValue(signalPublicKey(userId), encodeBase64(new Uint8Array(boxKeyPair2.secretKey)))            
+            await saveKeychainValue(signalPublicKey(userId), encodeBase64(new Uint8Array(boxKeyPair2.publicKey)))            
         }
 
         const signed = sign(
@@ -98,15 +100,11 @@ export class SignalDirectory {
             "username": username,
 
         }
-
         const ipAddress = await getServerIP()
         return await fetch(`${ipAddress}:${apiPort}/addBundle`, {
             method: 'PUT',
-            //headers: { 'x-api-key': this._apiKey },
             headers: {
                 'Content-Type': 'application/json',
-                // Optionally include any other headers if needed
-                //'x-api-key': this._apiKey
             },
             body: JSON.stringify(body),
         })
@@ -139,6 +137,51 @@ export class SignalDirectory {
         return deserializeKeyBundle({ identityKey, signedPreKey, preKey, registrationId })
     }
 
+    //Enviar nova chave publica assinada e cifrada com a antiga chave privada.
+    async updateServerPublicKey(username: string, userId: string): Promise<void> {
+
+        let privKeyBefore = decodeBase64(await getKeychainValueFor(signalPrivateKey(userId)))
+
+        const salt = randomUUID()
+        await postSalt(userId, salt, SaltServerDocumentName)
+        const pwd = await getKeychainValueFor(caregiverPwd)
+        const key = pbkdf2Sync(pwd, salt, pbkdf2Iterations, secretbox.keyLength, 'sha256')
+        const boxKeyPair = sign.keyPair.fromSeed(key)
+        await saveKeychainValue(signalPrivateKey(userId), encodeBase64(new Uint8Array(boxKeyPair.secretKey)))
+        await saveKeychainValue(signalPublicKey(userId), encodeBase64(new Uint8Array(boxKeyPair.publicKey)))     
+
+        const toSign = JSON.stringify({
+            "publicKey": encodeBase64(new Uint8Array(boxKeyPair.publicKey)),
+            "username": username,
+            "timestamp": Date.now()
+        })
+       
+        const signed = sign(
+            new Uint8Array(stringToArrayBuffer(toSign)),
+            new Uint8Array(privKeyBefore)
+        )
+        
+        const body = {
+            "bundleWithPublicKey": encodeBase64(signed),
+            "username": username
+        }
+
+        const ipAddress = await getServerIP()
+        return await fetch(`${ipAddress}:${apiPort}/updatePublicKey`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body),
+        })
+        .then((res) => {
+            return res.json()
+        })
+        .catch((_error) => {
+            Alert.alert("Erro", Errors.ERROR_SERVER_INTERNAL_ERROR)
+        })
+    }
+    
     get url(): string {
         return this._url
     }

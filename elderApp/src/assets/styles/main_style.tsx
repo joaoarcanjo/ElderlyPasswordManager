@@ -1,19 +1,19 @@
 import {StyleSheet} from 'react-native'
-import { acceptButtonBackground, acceptButtonBorder, blueBorder, cancelButtonBackground, cancelButtonBorder, copyButtonBackground, copyButtonBorder, darkGreenBorder, editButtonBackgroud, editButtonBorder, greyBorder, lightOrangeBackground, lightPurpleBackground, navigateButtonBackgroud, navigateButtonBorder, optionsButtonBackground, optionsButtonBorder, orangeBorder, purpleBorder, rejectButtonBackground, rejectButtonBorder, superlightBlueBackgroud, superlightGreenBackground, visibilityButtonBackground, visibilityButtonBorder, whiteBackgroud } from './colors'
+import { acceptButtonBackground, acceptButtonBorder, borderColorDark, buttonOptionBackground, buttonOptionBorder, cancelButtonBackground, cancelButtonBorder, cardButtonBackground, cardButtonBorder, copyButtonBackground, copyButtonBorder, editButtonBackgroud, editButtonBorder, filterButtonBackgroud, filterButtonBorder, greyBorder, loginButtonBackground, loginButtonBorder, navigateButtonBackgroud, navigateButtonBorder, optionsButtonBackground, optionsButtonBorder, rejectButtonBackground, rejectButtonBorder, videoButtonBackground, videoButtonBorder, visibilityButtonBackground, visibilityButtonBorder, color8, darkGrey } from './colors'
+import { mainBoxTextSize } from './text'
 
 
 const stylesMainBox = StyleSheet.create({
     pageInfoContainer: {
         borderTopWidth: 2, 
         borderBottomWidth: 2,
-        backgroundColor: whiteBackgroud,
-        borderBlockEndColor: greyBorder,
-        borderBlockStartColor: greyBorder,
+        backgroundColor: color8,
+        borderColor: borderColorDark,
     },
     pageInfoText: {
         marginHorizontal: '8%',
-        fontSize: 45,
-        color: 'black'
+        fontSize: mainBoxTextSize,
+        color: darkGrey
     }
 })
 
@@ -89,38 +89,38 @@ const stylesButtons = StyleSheet.create({
         backgroundColor: visibilityButtonBackground, // Cor de fundo
         borderColor: visibilityButtonBorder
     },
-    blueButton: {
+    videoButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        backgroundColor: superlightBlueBackgroud, // Cor de fundo
-        borderColor: blueBorder
+        backgroundColor: videoButtonBackground, // Cor de fundo
+        borderColor: videoButtonBorder
     },
     //ESTILO PARA O BOTÃO COM A SETA PARA MAIS INFORMAÇAO
     moreInfoButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        backgroundColor: whiteBackgroud, // Cor de fundo
-        borderColor: greyBorder
+        backgroundColor: filterButtonBackgroud, // Cor de fundo
+        borderColor: filterButtonBorder
     },
     //ESTILO PARA OS BOTOES COM OPÇÃO DE SELECIONADO E NÃO SELECIONADO
     selectedButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        backgroundColor: superlightGreenBackground, // Cor de fundo
-        borderColor: darkGreenBorder
+        backgroundColor: buttonOptionBackground, // Cor de fundo
+        borderColor: buttonOptionBorder
     },
     unselectedButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        backgroundColor: whiteBackgroud, // Cor de fundo
-        borderColor: greyBorder
+        backgroundColor: buttonOptionBackground, // Cor de fundo
+        borderColor: buttonOptionBorder
     },
     //BUTOES UTILIZADOS PARA SELECIONAR QUAL O FORMULARIO DE ADICIONAR CREDENCIAL 
     cardButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        backgroundColor: lightPurpleBackground, // Cor de fundo
-        borderColor: purpleBorder
+        backgroundColor: cardButtonBackground, // Cor de fundo
+        borderColor: cardButtonBorder
     },
     loginButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
-        backgroundColor: lightOrangeBackground, // Cor de fundo
-        borderColor: orangeBorder
+        backgroundColor: loginButtonBackground, // Cor de fundo
+        borderColor: loginButtonBorder
     },
     navigateButton: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los

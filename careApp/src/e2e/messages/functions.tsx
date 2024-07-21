@@ -11,10 +11,10 @@ import { setElderlyListUpdated } from "../../screens/list_elderly/actions/state"
 import { getKeychainValueFor, saveKeychainValue } from "../../keychain"
 import { caregiverId, elderlySSSKey } from "../../keychain/constants"
 import { ElderlyRequestStatus } from "../../database/types"
-import { credentialCreatedFlash, credentialDeletedFlash, credentialUpdatedFlash, elderlyPersonalInfoUpdatedFlash, elderlySentFirstKey, sessionAcceptedFlash, sessionEndedFlash, sessionPermissionsFlash, sessionRejectMaxReachedFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionRequestCanceledFlash, sessionRequestReceivedFlash } from "../../components/userMessages/UserMessages"
 import { deleteSessionById } from "../../database/signalSessions"
 import { setCredentialsListUpdated } from "../../screens/list_credentials/actions/state"
 import { checkElderlyByEmail, updateElderly, checkElderlyByEmailWaitingForResponse, isMaxElderlyReached, saveElderly, getElderlyWithSpecificState, deleteElderly } from "../../database/elderly"
+import { credentialUpdatedFlash, credentialCreatedFlash, credentialDeletedFlash, sessionPermissionsFlash, elderlyPersonalInfoUpdatedFlash, sessionAcceptedFlash, sessionRequestReceivedFlash, elderlySentFirstKey, sessionRejectMaxReachedFlash, sessionRequestCanceledFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionEndedFlash } from "../../notifications/userMessages/UserMessages"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -64,6 +64,7 @@ export async function processRegularMessage(address: string, message: string, ty
     plaintext = plaintext.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F]/g, '')
     const cm: ProcessedChatMessage = JSON.parse(plaintext)
 
+    console.log("AHHHHHHHH")
     addMessageToSession(address, cm, type)
 }
 
@@ -114,7 +115,7 @@ export async function addMessageToSession(address: string, cm: ProcessedChatMess
         await processPersonalData(currentUserId, cm)
         //userSession.messages.push(cm)  
     } else if(cm.type === ChatMessageType.KEY_UPDATE && !itsMine) {
-        updateKeyMessage(cm)
+        updateKeyMessage(currentUserId, cm)
         //userSession.messages.push(cm)  
     } else if (cm.type === ChatMessageType.REJECT_SESSION && !itsMine) {
         //vai apagar a sessão que foi criada com o possível cuidador
@@ -165,16 +166,16 @@ async function processPersonalData(currentUserId: string, cm: ProcessedChatMessa
         elderlyPersonalInfoUpdatedFlash(cm.from)   
     }  else if(await checkElderlyByEmailWaitingForResponse(currentUserId, cm.from)) {
         await updateElderly(currentUserId, data.userId, data.email, data.name, data.phone)
-        .then(() => saveKeychainValue(elderlySSSKey(data.userId), data.key))
+        .then(() => saveKeychainValue(elderlySSSKey(currentUserId, data.userId), data.key))
         .then(() => cancelWaitingElderlies(currentUserId))
         .then(() => sessionAcceptedFlash(cm.from, false))
         .then(() => setElderlyListUpdated())
     } else {
         const isMaxReached = await isMaxElderlyReached(currentUserId)
         if(isMaxReached) {
-            await refuseElderlyMaxReached(currentUserId, cm)
+            await refuseMaxReached(currentUserId, cm)
         } else {
-            await saveKeychainValue(elderlySSSKey(data.userId), data.key)
+            await saveKeychainValue(elderlySSSKey(currentUserId, data.userId), data.key)
             .then(() => saveElderly(currentUserId, data.userId, data.name, data.email, data.phone, ElderlyRequestStatus.RECEIVED.valueOf()))
             .then(() => sessionRequestReceivedFlash(cm.from))
             .then(() => setElderlyListUpdated())
@@ -182,13 +183,13 @@ async function processPersonalData(currentUserId: string, cm: ProcessedChatMessa
     }
 }
 
-async function updateKeyMessage(cm: ProcessedChatMessage) {
+async function updateKeyMessage(currentUserId: string, cm: ProcessedChatMessage) {
     const data = JSON.parse(cm.body) as ElderlyDataBody
-    const currentKey = await getKeychainValueFor(elderlySSSKey(data.userId))
+    const currentKey = await getKeychainValueFor(elderlySSSKey(currentUserId, data.userId))
     if (currentKey == '') {
         elderlySentFirstKey(cm.from)
     }
-    saveKeychainValue(elderlySSSKey(data.userId), data.key)
+    saveKeychainValue(elderlySSSKey(currentUserId, data.userId), data.key)
 }
 
 export async function cancelWaitingElderlies(userId: string) {
@@ -212,7 +213,7 @@ export async function cancelWaitingElderly(userId: string, elderlyEmail: string)
     .then(() => setElderlyListUpdated())
 }
 
-export async function refuseElderlyMaxReached(currentUserId: string, cm: ProcessedChatMessage) {
+export async function refuseMaxReached(currentUserId: string, cm: ProcessedChatMessage) {
     await encryptAndSendMessage(cm.from, 'rejectSession', true, ChatMessageType.MAX_REACHED_SESSION)
     .then(() => removeSession(cm.from))
     .then(() => deleteSessionById(currentUserId, cm.from))

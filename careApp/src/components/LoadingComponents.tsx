@@ -9,7 +9,7 @@ const Spinner = ({width, height}: {width: number, height: number}) => {
     )
 }
 
-const ElderlyLoading = () => {
+const BellLoading = () => {
     return (
         <View style={{alignItems: 'center',justifyContent: 'center'}}>
             <Image source={require('../assets/images/bell.gif')} style={[{width: 250, height: 250, resizeMode: 'contain'}]}/>
@@ -17,4 +17,4 @@ const ElderlyLoading = () => {
     )
 }
 
-export { Spinner, ElderlyLoading }
+export { Spinner, BellLoading }

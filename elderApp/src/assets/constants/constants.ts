@@ -6,10 +6,10 @@ export const gitHubUrl = 'https://github.com/joaoarcanjo/ThesisApps'
 //Labels:
 export const appName = 'ElderAPP'
 
-export const requirementLabel = "REQUISITOS:"
-export const nameLabel = 'Nome'
-export const emailLabel = 'Email'
-export const mobileLabel = 'Telemóvel'
+export const requirementLabel = "Requisitos da palavra-passe:"
+export const nameLabel = 'Nome*'
+export const emailLabel = 'Email*'
+export const mobileLabel = 'Telemóvel*'
 
 export const lengthLabel = "Tamanho:"
 export const upperLabel = "Maiúsculas"
@@ -18,10 +18,11 @@ export const specialLabel = "&%/$#\"@?"
 export const numbersLabel = "Números"
 export const uriLabel = 'Endereço (URL)'
 export const usernameLabel = 'Utilizador'
-export const passwordLabel = 'Palavra-passe'
-export const platformLabel = 'Plataforma'
+export const passwordLabel = 'Palavra-passe*'
+export const passwordLabelNotRequired = 'Palavra-passe'
+export const platformLabel = 'Nome da plataforma'
 export const cardNumberLabel = 'Número do Cartão'
-export const ownerNameLabel = 'Nome do Proprietário'
+export const ownerNameLabel = 'Nome do Titular'
 export const securityCodeLabel = 'Código de Segurança'
 export const verificationCodeLabel = 'Código de Verificação'
 export const cardPlatformLabel = 'Nome do Cartão'
@@ -46,8 +47,11 @@ export const unlinkLabel = 'Desvincular'
 export const acceptLabel = 'Aceitar'
 export const refuseLabel = 'Recusar'
 export const seeMoreLabel = 'Ver mais'
+export const seeLessLabel = 'Ver menos'
 export const platformsLabel = 'Plataformas'
 export const filtersLabel = 'Filtros'
+export const visibilityOnLabel = 'Visível'
+export const visibilityOffLabel = 'Invisível'
 
 export const cuidadoresLabel = 'Gerir Cuidadores'
 export const credentialsLabel = 'Gerir Credenciais'
@@ -56,13 +60,14 @@ export const questionsLabel = 'Ajuda'
 
 export const generatorLabel = 'Gerar nova Palavra-passe'
 export const createAccountLabel = 'Criar Conta'
+export const createAccountSlimLabel = 'Criar'
 export const doesNotHaveAccountLabel = 'Não tem conta?'
 export const enterLabel = 'Entrar'
-export const accountInfoLabel = 'Informação da Conta'
+export const accountInfoLabel = 'Informação da Conta:'
 export const historyLabel = 'Histórico'
 export const heyLabel = 'Olá,'
 export const addCaregiverLabel = 'Adicionar Cuidador'
-export const deleteCredentialLabel = 'Apagar Credencial'
+export const deleteCredentialLabel = 'Apagar'
 export const addLabel = 'Adicionar'
 export const moreAboutTheApp = 'Mais sobre a aplicação'
 export const leaveAccountLabel = 'Terminar Sessão'
@@ -78,10 +83,9 @@ export const copyPasswordLabel = 'Copiar palavra-passe'
 export const copyCardNumberLabel = 'Copiar Número do Cartão'
 export const copySecurityCodeLabel = 'Copiar Código de Segurança'
 export const copyVerificationCodeLabel = 'Copiar Código de Verificação'
-export const videoLabel = 'VIDEO DEMONSTRATIVO'
-export const perguntasLabel = 'PERGUNTAS'
-export const passosLabel = 'TUTORIAIS'
-export const sugestoesLabel = 'SUGESTÕES'
+export const perguntasLabel = 'Perguntas'
+export const passosLabel = 'Tutoriais'
+export const sugestoesLabel = 'Sugestões'
 
 //Constant Values:
 export const emptyValue = ''
@@ -107,14 +111,18 @@ export const placeholderCardNumber = "Insira o número do cartão"
 export const placeholderOwnerName = "Insira o nome do proprietário"
 export const placeholderCardPlatform = "Insira o nome do cartão"
 
+//PBDKF2:
+export const pbkdf2Iterations = 7000
+
 //SplashScreen:
-export const splashScreenDuration = 7000
+export const splashScreenDuration = 117000
 export const timeoutToNewSplash = 1000 * 60 * 60 * 24 // 24 hours
 
 //SSS:
 export const numberOfShares = 3
 export const threshold = 2
 export const keyRefreshTimeout = 1000 * 60 * 24 * 10 // 10 days
+export const keyRefreshVerificationTimeout = 1000 * 60 * 5//60 * 5
 
 //Password generator:
 export const passwordMaxLengthGenerator = 40
@@ -134,10 +142,14 @@ export const maxCaregiversCount = 2
 
 //Firestore:
 export const elderlyCollectionName = 'Elderly'
-export const credencialsCollectionName = 'Credencials'
+export const credentialsCollectionName = 'Credentials'
 
 export const keyParameter = 'key'
 export const keyCollectionName = 'Key'
+export const SaltCollection = 'Salt'
+export const SaltDocument = 'Value'
+export const SaltCredentialDocumentName = 'SaltCredential'
+export const SaltServerDocumentName = 'SaltServer'
 export const keyDocumentName = 'Value'
 export const caregiversCollectionName = 'Caregivers'
 export const caregiversDocumentName = 'Value'
@@ -147,7 +159,7 @@ export const readCaregivers = 'readCaregivers'
 
 //MainBox:
 export const fontSizeMainBox = 40
-export const fontSizeMainBoxKeyboard = 19
+export const fontSizeMainBoxKeyboard = 20
 
 //Credentials:
 export const credentialTimoutRefresh = 1000 * 60 * 5 // 5 minutes
@@ -174,6 +186,8 @@ export const pageTitleCaregiversList = 'Cuidadores'
 export const pageTitleElderlyCredentials = 'Credenciais do Idoso'
 export const pageAddCredentialTitle = 'Adicionar Credencial'
 export const pageTitleHistory = 'Histórico de Passwords'
+export const pageLoginTitle = 'Entrar na conta'
+export const pageSignupTitle = 'Criação de conta'
 
 //APP state:
 export const appActive = 'active'

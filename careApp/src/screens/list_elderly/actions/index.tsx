@@ -6,7 +6,7 @@ import { ElderlyItem, Elderly as ElderlyItemMockup } from './elderlyItem'
 import { Elderly } from '../../../database/types'
 import { elderlyListUpdated } from './state'
 import AddElderly from './addItem'
-import { useSessionInfo } from '../../../firebase/authentication/session'
+import { useSessionInfo } from '../../../context/session'
 import { getAllElderly } from '../../../database/elderly'
 import { pageTitleElderlyList } from '../../../assets/constants/constants'
 

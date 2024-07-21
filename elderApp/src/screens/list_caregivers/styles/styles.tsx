@@ -1,5 +1,6 @@
 import {StyleSheet} from 'react-native'
-import { addCaregiverButtonBackground, addCaregiverButtonBorder, blueBorder, desvinculateButtonBackgroud, desvinculateButtonBorder, greyBackgroud, greyBorder, permissionsNoButtonBackground, permissionsNoButtonBorder, permissionsYesButtonBackground, permissionsYesButtonBorder, superlightBlueBackgroud, whiteBackgroud } from '../../../assets/styles/colors'
+import { addCaregiverButtonBackground, addCaregiverButtonBorder, cancelTextColor, caregiverReceivedBackground, caregiverReceivedBorder, caregiverWaitingBackground, caregiverWaitingBorder, desvinculateButtonBackgroud, desvinculateButtonBorder, color7, greyBorder, permissionsNoButtonBackground, permissionsNoButtonBorder, permissionsYesButtonBackground, permissionsYesButtonBorder, color8, darkGrey, caregiverBackground, caregiverBorder } from '../../../assets/styles/colors'
+import { buttonNormalTextSize, caregiverAccountInfoTextSize, caregiverDecisionOptionsTextSize, caregiverPermissionLabelTextSize } from '../../../assets/styles/text'
 
 /**
  * Estilos da view para adicionar uma nova credencial
@@ -12,8 +13,8 @@ const stylesAddCaregiver = StyleSheet.create({
         borderWidth: 3, // Largura da linha na marge
     },
     buttonText: {
-        fontSize: 25,
-        color: whiteBackgroud,
+        fontSize: buttonNormalTextSize,
+        color: color8,
         fontWeight: 'bold'
     }
 })
@@ -22,26 +23,22 @@ const caregiverStyle = StyleSheet.create({
     container: {
         borderRadius: 20, // Define o raio dos cantos para arredondá-los
         borderWidth: 2, // Largura da linha na margem
-        backgroundColor: greyBackgroud, // Cor de fundo
-        borderColor: greyBorder,
+        backgroundColor: caregiverBackground, // Cor de fundo
+        borderColor: caregiverBorder,
         marginVertical: 8, // Margem vertical entre os itens
     },
     newCaregiverContainer: {
         borderRadius: 10, // Define o raio dos cantos para arredondá-los
         borderWidth: 2, // Largura da linha na margem
-        backgroundColor: superlightBlueBackgroud, // Cor de fundo
-        borderColor: blueBorder,
+        backgroundColor: caregiverReceivedBackground, // Cor de fundo
+        borderColor: caregiverReceivedBorder,
         marginBottom: 15,
-    },
-    newCaregiverText: {
-        fontSize: 20,
-        color: 'black'
     },
     sentRequestCaregiverContainer: {
         borderRadius: 10, // Define o raio dos cantos para arredondá-los
         borderWidth: 2, // Largura da linha na margem
-        backgroundColor: greyBackgroud, // Cor de fundo
-        borderColor: greyBorder,
+        backgroundColor: caregiverWaitingBackground, // Cor de fundo
+        borderColor: caregiverWaitingBorder,
         marginBottom: 15,
     }
 })
@@ -50,18 +47,18 @@ const caregiverContactInfo = StyleSheet.create({
     contactContainer: {
       borderRadius: 20, // Define o raio dos cantos para arredondá-los
       borderWidth: 2, // Largura da linha na margem
-      backgroundColor: greyBackgroud, // Cor de fundo
+      backgroundColor: color7, // Cor de fundo
       borderColor: greyBorder
     },
     accountInfo: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         borderWidth: 2, // Largura da linha na margem
-        backgroundColor: whiteBackgroud, // Cor de fundo
+        backgroundColor: color8, // Cor de fundo
         borderColor: greyBorder
     },
     accountInfoText: {
-      fontSize: 20,
-      color: 'black'
+      fontSize: caregiverAccountInfoTextSize,
+      color: darkGrey
     }
 })
 
@@ -74,7 +71,7 @@ const decouplingOption = StyleSheet.create({
     },
     buttonText: {
         fontWeight: 'bold',
-        fontSize: 22, 
+        fontSize: buttonNormalTextSize, 
         color: '#f5f5f5'
     }
 })
@@ -83,7 +80,7 @@ const caregiver = StyleSheet.create({
     container: {
         borderRadius: 20, // Define o raio dos cantos para arredondá-los
         borderWidth: 2, // Largura da linha na margem
-        backgroundColor: greyBackgroud, // Cor de fundo
+        backgroundColor: color7, // Cor de fundo
         borderColor: greyBorder,
         marginVertical: 8, // Margem vertical entre os itens
     }
@@ -91,8 +88,8 @@ const caregiver = StyleSheet.create({
 
 const permission = StyleSheet.create({
     questionText: {
-        fontSize: 20,
-        color: 'black'
+        fontSize: caregiverPermissionLabelTextSize,
+        color: darkGrey
     },
     yesButton: {
         borderRadius: 9, // Define o raio dos cantos para arredondá-los
@@ -103,24 +100,26 @@ const permission = StyleSheet.create({
         borderRadius: 9, // Define o raio dos cantos para arredondá-los
         backgroundColor: permissionsNoButtonBackground,
         borderColor: permissionsNoButtonBorder
-    },
+    },/*
     yesButtonText: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: 'white'
+        color: color8
     },
     noButtonText: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: 'white'
-    },
+        color: color8
+    },*/
 })
 
 const newCaregiverContainer = StyleSheet.create({
     buttonText: {
-      fontSize: 25,
-      color: 'black'
+      fontSize: caregiverDecisionOptionsTextSize,
+      fontWeight: 'bold',
+      color: color8
     },
+    cancelButtonText: {
+        fontSize: caregiverDecisionOptionsTextSize,
+        color: cancelTextColor,
+        fontWeight: 'bold'
+    }
 })
 
 export { newCaregiverContainer, caregiver, permission, stylesAddCaregiver, caregiverStyle, caregiverContactInfo, decouplingOption }

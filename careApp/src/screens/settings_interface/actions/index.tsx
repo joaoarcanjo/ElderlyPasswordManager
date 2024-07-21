@@ -5,7 +5,7 @@ import {Navbar} from '../../../navigation/actions'
 import { accountInfo, appInfo, logout } from '../styles/styles'
 import MainBox from '../../../components/MainBox'
 import { FIREBASE_AUTH } from '../../../firebase/FirebaseConfig'
-import { useSessionInfo } from '../../../firebase/authentication/session'
+import { useSessionInfo } from '../../../context/session'
 import { options } from '../../credential_interface/styles/styles'
 import { YesOrNoSpinnerModal } from '../../../components/Modal'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
@@ -14,10 +14,12 @@ import { getKeychainValueFor, saveKeychainValue } from '../../../keychain'
 import { caregiverId, caregiverName, caregiverPhone, caregiverPwd } from '../../../keychain/constants'
 import { sendElderlyNewInfo } from './functions'
 import { closeWebsocket } from '../../../e2e/network/webSockets'
-import { usernameSubject } from '../../../e2e/identity/state'
+import { directorySubject, usernameSubject } from '../../../e2e/identity/state'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
 import { accountInfoLabel, cancelLabel, editLabel, emptyValue, gitHubUrl, leaveAccountLabel, logoutAlertLabel, moreAboutTheApp, pageTitleSettings, saveChangesLabel, saveLabel } from '../../../assets/constants/constants'
-import { caregiverPersonalInfoUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../components/userMessages/UserMessages'
+import { createDirectory } from '../../../e2e/identity/functions'
+import { executeKeyExchange } from '../../../algorithms/changeKey/changeKey'
+import { caregiverPersonalInfoUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../notifications/userMessages/UserMessages'
 
 function AccountInfo() {
   
@@ -69,6 +71,14 @@ function AccountInfo() {
         if(result) {
           saveKeychainValue(caregiverPwd, userpasswordEdited).then(() => {
             setUserpassword(userpasswordEdited)
+          })
+          .then(() => executeKeyExchange(userId))
+          .then(async () => {
+            let directory = directorySubject.value!
+            if(directory === null) {
+              directory = await createDirectory()
+            }
+            await directory.updateServerPublicKey(userEmail, userId)
           })
         }
       })

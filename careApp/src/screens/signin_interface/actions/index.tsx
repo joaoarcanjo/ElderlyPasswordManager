@@ -9,7 +9,7 @@ import { whiteBackgroud } from "../../../assets/styles/colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { stylesButtons } from "../../../assets/styles/main_style";
 import { Spinner } from "../../../components/LoadingComponents";
-import { useSessionInfo } from "../../../firebase/authentication/session";
+import { useSessionInfo } from "../../../context/session";
 import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
 import { getKeychainValueFor } from "../../../keychain";
 import { appName, createAccountLabel, doesNotHaveAccountLabel, emailLabel, emailPlaceholder, emptyValue, enterLabel, pageSignup, passwordLabel, passwordPlaceholder } from "../../../assets/constants/constants";

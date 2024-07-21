@@ -8,10 +8,10 @@ import { whiteBackgroud } from "../../../assets/styles/colors"
 import { stylesButtons } from "../../../assets/styles/main_style"
 import { insertCredentialToLocalDB } from "../../../database/credentials"
 import { ChatMessageType } from "../../../e2e/messages/types"
-import { useSessionInfo } from "../../../firebase/authentication/session"
+import { useSessionInfo } from "../../../context/session"
 import { addCredencialToFirestore } from "../../../firebase/firestore/functionalities"
 import { sendElderlyCredentialInfoAction } from "../../credential_interface/actions/functions"
-import { stylesInputsCredencials, stylesAddCredential } from "../styles/styles"
+import { stylesInputsCredentials, stylesAddCredential } from "../styles/styles"
 import { getNewId, encrypt } from "../../../algorithms/tweetNacl/crypto"
 
 export function CredentialsCardInput({ ownerId, auxKey, isElderlyCredential }: Readonly<{ownerId: string, auxKey: string, isElderlyCredential: boolean }>) {
@@ -54,7 +54,7 @@ export function CredentialsCardInput({ ownerId, auxKey, isElderlyCredential }: R
     return (
         <View style={[{flex: 0.85}]}>
             <View style={{width: '100%', flexDirection: 'row'}}>
-                <View style={[{flex: 1, marginTop:'3%', marginHorizontal: '5%'}, stylesInputsCredencials.inputContainer]}>
+                <View style={[{flex: 1, marginTop:'3%', marginHorizontal: '5%'}, stylesInputsCredentials.inputContainer]}>
                     <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginTop: '2%', marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: 20}]}>{cardPlatformLabel}</Text>
                     <View style={[{margin: '4%', marginTop: '1%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 1, backgroundColor: whiteBackgroud }]}>
                         <TextInput

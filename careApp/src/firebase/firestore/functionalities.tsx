@@ -1,19 +1,20 @@
 import { Alert } from 'react-native';
 import { encrypt, decrypt } from '../../algorithms/tweetNacl/crypto';
-import { elderlyCollectionName, keyCollectionName, keyDocumentName, caregiverCollectionName, credencialsCollectionName, caregiversCollectionName, caregiversDocumentName, emptyValue, SaltDocumentName } from '../../assets/constants/constants';
+import { elderlyCollectionName, keyCollectionName, keyDocumentName, caregiverCollectionName, credentialsCollectionName, caregiversCollectionName, caregiversDocumentName, emptyValue, SaltDocumentName, SaltCollection, SaltDocument } from '../../assets/constants/constants';
 import { CredentialType } from '../../screens/list_credentials/actions/types';
 import { firebase } from '../FirebaseConfig';
-import { defaultCaregiver, defaultCredencials, updateDataCredencial } from './constants';
+import { defaultCaregiver, defaultCredentials, defaultSalt, updateDataCredencial } from './constants';
 
 const firestore = firebase.firestore()
 
 /**
  * Função para obter a chave que se encontra na cloud.
  */
-async function getKey(elderlyId: string): Promise<string> {
+async function getShare(elderlyId: string): Promise<string> {
     console.log("===> getFirebaseKeyCalled")
     return firestore.collection(elderlyCollectionName)
         .doc(elderlyId).collection(keyCollectionName).doc(keyDocumentName).get().then((doc: any) => {
+            console.log(doc.data())
             if(doc.exists) {
                 return doc.data().key
             } 
@@ -33,11 +34,11 @@ async function getKey(elderlyId: string): Promise<string> {
  */
 async function addCredencialToFirestore(userId: string, encryptionKey: string, newCredencialId: string, data: string, isElderlyCredentials: boolean) {
     const encrypted = encrypt(data, encryptionKey)
-    const credential = defaultCredencials(encrypted)
+    const credential = defaultCredentials(encrypted)
 
     const collection = isElderlyCredentials ? firestore.collection(elderlyCollectionName) : firestore.collection(caregiverCollectionName)
     await collection.doc(userId)
-            .collection(credencialsCollectionName)
+            .collection(credentialsCollectionName)
             .doc(newCredencialId)
             .set(credential)
         .catch((error: any) => {
@@ -53,11 +54,12 @@ async function addCredencialToFirestore(userId: string, encryptionKey: string, n
 export async function listAllCredentialsFromFirestore(userId: string, encryptionKey: string, isElderlyCredentials: boolean): Promise<CredentialType[]> {
 
     let collection = isElderlyCredentials? firestore.collection(elderlyCollectionName) : firestore.collection(caregiverCollectionName)
-
-    return collection.doc(userId).collection(credencialsCollectionName).get().then((docs: any) => {
+    
+    return collection.doc(userId).collection(credentialsCollectionName).get().then((docs: any) => {
         const values: CredentialType[] = []
         docs.forEach((doc: any) => { 
             if(doc.data()) {
+                console.log("Firestore Key: ",encryptionKey)
                 const decrypted = decrypt(doc.data().data, encryptionKey)
                 values.push({id: doc.id, data: JSON.parse(decrypted)}) 
             }
@@ -67,9 +69,7 @@ export async function listAllCredentialsFromFirestore(userId: string, encryption
         //alert('Erro ao obter as credenciais, tente novamente!')
         if(isElderlyCredentials) {
             Alert.alert('Erro', 'Erro ao obter as credenciais do idoso, verifique o estado da relação.')
-        } else {
-            Alert.alert('Erro', 'Não foi possível obter as credenciais.')
-        }
+        } 
         return []
     })
 }
@@ -78,10 +78,10 @@ export async function listAllCredentialsFromFirestore(userId: string, encryption
  * Função para apagar uma credencial específica
  * @param credentialId 
  */
-async function deleteCredential(userId: string, credentialId: string): Promise<boolean> {
+async function deleteCredentialFromFirestore(userId: string, credentialId: string): Promise<boolean> {
 
     return firestore.collection(caregiverCollectionName).doc(userId)
-            .collection(credencialsCollectionName)
+            .collection(credentialsCollectionName)
             .doc(credentialId)
             .delete()
         .catch((error: any) => {
@@ -92,13 +92,12 @@ async function deleteCredential(userId: string, credentialId: string): Promise<b
 }
 
 async function updateCredentialFromFirestore(userId: string, credencialId: string, encryptionKey: string, data: string, isElderlyCredential: boolean): Promise<boolean> {
-    console.log('Data: ', data)
     const encrypted = encrypt(data, encryptionKey) 
     
     const collection = isElderlyCredential ? firestore.collection(elderlyCollectionName) : firestore.collection(caregiverCollectionName)
     const updatedCredencial = updateDataCredencial(encrypted)
     return collection.doc(userId)
-            .collection(credencialsCollectionName)
+            .collection(credentialsCollectionName)
             .doc(credencialId)
             .update(updatedCredencial)
         .catch((error: any) => {
@@ -158,7 +157,12 @@ async function createCaregiver(caregiverId: string) {
 
         //Cria na coleção o elemento do idoso.
         const novoDocumentoRef = caregiverCollectionRef.doc(caregiverId)
-        novoDocumentoRef.set(defaultCaregiver)
+        await novoDocumentoRef.set(defaultCaregiver)
+
+        await novoDocumentoRef
+            .collection(SaltCollection)  
+            .doc(SaltDocument) 
+            .set(defaultSalt) 
 
     } catch (error) {
         Alert.alert('Erro', 'Erro ao tentar criar a conta na firebase!')
@@ -167,9 +171,9 @@ async function createCaregiver(caregiverId: string) {
 }
 
 export async function initFirestore(userId: string): Promise<boolean> {
-    return caregiverExists(userId).then((result) => {
+    return caregiverExists(userId).then(async (result) => {
         if (!result) { //se não existir
-            createCaregiver(userId)
+            await createCaregiver(userId)
             //console.log('Elderly created sucessfully!!')
         }
         return true
@@ -203,12 +207,13 @@ async function getServerIP(): Promise<string> {
  * @param saltValue - The salt to be posted.
  * @returns A Promise that resolves to a boolean indicating if the salt key was successfully posted.
  */
-export async function postSalt(caregiverId: string, saltValue: string, SaltCollectionName: string): Promise<boolean> {
+export async function postSalt(caregiverId: string, saltValue: string, SaltDocumentName: string): Promise<boolean> {
     console.log("===> postSaltCalled")
+    console.log(caregiverId)
     try {
         await firestore.collection(caregiverCollectionName)
-            .doc(caregiverId).collection(SaltCollectionName).doc(SaltDocumentName)
-            .set({ salt: saltValue })
+            .doc(caregiverId).collection(SaltCollection).doc(SaltDocument)
+            .update({ [SaltDocumentName]: saltValue })
         return true;
     } catch (error) {
         console.log('Error: ', error);
@@ -221,13 +226,15 @@ export async function postSalt(caregiverId: string, saltValue: string, SaltColle
  * @param caregiverId - The ID of the caregiver.
  * @returns A Promise that resolves to the salt key as a string.
  */
-export async function getSalt(caregiverId: string, SaltCollectionName: string): Promise<string> {
+export async function getSalt(elderlyId: string, SaltDocumentName: string): Promise<string> {
     console.log("===> getSaltCalled")
     return firestore.collection(caregiverCollectionName)
-        .doc(caregiverId).collection(SaltCollectionName).doc(SaltDocumentName).get().then((doc: any) => {
+        .doc(elderlyId).collection(SaltCollection).doc(SaltDocument).get().then((doc: any) => {
             if(doc.exists) {
-                return doc.data().salt
+                const value: string = doc[SaltDocumentName]
+                return value || emptyValue
             } 
+            return emptyValue
         })
         .catch((error: any) => {
             console.log('Error: ', error)
@@ -235,4 +242,4 @@ export async function getSalt(caregiverId: string, SaltCollectionName: string): 
         })
 }
 
-export { getServerIP, deleteCredential, getKey, addCredencialToFirestore, updateCredentialFromFirestore }
+export { getServerIP, deleteCredentialFromFirestore, getShare, addCredencialToFirestore, updateCredentialFromFirestore }

@@ -12,12 +12,14 @@ import { PasswordOptionsModal, PlatformSelectionModal } from "../../../component
 import { regeneratePassword } from "../../../components/passwordGenerator/functions"
 import { insertCredentialToLocalDB } from "../../../database/credentials"
 import { ChatMessageType } from "../../../e2e/messages/types"
-import { useSessionInfo } from "../../../firebase/authentication/session"
+import { useSessionInfo } from "../../../context/session"
 import { addCredencialToFirestore } from "../../../firebase/firestore/functionalities"
 import { sendElderlyCredentialInfoAction } from "../../credential_interface/actions/functions"
-import { stylesInputsCredencials, stylesAddCredential, passwordFirstHalf } from "../styles/styles"
+import { stylesInputsCredentials, stylesAddCredential, passwordFirstHalf } from "../styles/styles"
 import { getNewId, encrypt } from "../../../algorithms/tweetNacl/crypto"
 import { getSpecificUsernameAndPassword } from "../../../components/SpecificUsername&Password"
+import { getKeychainValueFor } from "../../../keychain"
+import { localDBKey as localDBKeyLabel } from '../../../keychain/constants';
 
 const jsonData = require('../../../assets/json/platforms.json')
 
@@ -70,7 +72,10 @@ export function CredentialsLoginInput({ ownerId, auxKey, isElderlyCredential }: 
                 }
             })
             await addCredencialToFirestore(ownerId, auxKey, uuid, jsonValue, isElderlyCredential)
-            await insertCredentialToLocalDB(userId, uuid, encrypt(jsonValue, localDBKey))
+            if(!isElderlyCredential) {
+                 console.log("Local dbkey: ", await getKeychainValueFor(localDBKeyLabel(userId)))
+                await insertCredentialToLocalDB(userId, uuid, encrypt(jsonValue, localDBKey))
+            }
             
             if(ownerId != userId) await sendElderlyCredentialInfoAction(userId, ownerId, emptyValue, platform, ChatMessageType.CREDENTIALS_CREATED)
             navigation.goBack()
@@ -87,7 +92,7 @@ export function CredentialsLoginInput({ ownerId, auxKey, isElderlyCredential }: 
     return (
         <View style={[{flex: 0.85}]}>
             <View style={{width: '100%', flexDirection: 'row'}}>
-                <View style={[{flex: 1, marginTop:'3%', marginHorizontal: '5%'}, stylesInputsCredencials.inputContainer]}>
+                <View style={[{flex: 1, marginTop:'3%', marginHorizontal: '5%'}, stylesInputsCredentials.inputContainer]}>
                     <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginTop: '2%', marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: 20}]}>{platformLabel}</Text>
                     <View style={{flex: 1, flexDirection: 'row', margin: '4%', marginTop: '1%', marginRight: '2%'}}>
                         <View style={[{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 1, backgroundColor: whiteBackgroud }]}>

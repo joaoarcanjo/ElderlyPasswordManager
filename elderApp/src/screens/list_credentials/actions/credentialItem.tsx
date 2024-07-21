@@ -1,33 +1,32 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Linking, View, TouchableOpacity, Text } from "react-native";
-import { pageCredentialLogin, pageCredentialCard, copyPasswordLabel, copyUsernameLabel, navigateLabel, copyCardNumberLabel, copySecurityCodeLabel, copyVerificationCodeLabel, closeLabel, seeMoreLabel } from "../../../assets/constants/constants";
+import { pageCredentialLogin, pageCredentialCard, copyPasswordLabel, copyUsernameLabel, navigateLabel, copyCardNumberLabel, copySecurityCodeLabel, copyVerificationCodeLabel, closeLabel, seeMoreLabel, seeLessLabel } from "../../../assets/constants/constants";
 import { stylesButtons } from "../../../assets/styles/main_style";
-import { useSessionInfo } from "../../../firebase/authentication/session";
-import { usePushNotifications } from "../../../notifications/usePushNotifications";
 import { CredentialType } from "./types";
 import React, { useState } from "react";
-import { copyValue } from "../../../components/UserMessages";
 import { copyUsernameDescription, copyPasswordDescription, FlashMessage, copyCardNumberDescription } from "../../../assets/constants/messages";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons"
-import { darkBlueBackground, dividerLineColor } from "../../../assets/styles/colors";
+import { arrowButtonTextColor, arrowColor, cardColor, credentialItemButtonTextColor, dividerLineColorLight, loginColor } from "../../../assets/styles/colors";
 import { styleScroolView } from "../styles/styles";
+import { options } from "../../credential_interface/styles/styles";
+import { copyValue } from "../../../notifications/UserMessages";
+import { credencialsPlatformLabelTextSize, credencialsUsernameTextSize, smallTextSize } from "../../../assets/styles/text";
 
 function ActionItem({text, func} : {text: string, func: Function}) {
 
   const color = text.includes('Copiar') ? stylesButtons.copyButton : stylesButtons.navigateButton
+  const textStyle = text.includes('Copiar') ? options.copyButtonText : options.navigateButtonText
 
   return (
     <TouchableOpacity style={[{flex: 1, marginTop: '3%'}, stylesButtons.mainConfig, color]} onPress={() => func()}>
-      <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 22, margin: '1%' }]}>{text}</Text>
+      <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '4%'}, textStyle]}>{text}</Text>
     </TouchableOpacity>
   )
 }
 
 export function ScrollItem({credential}: Readonly<{credential: CredentialType}>) {
     const navigation = useNavigation<StackNavigationProp<any>>()
-    const { setUsernameCopied, setPasswordCopied, usernameCopied, passwordCopied } = useSessionInfo()
-    const { expoPushToken } = usePushNotifications()
     const [showFilter, setShowFilter] = useState(false)
   
     const OpenCredentialPage = () => {
@@ -103,8 +102,9 @@ export function ScrollItem({credential}: Readonly<{credential: CredentialType}>)
       }
 
       const icone = credential.data.type === 'login' ? 'person' : 'credit-card'
-      const color = credential.data.type === 'login' ? 'orange' : 'purple'
-      const username = 'username' in credential.data ? `Utilizador: ${credential.data.username}` : `Proprietário: ${credential.data.ownerName}`
+      const color = credential.data.type === 'login' ? loginColor : cardColor
+      const usernamePre = 'username' in credential.data ? `Utilizador:` : `Titular:`
+      const username = 'username' in credential.data ? `${credential.data.username}` : `${credential.data.ownerName}`
     
       return (
         <>
@@ -117,32 +117,32 @@ export function ScrollItem({credential}: Readonly<{credential: CredentialType}>)
                     <MaterialIcons name={icone} size={40} color={color}/> 
                   </View>
                   <View style={{marginVertical: '3%', marginHorizontal: '2%', flexDirection: 'row', alignItems: 'center'}}>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 25, fontWeight: 'bold' }]}>{credential.data.platform}</Text>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: credencialsPlatformLabelTextSize, fontWeight: 'bold', color: credentialItemButtonTextColor }]}>{credential.data.platform}</Text>
                   </View>
                 </View>
-                <View style={{flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: '1%', marginVertical: '2%'}}>
-                  <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: 15, marginLeft: '5%' }]}>{username}</Text>
+                <View style={{flexDirection: 'row', marginHorizontal: '1%', marginVertical: '2%'}}>
+                  <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: credencialsUsernameTextSize, marginLeft: '1%', fontWeight: 'bold', color: credentialItemButtonTextColor }]}>{usernamePre}</Text>
+                  <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: credencialsUsernameTextSize, marginLeft: '3%', color: credentialItemButtonTextColor }]}>{username}</Text>
                 </View>
               </View>
               <View style={{flex: 0.25}}>
                 <TouchableOpacity style={[stylesButtons.moreInfoButton, stylesButtons.mainSlimConfig]} onPress={() => {setShowFilter(!showFilter)}}>
                   {!showFilter ? 
                   <View style={{marginVertical: '5%', alignContent: 'center', alignItems: 'center'}}>
-                    <FontAwesome name="arrow-circle-down" size={40} color={darkBlueBackground} />
-                    <Text>{seeMoreLabel}</Text>
+                    <FontAwesome name="chevron-down" size={40} color={arrowColor} />
+                    <Text style={{color: arrowButtonTextColor}}>{seeMoreLabel}</Text>
                   </View>
                   :
                   <View style={{marginVertical: '5%', alignContent: 'center', alignItems: 'center'}}>
-                    <FontAwesome name="arrow-circle-up" size={40} color={darkBlueBackground} />
-                    <Text>{closeLabel}</Text>
+                    <FontAwesome name="chevron-up" size={40} color={arrowColor} />
+                    <Text style={{color: arrowButtonTextColor}}>{seeLessLabel}</Text>
                   </View>}
                 </TouchableOpacity>
               </View>
             </View>
             {showFilter ?
               <View style={{flex: 0.7, margin: '3%'}}>
-              <View style={{ height: 1, backgroundColor: dividerLineColor }} />
-              <View style={{ height: 1, backgroundColor: dividerLineColor }} />
+              <View style={{ height: 1, backgroundColor: dividerLineColorLight }} />
                 <View style={{marginTop: '4%', marginHorizontal: '2%'}}>
                   {'uri' in credential.data ? 
                     <>

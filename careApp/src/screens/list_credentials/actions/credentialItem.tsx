@@ -4,17 +4,17 @@ import { useState } from "react"
 import { Linking, TouchableOpacity, View, Text} from "react-native"
 import { pageCredentialLogin, pageCredentialCard, copyCardNumberLabel, copyPasswordLabel, copySecurityCodeLabel, copyUsernameLabel, copyVerificationCodeLabel, navigateLabel, closeLabel, seeMoreLabel } from "../../../assets/constants/constants"
 import { stylesButtons } from "../../../assets/styles/main_style"
-import { copyValue } from "../../../components/userMessages/UserMessages"
-import { copyUsernameDescription, copyPasswordDescription, copyCardNumberDescription, FlashMessage } from "../../../components/userMessages/messages"
 import { CredentialType } from "./types"
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons"
-import { useSessionInfo } from "../../../firebase/authentication/session"
+import { useSessionInfo } from "../../../context/session"
 import { deriveSecret } from "../../../algorithms/shamirSecretSharing/sss"
-import { getKey } from "../../../firebase/firestore/functionalities"
 import { getKeychainValueFor } from "../../../keychain"
 import { elderlySSSKey } from "../../../keychain/constants"
-import { darkBlueBackground, dividerLineColor, orangeBackground, purpleBackground } from "../../../assets/styles/colors"
+import { cardColor, darkBlueBackground, dividerLineColor, loginColor, orangeBackground, purpleBackground } from "../../../assets/styles/colors"
 import { styleScroolView } from "../styles/styles"
+import { FlashMessage, copyCardNumberDescription, copyPasswordDescription, copyUsernameDescription } from "../../../notifications/userMessages/messages"
+import { copyValue } from "../../../notifications/userMessages/UserMessages"
+import { getShare } from "../../../firebase/firestore/functionalities"
 
 function ActionItem({text, func} : {text: string, func: Function}) {
 
@@ -37,8 +37,8 @@ export function ScrollItem({credential, elderlyId}: Readonly<{credential: Creden
       
         let encryptionKey = localDBKey
         if(elderlyId !== '') {
-            const cloudKey = await getKey(elderlyId)
-            const sssKey = await getKeychainValueFor(elderlySSSKey(elderlyId))
+            const cloudKey = await getShare(elderlyId)
+            const sssKey = await getKeychainValueFor(elderlySSSKey(userId, elderlyId))
             encryptionKey = deriveSecret([cloudKey, sssKey]) 
         }
 
@@ -120,8 +120,8 @@ export function ScrollItem({credential, elderlyId}: Readonly<{credential: Creden
       }
 
       const icone = credential.data.type === 'login' ? 'person' : 'credit-card'
-      const color = credential.data.type === 'login' ? orangeBackground : purpleBackground
-      const username = 'username' in credential.data ? `Utilizador: ${credential.data.username}` : `Proprietário: ${credential.data.ownerName}`
+      const color = credential.data.type === 'login' ? loginColor : cardColor
+      const username = 'username' in credential.data ? `Utilizador: ${credential.data.username}` : `Titular: ${credential.data.ownerName}`
     
       return (
         <>
