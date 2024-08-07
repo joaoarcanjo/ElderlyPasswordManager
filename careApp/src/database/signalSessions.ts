@@ -19,13 +19,13 @@ export const saveSignalSession = async (userId: string, otherId: string, record:
     console.log("===> saveSignalSessionCalled")
 
     if(dbSQL != null) {
-        await dbSQL.getAllAsync('SELECT id FROM sessionsSignal WHERE id = ? AND userId = ?', [otherId, userId])
+        await dbSQL.getAllAsync('SELECT elderlyId FROM sessionsSignal WHERE elderlyId = ? AND userId = ?', [otherId, userId])
             .then(async (result) => {
                 if (result.length > 0) {
                     console.log("Session exists")
                     // Row with given id and userId exists, perform UPDATE
                     if (dbSQL != null) {
-                        await dbSQL.runAsync('UPDATE sessionsSignal SET record = ? WHERE id = ? AND userId = ?', [record, otherId, userId])
+                        await dbSQL.runAsync('UPDATE sessionsSignal SET record = ? WHERE elderlyId = ? AND userId = ?', [record, otherId, userId])
                             .then(() => {
                                 return Promise.resolve()
                             })
@@ -40,8 +40,9 @@ export const saveSignalSession = async (userId: string, otherId: string, record:
                     console.log("Session not exists")
                     if (dbSQL != null) {
                         console.log("===> saveSignalSessionCalled")
+                        console.log("OtherId: ", otherId)
                         // Row with given id and userId does not exist, perform INSERT
-                        await dbSQL.runAsync('INSERT INTO sessionsSignal (id, userId, record) VALUES (?,?,?)', [otherId, userId, record])
+                        await dbSQL.runAsync('INSERT INTO sessionsSignal (elderlyId, userId, record) VALUES (?,?,?)', [otherId, userId, record])
                         .then(() => {
                             console.log('- Sessão salva com sucesso.')
                             return Promise.resolve()
@@ -64,6 +65,7 @@ export const saveSignalSession = async (userId: string, otherId: string, record:
     }
 }
 
+
 /**
  * Retrieves a session by its ID and user ID from the database.
  * @param otherId - The ID of the other user in the session.
@@ -78,7 +80,7 @@ export const getSession = async (otherId: string, userId: string, localDBKey: st
 
     return new Promise(async (resolve, reject) => {
         if(dbSQL != null) {
-            await dbSQL.getAllAsync('SELECT record FROM sessionsSignal WHERE id = ? AND userId = ?', [otherId, userId])
+            await dbSQL.getAllAsync('SELECT record FROM sessionsSignal WHERE elderlyId = ? AND userId = ?', [otherId, userId])
                 .then(async (result) => { 
                     if (result.length > 0) {
                         const record = (result[0] as any).record
@@ -88,7 +90,8 @@ export const getSession = async (otherId: string, userId: string, localDBKey: st
                     }
                 })
                 .catch((error) => {
-                    console.log("Error: " + error.message)
+                    console.log("AHHHHH")
+                    console.log("Error: " + error)
                     reject(Errors.ERROR_RETRIEVING_SESSION)
                     return false
                 })
@@ -112,7 +115,7 @@ export const deleteSessionById = async (userId: string, otherId: string) => {
     
     const otherIdAux = 'session'+otherId+'.1'
     if(dbSQL != null) {
-        return await dbSQL.runAsync('DELETE FROM sessionsSignal WHERE userId = ? AND id = ?', [userId, otherIdAux])
+        return await dbSQL.runAsync('DELETE FROM sessionsSignal WHERE userId = ? AND elderlyId = ?', [userId, otherIdAux])
             .then(async (result) => {
                 return Promise.resolve(result.changes > 0)
             })

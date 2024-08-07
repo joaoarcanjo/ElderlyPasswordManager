@@ -4,7 +4,7 @@ import { stylesMainBox } from "../assets/styles/main_style"
 import { fontSizeMainBox, fontSizeMainBoxKeyboard } from "../assets/constants/constants"
 
 const MainBox = ({text}: {text: string})  => {
-    
+
     const [fontSize, setFontSize] = React.useState(fontSizeMainBox)
 
     useEffect(() => {
@@ -21,14 +21,15 @@ const MainBox = ({text}: {text: string})  => {
             hideSubscription.remove()
         }
     }, [])
-    
+
     return (
-        <View style= { { flex: 0.18, flexDirection: 'row'} }>
+        <View style= { { flex: 0.13, flexDirection: 'row'} }>
             <View style={[{flex: 1, marginTop: '5%', justifyContent: 'center',  alignItems: 'center'}, stylesMainBox.pageInfoContainer]}>
-                <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesMainBox.pageInfoText, {fontSize: fontSize}]}>{text}</Text>
+                <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesMainBox.pageInfoText, {padding: '3%', fontSize: fontSize}]}>{text}</Text>
             </View>
         </View>
       )
 }
+
 
 export default MainBox

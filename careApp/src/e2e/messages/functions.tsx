@@ -14,7 +14,7 @@ import { ElderlyRequestStatus } from "../../database/types"
 import { deleteSessionById } from "../../database/signalSessions"
 import { setCredentialsListUpdated } from "../../screens/list_credentials/actions/state"
 import { checkElderlyByEmail, updateElderly, checkElderlyByEmailWaitingForResponse, isMaxElderlyReached, saveElderly, getElderlyWithSpecificState, deleteElderly } from "../../database/elderly"
-import { credentialUpdatedFlash, credentialCreatedFlash, credentialDeletedFlash, sessionPermissionsFlash, elderlyPersonalInfoUpdatedFlash, sessionAcceptedFlash, sessionRequestReceivedFlash, elderlySentFirstKey, sessionRejectMaxReachedFlash, sessionRequestCanceledFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionEndedFlash } from "../../notifications/userMessages/UserMessages"
+import { credentialUpdatedFlash, credentialCreatedFlash, credentialDeletedFlash, elderlyPersonalInfoUpdatedFlash, sessionAcceptedFlash, sessionRequestReceivedFlash, sessionRejectMaxReachedFlash, sessionRequestCanceledFlash, sessionRejectedFlash, sessionRejectedMaxReachedFlash, sessionEndedFlash, sessionPermissionsFlash, elderlySentFirstKey } from "../../notifications/UserMessages"
 
 /**
  * Função para processar uma mensagem recebida de tipo 3
@@ -63,8 +63,6 @@ export async function processRegularMessage(address: string, message: string, ty
     let plaintext = String.fromCharCode(...new Uint8Array(plaintextBytes))
     plaintext = plaintext.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F]/g, '')
     const cm: ProcessedChatMessage = JSON.parse(plaintext)
-
-    console.log("AHHHHHHHH")
     addMessageToSession(address, cm, type)
 }
 

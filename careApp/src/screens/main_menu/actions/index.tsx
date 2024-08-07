@@ -20,6 +20,7 @@ const generatorImage = '../../../assets/images/gerador.png'
 const settingsImage = '../../../assets/images/definições.png'
 const questionsImage = '../../../assets/images/perguntas.png'
 const caregiverImage = '../../../assets/images/caregiver.png'
+const elderlyImage = '../../../assets/images/healthcare.png'
 
 
 function CaregiverInfoBox() {
@@ -27,7 +28,7 @@ function CaregiverInfoBox() {
     const { userName } = useSessionInfo()
 
     return (
-        <View style={[{ flex: 0.2, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginHorizontal: '5%', marginTop: '2%' }, stylesFirstHalf.caregiverContainer]}>
+        <View style={[{ flex: 0.2, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: '2%' }, stylesFirstHalf.elderlyContainer]}>
             <View style={{flex: 0.55}}>
                 <View style={{flex: 0.50, justifyContent: 'center'}}>
                     <Text numberOfLines={1} adjustsFontSizeToFit style={{fontSize: 25, fontWeight: 'bold', marginLeft: '10%'}}>{heyLabel}</Text>
@@ -67,12 +68,7 @@ function Functionalities() {
     }
 
     return (
-        <View style={{flex: 0.80, marginBottom: '10%', justifyContent: 'center', alignItems: 'center' }}>
-            <View style={[{flex: 0.25, marginVertical: '2%', width: '90%'}]} >
-                <TouchableOpacity style={[{flex: 1, justifyContent: 'center', alignItems: 'center'}, stylesFirstHalf.caregiversButton, stylesButtons.mainConfig]} onPress={ElderlyNavigation}>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesFirstHalf.caregiversButtonText]}>{elderlyLabel}</Text>
-                </TouchableOpacity>
-            </View>
+        <View style={{flex: 0.80, marginVertical: '6%', justifyContent: 'center', alignItems: 'center'}}>
            <View style={{flex: 0.5, flexDirection: 'row', justifyContent: 'space-around' }}>
                 <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareCredentials, stylesButtons.mainConfig]} onPress={() => CredentialsNavigation()}>
                     <Image source={require(credentialsImage)} style={[stylesOptions.squarePhoto]}/>
@@ -88,11 +84,18 @@ function Functionalities() {
                     <Image source={require(settingsImage)} style={[stylesOptions.squarePhoto]}/>
                     <Text numberOfLines={1} adjustsFontSizeToFit style={[stylesOptions.squareText]}>{settingsLabel}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareQuestions, stylesButtons.mainConfig]} onPress={() => FrequentQuestionsNavigation()}>
-                    <Image source={require(questionsImage)} style={[stylesOptions.squarePhoto]}/>
-                    <Text numberOfLines={2} adjustsFontSizeToFit style={[stylesOptions.squareText]}>{questionsLabel}</Text>
+                <TouchableOpacity style={[{width: '40%', margin: '3%'}, stylesOptions.squareQuestions, stylesButtons.mainConfig]} onPress={() => {ElderlyNavigation()}}>
+                    <Image source={require(elderlyImage)} style={[stylesOptions.squarePhoto]}/>
+                    <Text numberOfLines={2} adjustsFontSizeToFit style={[stylesOptions.squareText]}>{elderlyLabel}</Text>
                 </TouchableOpacity>
            </View>
+           <View style={[{flex: 0.25, marginVertical: '2%', width: '90%'}]} >
+                <TouchableOpacity style={[{flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}, stylesFirstHalf.elderlyButton, stylesButtons.mainConfig]} onPress={() => FrequentQuestionsNavigation()}>
+                    <Image source={require(questionsImage)} style={[stylesOptions.helpPhoto]}/>
+                    <Text style={[{marginLeft: '7%'}, stylesFirstHalf.elderlButtonText]}>{questionsLabel}</Text>
+                </TouchableOpacity>
+            </View>
+           {/*<Button title='DELETE DATABASE CREDENTIALS' onPress={() => deleteAllCredentialFromLocalDB()}></Button>*/}
         </View>
     );
 }

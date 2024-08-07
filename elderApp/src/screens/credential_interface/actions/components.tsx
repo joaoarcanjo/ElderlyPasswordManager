@@ -40,7 +40,7 @@ export function DeleteCredential({id, platform}: Readonly<{id: string, platform:
   
     return (
       <View style= { { flex: 0.50, flexDirection: 'row', justifyContent: 'space-around', marginRight: '1%'} }>
-        <YesOrNoModal question={'Apagar a credencial?'} yesFunction={() => deleteCredentialAction()} noFunction={() => setModalVisible(false)} visibleFlag={modalVisible}/>
+        <YesOrNoModal question={'Deseja apagar a credencial?'} yesFunction={() => deleteCredentialAction()} noFunction={() => setModalVisible(false)} visibleFlag={modalVisible}/>
         <TouchableOpacity style={[{flex: 1}, logout.logoutButton, stylesButtons.mainConfig]} onPress={() => setModalVisible(true)}>
             <Text numberOfLines={1} adjustsFontSizeToFit style={[ logout.logoutButtonText]}>{deleteCredentialLabel}</Text>
         </TouchableOpacity>

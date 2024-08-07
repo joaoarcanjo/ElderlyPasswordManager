@@ -4,7 +4,7 @@ import { ElderlyLoading } from '../../../components/LoadingComponents'
 import { splashStyle } from '../styles/style'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
-import { closeLabel, historyLabel, pageMainMenu } from '../../../assets/constants/constants'
+import { pageMainMenu } from '../../../assets/constants/constants'
 import { stylesButtons } from '../../../assets/styles/main_style'
 import { historyTextColor } from '../../../assets/styles/colors'
 import { buttonNormalTextSize } from '../../../assets/styles/text'
@@ -29,4 +29,4 @@ export default function SplashScreen({ layout }: Readonly<{layout: () => Promise
         </TouchableOpacity>
     </View>
   )
-}//randomMessage
+}

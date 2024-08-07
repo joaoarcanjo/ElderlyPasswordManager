@@ -17,14 +17,13 @@ async function createLocalDBKey(userId: string) {
 export async function initDb(userId: string) {
 
     dbSQL = SQLite.openDatabaseSync('elderly.db')
-  
-/*
+  /*
     dbSQL.execAsync(`
         DROP TABLE IF EXISTS passwords;
         DROP TABLE IF EXISTS sessionsSignal;
         DROP TABLE IF EXISTS credentials;
-    `)
-*/
+    `)*/
+
 
     dbSQL.execSync(`
         CREATE TABLE IF NOT EXISTS passwords (
@@ -41,7 +40,7 @@ export async function initDb(userId: string) {
             email TEXT NOT NULL, 
             phoneNumber TEXT NOT NULL, 
             status INTEGER DEFAULT 0, 
-            PRIMARY KEY(userId, email)
+            PRIMARY KEY(userId, caregiverId, email)
         );
 
         CREATE TABLE IF NOT EXISTS sessionsSignal (

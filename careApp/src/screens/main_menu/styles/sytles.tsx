@@ -8,65 +8,79 @@ import {
   questionsButtonBackgroud,
   questionsButtonBorder,
   settingsButtonBorder,
-  whiteBackgroud,
+  borderColorDark,
+  color8,
   elderlyButtonBackgroud,
-  elderlyButtonBorder
+  elderlyButtonBorder,
+  mainPageOptionsTextColor
 } from '../../../assets/styles/colors';
+import { mainMenuButtonCaregiverTextSize, mainMenuButtonSquareTextSize } from '../../../assets/styles/text';
 
 const stylesFirstHalf = StyleSheet.create({
-    caregiverContainer: {
-        backgroundColor: whiteBackgroud,
-        borderRadius: 20, // Define o raio dos cantos para arredondá-los
-        borderWidth: 1, // Largura da linha na margem
-    },
-    caregiversButton: {
-        borderRadius: 20, // Define o raio dos cantos para arredondá-los
-        borderWidth: 3, // Largura da linha na margem
-        margin: '3%',
-        backgroundColor: elderlyButtonBackgroud,
-        borderColor: elderlyButtonBorder
-    },
-    caregiversButtonText: {
-        fontSize: 33,
-    }
+  elderlyContainer: {
+      backgroundColor: color8,
+      borderColor: borderColorDark,
+      borderWidth: 1, // Largura da linha na margem
+      borderRightWidth: 0,
+      borderLeftWidth: 0
+  },
+  elderlyButton: {
+      borderRadius: 20, // Define o raio dos cantos para arredondá-los
+      borderWidth: 3, // Largura da linha na margem
+      margin: '3%',
+      backgroundColor: elderlyButtonBackgroud,
+      borderColor: elderlyButtonBorder
+  },
+  elderlButtonText: {
+      fontSize: mainMenuButtonCaregiverTextSize,
+      color: mainPageOptionsTextColor,
+      fontWeight: 'bold'
+  }
 })
 
 const stylesOptions = StyleSheet.create({
-   squareQuestions: {
-     backgroundColor: questionsButtonBackgroud,
-     borderColor: questionsButtonBorder,
-     borderRadius: 20, 
-     borderWidth: 5
-   },
-   squareGenerator: {
-     backgroundColor: generatorButtonBackgroud,
-     borderColor: generatorButtonBorder,
-     borderRadius: 20, 
-     borderWidth: 5
-   },
-   squareCredentials: {
-     backgroundColor: credentialsButtonBackgroud,
-     borderColor: credentialsButtonBorder,
-     borderRadius: 20, 
-     borderWidth: 5
-   },
-   squareSettings: {
-     backgroundColor: settingsButtonBackgroud,
-     borderColor: settingsButtonBorder,
-     borderRadius: 20, 
-     borderWidth: 5
-   },
-   squareText: {
+ squareQuestions: {
+   backgroundColor: questionsButtonBackgroud,
+   borderColor: questionsButtonBorder,
+   borderRadius: 20, 
+   borderWidth: 5
+ },
+ squareGenerator: {
+   backgroundColor: generatorButtonBackgroud,
+   borderColor: generatorButtonBorder,
+   borderRadius: 20, 
+   borderWidth: 5
+ },
+ squareCredentials: {
+   backgroundColor: credentialsButtonBackgroud,
+   borderColor: credentialsButtonBorder,
+   borderRadius: 20, 
+   borderWidth: 5
+ },
+ squareSettings: {
+   backgroundColor: settingsButtonBackgroud,
+   borderColor: settingsButtonBorder,
+   borderRadius: 20, 
+   borderWidth: 5
+ },
+ squareText: {
     marginHorizontal: '5%',
-     fontSize: 23,
-     textAlign: 'center'
-   },
-   squarePhoto: {
-     margin: '5%',
-     width: '60%',
-     height: '60%',
-     resizeMode: 'contain'
-   }
+    fontSize: mainMenuButtonSquareTextSize,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: mainPageOptionsTextColor
+ },
+ squarePhoto: {
+   margin: '5%',
+   width: '60%',
+   height: '60%',
+   resizeMode: 'contain'
+ },
+   helpPhoto: {
+    width: '20%',
+    height: '80%',
+    resizeMode: 'contain'
+  }
 });
 
 export { stylesOptions, stylesFirstHalf }

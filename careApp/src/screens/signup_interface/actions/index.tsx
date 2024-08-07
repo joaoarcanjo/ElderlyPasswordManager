@@ -1,15 +1,16 @@
 import React, { useState } from "react"
 import { View, TextInput, Text, TouchableOpacity } from "react-native"
 import { styles, actions } from "../styles/styles";
-import { whiteBackgroud } from "../../../assets/styles/colors";
+import { color8, darkGrey, placeholderColor, signUpButtonTextColor } from "../../../assets/styles/colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { stylesButtons } from "../../../assets/styles/main_style";
 import { Spinner } from "../../../components/LoadingComponents";
 import { useSessionInfo } from "../../../context/session";
 import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
 import { signUpOperation } from "../../../firebase/authentication/funcionalities";
-import { appName, createAccountLabel, emailLabel, emailPlaceholder, emptyValue, mobileLabel, mobilePlaceholder, nameLabel, namePlaceholder, passwordLabel, passwordPlaceholder } from "../../../assets/constants/constants";
+import { appName, createAccountLabel, createAccountSlimLabel, emailLabel, emailPlaceholder, emptyValue, mobileLabel, mobilePlaceholder, nameLabel, namePlaceholder, pageSignupTitle, passwordLabel, passwordPlaceholder, visibilityOffLabel, visibilityOnLabel } from "../../../assets/constants/constants";
 import  { NavbarJustBack } from "../../../navigation/actions";
+import { mainBoxTextSize, signInUpDescriptionTextSize, signinUpInputTextSize, buttonNormalTextSize } from "../../../assets/styles/text";
 
 export function SignUp () {
 
@@ -38,75 +39,87 @@ export function SignUp () {
     }
     
     return (        
-            <View style={[styles.container]}>
-                <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                    <Text style={{fontSize: 50}}>
-                        {appName}
-                    </Text>
-                </View>
-                <View style={{}}>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginTop: '5%', marginLeft: '5%', justifyContent: 'center', fontSize: 20}]}>{nameLabel}</Text>
-                    <View style={[{margin: '3%', marginHorizontal: '4%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 2, backgroundColor: whiteBackgroud }]}>
-                        <TextInput
-                        placeholder={namePlaceholder}
-                        value={name}
-                        autoFocus={true} 
-                        autoCapitalize="none"
-                        style={{ flex: 1, fontSize: 18, padding: '3%', marginHorizontal: '5%', marginVertical: '1%' }}
-                        onChangeText={setName}
-                        maxLength={36}
-                        />
-                    </View> 
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginTop: '3%', marginLeft: '5%', justifyContent: 'center', fontSize: 20}]}>{emailLabel}</Text>
-                    <View style={[{margin: '3%', marginHorizontal: '4%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 2, backgroundColor: whiteBackgroud }]}>
-                        <TextInput
-                        placeholder={emailPlaceholder}
-                        value={email}
-                        autoFocus={true} 
-                        autoCapitalize="none"
-                        style={{ flex: 1, fontSize: 18, padding: '3%', marginHorizontal: '5%', marginVertical: '1%' }}
-                        onChangeText={setEmail}
-                        />
-                    </View> 
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginTop: '3%', marginLeft: '5%', justifyContent: 'center', fontSize: 20}]}>{mobileLabel}</Text>
-                    <View style={[{margin: '3%', marginHorizontal: '4%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 2, backgroundColor: whiteBackgroud }]}>
-                        <TextInput
-                        placeholder={mobilePlaceholder}
-                        value={phoneNumber}
-                        autoFocus={true} 
-                        autoCapitalize='none'
-                        style={{ flex: 1, fontSize: 18, padding: '3%', marginHorizontal: '5%', marginVertical: '1%' }}
-                        onChangeText={setPhoneNumber}
-                        />
-                    </View>
-                    { loading ? <Spinner width={250} height={250}/>
-                    : 
-                    <>
-                        <Text numberOfLines={1} adjustsFontSizeToFit style={[{ marginTop: '3%', marginLeft: '5%', justifyContent: 'center', fontSize: 20 }]}>{passwordLabel}</Text>
-                        <View style={[{ marginTop: '3%', marginHorizontal: '4%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }, { borderRadius: 15, borderWidth: 2, backgroundColor: whiteBackgroud }]}>
-                            <TextInput
-                                placeholder={passwordPlaceholder}
-                                value={password}
-                                autoFocus={true}
-                                secureTextEntry={showPassword}
-                                autoCapitalize='none'
-                                style={{ flex: 1, fontSize: 18, padding: '3%', marginHorizontal: '5%', marginVertical: '1%' }}
-                                onChangeText={setPassword} />
-                        </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
-                            <TouchableOpacity style={[{ flex: 0.22, marginHorizontal: '4%', marginTop: '2%' }, stylesButtons.mainConfig, stylesButtons.visibilityButton]} onPress={toggleShowPassword}>
-                                <MaterialCommunityIcons style={{ marginHorizontal: '5%' }} name={showPassword ? 'eye' : 'eye-off'} size={40} color="black" />
-                            </TouchableOpacity>
-                        </View>
-                        <View style={{}}>
-                            <TouchableOpacity style={[{  marginVertical: '5%', marginHorizontal: '10%' }, stylesButtons.mainConfig, actions.sinUpButton]} onPress={signUp}>
-                                <Text style={{ fontSize: 30, marginVertical: '5%' }}>{createAccountLabel}</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </>
-                }
-                </View>
+        <View style={[styles.container]}>
+            <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                <Text adjustsFontSizeToFit style={{fontSize: mainBoxTextSize, margin: '3%', color: darkGrey}}>
+                    {pageSignupTitle}
+                </Text>
             </View>
+            <View style={{}}>
+                <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginTop: '5%', marginLeft: '5%', justifyContent: 'center', fontSize: signInUpDescriptionTextSize, color: darkGrey}]}>{nameLabel}</Text>
+                <View style={[{margin: '3%', marginHorizontal: '4%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 2, backgroundColor: color8 }]}>
+                    <TextInput
+                    placeholder={namePlaceholder}
+                    placeholderTextColor={placeholderColor}
+                    value={name}
+                    autoFocus={true} 
+                    autoCapitalize="none"
+                    style={{ flex: 1, fontSize: signinUpInputTextSize, padding: '3%', marginHorizontal: '5%', marginVertical: '1%', color: darkGrey }}
+                    onChangeText={setName}
+                    maxLength={36}
+                    />
+                </View> 
+                <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginTop: '3%', marginLeft: '5%', justifyContent: 'center', fontSize: signInUpDescriptionTextSize, color: darkGrey}]}>{emailLabel}</Text>
+                <View style={[{margin: '3%', marginHorizontal: '4%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 2, backgroundColor: color8 }]}>
+                    <TextInput
+                    placeholder={emailPlaceholder}
+                    placeholderTextColor={placeholderColor}
+                    value={email}
+                    autoFocus={true} 
+                    autoCapitalize="none"
+                    style={{ flex: 1, fontSize: signinUpInputTextSize, padding: '3%', marginHorizontal: '5%', marginVertical: '1%', color: darkGrey }}
+                    onChangeText={setEmail}
+                    />
+                </View> 
+                <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginTop: '3%', marginLeft: '5%', justifyContent: 'center', fontSize: signInUpDescriptionTextSize, color: darkGrey}]}>{mobileLabel}</Text>
+                <View style={[{margin: '3%', marginHorizontal: '4%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 2, backgroundColor: color8 }]}>
+                    <TextInput
+                    placeholder={mobilePlaceholder}
+                    placeholderTextColor={placeholderColor}
+                    value={phoneNumber}
+                    autoFocus={true} 
+                    autoCapitalize='none'
+                    style={{ flex: 1, fontSize: signinUpInputTextSize, padding: '3%', marginHorizontal: '5%', marginVertical: '1%', color: darkGrey }}
+                    onChangeText={setPhoneNumber}
+                    />
+                </View>
+                { loading ? <Spinner width={300} height={300}/>
+                : 
+                <>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{ marginTop: '3%', marginLeft: '5%', justifyContent: 'center', fontSize: signInUpDescriptionTextSize, color: darkGrey }]}>{passwordLabel}</Text>
+                    <View style={[{ marginTop: '3%', marginHorizontal: '4%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }, { borderRadius: 15, borderWidth: 2, backgroundColor: color8 }]}>
+                        <TextInput
+                            placeholder={passwordPlaceholder}
+                            placeholderTextColor={placeholderColor}
+                            value={password}
+                            autoFocus={true}
+                            secureTextEntry={showPassword}
+                            autoCapitalize='none'
+                            style={{ flex: 1, fontSize: signinUpInputTextSize, padding: '3%', marginHorizontal: '5%', marginVertical: '1%', color: darkGrey }}
+                            onChangeText={setPassword} />
+                    </View>
+                    <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                        {showPassword ?
+                        <TouchableOpacity style={[{flex: 0.22, marginHorizontal: '4%', marginTop: '2%'}, stylesButtons.mainConfig, stylesButtons.visibilityButton]} onPress={toggleShowPassword} >
+                            <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={'eye'} size={34} color={darkGrey}/> 
+                            <Text style={{marginHorizontal: '2%', fontWeight: 'bold', color: darkGrey}}>{visibilityOnLabel}</Text>
+                        </TouchableOpacity>
+                        :
+                        <TouchableOpacity style={[{flex: 0.22, marginHorizontal: '4%', marginTop: '2%'}, stylesButtons.mainConfig, stylesButtons.visibilityButton]} onPress={toggleShowPassword} >
+                            <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={'eye-off'} size={34} color={darkGrey}/> 
+                            <Text style={{marginHorizontal: '2%', fontWeight: 'bold', color: darkGrey}}>{visibilityOffLabel}</Text>
+                        </TouchableOpacity>  
+                        }
+                    </View>
+                    <View style={{}}>
+                        <TouchableOpacity style={[{  marginVertical: '5%', marginHorizontal: '10%' }, stylesButtons.mainConfig, actions.sinUpButton]} onPress={signUp}>
+                            <Text style={{ fontSize: buttonNormalTextSize, marginVertical: '5%', fontWeight: 'bold', color: signUpButtonTextColor }}>{createAccountSlimLabel}</Text>
+                        </TouchableOpacity>
+                    </View>
+                </>
+            }
+            </View>
+        </View>
     )
 }
 

@@ -8,7 +8,7 @@ import { Spinner } from "../../../components/LoadingComponents";
 import { useSessionInfo } from "../../../context/session";
 import KeyboardAvoidingWrapper from "../../../components/KeyboardAvoidingWrapper";
 import { signUpOperation } from "../../../firebase/authentication/funcionalities";
-import { appName, createAccountLabel, createAccountSlimLabel, emailLabel, emailPlaceholder, emptyValue, mobileLabel, mobilePlaceholder, nameLabel, namePlaceholder, pageSignupTitle, passwordLabel, passwordPlaceholder, visibilityOffLabel, visibilityOnLabel } from "../../../assets/constants/constants";
+import { createAccountSlimLabel, emailLabel, emailPlaceholder, emptyValue, mobileLabel, mobilePlaceholder, nameLabel, namePlaceholder, pageSignupTitle, passwordLabel, passwordPlaceholder, visibilityOffLabel, visibilityOnLabel } from "../../../assets/constants/constants";
 import  { NavbarJustBack } from "../../../navigation/actions";
 import { buttonNormalTextSize, mainBoxTextSize, signInUpDescriptionTextSize, signinUpInputTextSize } from "../../../assets/styles/text";
 
@@ -115,7 +115,7 @@ export function SignUp () {
                         </TouchableOpacity>  
                         }
                     </View>
-                    <View style={{}}>
+                    <View>
                         <TouchableOpacity style={[{  marginVertical: '5%', marginHorizontal: '10%' }, stylesButtons.mainConfig, actions.sinUpButton]} onPress={signUp}>
                             <Text style={{ fontSize: buttonNormalTextSize, marginVertical: '5%', fontWeight: 'bold', color: signUpButtonTextColor }}>{createAccountSlimLabel}</Text>
                         </TouchableOpacity>

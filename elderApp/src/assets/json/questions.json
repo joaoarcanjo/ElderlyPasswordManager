@@ -5,7 +5,7 @@
             "title": "Porquê que devo utilizar um gestor de palavras-passe?",
             "description": [
                 {
-                    "response": "O Gestor de passwords é uma ferramenta que permite a gestão de relações entre idosos e cuidadores. Através do PM é possível estabelecer relações entre idosos e cuidadores, bem como visualizar as relações já estabelecidas."
+                    "response": "O Gestor de palavras-passe é uma ferramenta que permite a gestão de relações entre idosos e cuidadores. Através do PM é possível estabelecer relações entre idosos e cuidadores, bem como visualizar as relações já estabelecidas."
                 }  
             ],
             "video": ""
@@ -19,16 +19,31 @@
                 }  
             ],
             "video": ""
+        },
+        {
+            "icon": "numeric-3-box",
+            "title": "Quando é que uma palavra-passe é considerada fraca?",
+            "description": [
+                {
+                    "response": "Uma palavra-passe é considerada fraca quando um atacante consegue facilmente descobrir a mesma.  "
+                }  
+            ],
+            "video": ""
         }
     ],
     "suggestions": [
         {
-            "title": "✨ Nunca partilhe as suas credenciais de acesso por outro meio que não seja este Gestor de passwords. ✨",
+            "title": "✨ Nunca partilhe as suas credenciais de acesso por outro meio que não seja este Gestor de palavras-passe. ✨",
             "description": [],
             "video": ""
         },
         {
-            "title": "✨ Se não utilizar uma password gerada pelo Gestor de passwords, certifique-se que a password que está a utilizar é forte o suficiente através do emoji. ✨",
+            "title": "✨ Se não utilizar uma palavra-passe gerada pelo Gestor de palavras-passe, certifique-se que a palavra-passe que está a utilizar é forte o suficiente através do emoji. ✨",
+            "description": [],
+            "video": ""
+        },
+        {
+            "title": "✨ Esteja sempre vinculado a pelo menos um cuidador para que consiga realizar um backup das suas credenciais caso perca acesso à sua conta. ✨",
             "description": [],
             "video": ""
         }
@@ -229,7 +244,7 @@
                     "response": "A sua credencial foi apagada com sucesso."
                 }                
             ],
-            "video": "https://firebasestorage.googleapis.com/v0/b/thesis-pm-fa03e.appspot.com/o/apagarCredencial.mp4?alt=media&token=6bae1250-c995-4e30-b3aa-10f186afff91"
+            "video": "https://firebasestorage.googleapis.com/v0/b/thesis-pm-fa03e.appspot.com/o/apagarCredencial.MP4?alt=media&token=397de142-ac23-4462-8d4c-e666ead62a97"
         }
     ]
 }

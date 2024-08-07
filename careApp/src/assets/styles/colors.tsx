@@ -1,219 +1,276 @@
-//BACKGROUD COLORS
-export const whiteBackgroud =             '#FFFFFF'
-export const greyBackgroud =              '#DCE0DE'
-export const darkPurpleBackground =       '#b16fd1'
-export const purpleBackground =           '#DBB8E9'
-export const lightPurpleBackground =      '#f7e3ff'
-export const darkGreenBackgroud =         '#58b859'
-export const lightGreenBackgroud =        '#7FCA82'
-export const superlightGreenBackground =  '#cefad0'
-export const hiperlightBlueBackground =   '#f7feff'
-export const superlightBlueBackgroud =    '#d0f0f7'
-export const lightBlueBackground =        '#9FCFDD'
-export const darkBlueBackground =         '#1A5276'
-export const lightRedBackground =         '#F197AC'
-export const darkRedBackground =          '#e35f5f'
-export const yellowBackground =           '#F5D274'
-export const lightOrangeBackground =      '#FFCA91' //loginbutton
-export const orangeBackground =           '#FA9222'
-export const lightYellowBackground =      '#fcf4dc'
+export const color1 = '#DEEAF6'
+export const color2 = '#6fa8dc'
+export const color9 = '#264767'
+export const color4 = '#FFDDD2'
+export const color5 = '#F1B9A5'
+export const color3 = '#976250'
+export const color7 = '#E9E9E9'
+export const color8 = '#FFFFFF'
+export const color10 = '#E0B656'
+export const color11 = '#7C5F24'
 
-//EMOJI EVALUATION COLORS
-export const emojiRed =       '#FF0000'
-export const emojiOrange =    '#FFA500'
-export const emojiYellow =    '#FFD700'
-export const emojiGreen =     '#008000'
-export const emojiDarkGreen = '#005000'
+//Azul, rosa, amarelo, verde, vermelho, cinza e branco
+
+//BACKGROUD COLORS          
+export const redBackground   =            '#9D2828'
+export const greenBackground =            '#025503'
 
 //BORDER COLORS
-export const blackBorder =         '#000000'
-export const greyBorder =          '#8c8d8f'
-export const purpleBorder =        '#83419F'
-export const blueBorder =          '#297D95'
-export const darkGreenBorder =     '#449447'
-export const yellowBorder =        '#D09C11'
-export const lightRedBorder =      '#BC5E74'
-export const darkRedBorder =       '#a31f1f'
-export const orangeBorder =        '#FA9222'
-export const lightOrangeBorder =   '#FFCA91'
+export const greenBorder =                '#3C6D3D'
+export const redBorder   =                '#CF2020'
+export const greyBorder  =                '#8c8d8f'
+
+//EMOJI EVALUATION COLORS
+export const emojiRed       =             '#FF0000'
+export const emojiOrange    =             '#FFA500'
+export const emojiYellow    =             '#FFD700'
+export const emojiGreen     =             '#008000'
+export const emojiDarkGreen =             '#005000'
+
+//TEXT COLORS
+export const darkGrey       =             '#212121'
+export const placeholderColor =          greyBorder
 
 //LINHA DIVISORIA DE SECÇÕES
-export const dividerLineColor = greyBackgroud
+export const borderColorDark = greyBorder
+
+export const dividerLineColorDark = color7
+export const dividerLineColorLight = color8
+
+export const arrowColor = color3
+export const buttonOptionBackground = color8
+export const buttonOptionBorder = color1
+export const numericColor = color9
+export const numericColor2 = color3
+
+export const usernameToPresentColor = color9
+export const passwordToPresentColor = color9
+
+export const credentialItemButtonTextColor = darkGrey
+export const loginCardButtonTextColor = darkGrey
+export const vinculateButtonTextColor = color8
+export const yesButtonTextColor = color8
+export const noButtonTextColor = color8
+export const cancelTextColor = color8
+export const saveAcceptTextColor = color8
+export const copyTextColor = color8
+export const navigateTextColor = darkGrey
+export const editTextColor = darkGrey
+export const generateTextColor = darkGrey
+export const optionsTextColor = darkGrey
+export const requirementTextColor = darkGrey
+export const doubtOptionTextColor = darkGrey
+export const historyTextColor = darkGrey
+export const mainPageOptionsTextColor = darkGrey
+export const arrowButtonTextColor = darkGrey
+export const signInButtonTextColor = color8
+export const signUpButtonTextColor  = color8
+
+export const notificationColor = color1
 
 //BUTTONS COLORS
 //copy button
-export const copyButtonBackground = yellowBackground
-export const copyButtonBorder = yellowBorder
+export const copyButtonBackground = color9
+export const copyButtonBorder = color2
 
 //secret visibility button
-export const visibilityButtonBackground = yellowBackground
-export const visibilityButtonBorder = yellowBorder
+export const visibilityButtonBackground = color4
+export const visibilityButtonBorder = color5
 
 //Gerar nova password button
-export const regenerateButtonBackgroud = darkGreenBackgroud
-export const regenerateButtonBorder = darkGreenBorder
+export const regenerateButtonBackgroud = color1
+export const regenerateButtonBorder = color2
 
 //Botão para ativar a edição
-export const editButtonBackgroud = yellowBackground
-export const editButtonBorder = yellowBorder
+export const editButtonBackgroud = color10
+export const editButtonBorder = color11
 
-export const optionsButtonBackground = lightBlueBackground
-export const optionsButtonBorder = blueBorder
+export const optionsButtonBackground = color1
+export const optionsButtonBorder = color2
 
-export const rejectButtonBackground = lightRedBackground
-export const rejectButtonBorder = lightRedBorder
+export const rejectButtonBackground = redBackground
+export const rejectButtonBorder = redBorder
 
-export const acceptButtonBackground = lightGreenBackgroud
-export const acceptButtonBorder = darkGreenBorder
+export const acceptButtonBackground = greenBackground
+export const acceptButtonBorder = greenBorder
 
-export const cancelButtonBackground = lightRedBackground
-export const cancelButtonBorder = lightRedBorder
+export const cancelButtonBackground = redBackground
+export const cancelButtonBorder = redBorder
 
 //MAIN MENU PAGE COLORS
-export const credentialsButtonBackgroud = lightGreenBackgroud
-export const credentialsButtonBorder = darkGreenBorder
+export const credentialsButtonBackgroud = color8
+export const credentialsButtonBorder =  color1 
 
-export const settingsButtonBackgroud = lightRedBackground
-export const settingsButtonBorder = lightRedBorder
+export const settingsButtonBackgroud = color8
+export const settingsButtonBorder =  color1
 
-export const generatorButtonBackgroud = lightBlueBackground
-export const generatorButtonBorder = blueBorder
+export const generatorButtonBackgroud = color8
+export const generatorButtonBorder =  color1
 
-export const questionsButtonBackgroud = yellowBackground
-export const questionsButtonBorder = yellowBorder
+export const questionsButtonBackgroud = color8
+export const questionsButtonBorder =  color1
 
-export const elderlyButtonBackgroud = purpleBackground
-export const elderlyButtonBorder = purpleBorder
+export const elderlyButtonBackgroud = color8
+export const elderlyButtonBorder =  color1
 
 //GENERATOR PAGE COLORS
 
-export const historyButtonBackgroud = lightBlueBackground
-export const historyButtonBorder = blueBorder
+export const historyButtonBackgroud = color1
+export const historyButtonBorder = color2
 
-export const firstHalfContainerBackgroud = greyBackgroud
+export const firstHalfContainerBackgroud = color7
 
-export const lengthContainerBackgroud = greyBackgroud
+export const lengthContainerBackgroud = color7
 export const lengthContainerBorder = greyBorder
 
-export const passwordOptionButtonBackgroud = greyBackgroud
+export const passwordOptionButtonBackgroud = color7
 export const passwordOptionButtonBorder = greyBorder
 
 //HISTÓRICO PASSWORDS COLORS
 
-export const passwordContainerBackgroud = greyBackgroud
+export const passwordContainerBackgroud = color7
 export const passwordContainerBorder = greyBorder
 
 //SETTINGS PAGE COLORS
 
-export const accountInfoContainerBackgroud = greyBackgroud
+export const accountInfoContainerBackgroud = color7
 
-export const accountInputContainerBackgroud = whiteBackgroud
+export const accountInputContainerBackgroud = color8
 
-export const accountInputContainerBackgroudV2 = hiperlightBlueBackground
-export const accountInputContainerBorderV2 = blueBorder
+export const accountInputContainerBackgroudV2 = color8
+export const accountInputContainerBorderV2 = color2
 
-export const logoutButtonBackgroud = darkRedBackground
-export const logoutButtonBorder = darkRedBorder
+export const logoutButtonBackgroud = redBackground
+export const logoutButtonBorder = redBorder
 
-//CREDENCIALS INTERFACE COLORS
+export const appInfoButtonBackground = color8
+export const appInfoButtonBorder = greyBorder
 
-export const addCredentialButtonBackgroud = darkGreenBackgroud
-export const addCredentialButtonBorder = darkGreenBorder
+//LIST CREDENCIALS INTERFACE COLORS
 
-export const searchButtonBackgroud = lightBlueBackground
-export const searchButtonBorder = blueBorder
+export const addCredentialButtonBackgroud = greenBackground
+export const addCredentialButtonBorder = greenBorder
 
-export const cardOrLoginOptionButtonSelectedBackground = superlightBlueBackgroud
-export const cardOrLoginOptionButtonSelectedBorder = blueBorder
+export const searchButtonBackgroud = color1
+export const searchButtonBorder = color2
 
-export const cardOrLoginOptionButtonNotSelectedBackground = whiteBackgroud
-export const cardOrLoginOptionButtonNotSelectedBorder = greyBorder
+export const cardOrLoginOptionButtonSelectedBackground = color1
+export const cardOrLoginOptionButtonSelectedBorder = color2
 
-export const filterButtonBackgroud = whiteBackgroud
+export const cardOrLoginOptionButtonNotSelectedBackground = color8
+export const cardOrLoginOptionButtonNotSelectedBorder = color1
+
+export const filterButtonBackgroud = color8
 export const filterButtonBorder = greyBorder
 
-export const credentialItemBackgroud = greyBackgroud
+export const credentialItemBackgroud = color7
 export const credentialItemBorder = greyBorder
 
-export const cardColor = darkPurpleBackground
-export const loginColor = orangeBackground
+export const cardColor = color9
+export const loginColor = color9
 
-export const navigateButtonBackgroud = superlightBlueBackgroud 
-export const navigateButtonBorder = blueBorder
+export const navigateButtonBackgroud = color1 
+export const navigateButtonBorder = color2
 
 //ADD CREDENTIAL INTERFACE COLORS
 
-export const platformButtonBackgroud = superlightBlueBackgroud
-export const platformButtonBorder = blueBorder
+export const platformButtonBackgroud = color8
+export const platformButtonBorder = color1
+
+export const cardButtonBackground = color1
+export const cardButtonBorder = color2
+
+export const loginButtonBackground = color1
+export const loginButtonBorder = color2
 
 
 //CREDENCIAL INTERFACE COLORS
-export const editCredentialsButtonBackground = yellowBackground
-export const editCredentialsButtonBorder = yellowBorder
 
-export const saveButtonBackground = lightGreenBackgroud
-export const saveButtonBorder = darkGreenBorder
+export const saveButtonBackground = greenBackground
+export const saveButtonBorder = greenBorder
 
-export const deleteCredentialButtonBackground = darkRedBackground
-export const deleteCredentialButtonBorder = darkRedBorder
+export const deleteCredentialButtonBackground = redBackground
+export const deleteCredentialButtonBorder = redBorder
 
-export const platformLabelToPresent = darkBlueBackground
+export const platformLabelToPresent = color2
+
+export const credentialEditBackground = color8
+export const credentialEditBorder = color2
 
 //NAVIGATION COLORS
 
-export const navigationBackground = purpleBackground
-export const navigationBorder = purpleBorder
+export const navigationBackground = color8
+export const navigationBorder = greyBorder
 
-export const previousbuttonBackground = lightBlueBackground
-export const previousbuttonBorder = blueBorder
+export const previousbuttonBackground = color7
+export const previousbuttonBorder = greyBorder
 
-export const homePageButtonBackground = lightRedBackground
-export const homePagebuttonBorder = lightRedBorder
+export const homePageButtonBackground = color2
+export const homePagebuttonBorder = color9
 
 //ELDERLY LIST
 
-export const addElderlyButtonBackground = darkGreenBackgroud
-export const addElderlyButtonBorder = darkGreenBorder
+export const addElderlyButtonBackground = greenBackground
+export const addElderlyButtonBorder = greenBorder
 
-export const openCredentialsButtonBackground = superlightBlueBackgroud
-export const openCredentialsButtonBorder = blueBorder
+export const desvinculateButtonBackgroud = redBackground
+export const desvinculateButtonBorder = redBorder
 
-export const desvinculateButtonBackgroud = darkRedBackground
-export const desvinculateButtonBorder = darkRedBorder
-
-export const contactInfoButtonBackgroud = whiteBackgroud
+export const contactInfoButtonBackgroud = color8
 export const contactInfoButtonBorder = greyBorder
+
+export const permissionsYesButtonBackground = greenBackground
+export const permissionsYesButtonBorder = greenBorder
+
+export const permissionsNoButtonBackground = redBackground
+export const permissionsNoButtonBorder = redBorder
+
+export const elderlyWaitingBackground = color8
+export const elderlyWaitingBorder = borderColorDark
+
+export const elderlyReceivedBackground = color8
+export const elderlyReceivedBorder = borderColorDark
+
+export const elderlyBackground = color8
+export const elderlyBorder = borderColorDark
 
 //LOGIN PAGE
 
-export const signinButtonBackground = lightGreenBackgroud
-export const signinButtonBorder = darkGreenBorder
+export const signinButtonBackground = greenBackground
+export const signinButtonBorder = greenBorder
 
-export const signupButtonBackground = purpleBackground
-export const signupButtonBorder = purpleBorder
+export const signupButtonBackground = color9
+export const signupButtonBorder = color9
 
-export const manualButtonBackgroud = purpleBackground
-export const manualButtonBorder = purpleBorder
+export const signinPageBackground = color8
+export const signinPageBorder = color7
 
 //SIGNUP PAGE
 
-export const signupButtonBackgroundU = lightGreenBackgroud
-export const signupButtonBorderU = darkGreenBorder
+export const signupButtonBackgroundU = greenBackground
+export const signupButtonBorderU = greenBorder
 
-export const signupPageBackground = lightPurpleBackground
-export const signupPageBorder = purpleBorder
+export const signupPageBackground = color8
+export const signupPageBorder = color7
 
 //QUESTION LIST
 
-export const questionButtonSelectedBackground = superlightBlueBackgroud
-export const questionButtonSelectedBorder = blueBorder
+export const questionButtonSelectedBackground = color1
+export const questionButtonSelectedBorder = color2
 
-export const questionButtonNotSelected = whiteBackgroud
-export const questionButtonNotSelectedBorder = greyBorder
+export const questionButtonNotSelected = color8
+export const questionButtonNotSelectedBorder = color1
 
-export const itemContainerBackgroud = greyBackgroud
-export const itemContainerBorder = blackBorder
+export const itemContainerBackgroud = color8
+export const itemContainerBorder = greyBorder
+
+export const optionsBackground = color7
+export const optionsBorder = color2
+
+export const videoButtonBackground = color4
+export const videoButtonBorder = color5
 
 //SPALSH SCREEN COLORS
 
-export const splashScreenTextColor = orangeBackground
+export const splashScreenTextColor1 = color9
+export const splashScreenTextColor2 = color9

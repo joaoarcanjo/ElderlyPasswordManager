@@ -3,12 +3,13 @@ import { View, ScrollView } from 'react-native'
 import {Navbar} from '../../../navigation/actions'
 import MainBox from '../../../components/MainBox'
 import { ElderlyItem, Elderly as ElderlyItemMockup } from './elderlyItem'
-import { Elderly } from '../../../database/types'
+import { Elderly, ElderlyRequestStatus } from '../../../database/types'
 import { elderlyListUpdated } from './state'
 import AddElderly from './addItem'
 import { useSessionInfo } from '../../../context/session'
 import { getAllElderly } from '../../../database/elderly'
 import { pageTitleElderlyList } from '../../../assets/constants/constants'
+import { styleScroolView } from '../styles/styles'
 
 function ElderlyList() {
 
@@ -27,7 +28,9 @@ function ElderlyList() {
     <View style={{ flex: 0.85, flexDirection: 'row', marginTop: '5%', justifyContent: 'space-around'}}>
       <View style={[{ flex: 1, marginHorizontal: '4%', justifyContent: 'space-around'}]}>
         <AddElderly setRefresh={refreshValue}/>
-        <ScrollView style={[{flex: 0.85, margin: '3%'}]}>
+        <ScrollView style={[{flex: 0.85}, styleScroolView.credentialsContainer]}>
+
+          <View style={{marginTop: '2%'}}></View>
           {elderlyList.map((elderly, index) => 
             <ElderlyItem 
               key={index}

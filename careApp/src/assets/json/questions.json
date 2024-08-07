@@ -1,117 +1,250 @@
 {
     "questions": [
         {
-            "title": "1️⃣ Porquê que devo utilizar um Gestor de passwords?",
+            "icon": "numeric-1-box",
+            "title": "Porquê que devo utilizar um gestor de palavras-passe?",
             "description": [
-                "O Gestor de passwords é uma ferramenta que permite a gestão de relações entre idosos e cuidadores. Através do PM é possível estabelecer relações entre idosos e cuidadores, bem como visualizar as relações já estabelecidas."
+                {
+                    "response": "O Gestor de palavras-passe é uma ferramenta que permite a gestão de relações entre idosos e cuidadores. Através do PM é possível estabelecer relações entre idosos e cuidadores, bem como visualizar as relações já estabelecidas."
+                }  
             ],
             "video": ""
         },
         {
-            "title": "2️⃣ Quantas relações posso ter estabelecidas?",
+            "icon": "numeric-2-box",
+            "title": "Quantas relações posso ter estabelecidas?",
             "description": [
-                "Cada idoso pode estabelecer relações com, no máximo, 2 cuidadores. Por sua vez, um cuidador pode estabelecer uma relação com, no máximo, 4 idosos."
+                {
+                    "response": "Cada idoso pode estabelecer relações com, no máximo, 2 cuidadores. Por sua vez, um cuidador pode estabelecer uma relação com, no máximo, 4 idosos."
+                }  
+            ],
+            "video": ""
+        },
+        {
+            "icon": "numeric-3-box",
+            "title": "Quando é que uma palavra-passe é considerada fraca?",
+            "description": [
+                {
+                    "response": "Uma palavra-passe é considerada fraca quando um atacante consegue facilmente descobrir a mesma.  "
+                }  
             ],
             "video": ""
         }
     ],
     "suggestions": [
         {
-            "title": "✨ Nunca partilhe as suas credenciais de acesso por outro meio que não seja este Gestor de passwords. ✨",
+            "title": "✨ Nunca partilhe as suas credenciais de acesso por outro meio que não seja este Gestor de palavras-passe. ✨",
             "description": [],
             "video": ""
         },
         {
-            "title": "✨ Se não utilizar uma password gerada pelo Gestor de passwords, certifique-se que a password que está a utilizar é forte o suficiente através do emoji. ✨",
+            "title": "✨ Se não utilizar uma palavra-passe gerada pelo Gestor de palavras-passe, certifique-se que a palavra-passe que está a utilizar é forte o suficiente através do emoji. ✨",
+            "description": [],
+            "video": ""
+        },
+        {
+            "title": "✨ Esteja sempre vinculado a pelo menos um cuidador para que consiga realizar um backup das suas credenciais caso perca acesso à sua conta. ✨",
             "description": [],
             "video": ""
         }
     ],
     "stepByStep": [
         {
-            "title": "1️⃣ Como é que crio uma conta nova?",
+            "icon": "numeric-1-box",
+            "title": "Como é que crio uma conta nova?",
             "description": [
-                "1️⃣: Abra a aplicação e irá aparecer o formulário de login, e clique no botão 'Criar Conta'.",
-                "2️⃣: Preencha o formulário com os dados necessários, nomeadamente o nome, o seu email, número de telefone e a sua password principal.",
-                "3️⃣: Após todos os dados preenchidos, clique no botão 'Criar Conta'.",
-                "4️⃣: Caso os dados estejam bem preenchidos, nomeadamente o email, será redirecionado para a página principal da aplicação."
+                {
+                    "icon": "numeric-1-box",
+                    "response": "Abra a aplicação e irá aparecer o formulário de login, e clique no botão 'Criar Conta'."
+                },
+                {
+                    "icon": "numeric-2-box",
+                    "response": "Preencha o formulário com os dados necessários, nomeadamente o nome, o seu email, número de telefone e a sua password principal."
+                },
+                {
+                    "icon": "numeric-3-box",
+                    "response": "Caso os dados estejam bem preenchidos, nomeadamente o email, será redirecionado para a página principal da aplicação."
+                },
+                {
+                    "icon": "numeric-4-box",
+                    "response": "Caso os dados estejam bem preenchidos, nomeadamente o email, será redirecionado para a página principal da aplicação."
+                }                
             ],
             "video": "https://firebasestorage.googleapis.com/v0/b/thesis-pm-fa03e.appspot.com/o/criarConta.mp4?alt=media&token=c0f88800-f922-4fb7-834e-7aa3cf03d1cc"
         },
         {
-            "title": "2️⃣ Como é que atualizar os meus dados pessoais?",
+            "icon": "numeric-2-box",
+            "title": "Como atualizo os meus dados pessoais?",
             "description": [
-                "1️⃣: Navegue até ao menu inicial da aplicação. De seguida, clique no botão 'Definições'.",
-                "2️⃣: Clique no botão 'Editar' e irá verificar que os campos passaram a ser editáveis, o fundo dos mesmos passa a ser azul, e a opção 'Guardar' ficou disponível.",
-                "3️⃣: Após alterar as informações que pretende, clique no botão 'Guardar'.",
-                "4️⃣: Para finalizar, irá aparecer um pop-up onde poderá confirmar que as ações podem ser efetuadas.",
-                "5️⃣: Os seus dados pessoais foram atualizados com sucesso."
+                {
+                    "icon": "numeric-1-box",
+                    "response": "Navegue até ao menu inicial da aplicação. De seguida, clique no botão 'Definições'."
+                },
+                {
+                    "icon": "numeric-2-box",
+                    "response": "Clique no botão 'Editar' e irá verificar que os campos passaram a ser editáveis, o fundo dos mesmos passa a ser azul, e a opção 'Guardar' ficou disponível."
+                },
+                {
+                    "icon": "numeric-3-box",
+                    "response": "Após alterar as informações que pretende, clique no botão 'Guardar'."
+                },
+                {
+                    "icon": "numeric-4-box",
+                    "response": "Para finalizar, irá aparecer um pop-up onde poderá confirmar que as ações podem ser efetuadas."
+                },
+                {
+                    "icon": "numeric-5-box",
+                    "response": "Os seus dados pessoais foram atualizados com sucesso."
+                }                     
             ],
             "video": "https://firebasestorage.googleapis.com/v0/b/thesis-pm-fa03e.appspot.com/o/atualizarDadosPessoais.mp4?alt=media&token=0970df58-ee4c-46c4-8b5d-37a43238b1b5"
         },
         {
-            "title": "3️⃣ Como é que me vinculo ao meu cuidador?",
+            "icon": "numeric-3-box",
+            "title": "Como é que me vinculo a um cuidador?",
             "description": [
-                "1️⃣: Navegue até ao menu inicial da aplicação. De seguida, clique no botão 'Cuidadores'.",
-                "2️⃣: Clique num botão verde que se encontra disponível e visualize o popup a aparecer.",
-                "3️⃣: Insira o email do seu cuidador, e clique no botão 'Vincular'.",
-                "4️⃣: O pedido foi enviado com sucesso, e o seu cuidador foi informado. Agora só tem de aguardar pela aceitação do seu cuidador."
+                {
+                    "icon": "numeric-1-box",
+                    "response": "Navegue até ao menu inicial da aplicação. De seguida, clique no botão 'Cuidadores'."
+                },
+                {
+                    "icon": "numeric-2-box",
+                    "response": "Clique num botão verde que se encontra disponível e visualize o popup a aparecer."
+                },
+                {
+                    "icon": "numeric-3-box",
+                    "response": "Insira o email do seu cuidador, e clique no botão 'Vincular'."
+                },
+                {
+                    "icon": "numeric-4-box",
+                    "response": "O pedido foi enviado com sucesso, e o seu cuidador foi informado. Agora só tem de aguardar pela aceitação do seu cuidador."
+                }     
             ],
             "video": "https://firebasestorage.googleapis.com/v0/b/thesis-pm-fa03e.appspot.com/o/vincularCuidador.mp4?alt=media&token=cffac507-bdca-4814-891b-35e1d1ddf447"
         },
         {
-            "title": "4️⃣ Como é que altero as permissões do meu cuidador?",
+            "icon": "numeric-4-box",
+            "title": "Como altero as permissões do cuidador?",
             "description": [
-                "1️⃣: Navegue até ao menu inicial da aplicação. De seguida, clique no botão 'Cuidadores'.",
-                "2️⃣: Irá aparecer uma lista com os cuidadores com os quais possui uma relação.",
-                "3️⃣: No cuidador que pretende se desvincular, clique no interruptor e selecione a opção que melhor se adeque.",
-                "4️⃣: A alteração de permissão foi efetuada com sucesso."
+                {
+                    "icon": "numeric-1-box",
+                    "response": "Navegue até ao menu inicial da aplicação. De seguida, clique no botão 'Cuidadores'."
+                },
+                {
+                    "icon": "numeric-2-box",
+                    "response": "Irá aparecer uma lista com os cuidadores com os quais possui uma relação."
+                },
+                {
+                    "icon": "numeric-3-box",
+                    "response": "No cuidador que pretende se desvincular, clique no interruptor e selecione a opção que melhor se adeque."
+                },
+                {
+                    "icon": "numeric-4-box",
+                    "response": "A alteração de permissão foi efetuada com sucesso."
+                }                
             ],
             "video": "https://firebasestorage.googleapis.com/v0/b/thesis-pm-fa03e.appspot.com/o/alterarPermissoes.mp4?alt=media&token=635608c7-62c3-411d-8b62-bb5be836bb0f"
         },
         {
-            "title": "5️⃣ Como é que realizo a desvinculação de um cuidador?",
+            "icon": "numeric-5-box",
+            "title": "Como é que me desvinculo do cuidador?",
             "description": [
-                "1️⃣: Navegue até ao menu inicial da aplicação. De seguida, clique no botão 'Cuidadores'.",
-                "2️⃣: Irá aparecer uma lista com os cuidadores com os quais possui uma relação.",
-                "3️⃣: No cuidador que pretende se desvincular, selecione o botão 'Desvincular' e confirme a sua ação no popup que irá aparecer.",
-                "4️⃣: A desvinculação foi realizada com sucesso."
+                {
+                    "icon": "numeric-1-box",
+                    "response": "Navegue até ao menu inicial da aplicação. De seguida, clique no botão 'Cuidadores'."
+                },
+                {
+                    "icon": "numeric-2-box",
+                    "response": "Irá aparecer uma lista com os cuidadores com os quais possui uma relação."
+                },
+                {
+                    "icon": "numeric-3-box",
+                    "response": "No cuidador que pretende se desvincular, selecione o botão 'Desvincular' e confirme a sua ação no popup que irá aparecer."
+                },
+                {
+                    "icon": "numeric-4-box",
+                    "response": "A desvinculação foi realizada com sucesso."
+                }
+                
             ],
             "video": "https://firebasestorage.googleapis.com/v0/b/thesis-pm-fa03e.appspot.com/o/desvincularCuidador.mp4?alt=media&token=b5989dde-e61f-43cc-bcbb-bb85f47da8f8"
         },
         {
-            "title": "6️⃣ Como é que adiciono uma credencial nova?",
+            "icon": "numeric-6-box",
+            "title": "Como é que adiciono uma credencial nova?",
             "description": [
-                "1️⃣: Navegue até ao menu inicial da aplicação. De seguida, clique no botão 'Credenciais'.",
-                "2️⃣: Clique no botão 'Adicionar Credencial' e vai lhe aparecer um formulário com os dados a inserir relativamente à credencial.",
-                "3️⃣: Pode selecionar se pretende adicionar dados relativamente a uma credencial de login, ou a uma credencial de cartão.",
-                "4️⃣: Após preencher os campos, clique no botão 'Adicionar'.",
-                "5️⃣: A sua credencial foi adicionada com sucesso."
+                {
+                    "icon": "numeric-1-box",
+                    "response": "Navegue até ao menu inicial da aplicação. De seguida, clique no botão 'Credenciais'."
+                },
+                {
+                    "icon": "numeric-2-box",
+                    "response": "Clique no botão 'Adicionar Credencial' e vai lhe aparecer um formulário com os dados a inserir relativamente à credencial."
+                },
+                {
+                    "icon": "numeric-3-box",
+                    "response": "Pode selecionar se pretende adicionar dados relativamente a uma credencial de login, ou a uma credencial de cartão."
+                },
+                {
+                    "icon": "numeric-4-box",
+                    "response": "Após preencher os campos, clique no botão 'Adicionar'."
+                },
+                {
+                    "icon": "numeric-5-box",
+                    "response": "A sua credencial foi adicionada com sucesso."
+                }                
             ],
             "video": "https://firebasestorage.googleapis.com/v0/b/thesis-pm-fa03e.appspot.com/o/addCredential.mp4?alt=media&token=c9d0fb6a-adf6-41ef-af5e-763544ad0c87"
         },
         {
-            "title": "7️⃣ Como é que atualizo uma credencial?",
+            "icon": "numeric-7-box",
+            "title": "Como é que atualizo uma credencial?",
             "description": [
-                "1️⃣: Navegue até ao menu inicial da aplicação. De seguida, clique no botão 'Credenciais'.",
-                "2️⃣: Selecione a credencial que pretende atualizar.",
-                "3️⃣: Clique no botão 'Editar', e visualize os campos a alterarem para a cor azul.",
-                "4️⃣: Realize todas as alterações que pretende efetuar.",
-                "5️⃣: Clique no botão 'Guardar' e confirme a sua ação no popup que irá aparecer.",
-                "6️⃣: As alterações foram efetuadas com sucesso."
+                {
+                    "icon": "numeric-1-box",
+                    "response": "Navegue até ao menu inicial da aplicação. De seguida, clique no botão 'Credenciais'."
+                },
+                {
+                    "icon": "numeric-2-box",
+                    "response": "Clique no botão 'Editar', e visualize os campos a alterarem para a cor azul."
+                },
+                {
+                    "icon": "numeric-3-box",
+                    "response": "Realize todas as alterações que pretende efetuar."
+                },
+                {
+                    "icon": "numeric-4-box",
+                    "response": "Clique no botão 'Guardar' e confirme a sua ação no popup que irá aparecer."
+                },
+                {
+                    "icon": "numeric-5-box",
+                    "response": "As alterações foram efetuadas com sucesso."
+                }
             ],
             "video": "https://firebasestorage.googleapis.com/v0/b/thesis-pm-fa03e.appspot.com/o/atualizarumacredencial.mp4?alt=media&token=4a85d494-ee0e-4e3b-9cbe-9f212d7c1a4a"
         },
         {
-            "title": "8️⃣ Como é que apago uma credencial?",
+            "icon": "numeric-8-box",
+            "title": "Como é que apago uma credencial?",
             "description": [
-                "1️⃣: Navegue até ao menu inicial da aplicação. De seguida, clique no botão 'Credenciais'.",
-                "2️⃣: Selecione a credencial que pretende apagar.",
-                "3️⃣: Clique no botão 'Apagar'.",
-                "4️⃣: Irá aparecer um popup para confirmar a sua operação.",
-                "5️⃣: A sua credencial foi apagada com sucesso."
+                {
+                    "icon": "numeric-1-box",
+                    "response": "Selecione a credencial que pretende apagar."
+                },
+                {
+                    "icon": "numeric-2-box",
+                    "response": "Clique no botão 'Apagar'."
+                },
+                {
+                    "icon": "numeric-3-box",
+                    "response": "Irá aparecer um popup para confirmar a sua operação."
+                },
+                {
+                    "icon": "numeric-4-box",
+                    "response": "A sua credencial foi apagada com sucesso."
+                }                
             ],
-            "video": "https://firebasestorage.googleapis.com/v0/b/thesis-pm-fa03e.appspot.com/o/apagarCredencial.mp4?alt=media&token=6bae1250-c995-4e30-b3aa-10f186afff91"
+            "video": "https://firebasestorage.googleapis.com/v0/b/thesis-pm-fa03e.appspot.com/o/apagarCredencial.MP4?alt=media&token=397de142-ac23-4462-8d4c-e666ead62a97"
         }
     ]
 }

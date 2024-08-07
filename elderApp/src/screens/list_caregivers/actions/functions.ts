@@ -19,9 +19,12 @@ export async function startSessionWithCaregiver(caregiverEmail: string, userId: 
     console.log("===> startSessionWithCaregiverCalled")
     try {
         console.log(caregiverEmail)
+        console.log("AHAHHAHAHAHAHA")
         await startSession(caregiverEmail)
+        console.log("AHAHHAHAHAHAHA")
         const session = sessionForRemoteUser(caregiverEmail)
         currentSessionSubject.next(session ?? null)
+
     
         const data: ElderlyDataBody = {
             userId: userId,

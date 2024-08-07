@@ -24,22 +24,27 @@ export const saveCaregiver = async (userId: string, caregiverId: string, name: s
         }
     }
 
+    console.log("AHHHHHH")
     return new Promise(async (resolve, reject) => {
         if (dbSQL != null) {
             await dbSQL.runAsync('INSERT INTO caregivers (caregiverId, userId, name, email, phoneNumber, status) VALUES (?,?,?,?,?,?)', [caregiverId, userId, name, email, phoneNumber, requestStatus.valueOf()])
                 .then((result) => {
                     if(result.changes > 0) {
+                        console.log("dddtted")
                         console.log('- Cuidador armazenado com sucesso.')
                         return resolve()
                     } else {
+                        console.log("ddddttt")
                         console.log('- Cuidador não armazenado.')
                         return reject(new ErrorInstance(Errors.ERROR_SAVING_SESSION))
                     }
                 })
-                .catch(() => {
+                .catch((erro) => {
+                    console.log(erro)
                     return reject(new ErrorInstance(Errors.ERROR_SAVING_SESSION))
                 })
         } else {
+            console.log("dddtertd")
             return reject(new ErrorInstance(Errors.ERROR_SAVING_SESSION))
         }
     })

@@ -1,5 +1,6 @@
 import {StyleSheet} from 'react-native'
-import { addCredentialButtonBackgroud, addCredentialButtonBorder, cardOrLoginOptionButtonNotSelectedBackground, cardOrLoginOptionButtonNotSelectedBorder, cardOrLoginOptionButtonSelectedBackground, cardOrLoginOptionButtonSelectedBorder, credentialItemBackgroud, credentialItemBorder, searchButtonBackgroud, searchButtonBorder, whiteBackgroud } from '../../../assets/styles/colors'
+import { addCredentialButtonBackgroud, addCredentialButtonBorder, borderColorDark, cardOrLoginOptionButtonNotSelectedBackground, cardOrLoginOptionButtonNotSelectedBorder, cardOrLoginOptionButtonSelectedBackground, cardOrLoginOptionButtonSelectedBorder, color8, credentialItemBackgroud, credentialItemBorder, searchButtonBackgroud, searchButtonBorder } from '../../../assets/styles/colors'
+import { buttonNormalTextSize } from '../../../assets/styles/text'
 
 /**
  * Estilos da view para adicionar uma nova credencial
@@ -11,8 +12,8 @@ const stylesAddCredential = StyleSheet.create({
         borderColor: addCredentialButtonBorder
     },
     addCredentialButtonText: {
-        fontSize: 20,
-        color: whiteBackgroud
+        fontSize: buttonNormalTextSize,
+        color: color8
     }
 })
 
@@ -24,13 +25,14 @@ const styleScroolView = StyleSheet.create({
         borderTopLeftRadius: 20, // Arredonda o canto inferior esquerdo
         borderTopRightRadius: 20, // Arredonda o canto inferior direito        
         borderBottomWidth: 0,
-        borderWidth: 1, // Largura da linha na margem
+        borderColor: borderColorDark,
+        borderWidth: 2, // Largura da linha na margem
     },
     credentialContainer: {
         borderRadius: 15, // Define o raio dos cantos para arredondá-los
         backgroundColor: credentialItemBackgroud,
         borderColor: credentialItemBorder,
-    },
+    }
 })
 
 const styleSearch = StyleSheet.create({

@@ -14,7 +14,7 @@ export const mobileLabel = 'Telemóvel*'
 export const lengthLabel = "Tamanho:"
 export const upperLabel = "Maiúsculas"
 export const lowerLabel = "Minúsculas"
-export const specialLabel = "&%/$#\"@?"
+export const specialLabel = "Especiais"
 export const numbersLabel = "Números"
 export const uriLabel = 'Endereço (URL)'
 export const usernameLabel = 'Utilizador'
@@ -185,7 +185,7 @@ export const pageTitleQuestions = 'Ajuda'
 export const pageTitleCaregiversList = 'Cuidadores'
 export const pageTitleElderlyCredentials = 'Credenciais do Idoso'
 export const pageAddCredentialTitle = 'Adicionar Credencial'
-export const pageTitleHistory = 'Histórico de Passwords'
+export const pageTitleHistory = 'Histórico de Palavras-passe'
 export const pageLoginTitle = 'Entrar na conta'
 export const pageSignupTitle = 'Criação de conta'
 

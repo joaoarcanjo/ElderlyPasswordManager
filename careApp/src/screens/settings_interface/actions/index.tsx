@@ -16,10 +16,12 @@ import { sendElderlyNewInfo } from './functions'
 import { closeWebsocket } from '../../../e2e/network/webSockets'
 import { directorySubject, usernameSubject } from '../../../e2e/identity/state'
 import KeyboardAvoidingWrapper from '../../../components/KeyboardAvoidingWrapper'
-import { accountInfoLabel, cancelLabel, editLabel, emptyValue, gitHubUrl, leaveAccountLabel, logoutAlertLabel, moreAboutTheApp, pageTitleSettings, saveChangesLabel, saveLabel } from '../../../assets/constants/constants'
+import { accountInfoLabel, cancelLabel, editLabel, emptyValue, gitHubUrl, leaveAccountLabel, logoutAlertLabel, moreAboutTheApp, pageTitleSettings, saveChangesLabel, saveLabel, visibilityOffLabel, visibilityOnLabel } from '../../../assets/constants/constants'
 import { createDirectory } from '../../../e2e/identity/functions'
 import { executeKeyExchange } from '../../../algorithms/changeKey/changeKey'
-import { caregiverPersonalInfoUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../notifications/userMessages/UserMessages'
+import { caregiverPersonalInfoUpdatedFlash, editCanceledFlash, editValueFlash } from '../../../notifications/UserMessages'
+import { darkGrey, dividerLineColorLight } from '../../../assets/styles/colors'
+import { settingsAccountInfoLabelTextSize } from '../../../assets/styles/text'
 
 function AccountInfo() {
   
@@ -135,7 +137,8 @@ function AccountInfo() {
   return (
     <View style={[{flex: 1, width: '100%'}]}>
         <View style={[{ marginTop:'4%', marginHorizontal: '2%'}, accountInfo.accountInfoContainer]}>
-        <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.10, marginTop: '3%', marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: 20}]}>{accountInfoLabel}</Text>
+        <Text numberOfLines={1} adjustsFontSizeToFit style={[{flex: 0.10, marginTop: '3%', marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: settingsAccountInfoLabelTextSize, color: darkGrey}]}>{accountInfoLabel}</Text>
+        <View style={{ height: 2, margin: '2%', backgroundColor: dividerLineColorLight }} />
         <View style={[{flex: 0.17, marginVertical:'1%', marginHorizontal: '2%', justifyContent: 'center',  alignItems: 'center', flexDirection: 'row'}]}>
           <Text numberOfLines={1} adjustsFontSizeToFit style={[accountInfo.emailInfoText]}>{userEmail}</Text>
         </View>
@@ -160,7 +163,7 @@ function AccountInfo() {
         <View style={[{ flex: 0.20, marginTop:'2%', flexDirection: 'row', justifyContent: 'center',  alignItems: 'center', marginHorizontal: '4%'}, inputStyle]}>
           <TextInput 
             editable={!editFlag} 
-            secureTextEntry={!(showPassword || !editFlag)}
+            secureTextEntry={!(!showPassword || !editFlag)}
             value={editFlag ? userpassword : userpasswordEdited}
             style={[{flex: 0.8, marginLeft: '7%', marginVertical: '3%'}, accountInfo.accountInfoText]}
             onChangeText={text => editFlag ? setUserpassword(text): setUserpasswordEdited(text)}
@@ -168,36 +171,50 @@ function AccountInfo() {
           <Image source={require('../../../assets/images/lock.png')} style={[{flex: 0.2, height: '80%', marginRight: '5%', resizeMode: 'contain'}]}/>
         </View>
         {editFlag ?
-          <View style={{ flex: 0.2, flexDirection: 'row', justifyContent: 'space-between', marginTop: '1%' }}>
-            <TouchableOpacity style={[{marginLeft:'5%', marginTop: '0%'}, stylesButtons.mainConfig, stylesButtons.copyButton]}  onPress={toggleShowPassword} >
-              <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={showPassword ? 'eye' : 'eye-off'} size={40} color="black"/> 
-            </TouchableOpacity>
+          <View style={{ flex: 0.2, flexDirection: 'row', justifyContent: 'space-between', marginVertical: '3%' }}>
+            {showPassword ?
+              <TouchableOpacity style={[{marginLeft:'5%', marginTop: '0%'}, stylesButtons.mainConfig, stylesButtons.visibilityButton]} onPress={toggleShowPassword} >
+                <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={'eye'} size={34} color={darkGrey}/> 
+                <Text style={{marginHorizontal: '2%', fontWeight: 'bold', color: darkGrey}}>{visibilityOnLabel}</Text>
+              </TouchableOpacity>
+              :
+              <TouchableOpacity style={[{marginLeft:'5%', marginTop: '0%'}, stylesButtons.mainConfig, stylesButtons.visibilityButton]} onPress={toggleShowPassword} >
+                <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={'eye-off'} size={34} color={darkGrey}/> 
+                <Text style={{marginHorizontal: '2%', fontWeight: 'bold', color: darkGrey}}>{visibilityOffLabel}</Text>
+              </TouchableOpacity>  
+            }
           </View>
           :
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: '10%' }}></View>}       
-          <Options />
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: '10%' }}></View>}   
         <YesOrNoSpinnerModal question={saveChangesLabel} yesFunction={saveCredentialUpdate} noFunction={dontSaveCredentialsUpdate} visibleFlag={modalVisible} loading={loading}/>
-      </View>
+      </View>    
+      <Options />
+      {editFlag &&  <AppInfo/>}
+      {editFlag &&  <Logout/>}
     </View> 
   )
   
   function Options() {
-
     return (
-      <View style= { { flex: 0.25, marginHorizontal: '10%', marginTop: '3%', flexDirection: 'row'} }>
+      <View style= { { flex: 0.25, marginHorizontal: '10%', flexDirection: 'row'} }>
         {editFlag ?
           <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
-            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.editButton]} onPress={() => {toggleEditFlag(); editValueFlash(); }}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>{editLabel}</Text>
+            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.editButton]} onPress={() => {toggleEditFlag(); editValueFlash();}}>
+              <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.editButtonText]}>{editLabel}</Text>
             </TouchableOpacity>
           </View> :
-          <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}>
-            {infoModified && <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.acceptButton]} onPress={() => setModalVisible(true)}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[options.permissionsButtonText]}>{saveLabel}</Text>
-            </TouchableOpacity>}
-            <TouchableOpacity style={[{flex: 0.5, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.cancelButton]} onPress={cancelUpdate}>
-              <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.permissionsButtonText]}>{cancelLabel}</Text>
-            </TouchableOpacity>
+          <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end', marginVertical: '3%'}}>
+            <View style={{flex: 0.5, marginRight: '1%'}}>
+              {infoModified && 
+              <TouchableOpacity style={[{flex: 1, marginVertical: '3%'}, stylesButtons.mainConfig, stylesButtons.acceptButton]} onPress={() => setModalVisible(true)}>
+                <Text numberOfLines={1} adjustsFontSizeToFit style={[options.saveAcceptLabelText]}>{saveLabel}</Text>
+              </TouchableOpacity>}
+            </View> 
+            <View style={{flex: 0.5, marginLeft: '1%'}}>
+              <TouchableOpacity style={[{marginVertical: '3%'}, stylesButtons.mainConfig, stylesButtons.cancelButton]} onPress={cancelUpdate}>
+                <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginVertical: '3%'}, options.cancelLabelText]}>{cancelLabel}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         }
       </View>
@@ -241,11 +258,11 @@ function AppInfo() {
     const noFunction = () => { setModalVisible(false) }
   
     return (
-      <View style= { { flex: 0.10, flexDirection: 'row', justifyContent: 'space-around', marginBottom: '2%'} }>
-        <YesOrNoSpinnerModal question={logoutAlertLabel} yesFunction={() => yesFunction()} noFunction={() => noFunction()} visibleFlag={modalVisible} loading={false}/>
-        <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, logout.logoutButton, stylesButtons.mainConfig]} onPress={() => setModalVisible(true)}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>{leaveAccountLabel}</Text>
-        </TouchableOpacity>
+      <View style= { { flex: 0.10, flexDirection: 'row', justifyContent: 'space-around', marginBottom: '2%', marginTop: '5%'} }>
+      <YesOrNoSpinnerModal question={logoutAlertLabel} yesFunction={() => yesFunction()} noFunction={() => noFunction()} visibleFlag={modalVisible} loading={false}/>
+      <TouchableOpacity style={[{flex: 1, marginHorizontal: '10%', marginVertical: '2%'}, logout.logoutButton, stylesButtons.mainConfig]} onPress={() => setModalVisible(true)}>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, logout.logoutButtonText]}>{leaveAccountLabel}</Text>
+      </TouchableOpacity>
       </View>
     )
   }
@@ -257,8 +274,6 @@ export default function Settings() {
         <View style={{ flex: 1, alignItems: 'center',justifyContent: 'center'}}>
           <MainBox text={pageTitleSettings}/>
           <AccountInfo/>
-          <AppInfo/>
-          <Logout/>
         </View>
       </KeyboardAvoidingWrapper>
      <Navbar/>

@@ -13,7 +13,6 @@ import { getServerIP } from "../../firebase/firestore/functionalities";
  */
 export async function createIdentity(userId: string, username: string): Promise<void> {
 
-
     if (usernameSubject.value === username) return
     console.log("Username: ", username)
     console.log("userId: ", userId)

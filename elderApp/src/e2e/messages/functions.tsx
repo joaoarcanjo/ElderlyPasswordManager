@@ -152,7 +152,7 @@ async function processPersonalData(currentUserId: string, cm: ProcessedChatMessa
                 await saveCaregiver(currentUserId, data.userId, data.name, data.email, data.phone, CaregiverRequestStatus.RECEIVED)
                 .then(() => sessionRequestReceivedFlash(cm.from))
                 .then(() => setCaregiverListUpdated(currentUserId))
-                .catch(() => console.log('#1 Error saving caregiver'))
+                .catch((error) => console.log(error.message))
             }
         })
         .catch(() => console.log('#1 Error checking if max caregivers reached'))

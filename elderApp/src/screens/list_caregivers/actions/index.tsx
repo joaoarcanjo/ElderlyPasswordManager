@@ -8,6 +8,7 @@ import { caregiverListUpdated, setCaregiverListUpdated } from './state'
 import { useSessionInfo } from '../../../context/session'
 import { CaregiverPermission } from '../../list_credentials/actions/functions'
 import { pageTitleCaregiversList } from '../../../assets/constants/constants'
+import { CaregiverRequestStatus } from '../../../database/types'
 
 
 const CaregiversList = React.memo(function CaregiversList() {
@@ -57,6 +58,10 @@ const CaregiversList = React.memo(function CaregiversList() {
     </View>
   )
 })
+
+/**
+ * 
+ */
 
 export const Caregivers = React.memo(function Caregivers() {
 

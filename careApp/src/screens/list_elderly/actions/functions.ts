@@ -8,7 +8,7 @@ import { startSession } from "../../../e2e/session/functions"
 import { sessionForRemoteUser, currentSessionSubject, removeSession } from "../../../e2e/session/state"
 import { ErrorInstance } from "../../../exceptions/error"
 import { Errors } from "../../../exceptions/types"
-import { sessionAcceptedFlash, sessionRejectedFlash } from "../../../notifications/userMessages/UserMessages"
+import { sessionAcceptedFlash, sessionRejectedFlash } from "../../../notifications/UserMessages"
 import { setElderlyListUpdated } from "./state"
 
 //

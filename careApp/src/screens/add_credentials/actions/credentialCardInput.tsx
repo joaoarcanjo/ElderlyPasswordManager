@@ -3,8 +3,8 @@ import { useNavigation } from "@react-navigation/native"
 import { StackNavigationProp } from "@react-navigation/stack"
 import { useState } from "react"
 import { View, TextInput, TouchableOpacity, Text } from "react-native"
-import { addLabel, cardNumberLabel, cardPlatformLabel, emptyValue, ownerNameLabel, placeholderCardNumber, placeholderCardPlatform, placeholderOwnerName, placeholderSecurityCode, placeholderVerificationCode, securityCodeLabel, verificationCodeLabel } from "../../../assets/constants/constants"
-import { whiteBackgroud } from "../../../assets/styles/colors"
+import { addLabel, cardNumberLabel, cardPlatformLabel, emptyValue, ownerNameLabel, placeholderCardNumber, placeholderCardPlatform, placeholderOwnerName, placeholderSecurityCode, placeholderVerificationCode, securityCodeLabel, verificationCodeLabel, visibilityOffLabel, visibilityOnLabel } from "../../../assets/constants/constants"
+
 import { stylesButtons } from "../../../assets/styles/main_style"
 import { insertCredentialToLocalDB } from "../../../database/credentials"
 import { ChatMessageType } from "../../../e2e/messages/types"
@@ -13,6 +13,8 @@ import { addCredencialToFirestore } from "../../../firebase/firestore/functional
 import { sendElderlyCredentialInfoAction } from "../../credential_interface/actions/functions"
 import { stylesInputsCredentials, stylesAddCredential } from "../styles/styles"
 import { getNewId, encrypt } from "../../../algorithms/tweetNacl/crypto"
+import { color8, placeholderColor, darkGrey } from "../../../assets/styles/colors"
+import { credencialCardDescriptionTextSize, credencialCardInputTextSize } from "../../../assets/styles/text"
 
 export function CredentialsCardInput({ ownerId, auxKey, isElderlyCredential }: Readonly<{ownerId: string, auxKey: string, isElderlyCredential: boolean }>) {
     const [platform, setPlatform] = useState(emptyValue)
@@ -55,65 +57,78 @@ export function CredentialsCardInput({ ownerId, auxKey, isElderlyCredential }: R
         <View style={[{flex: 0.85}]}>
             <View style={{width: '100%', flexDirection: 'row'}}>
                 <View style={[{flex: 1, marginTop:'3%', marginHorizontal: '5%'}, stylesInputsCredentials.inputContainer]}>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginTop: '2%', marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: 20}]}>{cardPlatformLabel}</Text>
-                    <View style={[{margin: '4%', marginTop: '1%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 1, backgroundColor: whiteBackgroud }]}>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginTop: '2%', marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: credencialCardDescriptionTextSize}]}>{cardPlatformLabel}*</Text>
+                    <View style={[{margin: '4%', marginTop: '1%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 1, backgroundColor: color8 }]}>
                         <TextInput
                         placeholder={placeholderCardPlatform}
+                        placeholderTextColor={placeholderColor}
                         value={platform}
                         autoFocus={true}
-                        style={{ flex: 1, fontSize: 19, padding: '2%', marginHorizontal: '1%' }}
+                        style={{ flex: 1, fontSize: credencialCardInputTextSize, padding: '2%', marginHorizontal: '1%' }}
                         onChangeText={text => setPlatform(text)}
                         />
                     </View>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: 20}]}>{ownerNameLabel}</Text>
-                    <View style={[{margin: '4%', marginTop: '1%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 1, backgroundColor: whiteBackgroud }]}>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: credencialCardDescriptionTextSize}]}>{ownerNameLabel}*</Text>
+                    <View style={[{margin: '4%', marginTop: '1%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 1, backgroundColor: color8 }]}>
                         <TextInput
                         placeholder={placeholderOwnerName}
+                        placeholderTextColor={placeholderColor}
                         value={ownerName}
                         autoCapitalize='none'
-                        style={{ flex: 1, fontSize: 19, padding: '2%', marginHorizontal: '1%' }}
+                        style={{ flex: 1, fontSize: credencialCardInputTextSize, padding: '2%', marginHorizontal: '1%' }}
                         onChangeText={text => setOwnerName(text)}
                         />
                     </View>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: 20}]}>{cardNumberLabel}</Text>
-                    <View style={[{margin: '4%', marginTop: '1%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 1, backgroundColor: whiteBackgroud }]}>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: credencialCardDescriptionTextSize}]}>{cardNumberLabel}*</Text>
+                    <View style={[{margin: '4%', marginTop: '1%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 1, backgroundColor: color8 }]}>
                         <TextInput
                         placeholder={placeholderCardNumber}
+                        placeholderTextColor={placeholderColor}
                         value={cardNumber}
                         keyboardType='numeric'
-                        style={{ flex: 1, fontSize: 19, padding: '2%', marginHorizontal: '1%' }}
+                        style={{ flex: 1, fontSize: credencialCardInputTextSize, padding: '2%', marginHorizontal: '1%' }}
                         onChangeText={text => setCardNumber(text)}
                         />
                     </View>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: 20}]}>{securityCodeLabel}</Text>
-                    <View style={[{margin: '4%', marginTop: '1%'}, { borderRadius: 15, borderWidth: 1, backgroundColor: whiteBackgroud }]}>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: credencialCardDescriptionTextSize}]}>{securityCodeLabel}*</Text>
+                    <View style={[{margin: '4%', marginTop: '1%'}, { borderRadius: 15, borderWidth: 1, backgroundColor: color8 }]}>
                         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginHorizontal: '2%'}}>
                             <TextInput
                             placeholder={placeholderSecurityCode}
+                            placeholderTextColor={placeholderColor}
                             value={securityCode}
                             keyboardType='numeric'
-                            style={{ flex: 1, fontSize: 19, padding: '2%', marginHorizontal: '1%'}}
+                            style={{ flex: 1, fontSize: credencialCardInputTextSize, padding: '2%', marginHorizontal: '1%'}}
                             secureTextEntry={showSecurityCode}
                             onChangeText={text => setSecurityCode(text)}
                             />
                         </View>
                     </View>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: 20}]}>{verificationCodeLabel}</Text>
-                    <View style={[{margin: '4%', marginTop: '1%'}, { borderRadius: 15, borderWidth: 1, backgroundColor: whiteBackgroud }]}>
+                    <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: credencialCardDescriptionTextSize}]}>{verificationCodeLabel}*</Text>
+                    <View style={[{margin: '4%', marginTop: '1%'}, { borderRadius: 15, borderWidth: 1, backgroundColor: color8 }]}>
                         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginHorizontal: '2%'}}>
                             <TextInput
                             placeholder={placeholderVerificationCode}
+                            placeholderTextColor={placeholderColor}
                             value={verificationCode}
-                            style={{ flex: 1, fontSize: 19, padding: '2%', marginHorizontal: '1%'}}
+                            style={{ flex: 1, fontSize: credencialCardInputTextSize, padding: '2%', marginHorizontal: '1%'}}
                             secureTextEntry={showSecurityCode}
                             onChangeText={text => setVerificationCode(text)}
                             />
                         </View>
                     </View>
                     <View style={{flexDirection: 'row', marginTop: '2%', marginBottom: '5%', marginHorizontal: '3%'}}>
-                        <TouchableOpacity style={[{flex: 0.20, marginHorizontal: '3%', flexDirection: 'row'}, stylesButtons.visibilityButton, stylesButtons.mainConfig]}  onPress={toggleShowSecurityCode} >
-                            <MaterialCommunityIcons name={showSecurityCode ? 'eye' : 'eye-off'} size={35} color="black"/> 
+                        {showSecurityCode ?
+                        <TouchableOpacity style={[{marginHorizontal: '3%'}, stylesButtons.mainConfig, stylesButtons.visibilityButton]} onPress={toggleShowSecurityCode} >
+                            <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={'eye'} size={34} color={darkGrey}/> 
+                            <Text style={{marginHorizontal: '2%', fontWeight: 'bold', color: darkGrey}}>{visibilityOnLabel}</Text>
                         </TouchableOpacity>
+                        :
+                        <TouchableOpacity style={[{marginHorizontal: '3%'}, stylesButtons.mainConfig, stylesButtons.visibilityButton]} onPress={toggleShowSecurityCode} >
+                            <MaterialCommunityIcons style={{marginHorizontal: '5%'}} name={'eye-off'} size={34} color={darkGrey}/> 
+                            <Text style={{marginHorizontal: '2%', fontWeight: 'bold', color: darkGrey}}>{visibilityOffLabel}</Text>
+                        </TouchableOpacity>  
+                        }
                     </View>
                 </View>
             </View>

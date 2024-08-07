@@ -5,6 +5,9 @@ import { sessionListSubject } from "./state"
 import { stringToArrayBuffer } from "../signal/signal-store"
 import { ChatMessageType, ProcessedChatMessage } from "../messages/types"
 import { randomUUID } from 'expo-crypto'
+import { port } from "../../assets/constants/constants"
+import { getServerIP } from "../../firebase/firestore/functionalities"
+import { SignalDirectory } from "../signal/signal-directory"
 import { sendSignalProtocolMessage } from "../messages/sendMessage"
 
 /**
@@ -15,10 +18,18 @@ import { sendSignalProtocolMessage } from "../messages/sendMessage"
 export async function startSession(recipient: string): Promise<void> {
     console.log("--> Start session!")
     let directory = directorySubject.value!
+    if(directory === null) {
+        directory = await createDirectory()
+    }
+    console.log("- Directory: ", directory)
     const keyBundle = await directory.getPreKeyBundle(recipient)
     const recipientAddress = new SignalProtocolAddress(recipient, 1)
     // Instantiate a SessionBuilder for a remote recipientId + deviceId tuple.
     const sessionBuilder = new SessionBuilder(signalStore, recipientAddress)
+
+    // Process a prekey fetched from the server. Returns a promise that resolves
+    // once a session is created and saved in the store, or rejects if the
+    // identityKey differs from a previously seen identity for this address.
 
     const session = await sessionBuilder.processPreKey(keyBundle!)
 
@@ -46,4 +57,15 @@ export async function startSession(recipient: string): Promise<void> {
     const sessionList = [...sessionListSubject.value]
     sessionList.unshift(newSession)
     sessionListSubject.next(sessionList)
+}
+
+export const createDirectory = async (): Promise<SignalDirectory> => {
+    const directory = new SignalDirectory(await getUrl())
+    directorySubject.next(directory)
+    return directory
+}
+
+export const getUrl = async () => {
+    const ipAddr = await getServerIP()
+    return `${ipAddr}:${port}`
 }

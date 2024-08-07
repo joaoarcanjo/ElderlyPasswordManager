@@ -133,3 +133,14 @@ export async function createIdentity(userId: string, username: string): Promise<
         oneTimePreKeys: [publicPreKey],
     }) 
 }
+
+export const createDirectory = async (): Promise<SignalDirectory> => {
+    const directory = new SignalDirectory(await getUrl())
+    directorySubject.next(directory)
+    return directory
+}
+
+export const getUrl = async () => {
+    const ipAddr = await getServerIP()
+    return `${ipAddr}:${port}`
+}

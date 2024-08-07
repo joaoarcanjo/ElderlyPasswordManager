@@ -112,41 +112,6 @@ export function PasswordOptionsModal({saveFunction, closeFunction, visibleFlag}:
   )
 }
 
-export function PlatformSelectionModal({setPlatformName, setPlatformURI, closeFunction, visibleFlag}: Readonly<{setPlatformName: Function, setPlatformURI: Function, closeFunction: Function, visibleFlag: boolean}>) {
-
-  interface Platform { platformName: any, platformURI: any, materialCommunityIcon: any, iconColor: any }
-
-  const jsonData = require('../assets/json/platforms.json');
-
-  const applySelection = (platform: Platform) => {
-    setPlatformName(platform.platformName)
-    setPlatformURI(platform.platformURI)
-    closeFunction()
-  }
-
-  return (
-    <ModalBox visibleFlag={visibleFlag}>
-      <View style={{flexDirection: 'row', maxHeight: '85%'}}>
-        <ScrollView style={{width: '100%'}}>
-          {jsonData.platforms.map((platform: Platform, index: string) => 
-            <View key={index} style={{flexDirection: 'row'}}>
-              <TouchableOpacity style={[{flex: 1, marginVertical: '3%', flexDirection: 'row'}, stylesButtons.mainConfig, platformSelection.itemButton]} onPress={() => {applySelection(platform)}}>
-                <MaterialCommunityIcons name={platform.materialCommunityIcon} size={35} color={platform.iconColor}/>
-                <Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontSize: platformsModalSize, margin: '3%', color: platform.iconColor, fontWeight: 'bold' }]}>{platform.platformName}</Text>
-              </TouchableOpacity>
-            </View>  
-          )}
-        </ScrollView>
-      </View><View style={{ height: 1, backgroundColor: 'black', marginVertical: '3%' }}/>
-      <View style={{flexDirection: 'row', marginBottom: '2%'}}>
-        <TouchableOpacity style={[{flex: 1, margin: '3%'}, stylesButtons.mainConfig, stylesButtons.cancelButton]} onPress={() => closeFunction()}>
-          <Text numberOfLines={1} adjustsFontSizeToFit style={[{ margin: '3%' }, options.cancelLabelText]}>{cancelLabel}</Text>
-        </TouchableOpacity>
-      </View>
-    </ModalBox>
-  )
-}
-
 export function ModalBox({children, visibleFlag}: Readonly<{children: ReactNode, visibleFlag: boolean}>) {
     return (
         <Modal
@@ -192,11 +157,3 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
 });
-
-const platformSelection = StyleSheet.create({
-  itemButton: {
-      borderRadius: 15, // Define o raio dos cantos para arredondá-los
-      backgroundColor: platformButtonBackgroud, // Cor de fundo
-      borderColor: platformButtonBorder,
-  }
-})

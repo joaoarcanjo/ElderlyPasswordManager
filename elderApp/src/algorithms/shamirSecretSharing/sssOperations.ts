@@ -11,7 +11,6 @@ import { generateShares } from "./sss"
 import { encodeBase64 } from "tweetnacl-util"
 import { secretbox } from "tweetnacl";
 import { pbkdf2Sync } from 'pbkdf2';
-import { Alert } from "react-native"
 
 /**
  * Caso seja a primeira vez que é chamado, vai simplesmente criar novos.

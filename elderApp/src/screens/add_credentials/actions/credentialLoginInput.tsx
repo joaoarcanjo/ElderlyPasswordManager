@@ -2,13 +2,13 @@ import { MaterialCommunityIcons } from "@expo/vector-icons"
 import { useNavigation } from "@react-navigation/native"
 import { StackNavigationProp } from "@react-navigation/stack"
 import { useState, useEffect } from "react"
-import { View, TextInput, TouchableOpacity, Text, StyleSheet } from "react-native"
+import { View, TextInput, TouchableOpacity, Text } from "react-native"
 import { getScore } from "../../../algorithms/zxcvbn/algorithm"
 import { passwordDefaultLengthGenerator, placeholderPlatform, placeholderURI, usernameLabel, placeholderUsername, passwordLabel, placeholderPassword, optionsLabel, regenerateLabel, addLabel, platformLabel, uriLabel, emptyValue, seeMoreLabel, visibilityOffLabel, visibilityOnLabel, searchLabel } from "../../../assets/constants/constants"
 import { color8, darkGrey, passwordToPresentColor, placeholderColor, usernameToPresentColor } from "../../../assets/styles/colors"
 import { stylesButtons } from "../../../assets/styles/main_style"
 import AvaliationEmoji from "../../../components/EmojiAvaliation"
-import { PasswordOptionsModal, PlatformSelectionModal } from "../../../components/Modal"
+import { PasswordOptionsModal } from "../../../components/Modal"
 import { regeneratePassword } from "../../../components/passwordGenerator/functions"
 import { insertCredentialToLocalDB } from "../../../database/credentials"
 import { ChatMessageType } from "../../../e2e/messages/types"
@@ -40,7 +40,6 @@ export default function CredentialsLoginInput() {
     const [requirements, setRequirements] = useState<Object>({length: passwordDefaultLengthGenerator, strict: true, symbols: false, uppercase: true, lowercase: true, numbers: true})
     const [showPassword, setShowPassword] = useState(false)
     const [modalVisible, setModalVisible] = useState(false)
-    const [platformModal, setPlatformModal] = useState(false)
 
     const [usernameLabelToPresent, setUsernameLabelToPresent] = useState(emptyValue)
     const [passwordLabelToPresent, setPasswordLabelToPresent] = useState(emptyValue)
@@ -84,7 +83,7 @@ export default function CredentialsLoginInput() {
                 <MaterialCommunityIcons style={{marginHorizontal: 7}} color="black" name="form-dropdown" size={20} />
               )}
             />
-          );
+            );
         };
 
     const navigation = useNavigation<StackNavigationProp<any>>()
@@ -168,13 +167,6 @@ export default function CredentialsLoginInput() {
                             onChangeText={text => setPlatform(text)}
                             />
                         </View>
-                        {/*
-                        <TouchableOpacity style={[{justifyContent: 'center',  alignItems: 'center', marginHorizontal: '1%'}, stylesButtons.moreInfoButton, stylesButtons.mainSlimConfig]} onPress={() => {setPlatformModal(true)}}>
-                            <View style={{margin: '2%', alignContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
-                                <FontAwesome name="chevron-down" size={34} color={arrowColor} />
-                                <Text style={{marginLeft: '5%', color: arrowButtonTextColor}}>{seeMoreLabel}</Text>
-                            </View>
-                        </TouchableOpacity> */}
                     </View>}
                     <Text numberOfLines={1} adjustsFontSizeToFit style={[{marginLeft: '5%', width: '90%', justifyContent: 'center', fontSize: credencialCardDescriptionTextSize, color: darkGrey}]}>{uriLabel}*</Text>
                     <View style={[{margin: '4%', marginTop: '1%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}, { borderRadius: 15, borderWidth: 1, backgroundColor: color8 }]}>
@@ -239,7 +231,6 @@ export default function CredentialsLoginInput() {
                 <Text numberOfLines={1} adjustsFontSizeToFit style={[{margin: '3%'}, stylesAddCredential.buttonText]}>{addLabel}</Text>
             </TouchableOpacity>
             <PasswordOptionsModal saveFunction={saveRequirements} closeFunction={() => {setModalVisible(false)}} visibleFlag={modalVisible} loading={false}/>
-            <PlatformSelectionModal closeFunction={() => { setPlatformModal(false) } } visibleFlag={platformModal} setPlatformName={setPlatform} setPlatformURI={setURI}/>
         </View>
     )
 }

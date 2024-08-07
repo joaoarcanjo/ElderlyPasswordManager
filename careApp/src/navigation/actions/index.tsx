@@ -43,6 +43,9 @@ export function Navbar() {
     </View> : null)
 }
 
+/**
+ * Renders a navigation bar with a back button.
+ */
 export function NavbarJustBack() {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
@@ -54,7 +57,7 @@ export function NavbarJustBack() {
         const showSubscriptionIOS = Keyboard.addListener('keyboardWillShow', () => setKeyboardStatus(!keyboardStatus))
         const hideSubscriptionIOS = Keyboard.addListener('keyboardWillHide', () => setKeyboardStatus(!keyboardStatus))
         const showSubscription = Keyboard.addListener('keyboardDidHide', () => setKeyboardStatus(!keyboardStatus))
-        const hideSubscription = Keyboard.addListener('keyboardDidHide', () => setKeyboardStatus(!keyboardStatus))
+        const hideSubscription = Keyboard.addListener('keyboardDidShow', () => setKeyboardStatus(!keyboardStatus))
     
         return () => {
             showSubscriptionIOS.remove()
@@ -65,9 +68,8 @@ export function NavbarJustBack() {
     }, [keyboardStatus])
 
     return (!Keyboard.isVisible() ? 
-        <View style={[{flex: 0.12, backgroundColor: 'red', flexDirection: 'row', justifyContent: 'center'}, navigationStyle.pageInfoContainer]}>
+        <View style={[{flex: 0.12, flexDirection: 'row'}, navigationStyle.pageInfoContainer]}>
             <TouchableOpacity style={[{flex: 0.5, marginLeft: '5%', marginRight: '2%', marginTop: '2%', marginBottom: '2%'}, navigationStyle.backButton, stylesButtons.mainConfig]} onPress={() => goBack()}>
-                {/*<Text numberOfLines={1} adjustsFontSizeToFit style={[{ fontWeight: 'bold', fontSize: 22 }]}>Anterior</Text> */}
                 <Entypo name="back" size={40} color="black" />
             </TouchableOpacity>
     </View> : null)

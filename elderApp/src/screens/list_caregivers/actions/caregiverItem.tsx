@@ -76,9 +76,10 @@ export function CaregiverToBeAccepted({ caregiverId, number, name, email, setRef
        <View style={[{ flexDirection: 'row', alignItems: 'center', marginVertical: '3%' }, caregiverStyle.newCaregiverContainer]}>
         <View style={{ flex: 1, marginTop: '4%' }}>
           <Text numberOfLines={2} adjustsFontSizeToFit style={[{ fontSize: caregiverTitleTextSize, marginHorizontal: '3%', fontWeight: 'bold' }]}>{`Pedido recebido de: ${email}`}</Text>
-          <View style={{ height: 2, marginVertical: '3%', marginHorizontal: '2%' }}/>
+
+          <View style={{ height: 2, backgroundColor: dividerLineColorDark, marginVertical: '4%' }}/>
           <View style={{flexDirection: 'row', marginHorizontal: '3%'}}>
-            <Text numberOfLines={3} adjustsFontSizeToFit style={[{ fontSize: caregiverDescriptionTextSize }]}>{`O idoso ${name} com o email ${email} enviou-lhe um pedido!`}</Text>
+            <Text numberOfLines={3} adjustsFontSizeToFit style={[{ fontSize: caregiverDescriptionTextSize }]}>{`O cuidador ${name} com o email ${email} enviou-lhe um pedido!`}</Text>
           </View>
           <View style={{ height: 2, backgroundColor: dividerLineColorDark, marginVertical: '2%' }}/>
           <View style={{flexDirection: 'row'}}>
