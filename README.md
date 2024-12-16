@@ -45,6 +45,74 @@ A seguinte figura apresenta a arquitetura do sistema proposta para que estes sej
 Para obter mais informações sobre o trabalho realizado neste projeto, pode consultar o PDF diretamente [aqui](docs/tese.pdf), onde encontrará todos os detalhes.
 
 ---
+## Regras definidas na Firebase Firestore
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+  
+  	match /Server/{serverId} {
+     allow read: if true;
+     allow write: if request.auth.token.admin == true;
+    }
+  
+    match /Elderly/{elderlyId} {
+     allow read, write: if request.auth != null; 
+     
+     //Função que retorna os utilizadores que podem ler os dados.
+     //O identificador do cuidador é inserido no array readCaregivers no momento da vinculação
+     //e é retirado se ocorrer uma desvinculação com o respetivo.
+     function caregiverCanRead(userId) {
+        return (exists(/databases/$(database)/documents/Elderly/$(elderlyId)/Caregivers/Value) &&
+        get(/databases/$(database)/documents/Elderly/$(elderlyId)/Caregivers/Value).data.readCaregivers.hasAny([userId]))
+     }
+     
+     //Função para obter os cuidadores que possuem permissões de escrita nas credenciais.
+     //O cuidador é inserido neste array writeCaregivers caso lhe seja dada a permissão para atualizar
+     //e criar as credenciais, e é retirado do array se ocorrer uma desvinculação ou caso o idoso
+     //considere que tenha que lhe retirar as devidas permissões.
+     function caregiverCanWrite(userId) {
+        return (exists(/databases/$(database)/documents/Elderly/$(elderlyId)/Caregivers/Value) &&
+        get(/databases/$(database)/documents/Elderly/$(elderlyId)/Caregivers/Value).data.writeCaregivers.hasAny([userId]))
+     }
+     
+     match /Caregivers/{documents=**} {
+     	allow read: if request.auth != null; 
+      allow write: if request.auth.uid == elderlyId;
+     }
+     
+     match /Key/{documents=**} {
+     	allow read: if request.auth.uid == elderlyId || caregiverCanRead(request.auth.uid);
+      allow write: if request.auth.uid == elderlyId;
+     }
+     
+      match /Salt/{documents=**} {
+     		allow read, write: if request.auth.uid == elderlyId;
+     	}
+      
+     match /Credentials/{documents=**} {
+     	allow read: if (request.auth.uid == elderlyId) || caregiverCanRead(request.auth.uid);
+     	allow create, update: if (request.auth.uid == elderlyId) || caregiverCanWrite(request.auth.uid);
+      allow delete: if (request.auth.uid == elderlyId)
+     }
+    }
+    
+    match /Caregiver/{caregiverId} {
+    	allow read, write: if request.auth != null;
+      
+      match /Credentials/{documents=**} {
+     	 	allow read, write: if request.auth.uid == caregiverId;
+     	}	
+      
+      match /Salt/{documents=**} {
+     		allow read, write: if request.auth.uid == caregiverId;
+     	}
+    }
+	}
+}
+```
+
+---
 
 ## Vídeos
 
