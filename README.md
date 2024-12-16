@@ -45,6 +45,24 @@ A seguinte figura apresenta a arquitetura do sistema proposta para que estes sej
 Para obter mais informações sobre o trabalho realizado neste projeto, pode consultar o PDF diretamente [aqui](docs/tese.pdf), onde encontrará todos os detalhes.
 
 ---
+## Como correr 
+`Requisitos:` 
+- Possuir o Node.js instalado na sua máquina. Na instalação do Node, o NPM (Node Package Manager) vem também instalado. Para verificar se possui o Node e o NPM instalados, basta correr os comandos `node -v` e `npm -v` numa linha de comandos.
+- Possuir um Simulador instalado no seu dispositivo, sendo possível utilizar qualquer um dos sistemas operativos.
+- Possua o código fonte do servidor intermédio e de ambas as aplicações aberto no seu IDE favorito. (Devido ao recurso ao React Native Expo, não é necessário abrir nenhum IDE específico de nenhum sistema operativo.
+
+`Preparar e executar o sistema:` 
+- Criar um projeto na [Firebase](https://firebase.google.com/) e registar uma aplicação neste mesmo projeto. Verifica com registar as aplicações [aqui](https://firebase.google.com/docs/web/setup?hl=pt&authuser=0). No processo de registo da aplicação é necessário copiar os dados do objeto `firebaseConfig` disponibilizado pela Firebase para o código fonte de ambas aplicações, nomeadamente para o ficheiro `src/firebase/FirebaseConfig.tsx` presente em ambas as aplicações. Nota: Ao registar uma aplicação na Firebase, é possível utilizar o mesmo objeto `firebaseConfig` para múltiplas aplicações, onde, no nosso caso, será para a aplicação do idoso e a aplicação do cuidador.
+
+- Em seguida, é necessário gerar uma chave privada para ser colocada no Servidor Intermédio, para que este seja administrator da Firebase. Para tal, diriga-se às configurações do projeto no portal da [Firebase](https://firebase.google.com/), e em `Contas de serviço` é necessário gerar uma nova chave privada. Uma vez gerada, sendo esta um ficheiro .JSON, atualize o ficheiro `admin/privatekey.json` presente no servidor.
+
+- Na Firestore, a base de dados da Firebase também acessível através do portal, na opção `Regras`, atualize as regras de acesso à mesma com as que se encontram descritas na próxima secção deste ficheiro readme.
+
+- Na raiz do projeto do servidor, e nas raizes dos projetos de ambas as aplicações, abra um terminal e execute o comando `npm install` para que o NPM instale todas as dependências das três identidades do nosso sistema. Após a conclusão da execução deste comando, é possível verificar a presença, nos diretórios raiz das três identidades, um novo ficheiro denominado por `package-lock.json` e uma nova pasta denominada por `node_modules`.
+
+- Na raíz das três identidades, execute o comando `npm start`, que por sua vez vai executar as respetivas aplicações e servidor, sendo que, no caso das aplicações, será ainda questionado relativamente a qual simulador pretende utilizar, tendo em conta aqueles que possui instalados.
+
+---
 ## Regras definidas na Firebase Firestore
 ```
 rules_version = '2';
